@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Crystal Dock
+GenericName=Desktop Panel
+Icon=user-desktop
+Exec=crystal-dock
+Terminal=false
+Categories=Utility;
