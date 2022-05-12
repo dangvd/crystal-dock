@@ -1,19 +1,19 @@
 /*
- * This file is part of QDockX.
+ * This file is part of Crystal Dock.
  * Copyright (C) 2022 Viet Dang (dangvd@gmail.com)
  *
- * QDockX is free software: you can redistribute it and/or modify
+ * Crystal Dock is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * QDockX is distributed in the hope that it will be useful,
+ * Crystal Dock is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with QDockX.  If not, see <http://www.gnu.org/licenses/>.
+ * along with Crystal Dock.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "multi_dock_model.h"
@@ -22,7 +22,7 @@
 #include <QTemporaryDir>
 #include <QtTest>
 
-namespace qdockx {
+namespace crystaldock {
 
 class MultiDockModelTest: public QObject {
   Q_OBJECT
@@ -68,7 +68,7 @@ void MultiDockModelTest::load_multipleDocks() {
   QCOMPARE(model.dockCount(), 3);
 }
 
-}  // namespace qdockx
+}  // namespace crystaldock
 
-QTEST_MAIN(qdockx::MultiDockModelTest)
+QTEST_MAIN(Crystal Dock::MultiDockModelTest)
 #include "multi_dock_model_test.moc"
