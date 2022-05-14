@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>600</width>
-    <height>300</height>
+    <height>270</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,7 +17,7 @@
    <property name="geometry">
     <rect>
      <x>30</x>
-     <y>240</y>
+     <y>200</y>
      <width>530</width>
      <height>32</height>
     </rect>
@@ -45,33 +45,11 @@
     <string>Showing tasks from:</string>
    </property>
   </widget>
-  <widget class="QCheckBox" name="showCurrentActivityOnly">
-   <property name="enabled">
-    <bool>false</bool>
-   </property>
-   <property name="geometry">
-    <rect>
-     <x>80</x>
-     <y>70</y>
-     <width>401</width>
-     <height>32</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Current activity only</string>
-   </property>
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="checked">
-    <bool>true</bool>
-   </property>
-  </widget>
   <widget class="QCheckBox" name="showCurrentDesktopOnly">
    <property name="geometry">
     <rect>
      <x>80</x>
-     <y>120</y>
+     <y>80</y>
      <width>401</width>
      <height>32</height>
     </rect>
@@ -87,7 +65,7 @@
    <property name="geometry">
     <rect>
      <x>80</x>
-     <y>170</y>
+     <y>130</y>
      <width>421</width>
      <height>32</height>
     </rect>
