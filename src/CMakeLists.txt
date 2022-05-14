@@ -79,7 +79,13 @@ set(SRCS
     utils/desktop_file.h
     utils/draw_utils.h
     utils/font_utils.h
-    utils/task_helper.h)
+    utils/task_helper.h
+    view/add_panel_dialog.ui
+    view/appearance_settings_dialog.ui
+    view/application_menu_settings_dialog.ui
+    view/edit_launchers_dialog.ui
+    view/task_manager_settings_dialog.ui
+    view/wallpaper_settings_dialog.ui)
 add_library(crystal-dock_lib ${SRCS})
 
 set(LIBS Qt5::DBus Qt5::Gui Qt5::Widgets KF5::WindowSystem stdc++fs)
