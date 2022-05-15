@@ -93,6 +93,7 @@ EditLaunchersDialog::EditLaunchersDialog(QWidget* parent, MultiDockModel* model,
       model_(model),
       dockId_(dockId) {
   ui->setupUi(this);
+  setWindowFlag(Qt::Tool);
 
   qRegisterMetaType<LauncherInfo>();
   qRegisterMetaTypeStreamOperators<LauncherInfo>("LauncherInfo");

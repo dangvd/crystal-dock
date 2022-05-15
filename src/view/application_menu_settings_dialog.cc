@@ -29,6 +29,7 @@ ApplicationMenuSettingsDialog::ApplicationMenuSettingsDialog(QWidget* parent,
       model_(model) {
   ui->setupUi(this);
   icon_->setGeometry(QRect(140, 80, 80, 80));
+  setWindowFlag(Qt::Tool);
 
   connect(ui->buttonBox, SIGNAL(clicked(QAbstractButton*)),
       this, SLOT(buttonClicked(QAbstractButton*)));

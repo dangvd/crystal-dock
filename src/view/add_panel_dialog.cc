@@ -31,6 +31,7 @@ AddPanelDialog::AddPanelDialog(QWidget* parent, MultiDockModel* model,
       dockId_(dockId),
       isSingleScreen_(true) {
   ui->setupUi(this);
+  setWindowFlag(Qt::Tool);
 
   // Populate screen list.
   const int screenCount = QGuiApplication::screens().size();

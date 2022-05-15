@@ -97,7 +97,7 @@ bool TaskHelper::isValidTask(WId wId) {
     return false;
   }
 
-  const auto windowType = info.windowType(NET::DockMask | NET::DesktopMask);
+  const auto windowType = info.windowType(NET::AllTypesMask);
   if (windowType != NET::Normal && windowType != NET::Unknown) {
     return false;
   }
@@ -107,8 +107,7 @@ bool TaskHelper::isValidTask(WId wId) {
     return false;
   }
 
-  // Filters out Crystal Dock dialogs.
-  return getCommand(info) != "crystaldock";
+  return true;
 }
 
 bool TaskHelper::isValidTask(WId wId, int screen, bool currentDesktopOnly) {

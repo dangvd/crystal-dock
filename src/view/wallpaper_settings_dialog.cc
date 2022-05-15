@@ -40,6 +40,7 @@ WallpaperSettingsDialog::WallpaperSettingsDialog(QWidget* parent,
       currentDir_(QDir::homePath()),
       multiScreen_(false) {
   ui->setupUi(this);
+  setWindowFlag(Qt::Tool);
 
   populateDesktopList();
 

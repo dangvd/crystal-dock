@@ -39,6 +39,7 @@ AppearanceSettingsDialog::AppearanceSettingsDialog(QWidget* parent,
       ui(new Ui::AppearanceSettingsDialog),
       model_(model) {
   ui->setupUi(this);
+  setWindowFlag(Qt::Tool);
 
   backgroundColor_ = new ColorButton(this);
   backgroundColor_->setGeometry(QRect(260, 150, 80, 40));
