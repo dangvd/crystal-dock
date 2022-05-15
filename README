@@ -1,15 +1,15 @@
-Crystal Dock is a cool dock (desktop panel) with parabolic zooming effect for Linux desktop, with the focus on smooth zooming effect and being simple and easy to use.
+Crystal Dock is a cool dock (desktop panel) for Linux desktop, with the focus on attractive user interface, smooth zooming effect and being simple and easy to use.
 
 Main features:
 - Smooth parabolic zooming effect
 - Supported components: Application Menu, Pager, combined Launchers/Tasks, Clock
 - Multiple docks support
-- Integration with various desktop environments (KDE Plasma, GNOME, XFCE, MATE, Cinnamon, LXQT): special menu entries (e.g. Log Out), specific default launchers, setting wallpapers
+- Integration with major desktop environments (KDE Plasma, GNOME, XFCE, MATE, Cinnamon, LXQT): special menu entries (e.g. Log Out), specific default launchers, setting wallpapers
 - Support for separate wallpapers for separate virtual desktops
 - Separate configs for separate desktop environments
 
 Crystal Dock is written in C++ and depends on:
-- Qt 5 as the GUI framework
+- Qt5 as the GUI framework
 - KWindowSystem as a high-level API to access the window system
 
 For more information, please visit Crystal Dock's homepage: https://dangvd.github.io/crystal-dock
