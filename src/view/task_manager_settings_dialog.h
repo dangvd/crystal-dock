@@ -37,6 +37,8 @@ class TaskManagerSettingsDialog : public QDialog {
   explicit TaskManagerSettingsDialog(QWidget* parent, MultiDockModel* model);
   ~TaskManagerSettingsDialog();
 
+  void reload() { loadData(); }
+
  public slots:
   void accept() override;
   void buttonClicked(QAbstractButton* button);

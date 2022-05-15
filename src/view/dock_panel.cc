@@ -274,7 +274,7 @@ void DockPanel::showWallpaperSettingsDialog(int desktop) {
 }
 
 void DockPanel::showTaskManagerSettingsDialog() {
-  // Needs taskManagerSettingsDialog_.reload();
+  taskManagerSettingsDialog_.reload();
   taskManagerSettingsDialog_.show();
   taskManagerSettingsDialog_.raise();
   taskManagerSettingsDialog_.activateWindow();
