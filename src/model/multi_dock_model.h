@@ -63,8 +63,9 @@ constexpr bool kDefaultShowTaskManager = true;
 constexpr bool kDefaultShowClock = false;
 
 constexpr char kDefaultApplicationMenuName[] = "Applications";
-constexpr char kDefaultApplicationMenuIcon[] = "start-here-kde";
-constexpr bool kDefaultApplicationMenuStrut = true;
+constexpr int kDefaultApplicationMenuIconSize = 48;
+constexpr int kDefaultApplicationMenuFontSize = 18;
+constexpr float kDefaultApplicationMenuBackgroundAlpha = 0.8;
 constexpr bool kDefaultShowDesktopNumber = true;
 constexpr bool kDefaultCurrentDesktopTasksOnly = true;
 constexpr bool kDefaultCurrentScreenTasksOnly = false;
@@ -173,21 +174,34 @@ class MultiDockModel : public QObject {
   }
 
   QString applicationMenuIcon() const {
-    return appearanceProperty(kApplicationMenuCategory, kIcon,
-                              QString(kDefaultApplicationMenuIcon));
+    return desktopEnv_->getApplicationMenuIcon();
   }
 
-  void setApplicationMenuIcon(const QString& value) {
-    setAppearanceProperty(kApplicationMenuCategory, kIcon, value);
+  int applicationMenuIconSize() const {
+    return appearanceProperty(kApplicationMenuCategory, kIconSize,
+                              kDefaultApplicationMenuIconSize);
   }
 
-  bool applicationMenuStrut() const {
-    return appearanceProperty(kApplicationMenuCategory, kStrut,
-                              kDefaultApplicationMenuStrut);
+  void setApplicationMenuIconSize(int value) {
+    setAppearanceProperty(kApplicationMenuCategory, kIconSize, value);
   }
 
-  void setApplicationMenuStrut(bool value) {
-    setAppearanceProperty(kApplicationMenuCategory, kStrut, value);
+  int applicationMenuFontSize() const {
+    return appearanceProperty(kApplicationMenuCategory, kFontSize,
+                              kDefaultApplicationMenuFontSize);
+  }
+
+  void setApplicationMenuFontSize(int value) {
+    setAppearanceProperty(kApplicationMenuCategory, kFontSize, value);
+  }
+
+  float applicationMenuBackgroundAlpha() const {
+    return appearanceProperty(kApplicationMenuCategory, kBackgroundAlpha,
+                              kDefaultApplicationMenuBackgroundAlpha);
+  }
+
+  void setApplicationMenuBackgroundAlpha(float value) {
+    setAppearanceProperty(kApplicationMenuCategory, kBackgroundAlpha, value);
   }
 
   QString wallpaper(int desktop, int screen) const {
@@ -450,9 +464,10 @@ class MultiDockModel : public QObject {
   static constexpr char kTooltipFontSize[] = "tooltipFontSize";
 
   static constexpr char kApplicationMenuCategory[] = "Application Menu";
-  static constexpr char kIcon[] = "icon";
   static constexpr char kLabel[] = "label";
-  static constexpr char kStrut[] = "strut";
+  static constexpr char kIconSize[] = "iconSize";
+  static constexpr char kFontSize[] = "fontSize";
+  static constexpr char kBackgroundAlpha[] = "backgroundAlpha";
 
   static constexpr char kPagerCategory[] = "Pager";
   static constexpr char kWallpaper[] = "wallpaper";

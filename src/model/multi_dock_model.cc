@@ -46,9 +46,9 @@ constexpr char MultiDockModel::kSpacingFactor[];
 constexpr char MultiDockModel::kShowBorder[];
 constexpr char MultiDockModel::kTooltipFontSize[];
 constexpr char MultiDockModel::kApplicationMenuCategory[];
-constexpr char MultiDockModel::kIcon[];
 constexpr char MultiDockModel::kLabel[];
-constexpr char MultiDockModel::kStrut[];
+constexpr char MultiDockModel::kFontSize[];
+constexpr char MultiDockModel::kBackgroundAlpha[];
 constexpr char MultiDockModel::kPagerCategory[];
 constexpr char MultiDockModel::kWallpaper[];
 constexpr char MultiDockModel::kShowDesktopNumber[];
@@ -109,7 +109,8 @@ void MultiDockModel::addDock(PanelPosition position, int screen,
     setTooltipFontSize(kDefaultTooltipFontSize);
 
     setApplicationMenuName(kDefaultApplicationMenuName);
-    setApplicationMenuIcon(kDefaultApplicationMenuIcon);
+    setApplicationMenuFontSize(kDefaultApplicationMenuFontSize);
+    setApplicationMenuBackgroundAlpha(kDefaultApplicationMenuBackgroundAlpha);
 
     setUse24HourClock(kDefaultUse24HourClock);
     setClockFontScaleFactor(kDefaultClockFontScaleFactor);

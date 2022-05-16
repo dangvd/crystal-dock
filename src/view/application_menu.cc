@@ -40,7 +40,7 @@ int ApplicationMenuStyle::pixelMetric(
     PixelMetric metric, const QStyleOption *option, const QWidget *widget)
     const {
   if (metric == QStyle::PM_SmallIconSize) {
-    return kApplicationMenuIconSize;
+    return model_->applicationMenuIconSize();
   }
   return QProxyStyle::pixelMetric(metric, option, widget);
 }
@@ -48,17 +48,14 @@ int ApplicationMenuStyle::pixelMetric(
 ApplicationMenu::ApplicationMenu(
     DockPanel *parent, MultiDockModel* model, Qt::Orientation orientation,
     int minSize, int maxSize)
-    : IconBasedDockItem(parent, "" /* label */, orientation, "" /* iconName */,
+    : IconBasedDockItem(parent, "" /* label */, orientation, model->applicationMenuIcon(),
                         minSize, maxSize),
       model_(model),
-      showingMenu_(false) {
+      showingMenu_(false),
+      style_(model) {
   menu_.setAttribute(Qt::WA_TranslucentBackground);
   menu_.setStyle(&style_);
   menu_.setStyleSheet(getStyleSheet());
-  font_ = menu_.font();
-  font_.setPointSize(18);
-  font_.setBold(true);
-  menu_.setFont(font_);
 
   loadConfig();
   buildMenu();
@@ -129,7 +126,7 @@ bool ApplicationMenu::eventFilter(QObject* object, QEvent* event) {
 
 QString ApplicationMenu::getStyleSheet() {
   QColor bgColor = model_->backgroundColor();
-  bgColor.setAlphaF(0.8);
+  bgColor.setAlphaF(model_->applicationMenuBackgroundAlpha());
   bgColor = bgColor.darker();
   QColor borderColor = model_->borderColor();
   return " \
@@ -163,7 +160,10 @@ QMenu::separator { \
 
 void ApplicationMenu::loadConfig() {
   setLabel(model_->applicationMenuName());
-  setIconName(model_->applicationMenuIcon());
+  font_ = menu_.font();
+  font_.setPointSize(model_->applicationMenuFontSize());
+  font_.setBold(true);
+  menu_.setFont(font_);
 }
 
 void ApplicationMenu::buildMenu() {
@@ -202,7 +202,7 @@ void ApplicationMenu::addEntry(const ApplicationEntry &entry, QMenu *menu) {
 }
 
 QIcon ApplicationMenu::loadIcon(const QString &icon) {
-  return QIcon::fromTheme(icon).pixmap(kApplicationMenuIconSize);
+  return QIcon::fromTheme(icon).pixmap(model_->applicationMenuIconSize());
 }
 
 void ApplicationMenu::createContextMenu() {

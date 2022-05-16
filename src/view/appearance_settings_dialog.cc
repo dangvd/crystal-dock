@@ -19,19 +19,9 @@
 #include "appearance_settings_dialog.h"
 #include "ui_appearance_settings_dialog.h"
 
-#include <cmath>
+#include <utils/math_utils.h>
 
 namespace crystaldock {
-
-namespace {
-  inline int alphaFToTransparencyPercent(float alphaF) {
-    return static_cast<int>(std::round(100 * (1 - alphaF)));
-  }
-
-  inline float transparencyPercentToAlphaF(int transparencyPercent) {
-    return 1 - transparencyPercent / 100.0;
-  }
-}
 
 AppearanceSettingsDialog::AppearanceSettingsDialog(QWidget* parent,
                                                    MultiDockModel* model)

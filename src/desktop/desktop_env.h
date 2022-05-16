@@ -35,7 +35,7 @@ class DesktopEnv {
   static DesktopEnv* getDesktopEnv();
   static QString getDesktopEnvName();
 
-  virtual QString getDefaultApplicationMenuIcon() const { return "start-here"; }
+  virtual QString getApplicationMenuIcon() const { return "start-here"; }
 
   // System categories (e.g. Session/Power) on the Application Menu.
   virtual std::vector<Category> getApplicationMenuSystemCategories() const { return {}; }

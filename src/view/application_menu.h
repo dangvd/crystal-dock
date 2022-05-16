@@ -35,12 +35,15 @@
 
 namespace crystaldock {
 
-constexpr int kApplicationMenuIconSize = 48;
-
 class ApplicationMenuStyle : public QProxyStyle {
  public:
+  ApplicationMenuStyle(const MultiDockModel* model) : model_(model) {}
+
   int pixelMetric(PixelMetric metric, const QStyleOption *option = Q_NULLPTR,
                   const QWidget *widget = Q_NULLPTR) const override;
+
+ private:
+  const MultiDockModel* model_;
 };
 
 

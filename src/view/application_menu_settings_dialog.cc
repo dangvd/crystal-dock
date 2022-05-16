@@ -19,16 +19,16 @@
 #include "application_menu_settings_dialog.h"
 #include "ui_application_menu_settings_dialog.h"
 
+#include <utils/math_utils.h>
+
 namespace crystaldock {
 
 ApplicationMenuSettingsDialog::ApplicationMenuSettingsDialog(QWidget* parent,
     MultiDockModel* model)
     : QDialog(parent),
       ui(new Ui::ApplicationMenuSettingsDialog),
-      icon_(new IconButton(this)),
       model_(model) {
   ui->setupUi(this);
-  icon_->setGeometry(QRect(140, 80, 80, 80));
   setWindowFlag(Qt::Tool);
 
   connect(ui->buttonBox, SIGNAL(clicked(QAbstractButton*)),
@@ -50,19 +50,33 @@ void ApplicationMenuSettingsDialog::buttonClicked(QAbstractButton *button) {
   auto role = ui->buttonBox->buttonRole(button);
   if (role == QDialogButtonBox::ApplyRole) {
     saveData();
+  } else if (role == QDialogButtonBox::ResetRole) {
+    resetData();
   }
 }
 
 void ApplicationMenuSettingsDialog::loadData() {
   ui->name->setText(model_->applicationMenuName());
-  icon_->setIcon(model_->applicationMenuIcon());
-  ui->strut->setChecked(model_->applicationMenuStrut());
+  ui->iconSize->setValue(model_->applicationMenuIconSize());
+  ui->fontSize->setValue(model_->applicationMenuFontSize());
+  ui->backgroundTransparency->setValue(
+      alphaFToTransparencyPercent(model_->applicationMenuBackgroundAlpha()));
+}
+
+void ApplicationMenuSettingsDialog::resetData() {
+  ui->name->setText(kDefaultApplicationMenuName);
+  ui->iconSize->setValue(kDefaultApplicationMenuIconSize);
+  ui->fontSize->setValue(kDefaultApplicationMenuFontSize);
+  ui->backgroundTransparency->setValue(
+      alphaFToTransparencyPercent(kDefaultApplicationMenuBackgroundAlpha));
 }
 
 void ApplicationMenuSettingsDialog::saveData() {
   model_->setApplicationMenuName(ui->name->text());
-  model_->setApplicationMenuIcon(icon_->icon());
-  model_->setApplicationMenuStrut(ui->strut->isChecked());
+  model_->setApplicationMenuIconSize(ui->iconSize->value());
+  model_->setApplicationMenuFontSize(ui->fontSize->value());
+  model_->setApplicationMenuBackgroundAlpha(
+      transparencyPercentToAlphaF(ui->backgroundTransparency->value()));
   model_->saveAppearanceConfig();
 }
 

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>500</width>
-    <height>310</height>
+    <height>370</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -16,9 +16,9 @@
   <widget class="QDialogButtonBox" name="buttonBox">
    <property name="geometry">
     <rect>
-     <x>40</x>
-     <y>250</y>
-     <width>420</width>
+     <x>0</x>
+     <y>300</y>
+     <width>500</width>
      <height>32</height>
     </rect>
    </property>
@@ -26,7 +26,7 @@
     <enum>Qt::Horizontal</enum>
    </property>
    <property name="standardButtons">
-    <set>QDialogButtonBox::Apply|QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+    <set>QDialogButtonBox::Apply|QDialogButtonBox::Cancel|QDialogButtonBox::Ok|QDialogButtonBox::RestoreDefaults</set>
    </property>
    <property name="centerButtons">
     <bool>true</bool>
@@ -35,10 +35,10 @@
   <widget class="QLabel" name="nameLabel">
    <property name="geometry">
     <rect>
-     <x>40</x>
-     <y>30</y>
+     <x>70</x>
+     <y>40</y>
      <width>91</width>
-     <height>23</height>
+     <height>30</height>
     </rect>
    </property>
    <property name="text">
@@ -48,37 +48,104 @@
   <widget class="QLineEdit" name="name">
    <property name="geometry">
     <rect>
-     <x>140</x>
-     <y>20</y>
-     <width>320</width>
+     <x>190</x>
+     <y>30</y>
+     <width>241</width>
      <height>36</height>
     </rect>
    </property>
   </widget>
-  <widget class="QLabel" name="iconLabel">
+  <widget class="QLabel" name="fontSizeLabel">
    <property name="geometry">
     <rect>
-     <x>40</x>
-     <y>110</y>
-     <width>91</width>
-     <height>23</height>
+     <x>70</x>
+     <y>160</y>
+     <width>94</width>
+     <height>30</height>
     </rect>
    </property>
    <property name="text">
-    <string>Icon</string>
+    <string>Font size</string>
    </property>
   </widget>
-  <widget class="QCheckBox" name="strut">
+  <widget class="QLabel" name="backgroundTransparencyLabel">
    <property name="geometry">
     <rect>
-     <x>40</x>
-     <y>190</y>
-     <width>421</width>
-     <height>29</height>
+     <x>70</x>
+     <y>220</y>
+     <width>281</width>
+     <height>30</height>
     </rect>
    </property>
    <property name="text">
-    <string>Reserve screen space when showing</string>
+    <string>Background transparency</string>
+   </property>
+  </widget>
+  <widget class="QSpinBox" name="fontSize">
+   <property name="geometry">
+    <rect>
+     <x>190</x>
+     <y>150</y>
+     <width>63</width>
+     <height>44</height>
+    </rect>
+   </property>
+   <property name="minimum">
+    <number>10</number>
+   </property>
+   <property name="maximum">
+    <number>40</number>
+   </property>
+   <property name="singleStep">
+    <number>2</number>
+   </property>
+  </widget>
+  <widget class="QSpinBox" name="backgroundTransparency">
+   <property name="geometry">
+    <rect>
+     <x>370</x>
+     <y>210</y>
+     <width>63</width>
+     <height>44</height>
+    </rect>
+   </property>
+   <property name="maximum">
+    <number>100</number>
+   </property>
+   <property name="singleStep">
+    <number>5</number>
+   </property>
+  </widget>
+  <widget class="QLabel" name="iconSizeLabel">
+   <property name="geometry">
+    <rect>
+     <x>70</x>
+     <y>100</y>
+     <width>94</width>
+     <height>30</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Icon size</string>
+   </property>
+  </widget>
+  <widget class="QSpinBox" name="iconSize">
+   <property name="geometry">
+    <rect>
+     <x>190</x>
+     <y>90</y>
+     <width>63</width>
+     <height>44</height>
+    </rect>
+   </property>
+   <property name="minimum">
+    <number>32</number>
+   </property>
+   <property name="maximum">
+    <number>64</number>
+   </property>
+   <property name="singleStep">
+    <number>8</number>
    </property>
   </widget>
  </widget>

@@ -22,7 +22,6 @@
 #include <QAbstractButton>
 #include <QDialog>
 
-#include "icon_button.h"
 #include <model/multi_dock_model.h>
 
 namespace Ui {
@@ -47,9 +46,9 @@ class ApplicationMenuSettingsDialog : public QDialog {
  private:
   void loadData();
   void saveData();
+  void resetData();
 
   Ui::ApplicationMenuSettingsDialog *ui;
-  IconButton* icon_;
 
   MultiDockModel* model_;
 

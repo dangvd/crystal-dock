@@ -16,33 +16,21 @@
  * along with Crystal Dock.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef CRYSTALDOCK_KDE_DESKTOP_ENV_H_
-#define CRYSTALDOCK_KDE_DESKTOP_ENV_H_
+#ifndef CRYSTALDOCK_MATH_UTILS_H_
+#define CRYSTALDOCK_MATH_UTILS_H_
 
-#include "desktop_env.h"
-
-#include <QDBusInterface>
+#include <cmath>
 
 namespace crystaldock {
 
-class KdeDesktopEnv : public DesktopEnv {
- public:
-  KdeDesktopEnv();
+inline int alphaFToTransparencyPercent(float alphaF) {
+  return static_cast<int>(std::round(100 * (1 - alphaF)));
+}
 
-  QString getApplicationMenuIcon() const override { return "start-here-kde"; }
-
-  std::vector<Category> getApplicationMenuSystemCategories() const override;
-
-  const ApplicationEntry* getApplicationMenuSearchEntry() const override;
-
-  std::vector<QString> getDefaultLaunchers() const override;
-
-  bool setWallpaper(int screen, const QString& wallpaper) override;
-
- private:
-  QDBusInterface plasmaShellDBus_;
-};
+inline float transparencyPercentToAlphaF(int transparencyPercent) {
+  return 1 - transparencyPercent / 100.0;
+}
 
 }  // namespace crystaldock
 
-#endif // CRYSTALDOCK_KDE_DESKTOP_ENV_H_
+#endif // CRYSTALDOCK_MATH_UTILS_H_
