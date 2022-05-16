@@ -209,6 +209,21 @@ void Program::launch(const QString& command) {
 }
 
 void Program::createMenu() {
+  if (isAppMenuEntry_) {
+    pinAction_ = menu_.addAction(
+        QString("Pinned"), this,
+        [this] {
+          pinUnpin();
+        });
+    pinAction_->setCheckable(true);
+    pinAction_->setChecked(pinned_);
+
+    menu_.addAction(QIcon::fromTheme("list-add"), QString("&New Instance"), this,
+                    [this] { launch(); });
+
+    menu_.addSeparator();
+  }
+
   menu_.addAction(QIcon::fromTheme("configure"), QString("Edit &Launchers"), parent_,
                   [this] { parent_->showEditLaunchersDialog(); });
 
@@ -217,19 +232,6 @@ void Program::createMenu() {
                     QString("Task Manager &Settings"),
                     parent_,
                     [this] { parent_->showTaskManagerSettingsDialog(); });
-  }
-
-  if (isAppMenuEntry_) {
-    menu_.addAction(QIcon::fromTheme("list-add"), QString("&New Instance"), this,
-                    [this] { launch(); });
-
-    pinAction_ = menu_.addAction(
-        QString("Pinned"), this,
-        [this] {
-          pinUnpin();
-        });
-    pinAction_->setCheckable(true);
-    pinAction_->setChecked(pinned_);
   }
 
   menu_.addSeparator();
