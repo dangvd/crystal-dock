@@ -103,11 +103,14 @@
   <widget class="QSpinBox" name="backgroundTransparency">
    <property name="geometry">
     <rect>
-     <x>370</x>
+     <x>352</x>
      <y>210</y>
-     <width>63</width>
+     <width>81</width>
      <height>44</height>
     </rect>
+   </property>
+   <property name="suffix">
+    <string>%</string>
    </property>
    <property name="maximum">
     <number>100</number>
