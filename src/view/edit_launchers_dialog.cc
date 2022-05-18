@@ -54,7 +54,7 @@ EditLaunchersDialog::EditLaunchersDialog(QWidget* parent, MultiDockModel* model,
   qRegisterMetaType<LauncherInfo>();
   qRegisterMetaTypeStreamOperators<LauncherInfo>("LauncherInfo");
 
-  connect(ui->addSystemCommand, SIGNAL(currentIndexChanged(int)), this, SLOT(addSystemCommand(int)));
+  connect(ui->systemCommands, SIGNAL(currentIndexChanged(int)), this, SLOT(addSystemCommand(int)));
   connect(ui->addSeparator, SIGNAL(clicked()), this, SLOT(addSeparator()));
   connect(ui->remove, SIGNAL(clicked()), this, SLOT(removeSelectedLauncher()));
   connect(ui->removeAll, SIGNAL(clicked()), this, SLOT(removeAllLaunchers()));
@@ -62,6 +62,7 @@ EditLaunchersDialog::EditLaunchersDialog(QWidget* parent, MultiDockModel* model,
   connect(ui->buttonBox, SIGNAL(clicked(QAbstractButton*)), this,
       SLOT(buttonClicked(QAbstractButton*)));
 
+  initSystemCommands();
   loadData();
 }
 
@@ -91,8 +92,8 @@ void EditLaunchersDialog::addSystemCommand(int index) {
     return;
   }
 
-  LauncherInfo info = ui->addSystemCommand->currentData().value<LauncherInfo>();
-  addLauncher(ui->addSystemCommand->currentText(), info.command, info.iconName);
+  LauncherInfo info = ui->systemCommands->currentData().value<LauncherInfo>();
+  addLauncher(ui->systemCommands->currentText(), info.command, info.iconName);
 }
 
 void EditLaunchersDialog::addSeparator() {
@@ -110,6 +111,24 @@ void EditLaunchersDialog::removeAllLaunchers() {
   ui->launchers->clear();
 }
 
+void EditLaunchersDialog::initSystemCommands() {
+  ui->systemCommands->addItem(getListItemIcon("user-desktop"), "Show Desktop",
+                              QVariant::fromValue(LauncherInfo("user-desktop", "SHOW_DESKTOP")));
+
+  for (const auto& category : model_->applicationMenuSystemCategories()) {
+    for (const auto& entry : category.entries) {
+      ui->systemCommands->addItem(getListItemIcon(entry.icon), entry.name,
+                                  QVariant::fromValue(LauncherInfo(entry.icon, entry.command)));
+    }
+  }
+
+  const auto* entry = model_->applicationMenuSearchEntry();
+  if (entry != nullptr) {
+    ui->systemCommands->addItem(getListItemIcon(entry->icon), entry->name,
+                                QVariant::fromValue(LauncherInfo(entry->icon, entry->command)));
+  }
+}
+
 void EditLaunchersDialog::loadData() {
   ui->launchers->clear();
   for (const auto& item : model_->dockLauncherConfigs(dockId_)) {
@@ -121,6 +140,8 @@ void EditLaunchersDialog::loadData() {
     ui->launchers->addItem(listItem);
   }
   ui->launchers->setCurrentRow(0);
+
+  ui->systemCommands->setCurrentIndex(0);
 }
 
 void EditLaunchersDialog::saveData() {
