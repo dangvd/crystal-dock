@@ -18,8 +18,6 @@
 
 #include "clock.h"
 
-#include <algorithm>
-
 #include <QColor>
 #include <QDate>
 #include <QFont>
