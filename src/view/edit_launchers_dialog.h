@@ -22,14 +22,9 @@
 #include <QAbstractButton>
 #include <QDataStream>
 #include <QDialog>
-#include <QDragEnterEvent>
-#include <QDragMoveEvent>
-#include <QDropEvent>
 #include <QListWidget>
 #include <QListWidgetItem>
-#include <QMetaType>
 
-#include "icon_button.h"
 #include <model/multi_dock_model.h>
 
 namespace Ui {
@@ -52,21 +47,6 @@ struct LauncherInfo {
 QDataStream &operator<<(QDataStream &out, const LauncherInfo& launcher);
 QDataStream &operator>>(QDataStream &in, LauncherInfo& launcher);
 
-class EditLaunchersDialog;
-
-class LauncherList : public QListWidget {
- public:
-  explicit LauncherList(EditLaunchersDialog* parent);
-
- protected:
-  void dragEnterEvent(QDragEnterEvent *event) override;
-  void dragMoveEvent(QDragMoveEvent* event) override;
-  void dropEvent(QDropEvent *event) override;
-
- private:
-  EditLaunchersDialog* parent_;
-};
-
 class EditLaunchersDialog : public QDialog {
   Q_OBJECT
 
@@ -83,23 +63,10 @@ class EditLaunchersDialog : public QDialog {
   void accept() override;
   void buttonClicked(QAbstractButton* button);
 
-  void refreshSelectedLauncher(QListWidgetItem* current,
-      QListWidgetItem* previous);
-
-  void addLauncher();
+  void addSystemCommand(int index);
   void addSeparator();
   void removeSelectedLauncher();
   void removeAllLaunchers();
-  void updateSelectedLauncher();
-
-  void openLink(const QString& link);
-
-  void browseCommand();
-  void updateInternalCommand(int index);
-  void updateDBusCommand(int index);
-  void updateWebCommand(int index);
-  void updateDirCommand(int index);
-  void resetCommandLists();
 
  private:
   static constexpr int kListIconSize = 48;
@@ -111,16 +78,9 @@ class EditLaunchersDialog : public QDialog {
     return QIcon::fromTheme(iconName).pixmap(kListIconSize);
   }
 
-  void populateInternalCommands();
-  void populateDBusCommands();
-  void populateWebCommands();
-  void populateDirCommands();
-
-  void clearItemDetails();
+  void populateSystemCommands();
 
   Ui::EditLaunchersDialog *ui;
-  LauncherList *launchers_;
-  IconButton *icon_;
 
   MultiDockModel* model_;
   int dockId_;

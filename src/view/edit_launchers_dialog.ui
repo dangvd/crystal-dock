@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1200</width>
-    <height>645</height>
+    <width>820</width>
+    <height>750</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -16,9 +16,9 @@
   <widget class="QDialogButtonBox" name="buttonBox">
    <property name="geometry">
     <rect>
-     <x>80</x>
-     <y>580</y>
-     <width>960</width>
+     <x>40</x>
+     <y>680</y>
+     <width>741</width>
      <height>35</height>
     </rect>
    </property>
@@ -36,177 +36,44 @@
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>530</y>
-     <width>350</width>
-     <height>30</height>
+     <y>520</y>
+     <width>771</width>
+     <height>141</height>
     </rect>
    </property>
    <property name="text">
-    <string>Note: &lt;a href=https://github.com/dangvd/ksmoothdock/wiki/Documentation#editLaunchers_dragAndDrop&gt;Drag and drop&lt;/a&gt; is supported.</string>
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Tips: &lt;/p&gt;&lt;ul style=&quot;margin-top: 0px; margin-bottom: 0px; margin-left: 0px; margin-right: 0px; -qt-list-indent: 1;&quot;&gt;&lt;li style=&quot; margin-top:12px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Use drag-and-drop in the launcher list to re-order the items. &lt;/li&gt;&lt;li style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;To add a standard program launcher, simply right-click a running program on the dock panel then tick &amp;quot;Pinned&amp;quot;. &lt;/li&gt;&lt;/ul&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
    <property name="textFormat">
     <enum>Qt::RichText</enum>
    </property>
-  </widget>
-  <widget class="QPushButton" name="add">
-   <property name="geometry">
-    <rect>
-     <x>420</x>
-     <y>80</y>
-     <width>180</width>
-     <height>40</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Add</string>
-   </property>
-   <property name="icon">
-    <iconset theme="list-add">
-     <normaloff>.</normaloff>.</iconset>
+   <property name="wordWrap">
+    <bool>true</bool>
    </property>
   </widget>
   <widget class="QPushButton" name="remove">
    <property name="geometry">
     <rect>
      <x>420</x>
-     <y>220</y>
-     <width>180</width>
+     <y>260</y>
+     <width>361</width>
      <height>40</height>
     </rect>
    </property>
    <property name="text">
-    <string>Remove</string>
+    <string>Remove Selected</string>
    </property>
    <property name="icon">
     <iconset theme="list-remove">
      <normaloff>.</normaloff>.</iconset>
    </property>
   </widget>
-  <widget class="QPushButton" name="update">
-   <property name="geometry">
-    <rect>
-     <x>420</x>
-     <y>360</y>
-     <width>180</width>
-     <height>40</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Update</string>
-   </property>
-   <property name="icon">
-    <iconset theme="arrow-left">
-     <normaloff>.</normaloff>.</iconset>
-   </property>
-  </widget>
-  <widget class="QLabel" name="nameLabel">
-   <property name="geometry">
-    <rect>
-     <x>650</x>
-     <y>25</y>
-     <width>100</width>
-     <height>30</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Name</string>
-   </property>
-  </widget>
-  <widget class="QLineEdit" name="name">
-   <property name="geometry">
-    <rect>
-     <x>760</x>
-     <y>20</y>
-     <width>421</width>
-     <height>36</height>
-    </rect>
-   </property>
-  </widget>
-  <widget class="QLabel" name="commandLabel">
-   <property name="geometry">
-    <rect>
-     <x>650</x>
-     <y>105</y>
-     <width>100</width>
-     <height>30</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Command</string>
-   </property>
-  </widget>
-  <widget class="QLineEdit" name="command">
-   <property name="geometry">
-    <rect>
-     <x>760</x>
-     <y>100</y>
-     <width>421</width>
-     <height>36</height>
-    </rect>
-   </property>
-  </widget>
-  <widget class="QPushButton" name="browseCommand">
-   <property name="geometry">
-    <rect>
-     <x>760</x>
-     <y>160</y>
-     <width>371</width>
-     <height>38</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Browse Command</string>
-   </property>
-  </widget>
-  <widget class="QComboBox" name="internalCommands">
-   <property name="geometry">
-    <rect>
-     <x>760</x>
-     <y>215</y>
-     <width>371</width>
-     <height>36</height>
-    </rect>
-   </property>
-  </widget>
-  <widget class="QComboBox" name="dbusCommands">
-   <property name="geometry">
-    <rect>
-     <x>760</x>
-     <y>270</y>
-     <width>371</width>
-     <height>36</height>
-    </rect>
-   </property>
-  </widget>
-  <widget class="QComboBox" name="webCommands">
-   <property name="geometry">
-    <rect>
-     <x>760</x>
-     <y>325</y>
-     <width>371</width>
-     <height>36</height>
-    </rect>
-   </property>
-  </widget>
-  <widget class="QLabel" name="iconLabel">
-   <property name="geometry">
-    <rect>
-     <x>650</x>
-     <y>470</y>
-     <width>100</width>
-     <height>30</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Icon</string>
-   </property>
-  </widget>
   <widget class="QPushButton" name="removeAll">
    <property name="geometry">
     <rect>
      <x>420</x>
-     <y>290</y>
-     <width>180</width>
+     <y>340</y>
+     <width>361</width>
      <height>40</height>
     </rect>
    </property>
@@ -218,22 +85,12 @@
      <normaloff>.</normaloff>.</iconset>
    </property>
   </widget>
-  <widget class="QComboBox" name="dirCommands">
-   <property name="geometry">
-    <rect>
-     <x>760</x>
-     <y>380</y>
-     <width>371</width>
-     <height>36</height>
-    </rect>
-   </property>
-  </widget>
   <widget class="QPushButton" name="addSeparator">
    <property name="geometry">
     <rect>
      <x>420</x>
-     <y>150</y>
-     <width>180</width>
+     <y>180</y>
+     <width>361</width>
      <height>40</height>
     </rect>
    </property>
@@ -241,7 +98,39 @@
     <string>Add Separator</string>
    </property>
    <property name="icon">
-    <iconset theme="list-add"/>
+    <iconset theme="list-add">
+     <normaloff>.</normaloff>.</iconset>
+   </property>
+  </widget>
+  <widget class="QComboBox" name="addSystemCommand">
+   <property name="geometry">
+    <rect>
+     <x>420</x>
+     <y>100</y>
+     <width>361</width>
+     <height>44</height>
+    </rect>
+   </property>
+   <property name="frame">
+    <bool>true</bool>
+   </property>
+   <item>
+    <property name="text">
+     <string>Add System Command</string>
+    </property>
+   </item>
+  </widget>
+  <widget class="QListWidget" name="launchers">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>20</y>
+     <width>350</width>
+     <height>490</height>
+    </rect>
+   </property>
+   <property name="dragDropMode">
+    <enum>QAbstractItemView::InternalMove</enum>
    </property>
   </widget>
  </widget>
