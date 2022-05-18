@@ -37,6 +37,7 @@ WallpaperSettingsDialog::WallpaperSettingsDialog(QWidget* parent,
     : QDialog(parent),
       ui(new Ui::WallpaperSettingsDialog),
       model_(model),
+      desktopEnv_(DesktopEnv::getDesktopEnv()),
       currentDir_(QDir::homePath()),
       multiScreen_(false) {
   ui->setupUi(this);
@@ -52,7 +53,7 @@ WallpaperSettingsDialog::WallpaperSettingsDialog(QWidget* parent,
   ui->screen->setCurrentIndex(0);
 
   // Adjust the UI for single/multi-screen.
-  multiScreen_ = (screenCount > 1);
+  multiScreen_ = (screenCount > 1) && desktopEnv_->supportSeparateSreenWallpapers();
   ui->screenLabel->setVisible(multiScreen_);
   ui->screen->setVisible(multiScreen_);
 

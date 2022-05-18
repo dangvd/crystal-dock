@@ -23,6 +23,7 @@
 #include <QDialog>
 #include <QString>
 
+#include <desktop/desktop_env.h>
 #include <model/multi_dock_model.h>
 
 namespace Ui {
@@ -65,6 +66,7 @@ class WallpaperSettingsDialog : public QDialog {
   Ui::WallpaperSettingsDialog *ui;
 
   MultiDockModel* model_;
+  DesktopEnv* desktopEnv_;
 
   // Path to wallpaper file.
   QString wallpaper_;

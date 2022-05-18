@@ -37,6 +37,8 @@ class KdeDesktopEnv : public DesktopEnv {
 
   std::vector<QString> getDefaultLaunchers() const override;
 
+  bool supportSeparateSreenWallpapers() const override { return true; }
+
   bool setWallpaper(int screen, const QString& wallpaper) override;
 
  private:
