@@ -102,7 +102,7 @@
      <normaloff>.</normaloff>.</iconset>
    </property>
   </widget>
-  <widget class="QComboBox" name="addSystemCommand">
+  <widget class="QComboBox" name="systemCommands">
    <property name="geometry">
     <rect>
      <x>420</x>

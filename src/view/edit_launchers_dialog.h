@@ -71,6 +71,8 @@ class EditLaunchersDialog : public QDialog {
  private:
   static constexpr int kListIconSize = 48;
 
+  void initSystemCommands();
+
   void loadData();
   void saveData();
 
