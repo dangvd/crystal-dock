@@ -28,7 +28,6 @@
 #include <QTimer>
 
 #include "dock_panel.h"
-#include "program.h"
 #include <utils/draw_utils.h>
 #include <utils/font_utils.h>
 
@@ -91,10 +90,6 @@ void Clock::updateTime() {
   parent_->update();
 }
 
-void Clock::setDateAndTime() {
-  Program::launch("kcmshell5 clock");
-}
-
 void Clock::setFontScaleFactor(float fontScaleFactor) {
   largeFontAction_->setChecked(
       fontScaleFactor > kLargeClockFontScaleFactor - kDelta);
@@ -121,11 +116,6 @@ void Clock::setSmallFont() {
 }
 
 void Clock::createMenu() {
-  menu_.addAction(QIcon::fromTheme("preferences-system-time"),
-                  QString("Date and Time &Settings"),
-                  this,
-                  SLOT(setDateAndTime()));
-
   use24HourClockAction_ = menu_.addAction(
       QString("Use 24-hour Clock"), this,
       [this] {

@@ -50,8 +50,6 @@ class Clock : public QObject, public IconlessDockItem {
  public slots:
   void updateTime();
 
-  void setDateAndTime();
-
   void setFontScaleFactor(float fontScaleFactor);
   void setLargeFont();
   void setMediumFont();
