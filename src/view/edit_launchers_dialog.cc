@@ -27,7 +27,6 @@
 #include <Qt>
 #include <QSettings>
 
-#include "program.h"
 #include <utils/command_utils.h>
 
 namespace crystaldock {
