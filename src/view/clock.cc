@@ -74,7 +74,7 @@ void Clock::draw(QPainter *painter) const {
 
 void Clock::mousePressEvent(QMouseEvent *e) {
   if (e->button() == Qt::LeftButton) {
-    calendar_.toggleCalendar();
+    calendar_.showCalendar();
   } else if (e->button() == Qt::RightButton) {
     // In case other docks have changed the config.
     loadConfig();

@@ -32,7 +32,7 @@ class Calendar : public QDialog {
   // Toggles showing the calendar.
   //
   // This also resets the selected date to the current date.
-  void toggleCalendar();
+  void showCalendar();
 
  private:
   QCalendarWidget calendar_;

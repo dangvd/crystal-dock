@@ -20,23 +20,22 @@
 
 #include <QDate>
 
-#include <KWindowSystem>
-#include <netwm_def.h>
-
 namespace crystaldock {
 
 Calendar::Calendar(QWidget* parent)
     : QDialog(parent),
       calendar_(this) {
-  KWindowSystem::setState(winId(), NET::SkipTaskbar);
-  setWindowTitle(QString("Calendar"));
+  setWindowFlag(Qt::Tool);
+  setWindowTitle("Calendar");
   calendar_.setVerticalHeaderFormat(QCalendarWidget::NoVerticalHeader);
   resize(calendar_.sizeHint());
 }
 
-void Calendar::toggleCalendar() {
+void Calendar::showCalendar() {
   calendar_.setSelectedDate(QDate::currentDate());
-  setVisible(!isVisible());
+  show();
+  raise();
+  activateWindow();
 }
 
 }  // namespace crystaldock
