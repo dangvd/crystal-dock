@@ -101,6 +101,7 @@ void MultiDockModel::addDock(PanelPosition position, int screen,
   if (dockCount() == 1) {
     setMinIconSize(kDefaultMinSize);
     setMaxIconSize(kDefaultMaxSize);
+    setSpacingFactor(kDefaultSpacingFactor);
     QColor color(kDefaultBackgroundColor);
     color.setAlphaF(kDefaultBackgroundAlpha);
     setBackgroundColor(color);

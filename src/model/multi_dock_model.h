@@ -119,22 +119,24 @@ class MultiDockModel : public QObject {
   }
 
   float spacingFactor() const {
-    return appearanceProperty(kGeneralCategory, kSpacingFactor, kDefaultSpacingFactor);
+    return appearanceProperty(kGeneralCategory, kSpacingFactor,
+                              QString::number(kDefaultSpacingFactor)).toFloat();
   }
 
+  // Converts float to string to make the entry in the config file human-readable.
   void setSpacingFactor(float value) {
-    setAppearanceProperty(kGeneralCategory, kSpacingFactor, value);
+    setAppearanceProperty(kGeneralCategory, kSpacingFactor, QString::number(value));
   }
 
   QColor backgroundColor() const {
     QColor defaultBackgroundColor(kDefaultBackgroundColor);
     defaultBackgroundColor.setAlphaF(kDefaultBackgroundAlpha);
-    return appearanceProperty(kGeneralCategory, kBackgroundColor,
-                              defaultBackgroundColor);
+    return QColor(appearanceProperty(kGeneralCategory, kBackgroundColor,
+                                     defaultBackgroundColor.name(QColor::HexArgb)));
   }
 
   void setBackgroundColor(const QColor& value) {
-    setAppearanceProperty(kGeneralCategory, kBackgroundColor, value);
+    setAppearanceProperty(kGeneralCategory, kBackgroundColor, value.name(QColor::HexArgb));
   }
 
   bool showBorder() const {
@@ -147,12 +149,12 @@ class MultiDockModel : public QObject {
   }
 
   QColor borderColor() const {
-    return appearanceProperty(kGeneralCategory, kBorderColor,
-                              QColor(kDefaultBorderColor));
+    return QColor(appearanceProperty(kGeneralCategory, kBorderColor,
+                                     QString(kDefaultBorderColor)));
   }
 
   void setBorderColor(const QColor& value) {
-    setAppearanceProperty(kGeneralCategory, kBorderColor, value);
+    setAppearanceProperty(kGeneralCategory, kBorderColor, value.name(QColor::HexRgb));
   }
 
   int tooltipFontSize() const {
@@ -197,11 +199,12 @@ class MultiDockModel : public QObject {
 
   float applicationMenuBackgroundAlpha() const {
     return appearanceProperty(kApplicationMenuCategory, kBackgroundAlpha,
-                              kDefaultApplicationMenuBackgroundAlpha);
+                              QString::number(kDefaultApplicationMenuBackgroundAlpha)).toFloat();
   }
 
+  // Converts float to string to make the entry in the config file human-readable.
   void setApplicationMenuBackgroundAlpha(float value) {
-    setAppearanceProperty(kApplicationMenuCategory, kBackgroundAlpha, value);
+    setAppearanceProperty(kApplicationMenuCategory, kBackgroundAlpha, QString::number(value));
   }
 
   QString wallpaper(int desktop, int screen) const {
@@ -260,11 +263,12 @@ class MultiDockModel : public QObject {
 
   float clockFontScaleFactor() const {
     return appearanceProperty(kClockCategory, kFontScaleFactor,
-                              kDefaultClockFontScaleFactor);
+                              QString::number(kDefaultClockFontScaleFactor)).toFloat();
   }
 
+  // Converts float to string to make the entry in the config file human-readable.
   void setClockFontScaleFactor(float value) {
-    setAppearanceProperty(kClockCategory, kFontScaleFactor, value);
+    setAppearanceProperty(kClockCategory, kFontScaleFactor, QString::number(value));
   }
 
   QString clockFontFamily() const {
@@ -442,7 +446,7 @@ class MultiDockModel : public QObject {
 
  private:
   // Dock config's categories/properties.
-  static constexpr char kGeneralCategory[] = "General";
+  static constexpr char kGeneralCategory[] = "";
   static constexpr char kAutoHide[] = "autoHide";
   static constexpr char kVisibility[] = "visibility";
   static constexpr char kPosition[] = "position";
@@ -484,10 +488,17 @@ class MultiDockModel : public QObject {
 
   template <typename T>
   T appearanceProperty(QString category, QString name, T defaultValue) const {
-    return appearanceConfig_.value(category + '/' + name, defaultValue).template value<T>();
+    return category.isEmpty()
+        ? appearanceConfig_.value(name, defaultValue).template value<T>()
+        : appearanceConfig_.value(category + '/' + name, defaultValue).template value<T>();
   }
   template <typename T>
   void setAppearanceProperty(QString category, QString name, T value) {
+    if (category.isEmpty()) {
+      appearanceConfig_.setValue(name, value);
+      return;
+    }
+
     appearanceConfig_.beginGroup(category);
     appearanceConfig_.setValue(name, value);
     appearanceConfig_.endGroup();
@@ -496,12 +507,19 @@ class MultiDockModel : public QObject {
   template <typename T>
   T dockProperty(int dockId, QString category, QString name, T defaultValue)
       const {
-    return dockConfig(dockId)->value(category + '/' + name, defaultValue).template value<T>();
+    return category.isEmpty()
+        ? dockConfig(dockId)->value(name, defaultValue).template value<T>()
+        : dockConfig(dockId)->value(category + '/' + name, defaultValue).template value<T>();
   }
 
   template <typename T>
   void setDockProperty(int dockId, QString category, QString name, T value) {
     auto* config = dockConfig(dockId);
+    if (category.isEmpty()) {
+      config->setValue(name, value);
+      return;
+    }
+
     config->beginGroup(category);
     config->setValue(name, value);
     config->endGroup();
