@@ -5,6 +5,7 @@
 [Releases](https://github.com/dangvd/crystal-dock/releases)
 [Documentation](https://github.com/dangvd/crystal-dock/wiki/Documentation)
 [Screenshots](https://github.com/dangvd/crystal-dock/wiki/Screenshots)
+[Issues](https://github.com/dangvd/crystal-dock/issues)
 
 Crystal Dock is a cool dock (desktop panel) for Linux desktop, with the focus on attractive user interface, being simple and easy to use, and cross-desktop support.
 
@@ -25,7 +26,7 @@ Crystal Dock is written in C++ and depends on:
 
 ## Recommended icon theme
 
-A good icon theme to use with Crystal Dock is the Crystal Remix icon theme: https://github.com/dangvd/crystal-remix-icon-theme
+A nice icon theme to use with Crystal Dock is the Crystal Remix icon theme: https://github.com/dangvd/crystal-remix-icon-theme
 
 ---
 
@@ -33,24 +34,38 @@ A good icon theme to use with Crystal Dock is the Crystal Remix icon theme: http
 
 Dependencies development packages: to build from the source code, Qt5 and KWindowSystem development packages are required.
 - On Debian-based distributions, they can be installed by running:
+```
 $ sudo apt install extra-cmake-modules qtbase5-dev libkf5windowsystem-dev
+```
 - For Fedora, install the following packages: extra-cmake-modules qt5-devel kf5-kwindowsystem-devel
 
 To build, run:
+```
 $ mkdir -p build && cd build && cmake ../src
 $ make
+```
 
 To launch the program:
+```
 $ ./crystal-dock
+```
 
 To install, run:
+```
 $ sudo make install
+```
 
 After the installation, Crystal Dock can be launched from the Application Menu (Utilities category), or from the command line:
+```
 $ crystal-dock
+```
 
 To uninstall, run:
+```
 $ sudo make uninstall
+```
 
 To execute the automated tests, run:
+```
 $ make test
+```
