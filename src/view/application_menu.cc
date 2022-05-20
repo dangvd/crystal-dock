@@ -91,39 +91,6 @@ void ApplicationMenu::reloadMenu() {
   buildMenu();
 }
 
-bool ApplicationMenu::eventFilter(QObject* object, QEvent* event) {
-  QMenu* menu = dynamic_cast<QMenu*>(object);
-  if (menu) {
-    if (event->type() == QEvent::MouseButtonPress) {
-      QMouseEvent* mouseEvent = dynamic_cast<QMouseEvent*>(event);
-      if (mouseEvent && mouseEvent->button() == Qt::LeftButton
-          && menu->activeAction()) {
-        startMousePos_ = mouseEvent->pos();
-        draggedEntry_ = menu->activeAction()->data().toString();
-      }
-    } else if (event->type() == QEvent::MouseMove) {
-      QMouseEvent* mouseEvent = dynamic_cast<QMouseEvent*>(event);
-      if (mouseEvent && mouseEvent->buttons() & Qt::LeftButton) {
-        const int distance
-            = (mouseEvent->pos() - startMousePos_).manhattanLength();
-        if (distance >= QApplication::startDragDistance()
-            && !draggedEntry_.isEmpty()) {
-          // Start drag.
-          QMimeData* mimeData = new QMimeData;
-          mimeData->setData("text/uri-list",
-                            QUrl::fromLocalFile(draggedEntry_).toEncoded());
-
-          QDrag* drag = new QDrag(this);
-          drag->setMimeData(mimeData);
-          drag->exec(Qt::CopyAction);
-        }
-      }
-    }
-  }
-
-  return QObject::eventFilter(object, event);
-}
-
 QString ApplicationMenu::getStyleSheet() {
   QColor bgColor = model_->backgroundColor();
   bgColor.setAlphaF(model_->applicationMenuBackgroundAlpha());
@@ -185,7 +152,6 @@ void ApplicationMenu::addToMenu(const std::vector<Category>& categories) {
     for (const auto& entry : category.entries) {
       addEntry(entry, menu);
     }
-    menu->installEventFilter(this);
   }
 }
 

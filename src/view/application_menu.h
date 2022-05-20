@@ -75,13 +75,8 @@ class ApplicationMenu : public QObject, public IconBasedDockItem {
 
   QSize getMenuSize() { return menu_.sizeHint(); }
 
-public slots:
- void reloadMenu();
-
-protected:
-  // Intercepts sub-menus's show events to adjust their position to improve
-  // visibility.
-  bool eventFilter(QObject* object, QEvent* event) override;
+ public slots:
+  void reloadMenu();
 
  private:
   QString getStyleSheet();
