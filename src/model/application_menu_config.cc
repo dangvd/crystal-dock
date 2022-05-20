@@ -97,6 +97,16 @@ void ApplicationMenuConfig::initSearchEntry() {
   searchEntry_ = desktopEnv_->getApplicationMenuSearchEntry();
 }
 
+void ApplicationMenuConfig::clearEntries() {
+  for (auto& category : categories_) {
+    category.entries.clear();
+  }
+  entries_.clear();
+  commandsToEntries_.clear();
+  namesToEntries_.clear();
+  filesToEntries_.clear();
+}
+
 bool ApplicationMenuConfig::loadEntries() {
   for (const QString& entryDir : entryDirs_) {
     if (!QDir::root().exists(entryDir)) {
@@ -178,9 +188,7 @@ bool ApplicationMenuConfig::loadEntry(const QString &file) {
 }
 
 void ApplicationMenuConfig::reload() {
-  for (auto& category : categories_) {
-    category.entries.clear();
-  }
+  clearEntries();
   loadEntries();
   emit configChanged();
 }

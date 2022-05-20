@@ -80,6 +80,9 @@ class ApplicationMenuConfig : public QObject {
   // Initializes desktop search entry.
   void initSearchEntry();
 
+  // Clears all application entries.
+  void clearEntries();
+
   // Loads application entries from entryDir.
   bool loadEntries();
 
