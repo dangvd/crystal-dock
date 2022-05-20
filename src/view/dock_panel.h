@@ -24,6 +24,7 @@
 
 #include <QAction>
 #include <QMenu>
+#include <QMessageBox>
 #include <QMouseEvent>
 #include <QPaintEvent>
 #include <QPoint>
@@ -311,7 +312,7 @@ class DockPanel : public QWidget {
   // Actions to set the dock on a specific screen.
   std::vector<QAction*> screenActions_;
 
-  // AboutDialog aboutDialog_;
+  QMessageBox aboutDialog_;
   AddPanelDialog addPanelDialog_;
   AppearanceSettingsDialog appearanceSettingsDialog_;
   EditLaunchersDialog editLaunchersDialog_;
