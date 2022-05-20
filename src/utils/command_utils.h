@@ -30,7 +30,7 @@ static constexpr char kLockScreenCommand[] = "xdg-screensaver lock";
 
 inline QString filterFieldCodes(const QString& command) {
   if (command.contains('%')) {
-    return command.left(command.indexOf(' '));
+    return command.left(command.indexOf('%') - 1);
   }
   return command;
 }

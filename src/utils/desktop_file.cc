@@ -36,9 +36,9 @@ DesktopFile::DesktopFile(const QString& file) {
           parsing = true;
         }
       } else {
-        if (line.contains("=")) {
-          QStringList linelist = line.split("=");
-          values_[linelist[0]] = linelist[1];
+        int index = line.indexOf('=');
+        if (index >= 0 && index < line.length() - 1) {
+          values_[line.left(index)] = line.mid(index + 1);
         } else if (line.startsWith("[")) {  // start of a new section.
           break;
         }
