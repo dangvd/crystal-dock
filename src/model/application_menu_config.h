@@ -49,7 +49,6 @@ class ApplicationMenuConfig : public QObject {
 
   const std::vector<Category>& categories() const { return categories_; }
   const std::vector<Category>& systemCategories() const { return systemCategories_; }
-  const ApplicationEntry* searchEntry() const { return searchEntry_; }
 
   const ApplicationEntry* findApplication(const std::string& command) const;
   const ApplicationEntry* findApplication(const QString& command) const {
@@ -77,9 +76,6 @@ class ApplicationMenuConfig : public QObject {
   // Initializes system categories.
   void initSystemCategories();
 
-  // Initializes desktop search entry.
-  void initSearchEntry();
-
   // Clears all application entries.
   void clearEntries();
 
@@ -97,8 +93,6 @@ class ApplicationMenuConfig : public QObject {
   std::vector<Category> categories_;
   // System entries (e.g. Lock Screen / Shut Down), organized by categories.
   std::vector<Category> systemCategories_;
-  // Desktop search.
-  const ApplicationEntry* searchEntry_ = nullptr;
   // Map from category names to category indices in the above vector,
   // to make loading entries faster.
   std::unordered_map<std::string, int> categoryMap_;

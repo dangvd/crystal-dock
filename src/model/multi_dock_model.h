@@ -420,10 +420,6 @@ class MultiDockModel : public QObject {
     return applicationMenuConfig_.systemCategories();
   }
 
-  const ApplicationEntry* applicationMenuSearchEntry() const {
-    return applicationMenuConfig_.searchEntry();
-  }
-
   const ApplicationEntry* findApplication(const QString& command) const {
     return applicationMenuConfig_.findApplication(command);
   }

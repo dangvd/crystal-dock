@@ -120,12 +120,6 @@ void EditLaunchersDialog::initSystemCommands() {
                                   QVariant::fromValue(LauncherInfo(entry.icon, entry.command)));
     }
   }
-
-  const auto* entry = model_->applicationMenuSearchEntry();
-  if (entry != nullptr) {
-    ui->systemCommands->addItem(getListItemIcon(entry->icon), entry->name,
-                                QVariant::fromValue(LauncherInfo(entry->icon, entry->command)));
-  }
 }
 
 void EditLaunchersDialog::loadData() {

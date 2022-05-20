@@ -21,6 +21,9 @@ set(SRCS
     desktop/desktop_env.cc
     desktop/gnome_desktop_env.cc
     desktop/kde_desktop_env.cc
+    desktop/lxqt_desktop_env.cc
+    desktop/mate_desktop_env.cc
+    desktop/xfce_desktop_env.cc
     model/application_menu_config.cc
     model/config_helper.cc
     model/launcher_config.cc
@@ -50,6 +53,9 @@ set(SRCS
     desktop/desktop_env.h
     desktop/gnome_desktop_env.h
     desktop/kde_desktop_env.h
+    desktop/lxqt_desktop_env.h
+    desktop/mate_desktop_env.h
+    desktop/xfce_desktop_env.h
     model/application_menu_config.h
     model/application_menu_entry.h
     model/config_helper.h

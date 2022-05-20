@@ -170,10 +170,6 @@ void ApplicationMenu::buildMenu() {
   addToMenu(model_->applicationMenuCategories());
   menu_.addSeparator();
   addToMenu(model_->applicationMenuSystemCategories());
-  auto* searchEntry = model_->applicationMenuSearchEntry();
-  if (searchEntry != nullptr) {
-    addEntry(*model_->applicationMenuSearchEntry(), &menu_);
-  }
 }
 
 void ApplicationMenu::addToMenu(const std::vector<Category>& categories) {

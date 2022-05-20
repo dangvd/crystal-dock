@@ -42,7 +42,6 @@ ApplicationMenuConfig::ApplicationMenuConfig(const QStringList& entryDirs)
       desktopEnv_(DesktopEnv::getDesktopEnv()) {
   initCategories();
   initSystemCategories();
-  initSearchEntry();
   loadEntries();
   connect(&fileWatcher_, SIGNAL(directoryChanged(const QString&)),
           this, SLOT(reload()));
@@ -91,10 +90,6 @@ void ApplicationMenuConfig::initCategories() {
 
 void ApplicationMenuConfig::initSystemCategories() {
   systemCategories_ = desktopEnv_->getApplicationMenuSystemCategories();
-}
-
-void ApplicationMenuConfig::initSearchEntry() {
-  searchEntry_ = desktopEnv_->getApplicationMenuSearchEntry();
 }
 
 void ApplicationMenuConfig::clearEntries() {

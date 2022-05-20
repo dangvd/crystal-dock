@@ -61,13 +61,6 @@ std::vector<Category> KdeDesktopEnv::getApplicationMenuSystemCategories() const 
   return kSystemCategories;
 }
 
-const ApplicationEntry* KdeDesktopEnv::getApplicationMenuSearchEntry() const {
-  static const ApplicationEntry kSearchEntry = {
-    "Search", "", "system-search", "krunner", ""
-  };
-  return &kSearchEntry;
-}
-
 std::vector<QString> KdeDesktopEnv::getDefaultLaunchers() const {
   return {"org.kde.konsole.desktop", "org.kde.dolphin.desktop",
           "systemsettings.desktop"};

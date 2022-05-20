@@ -21,6 +21,8 @@
 
 #include <vector>
 
+#include <QString>
+
 #include <model/application_menu_entry.h>
 
 namespace crystaldock {
@@ -39,10 +41,6 @@ class DesktopEnv {
 
   // System categories (e.g. Session/Power) on the Application Menu.
   virtual std::vector<Category> getApplicationMenuSystemCategories() const { return {}; }
-
-  // Desktop search entry on the Application Menu, if available.
-  // For example, on KDE it should point to krunner.
-  virtual const ApplicationEntry* getApplicationMenuSearchEntry() const { return nullptr; }
 
   // Default desktop environment-specific launchers
   // e.g. File Manager, Console, System Settings.
