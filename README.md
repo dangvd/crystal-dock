@@ -17,15 +17,19 @@ Crystal Dock is a cool dock (desktop panel) for Linux desktop, with the focus on
 - Support for separate wallpapers for separate virtual desktops
 - Separate configs for separate desktop environments
 
+## Recommended icon theme
+
+A good icon theme to use with Crystal Dock is the Crystal Remix icon theme: https://github.com/dangvd/crystal-remix-icon-theme
+
+## License
+
+Crystal Dock is licensed under the GNU General Public License v3.0
+
 ## Dependencies
 
 Crystal Dock is written in C++ and depends on:
 - Qt5 as the GUI framework
 - KWindowSystem as a high-level API to access the window system
-
-## Recommended icon theme
-
-A nice icon theme to use with Crystal Dock is the Crystal Remix icon theme: https://github.com/dangvd/crystal-remix-icon-theme
 
 ---
 
