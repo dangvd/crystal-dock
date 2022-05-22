@@ -143,7 +143,8 @@ bool ApplicationMenuConfig::loadEntry(const QString &file) {
   QString desktopEnvName = DesktopEnv::getDesktopEnvName();
   if (!desktopFile.onlyShowIn().empty() && !desktopFile.onlyShowIn().contains(desktopEnvName)) {
     // Fix for Cinnamon.
-    if (desktopEnvName != "X-Cinnamon" || !desktopFile.onlyShowIn().contains("GNOME")) {
+    if ((desktopEnvName != "X-Cinnamon" && desktopEnvName != "Cinnamon") ||
+        !desktopFile.onlyShowIn().contains("GNOME")) {
       return false;
     }
   }
