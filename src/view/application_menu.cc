@@ -168,6 +168,7 @@ void ApplicationMenu::addSearchMenu() {
   searchMenu_->setAttribute(Qt::WA_TranslucentBackground);
   searchMenu_->setStyle(&style_);
   searchMenu_->setFont(font_);
+
   searchText_ = new QLineEdit(searchMenu_);
   searchText_->setMinimumWidth(250);
   searchText_->setPlaceholderText("Type here to search");
@@ -195,11 +196,10 @@ void ApplicationMenu::addToMenu(const std::vector<Category>& categories) {
 }
 
 void ApplicationMenu::addEntry(const ApplicationEntry &entry, QMenu *menu) {
-  QAction* action = menu->addAction(loadIcon(entry.icon), entry.name, this,
+  menu->addAction(loadIcon(entry.icon), entry.name, this,
                   [entry]() {
                     Program::launch(entry.command);
                   });
-  action->setData(entry.desktopFile);
 }
 
 void ApplicationMenu::resetSearchMenu() {
