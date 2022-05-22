@@ -18,17 +18,16 @@
 
 #include "application_menu_config.h"
 
-#include <memory>
+#include <unordered_map>
 
+#include <QString>
 #include <QTemporaryDir>
 #include <QTest>
 
-#include <QSettings>
-#include <QString>
+#include <desktop/desktop_env.h>
+#include <utils/desktop_file.h>
 
 namespace crystaldock {
-
-constexpr int kNumCategories = 11;
 
 class ApplicationMenuConfigTest: public QObject {
   Q_OBJECT
@@ -47,18 +46,25 @@ class ApplicationMenuConfigTest: public QObject {
                   const QString& categories,
                   const std::unordered_map<std::string, std::string>& extraKVs
                       = {}) {
-    QSettings config(filename, QSettings::SimpleConfig);
-    QString group(&config, "Desktop Entry");
-    group.writeEntry("Name", entry.name);
-    group.writeEntry("GenericName", entry.genericName);
-    group.writeEntry("Icon", entry.icon);
-    group.writeEntry("Exec", entry.command);
-    group.writeEntry("Categories", categories);
-    for (const auto& kv : extraKVs) {
-      group.writeEntry(QString::fromStdString(kv.first),
-                       QString::fromStdString(kv.second));
+    DesktopFile desktopFile;
+    desktopFile.setName(entry.name);
+    desktopFile.setGenericName(entry.genericName);
+    desktopFile.setIcon(entry.icon);
+    desktopFile.setExec(entry.command);
+    desktopFile.setType("Application");
+    desktopFile.setCategories(categories);
+    for (const auto& entry : extraKVs) {
+      if (entry.first == "Hidden") {
+        desktopFile.setHidden(entry.second == "true");
+      } else if (entry.first == "NoDisplay") {
+        desktopFile.setNoDisplay(entry.second == "true");
+      } else if (entry.first == "OnlyShowIn") {
+        desktopFile.setOnlyShowIn(QString::fromStdString(entry.second));
+      } else if (entry.first == "NotShowIn") {
+        desktopFile.setNotShowIn(QString::fromStdString(entry.second));
+      }
     }
-    config.sync();
+    desktopFile.write(filename);
   }
 };
 
@@ -67,14 +73,12 @@ void ApplicationMenuConfigTest::loadEntries_singleDir() {
   QVERIFY(entryDir.isValid());
   writeEntry(entryDir.path() + "/1.desktop",
              {"Chrome", "Web Browser", "chrome", "chrome", ""},
-             "Network");
+             "Internet");
 
   ApplicationMenuConfig ApplicationMenuConfig({ entryDir.path() });
 
-  QCOMPARE(static_cast<int>(ApplicationMenuConfig.categories_.size()),
-           kNumCategories);
   for (const auto& category : ApplicationMenuConfig.categories_) {
-    if (category.name == "Network") {
+    if (category.name == "Internet") {
       QCOMPARE(static_cast<int>(category.entries.size()), 1);
     } else {
       QCOMPARE(static_cast<int>(category.entries.size()), 0);
@@ -87,14 +91,14 @@ void ApplicationMenuConfigTest::loadEntries_multipleDirs() {
   QVERIFY(entryDir1.isValid());
   writeEntry(entryDir1.path() + "/1.desktop",
              {"Chrome", "Web Browser", "chrome", "chrome", ""},
-             "Network");
+             "Internet");
   writeEntry(entryDir1.path() + "/2.desktop",
-             {"KMail", "Email Client", "kmail", "kmail", ""},
-             "Qt;KDE;Network");
+             {"Mail", "Email Client", "mail", "mail", ""},
+             "Internet;Office");
   writeEntry(entryDir1.path() + "/3.desktop",
-             {"Xfce Settings", "", "xfce-settings", "xfce-settings", ""},
+             {"ADesktop Settings", "", "adesktop-settings", "adesktop-settings", ""},
              "Settings",
-             {{"OnlyShowIn", "Xfce"}});
+             {{"OnlyShowIn", "ADesktop"}});
 
   // Empty dir
   QTemporaryDir entryDir2;
@@ -103,32 +107,30 @@ void ApplicationMenuConfigTest::loadEntries_multipleDirs() {
   QTemporaryDir entryDir3;
   QVERIFY(entryDir3.isValid());
   writeEntry(entryDir3.path() + "/1.desktop",
-             {"KDE Settings", "", "systemsettings5", "systemsettings5", ""},
+             {"System Settings", "", "systemsettings", "systemsettings", ""},
              "Settings",
-             {{"OnlyShowIn", "KDE"}});
+             {{"OnlyShowIn", DesktopEnv::getDesktopEnvName().toStdString()}});
   writeEntry(entryDir3.path() + "/2.desktop",
-             {"Gnome Settings", "", "gnome-settings", "gnome-settings", ""},
+             {"ADesktop Settings", "", "adesktop-settings", "adesktop-settings", ""},
              "Settings",
-             {{"NotShowIn", "KDE"}});
+             {{"NotShowIn", DesktopEnv::getDesktopEnvName().toStdString()}});
   writeEntry(entryDir3.path() + "/3.desktop",
              {"Chrome - HTML", "Web Browser", "chrome", "chrome", ""},
-             "Network",
+             "Internet",
              {{"NoDisplay", "true"}});
   writeEntry(entryDir3.path() + "/4.desktop",
              {"Chrome - Old", "Web Browser", "chrome", "chrome", ""},
-             "Network",
+             "Internet",
              {{"Hidden", "true"}});
 
   ApplicationMenuConfig ApplicationMenuConfig(
       { entryDir1.path(), entryDir1.path() + "/dir-not-exist", entryDir2.path(),
         entryDir3.path() });
 
-  QCOMPARE(static_cast<int>(ApplicationMenuConfig.categories_.size()),
-           kNumCategories);
   for (const auto& category : ApplicationMenuConfig.categories_) {
-    if (category.name == "Network") {
+    if (category.name == "Internet") {
       QCOMPARE(static_cast<int>(category.entries.size()), 2);
-    } else if (category.name == "Settings") {
+    } else if (category.name == "Settings" || category.name == "Office") {
       QCOMPARE(static_cast<int>(category.entries.size()), 1);
     } else {
       QCOMPARE(static_cast<int>(category.entries.size()), 0);

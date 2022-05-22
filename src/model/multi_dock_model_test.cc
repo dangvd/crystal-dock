@@ -22,6 +22,9 @@
 #include <QTemporaryDir>
 #include <QtTest>
 
+#include "config_helper.h"
+#include <desktop/desktop_env.h>
+
 namespace crystaldock {
 
 class MultiDockModelTest: public QObject {
@@ -36,8 +39,11 @@ class MultiDockModelTest: public QObject {
 
  private:
   void createDockConfig(const QTemporaryDir& configDir, int fileId) {
-    QFile dockConfig(configDir.path() + "/" +
-                     ConfigHelper::dockConfigFile(fileId));
+    QString dirPath = configDir.path() + "/" + DesktopEnv::getDesktopEnvName();
+    if (!QDir(dirPath).exists()) {
+      QDir::root().mkpath(dirPath);
+    }
+    QFile dockConfig(dirPath + "/" + ConfigHelper::dockConfigFile(fileId));
     dockConfig.open(QIODevice::WriteOnly);
   }
 };
@@ -70,5 +76,5 @@ void MultiDockModelTest::load_multipleDocks() {
 
 }  // namespace crystaldock
 
-QTEST_MAIN(Crystal Dock::MultiDockModelTest)
+QTEST_MAIN(crystaldock::MultiDockModelTest)
 #include "multi_dock_model_test.moc"
