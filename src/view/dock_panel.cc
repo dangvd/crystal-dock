@@ -67,7 +67,7 @@ DockPanel::DockPanel(MultiDockView* parent, MultiDockModel* model, int dockId)
       aboutDialog_(QMessageBox::Information, "About Crystal Dock",
                    QString("<h3>Crystal Dock 1.0 alpha</h3>")
                    + "<p>Copyright (C) 2022 Viet Dang (dangvd@gmail.com)"
-                   + "<p>GitHub: <a href=\"https://github.com/dangvd/crystal-dock\">https://github.com/dangvd/crystal-dock</a>"
+                   + "<p><a href=\"https://github.com/dangvd/crystal-dock\">https://github.com/dangvd/crystal-dock</a>"
                    + "<p>License: GPLv3",
                    QMessageBox::Ok, this, Qt::Tool),
       addPanelDialog_(this, model, dockId),
