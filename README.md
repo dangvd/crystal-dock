@@ -1,4 +1,4 @@
-![Crystal Dock](https://github.com/dangvd/crystal-dock/raw/main/crystal-dock.jpg)
+![Crystal Dock](https://github.com/dangvd/crystal-dock/raw/main/images/crystal-dock.jpg)
 
 # Crystal Dock
 
