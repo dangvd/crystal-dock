@@ -54,7 +54,9 @@ struct ApplicationEntry {
         taskCommand(getTaskCommand(command)), desktopFile(desktopFile2) {}
 };
 
-bool operator<(const ApplicationEntry &e1, const ApplicationEntry &e2);
+inline bool operator<(const ApplicationEntry &e1, const ApplicationEntry &e2) {
+  return e1.name.toLower() < e2.name.toLower();
+}
 
 // A category in the application menu.
 struct Category {

@@ -32,10 +32,6 @@
 
 namespace crystaldock {
 
-bool operator<(const ApplicationEntry &e1, const ApplicationEntry &e2) {
-  return e1.name < e2.name;
-}
-
 ApplicationMenuConfig::ApplicationMenuConfig(const QStringList& entryDirs)
     : entryDirs_(entryDirs),
       fileWatcher_(entryDirs),
