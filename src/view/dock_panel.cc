@@ -21,7 +21,6 @@
 #include <algorithm>
 #include <cmath>
 #include <cstdlib>
-#include <iostream>
 #include <utility>
 
 #include <QColor>
@@ -84,7 +83,7 @@ DockPanel::DockPanel(MultiDockView* parent, MultiDockModel* model, int dockId)
       animationTimer_(std::make_unique<QTimer>(this)) {
   setAttribute(Qt::WA_TranslucentBackground);
   KWindowSystem::setType(winId(), NET::Dock);
-  //KWindowSystem::setOnAllDesktops(winId(), true);
+  KWindowSystem::setOnAllDesktops(winId(), true);
   KWindowSystem::setState(winId(), NET::SkipTaskbar | NET::SkipPager | NET::SkipSwitcher);
   setMouseTracking(true);
   createMenu();
@@ -138,8 +137,8 @@ void DockPanel::resize(int w, int h) {
     minX_ = x + screenGeometry_.x();
     minY_ = y + screenGeometry_.y();
   }
-  // This is to fix the bug that if launched from Plasma Quicklaunch,
-  // Crystal Dock still doesn't show on all desktops even though
+  // This is to fix the bug that if launched from a KDE Plasma Quicklaunch,
+  // the dock panel still doesn't show on all desktops even though
   // we've already called this in the constructor.
   KWindowSystem::setOnAllDesktops(winId(), true);
   isResizing_ = false;

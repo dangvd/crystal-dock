@@ -18,8 +18,6 @@
 
 #include "program.h"
 
-#include <iostream>
-
 #include <QGuiApplication>
 #include <QMessageBox>
 #include <QProcess>
@@ -200,7 +198,6 @@ void Program::pinUnpin() {
 }
 
 void Program::launch(const QString& command) {
-  std::cout << "Launching " << command.toStdString() << std::endl;
   QStringList list = QProcess::splitCommand(command);
   if (!QProcess::startDetached(list.at(0), list.mid(1))) {
     QMessageBox warning(QMessageBox::Warning, "Error",

@@ -19,7 +19,6 @@
 #include "application_menu_config.h"
 
 #include <algorithm>
-#include <iostream>
 
 #include <QApplication>
 #include <QDir>
@@ -116,12 +115,6 @@ bool ApplicationMenuConfig::loadEntries() {
     }
   }
 
-  for (const auto & e : entries_) {
-      std::cout << e.first << ":" << e.second->name.toStdString()
-                   << ":" << e.second->command.toStdString()
-                   << ":" << e.second->taskCommand.toStdString() << std::endl;
-    }
-
   return true;
 }
 
@@ -187,7 +180,6 @@ void ApplicationMenuConfig::reload() {
 
 const ApplicationEntry* ApplicationMenuConfig::findApplication(
     const std::string& command) const {
-  std::cout << "Finding " << command << std::endl;
   // Fix for Synaptic.
   if (command == "synaptic") {
     return (entries_.count("synaptic-pkexec") > 0) ? entries_.at("synaptic-pkexec") : nullptr;
