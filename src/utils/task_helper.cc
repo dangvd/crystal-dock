@@ -98,7 +98,7 @@ bool TaskHelper::isValidTask(WId wId) {
   }
 
   const auto windowType = info.windowType(NET::AllTypesMask);
-  if (windowType != NET::Normal && windowType != NET::Unknown) {
+  if (windowType != NET::Normal && windowType != NET::Unknown && windowType != NET::Dialog) {
     return false;
   }
 
