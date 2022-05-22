@@ -35,14 +35,6 @@ inline QString filterFieldCodes(const QString& command) {
   return command;
 }
 
-inline bool isCommandInternal(const QString& command) {
-  return command == kShowDesktopCommand;
-}
-
-inline bool isCommandDBus(const QString& command) {
-  return command.startsWith("qdbus");
-}
-
 inline bool isCommandLockScreen(const QString& command) {
   return command == kLockScreenCommand;
 }

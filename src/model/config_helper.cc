@@ -21,21 +21,18 @@
 #include <QFile>
 #include <QStringList>
 
-namespace crystaldock {
+#include "desktop/desktop_env.h"
 
-constexpr char ConfigHelper::kSingleDockConfig[];
-constexpr char ConfigHelper::kSingleDockOldConfig[];
-constexpr char ConfigHelper::kSingleDockLaunchers[];
+namespace crystaldock {
 
 constexpr char ConfigHelper::kConfigPattern[];
 constexpr char ConfigHelper::kAppearanceConfig[];
-constexpr char ConfigHelper::kIconOverrideRules[];
 
 // Creates a seperate config dir for each desktop environment.
 ConfigHelper::ConfigHelper(const QString& configDir)
-    : configDir_{configDir + "/" + qEnvironmentVariable("XDG_CURRENT_DESKTOP")} {
+    : configDir_{configDir + "/" + DesktopEnv::getDesktopEnvName()} {
   if (!configDir_.exists()) {
-    QDir::root().mkpath(configDir);
+    QDir::root().mkpath(configDir_.path());
   }
 }
 

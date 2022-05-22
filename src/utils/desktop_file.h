@@ -49,13 +49,19 @@ class DesktopFile {
   void setType(const QString& type) { values_["Type"] = type; }
 
   QStringList categories() const { return values_["Categories"].split(";", Qt::SkipEmptyParts); }
+  void setCategories(const QString& categories) { values_["Categories"] = categories; }
 
   QStringList onlyShowIn() const { return values_["OnlyShowIn"].split(";", Qt::SkipEmptyParts); }
+  void setOnlyShowIn(const QString& desktops) { values_["OnlyShowIn"] = desktops; }
+
   QStringList notShowIn() const { return values_["NotShowIn"].split(";", Qt::SkipEmptyParts); }
+  void setNotShowIn(const QString& desktops) { values_["NotShowIn"] = desktops; }
 
   bool noDisplay() const { return values_["NoDisplay"].toLower() == "true"; }
+  void setNoDisplay(bool value) { values_["NoDisplay"] = value ? "true" : "false"; }
 
   bool hidden() const { return values_["Hidden"].toLower() == "true"; }
+  void setHidden(bool value) { values_["Hidden"] = value ? "true" : "false"; }
 
  private:
   QMap<QString, QString> values_;
