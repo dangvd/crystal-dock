@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>440</width>
+    <width>540</width>
     <height>450</height>
    </rect>
   </property>
@@ -16,7 +16,7 @@
   <widget class="QDialogButtonBox" name="buttonBox">
    <property name="geometry">
     <rect>
-     <x>20</x>
+     <x>70</x>
      <y>390</y>
      <width>400</width>
      <height>32</height>
@@ -35,7 +35,7 @@
   <widget class="QLabel" name="positionLabel">
    <property name="geometry">
     <rect>
-     <x>40</x>
+     <x>90</x>
      <y>280</y>
      <width>210</width>
      <height>23</height>
@@ -48,7 +48,7 @@
   <widget class="QComboBox" name="position">
    <property name="geometry">
     <rect>
-     <x>290</x>
+     <x>340</x>
      <y>270</y>
      <width>111</width>
      <height>36</height>
@@ -81,7 +81,7 @@
   <widget class="QLabel" name="screenLabel">
    <property name="geometry">
     <rect>
-     <x>40</x>
+     <x>90</x>
      <y>320</y>
      <width>210</width>
      <height>23</height>
@@ -94,7 +94,7 @@
   <widget class="QComboBox" name="screen">
    <property name="geometry">
     <rect>
-     <x>290</x>
+     <x>340</x>
      <y>320</y>
      <width>111</width>
      <height>36</height>
@@ -104,7 +104,7 @@
   <widget class="QLabel" name="componentsLabel">
    <property name="geometry">
     <rect>
-     <x>40</x>
+     <x>90</x>
      <y>68</y>
      <width>351</width>
      <height>23</height>
@@ -117,7 +117,7 @@
   <widget class="QCheckBox" name="showApplicationMenu">
    <property name="geometry">
     <rect>
-     <x>70</x>
+     <x>120</x>
      <y>100</y>
      <width>300</width>
      <height>29</height>
@@ -133,7 +133,7 @@
   <widget class="QCheckBox" name="showPager">
    <property name="geometry">
     <rect>
-     <x>70</x>
+     <x>120</x>
      <y>140</y>
      <width>300</width>
      <height>29</height>
@@ -149,7 +149,7 @@
   <widget class="QLabel" name="headerLabel">
    <property name="geometry">
     <rect>
-     <x>40</x>
+     <x>90</x>
      <y>20</y>
      <width>361</width>
      <height>23</height>
@@ -162,8 +162,8 @@
   <widget class="QCheckBox" name="showClock">
    <property name="geometry">
     <rect>
-     <x>70</x>
-     <y>180</y>
+     <x>120</x>
+     <y>220</y>
      <width>300</width>
      <height>29</height>
     </rect>
@@ -178,14 +178,14 @@
   <widget class="QCheckBox" name="showTaskManager">
    <property name="geometry">
     <rect>
-     <x>70</x>
-     <y>220</y>
+     <x>120</x>
+     <y>180</y>
      <width>311</width>
      <height>30</height>
     </rect>
    </property>
    <property name="text">
-    <string>Show running tasks</string>
+    <string>Task Manager</string>
    </property>
    <property name="checked">
     <bool>true</bool>

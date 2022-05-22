@@ -74,13 +74,19 @@ void AddPanelDialog::setMode(Mode mode) {
   ui->showTaskManager->setVisible(mode != Mode::Clone);
   ui->showClock->setVisible(mode != Mode::Clone);
 
+  if (mode == Mode::Welcome) {
+    ui->buttonBox->setStandardButtons(QDialogButtonBox::Ok);
+  } else {
+    ui->buttonBox->setStandardButtons(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
+  }
+
   const int deltaY = (mode == Mode::Clone) ? 220 : 0;
-  ui->positionLabel->move(40, 280 - deltaY);
-  ui->position->move(290, 270 - deltaY);
-  ui->screenLabel->move(40, 320 - deltaY);
-  ui->screen->move(290, 320 - deltaY);
-  ui->buttonBox->move(20, 390 - deltaY);
-  resize(440, 450 - deltaY);
+  ui->positionLabel->move(90, 280 - deltaY);
+  ui->position->move(340, 270 - deltaY);
+  ui->screenLabel->move(90, 320 - deltaY);
+  ui->screen->move(440, 320 - deltaY);
+  ui->buttonBox->move(70, 390 - deltaY);
+  resize(540, 450 - deltaY);
 
   // Adjust the UI for single/multi-screen.
   if (isSingleScreen_) {

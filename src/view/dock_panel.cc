@@ -242,7 +242,7 @@ void DockPanel::resetCursor() {
 
 void DockPanel::showOnlineDocumentation() {
   Program::launch(
-      "xdg-open https://github.com/dangvd/crystal-dock/wiki/Documentation");
+      "xdg-open https://github.com/dangvd/crystaldock/wiki/Documentation");
 }
 
 void DockPanel::about() {
@@ -541,12 +541,12 @@ void DockPanel::createMenu() {
   pagerAction_ = extraComponents->addAction(QString("Pager"), this,
       SLOT(togglePager()));
   pagerAction_->setCheckable(true);
+  taskManagerAction_ = extraComponents->addAction(QString("Task Manager"), this,
+      SLOT(toggleTaskManager()));
+  taskManagerAction_->setCheckable(true);
   clockAction_ = extraComponents->addAction(QString("Clock"), this,
       SLOT(toggleClock()));
   clockAction_->setCheckable(true);
-  taskManagerAction_ = extraComponents->addAction(QString("Show Running Tasks"), this,
-      SLOT(toggleTaskManager()));
-  taskManagerAction_->setCheckable(true);
 
   menu_.addSeparator();
   menu_.addAction(QIcon::fromTheme("help-contents"),
