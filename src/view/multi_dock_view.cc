@@ -81,9 +81,10 @@ bool MultiDockView::setWallpaper(int screen) {
   }
 
   if (!QFile::exists(wallpaper)) {
-    QMessageBox::warning(nullptr,
-                         "Error",
-                         QString("Failed to load wallpaper from: ") + wallpaper);
+    QMessageBox warning(QMessageBox::Warning, "Error",
+                        QString("Failed to load wallpaper from: ") + wallpaper,
+                        QMessageBox::Ok, nullptr, Qt::Tool);
+    warning.exec();
     return false;
   }
 

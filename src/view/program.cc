@@ -200,11 +200,13 @@ void Program::pinUnpin() {
 }
 
 void Program::launch(const QString& command) {
+  std::cout << "Launching " << command.toStdString() << std::endl;
   QStringList list = QProcess::splitCommand(command);
   if (!QProcess::startDetached(list.at(0), list.mid(1))) {
-    QMessageBox::warning(nullptr,
-                         "Error",
-                         QString("Could not run command: ") + command);
+    QMessageBox warning(QMessageBox::Warning, "Error",
+                        QString("Could not run command: ") + command,
+                        QMessageBox::Ok, nullptr, Qt::Tool);
+    warning.exec();
   }
 }
 

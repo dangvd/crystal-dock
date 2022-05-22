@@ -18,8 +18,7 @@
 
 #include "kde_desktop_env.h"
 
-#include <QFile>
-#include <QMessageBox>
+#include <QDBusMessage>
 
 namespace crystaldock {
 
@@ -75,16 +74,7 @@ bool KdeDesktopEnv::setWallpaper(int screen, const QString& wallpaper) {
       "d.currentConfigGroup = Array('Wallpaper', 'org.kde.image','General');"
       "d.writeConfig('Image','file://"
       + wallpaper + "')");
-  if (response.type() == QDBusMessage::ErrorMessage) {
-    QMessageBox::warning(
-        nullptr,
-        "Error",
-        "Failed to update wallpaper. Please make sure Plasma desktop "
-             "widgets are unlocked in order to set wallpaper.");
-    return false;
-  }
-
-  return true;
+  return response.type() != QDBusMessage::ErrorMessage;
 }
 
 }  // namespace crystaldock

@@ -247,9 +247,7 @@ void DockPanel::showOnlineDocumentation() {
 }
 
 void DockPanel::about() {
-  aboutDialog_.show();
-  aboutDialog_.raise();
-  aboutDialog_.activateWindow();
+  aboutDialog_.exec();
 }
 
 void DockPanel::showAppearanceSettingsDialog() {
@@ -303,17 +301,17 @@ void DockPanel::cloneDock() {
 
 void DockPanel::removeDock() {
   if (model_->dockCount() == 1) {
-    QMessageBox::information(
-        nullptr,
-        QString("Remove Panel"),
-        QString("The last panel cannot be removed."));
+    QMessageBox message(QMessageBox::Information, "Remove Panel",
+                        "The last panel cannot be removed.",
+                        QMessageBox::Ok, this, Qt::Tool);
+    message.exec();
     return;
   }
 
-  if (QMessageBox::question(
-        nullptr,
-        QString("Remove Panel"),
-        QString("Do you really want to remove this panel?")) == QMessageBox::Yes) {
+  QMessageBox question(QMessageBox::Question, "Remove Panel",
+                       "Do you really want to remove this panel?",
+                       QMessageBox::Yes | QMessageBox::No, this, Qt::Tool);
+  if (question.exec() == QMessageBox::Yes) {
     deleteLater();
     model_->removeDock(dockId_);
   }
