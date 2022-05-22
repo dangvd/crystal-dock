@@ -100,6 +100,7 @@ void ApplicationMenu::searchApps(const QString& searchText_) {
 
   QString text = searchText_.trimmed();
   if (text.isEmpty()) {
+    resetSearchMenu();
     return;
   }
 
