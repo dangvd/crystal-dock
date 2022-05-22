@@ -11,7 +11,7 @@ Crystal Dock is a cool dock (desktop panel) for Linux desktop, with the focus on
 ## Main features
 
 - Smooth parabolic zooming and translucent effect
-- Supported components: Application Menu, Pager, combined Launchers/Tasks, Clock
+- Supported components: Application Menu, Pager, Programs/Task Manager, Clock
 - Multiple docks support
 - Integration with various desktop environments (KDE Plasma, GNOME, XFCE, MATE, Cinnamon, LXQt): special menu entries (e.g. Log Out), specific default launchers, setting wallpapers
 - Support for separate wallpapers for separate virtual desktops
