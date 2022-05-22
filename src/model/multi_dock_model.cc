@@ -237,9 +237,9 @@ std::vector<LauncherConfig> MultiDockModel::createDefaultLaunchers() {
   }
 
   launchers.push_back(
-      LauncherConfig("Separator", "", "SEPARATOR"));
+      LauncherConfig("Separator", "", kSeparatorCommand));
   launchers.push_back(
-      LauncherConfig("Lock Screen", "system-lock-screen", "xdg-screensaver lock"));
+      LauncherConfig("Lock Screen", "system-lock-screen", kLockScreenCommand));
 
   return launchers;
 }

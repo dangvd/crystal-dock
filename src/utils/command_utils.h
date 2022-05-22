@@ -25,6 +25,7 @@
 
 namespace crystaldock {
 
+static constexpr char kSeparatorCommand[] = "SEPARATOR";
 static constexpr char kShowDesktopCommand[] = "SHOW_DESKTOP";
 static constexpr char kLockScreenCommand[] = "xdg-screensaver lock";
 

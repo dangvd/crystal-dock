@@ -644,7 +644,7 @@ void DockPanel::initApplicationMenu() {
 
 void DockPanel::initLaunchers() {
   for (const auto& launcherConfig : model_->dockLauncherConfigs(dockId_)) {
-    if (launcherConfig.command == "SEPARATOR") {
+    if (launcherConfig.command == kSeparatorCommand) {
       items_.push_back(std::make_unique<Separator>(this, model_, orientation_, minSize_, maxSize_));
     } else {
       items_.push_back(std::make_unique<Program>(

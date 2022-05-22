@@ -96,7 +96,7 @@ void EditLaunchersDialog::addSystemCommand(int index) {
 }
 
 void EditLaunchersDialog::addSeparator() {
-  addLauncher("Separator", "SEPARATOR", /*iconName=*/"");
+  addLauncher("Separator", kSeparatorCommand, /*iconName=*/"");
 }
 
 void EditLaunchersDialog::removeSelectedLauncher() {
@@ -112,7 +112,7 @@ void EditLaunchersDialog::removeAllLaunchers() {
 
 void EditLaunchersDialog::initSystemCommands() {
   ui->systemCommands->addItem(getListItemIcon("user-desktop"), "Show Desktop",
-                              QVariant::fromValue(LauncherInfo("user-desktop", "SHOW_DESKTOP")));
+                              QVariant::fromValue(LauncherInfo("user-desktop", kShowDesktopCommand)));
 
   for (const auto& category : model_->applicationMenuSystemCategories()) {
     for (const auto& entry : category.entries) {

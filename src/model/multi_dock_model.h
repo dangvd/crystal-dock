@@ -393,7 +393,7 @@ class MultiDockModel : public QObject {
   void addLauncher(int dockId, const LauncherConfig& launcher) {
     auto& launchers = std::get<3>(dockConfigs_[dockId]);
     unsigned int i = 0;
-    for (; i < launchers.size() && launchers[i].command != "SEPARATOR"; ++i) {}
+    for (; i < launchers.size() && launchers[i].command != kSeparatorCommand; ++i) {}
     launchers.insert(launchers.begin() + i, launcher);
     syncDockLaunchersConfig(dockId);
   }
