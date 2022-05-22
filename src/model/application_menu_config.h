@@ -60,6 +60,8 @@ class ApplicationMenuConfig : public QObject {
     return findApplicationFromFile(desktopFile.toStdString());
   }
 
+  const std::vector<ApplicationEntry> searchApplications(const QString& text) const;
+
   bool isAppMenuEntry(const std::string& command) const ;
   bool isAppMenuEntry(const QString& command) const { return isAppMenuEntry(command.toStdString()); }
 

@@ -27,6 +27,7 @@
 #include <QSettings>
 #include <QStringBuilder>
 #include <QUrl>
+#include <QWidgetAction>
 
 #include <KWindowSystem>
 
@@ -63,7 +64,7 @@ ApplicationMenu::ApplicationMenu(
   createContextMenu();
 
   connect(&menu_, &QMenu::aboutToShow, this,
-          [this]() { showingMenu_ = true; } );
+          [this]() { showingMenu_ = true; resetSearchMenu(); } );
   connect(&menu_, &QMenu::aboutToHide, this,
           [this]() { showingMenu_ = false; } );
   connect(model_, SIGNAL(applicationMenuConfigChanged()),
@@ -88,7 +89,28 @@ void ApplicationMenu::mousePressEvent(QMouseEvent *e) {
 
 void ApplicationMenu::reloadMenu() {
   menu_.clear();
+  searchMenu_ = nullptr;
   buildMenu();
+}
+
+void ApplicationMenu::searchApps(const QString& searchText_) {
+  if (searchMenu_ == nullptr) {
+    return;
+  }
+
+  QString text = searchText_.trimmed();
+  if (text.isEmpty()) {
+    return;
+  }
+
+  const auto actions = searchMenu_->actions();
+  for (int i = 1; i < actions.size(); ++i) {
+    searchMenu_->removeAction(actions[i]);
+  }
+
+  for (const auto& entry : model_->searchApplications(text)) {
+    addEntry(entry, searchMenu_);
+  }
 }
 
 QString ApplicationMenu::getStyleSheet() {
@@ -134,9 +156,26 @@ void ApplicationMenu::loadConfig() {
 }
 
 void ApplicationMenu::buildMenu() {
+  addSearchMenu();
+  menu_.addSeparator();
   addToMenu(model_->applicationMenuCategories());
   menu_.addSeparator();
   addToMenu(model_->applicationMenuSystemCategories());
+}
+
+void ApplicationMenu::addSearchMenu() {
+  searchMenu_ = menu_.addMenu(loadIcon("edit-find"), "Search");
+  searchMenu_->setAttribute(Qt::WA_TranslucentBackground);
+  searchMenu_->setStyle(&style_);
+  searchMenu_->setFont(font_);
+  searchText_ = new QLineEdit(searchMenu_);
+  searchText_->setMinimumWidth(250);
+  searchText_->setPlaceholderText("Type here to search");
+  QWidgetAction* searchAction = new QWidgetAction(searchMenu_);
+  searchAction->setDefaultWidget(searchText_);
+  searchMenu_->addAction(searchAction);
+  connect(searchText_, SIGNAL(textEdited(const QString&)),
+          this, SLOT(searchApps(const QString&)));
 }
 
 void ApplicationMenu::addToMenu(const std::vector<Category>& categories) {
@@ -157,10 +196,19 @@ void ApplicationMenu::addToMenu(const std::vector<Category>& categories) {
 
 void ApplicationMenu::addEntry(const ApplicationEntry &entry, QMenu *menu) {
   QAction* action = menu->addAction(loadIcon(entry.icon), entry.name, this,
-                  [&entry]() {
+                  [entry]() {
                     Program::launch(entry.command);
                   });
   action->setData(entry.desktopFile);
+}
+
+void ApplicationMenu::resetSearchMenu() {
+  searchText_->clear();
+  searchText_->setFocus();
+  const auto actions = searchMenu_->actions();
+  for (int i = 1; i < actions.size(); ++i) {
+    searchMenu_->removeAction(actions[i]);
+  }
 }
 
 QIcon ApplicationMenu::loadIcon(const QString &icon) {

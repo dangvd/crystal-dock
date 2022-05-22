@@ -424,6 +424,10 @@ class MultiDockModel : public QObject {
     return applicationMenuConfig_.findApplication(command);
   }
 
+  const std::vector<ApplicationEntry> searchApplications(const QString& text) const {
+    return applicationMenuConfig_.searchApplications(text);
+  }
+
   bool isAppMenuEntry(const QString& command) const {
     return applicationMenuConfig_.isAppMenuEntry(command);
   }

@@ -200,6 +200,26 @@ const ApplicationEntry* ApplicationMenuConfig::findApplicationFromFile(
   return (filesToEntries_.count(desktopFile) > 0) ? filesToEntries_.at(desktopFile) : nullptr;
 }
 
+const std::vector<ApplicationEntry> ApplicationMenuConfig::searchApplications(const QString& text) const {
+  std::vector<ApplicationEntry> entries;
+  for (const auto& category : categories_) {
+    for (const auto& entry : category.entries) {
+      if (text.length() == 1) {
+        if (entry.name.startsWith(text, Qt::CaseInsensitive)) {
+          entries.push_back(entry);
+        }
+      } else {
+        if (entry.name.contains(text, Qt::CaseInsensitive) ||
+            entry.genericName.contains(text, Qt::CaseInsensitive)) {
+          entries.push_back(entry);
+        }
+      }
+    }
+  }
+  std::sort(entries.begin(), entries.end());
+  return entries;
+}
+
 bool ApplicationMenuConfig::isAppMenuEntry(const std::string& command) const {
   // Fix for Synaptic.
   if (command == "synaptic") {

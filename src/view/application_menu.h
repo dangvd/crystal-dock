@@ -23,6 +23,7 @@
 
 #include <QEvent>
 #include <QFont>
+#include <QLineEdit>
 #include <QMenu>
 #include <QMouseEvent>
 #include <QPoint>
@@ -78,6 +79,8 @@ class ApplicationMenu : public QObject, public IconBasedDockItem {
  public slots:
   void reloadMenu();
 
+  void searchApps(const QString& searchText);
+
  private:
   QString getStyleSheet();
 
@@ -85,8 +88,11 @@ class ApplicationMenu : public QObject, public IconBasedDockItem {
 
   // Builds the menu from the application entries;
   void buildMenu();
+  void addSearchMenu();
   void addToMenu(const std::vector<Category>& categories);
   void addEntry(const ApplicationEntry& entry, QMenu* menu);
+
+  void resetSearchMenu();
 
   void createContextMenu();
 
@@ -99,12 +105,8 @@ class ApplicationMenu : public QObject, public IconBasedDockItem {
   ApplicationMenuStyle style_;
   QFont font_;
 
-  // Drag support.
-
-  // Starting mouse position, used for minimum drag distance check.
-  QPoint startMousePos_;
-  // The desktop file associated with the application entry being dragged.
-  QString draggedEntry_;
+  QMenu* searchMenu_;
+  QLineEdit* searchText_;
 
   // Context (right-click) menu.
   QMenu contextMenu_;
