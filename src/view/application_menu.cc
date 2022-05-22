@@ -27,7 +27,6 @@
 #include <QSettings>
 #include <QStringBuilder>
 #include <QUrl>
-#include <QWidgetAction>
 
 #include <KWindowSystem>
 
@@ -173,9 +172,9 @@ void ApplicationMenu::addSearchMenu() {
   searchText_ = new QLineEdit(searchMenu_);
   searchText_->setMinimumWidth(250);
   searchText_->setPlaceholderText("Type here to search");
-  QWidgetAction* searchAction = new QWidgetAction(searchMenu_);
-  searchAction->setDefaultWidget(searchText_);
-  searchMenu_->addAction(searchAction);
+  // A work-around as using QWidgetAction somehow causes a memory issue
+  // when quitting the dock.
+  searchMenu_->addAction(loadIcon("edit-find"), "                 ");
   connect(searchText_, SIGNAL(textEdited(const QString&)),
           this, SLOT(searchApps(const QString&)));
 }
