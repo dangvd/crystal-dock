@@ -242,7 +242,7 @@ void DockPanel::resetCursor() {
 
 void DockPanel::showOnlineDocumentation() {
   Program::launch(
-      "xdg-open https://github.com/dangvd/crystaldock/wiki/Documentation");
+      "xdg-open https://github.com/dangvd/crystal-dock/wiki/Documentation");
 }
 
 void DockPanel::about() {
