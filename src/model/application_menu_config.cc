@@ -49,6 +49,7 @@ QStringList ApplicationMenuConfig::getEntryDirs() {
   QStringList dataDirs = qEnvironmentVariable("XDG_DATA_DIRS").split(":", Qt::SkipEmptyParts);
   if (dataDirs.empty()) {
     dataDirs.append("/usr/share/");
+    dataDirs.append("/usr/local/share/");
   }
   for (const auto& dir : dataDirs) {
     entryDirs.append(dir + "/applications");
