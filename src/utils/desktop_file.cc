@@ -30,7 +30,7 @@ DesktopFile::DesktopFile(const QString& file) {
     QTextStream input(&inputFile);
     bool parsing = false;
     while (!input.atEnd()) {
-      QString line = input.readLine();
+      QString line = input.readLine().trimmed();
       if (!parsing) {
         if (line == "[Desktop Entry]") {
           parsing = true;
