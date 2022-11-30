@@ -45,6 +45,7 @@
 #include "desktop_selector.h"
 #include "multi_dock_view.h"
 #include "program.h"
+#include "qpainterpath.h"
 #include "separator.h"
 #include <utils/command_utils.h>
 #include <utils/task_helper.h>
@@ -364,28 +365,32 @@ void DockPanel::paintEvent(QPaintEvent* e) {
   }
 
   QPainter painter(this);
+  painter.setRenderHint(QPainter::Antialiasing);
+  QPainterPath path;
 
   if (isHorizontal()) {
     const int y = (position_ == PanelPosition::Top)
                   ? 0 : height() - backgroundHeight_;
-    painter.fillRect((width() - backgroundWidth_) / 2, y,
-                     backgroundWidth_, backgroundHeight_, backgroundColor_);
+    path.addRoundedRect(QRectF((width() - backgroundWidth_) / 2, y,
+                               backgroundWidth_ - 1 , backgroundHeight_ - 1),
+                        10, 10);
+    painter.fillPath(path, backgroundColor_);
 
     if (showBorder_) {
       painter.setPen(borderColor_);
-      painter.drawRect((width() - backgroundWidth_) / 2, y,
-                       backgroundWidth_ - 1, backgroundHeight_ - 1);
+      painter.drawPath(path);
     }
   } else {  // Vertical
     const int x =  (position_ == PanelPosition::Left)
                    ? 0 : width() - backgroundWidth_;
-    painter.fillRect(x, (height() - backgroundHeight_) / 2,
-                     backgroundWidth_, backgroundHeight_, backgroundColor_);
+    path.addRoundedRect(QRectF(x, (height() - backgroundHeight_) / 2,
+                               backgroundWidth_ - 1, backgroundHeight_ - 1),
+                        10, 10);
+    painter.fillPath(path, backgroundColor_);
 
     if (showBorder_) {
       painter.setPen(borderColor_);
-      painter.drawRect(x, (height() - backgroundHeight_) / 2,
-                       backgroundWidth_ - 1, backgroundHeight_ - 1);
+      painter.drawPath(path);
     }
   }
 
