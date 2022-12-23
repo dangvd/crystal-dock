@@ -49,7 +49,7 @@ void IconBasedDockItem::setIcon(const QPixmap& icon) {
 }
 
 void IconBasedDockItem::setIconName(const QString& iconName) {
-  if (!iconName.isEmpty()) {
+  if (!iconName.isEmpty() && QIcon::hasThemeIcon(iconName)) {
     iconName_ = iconName;
     QPixmap icon = QIcon::fromTheme(iconName).pixmap(kIconLoadSize);
     setIcon(icon);

@@ -709,7 +709,7 @@ void DockPanel::addTask(const TaskInfo& task) {
   const QString& program = app ? app->name : task.program;
   int i = 0;
   for (; i < itemCount() && items_[i]->beforeTask(program); ++i);
-  if (app) {
+  if (app && QIcon::hasThemeIcon(app->icon)) {
     items_.insert(items_.begin() + i, std::make_unique<Program>(
         this, model_, app->name, orientation_, app->icon, minSize_,
         maxSize_, app->command, app->taskCommand, /*isAppMenuEntry=*/true,
