@@ -154,10 +154,23 @@ void WallpaperSettingsDialog::loadData() {
 void WallpaperSettingsDialog::saveData() {
   if (!wallpaper_.isEmpty() &&
       (wallpaper_ != model_->wallpaper(desktop(), screen()))) {
-    model_->setWallpaper(desktop(), screen(), wallpaper_);
+    const int screenCount = QGuiApplication::screens().size();
+    if (desktopEnv_->supportSeparateSreenWallpapers()) {
+      model_->setWallpaper(desktop(), screen(), wallpaper_);
+    } else {
+      for (int screen = 0; screen < screenCount; ++screen) {
+        model_->setWallpaper(desktop(), screen, wallpaper_);
+      }
+    }
     model_->saveAppearanceConfig();
     if (desktop() == KWindowSystem::currentDesktop()) {
-      model_->notifyWallpaperChanged(screen());
+      if (desktopEnv_->supportSeparateSreenWallpapers()) {
+        model_->notifyWallpaperChanged(screen());
+      } else {
+        for (int screen = 0; screen < screenCount; ++screen) {
+          model_->notifyWallpaperChanged(screen);
+        }
+      }
     }
   }
 }
