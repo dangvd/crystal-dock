@@ -47,6 +47,7 @@
 #include "program.h"
 #include "separator.h"
 #include <utils/command_utils.h>
+#include <utils/draw_utils.h>
 #include <utils/task_helper.h>
 
 namespace crystaldock {
@@ -368,25 +369,13 @@ void DockPanel::paintEvent(QPaintEvent* e) {
   if (isHorizontal()) {
     const int y = (position_ == PanelPosition::Top)
                   ? 0 : height() - backgroundHeight_;
-    painter.fillRect((width() - backgroundWidth_) / 2, y,
-                     backgroundWidth_, backgroundHeight_, backgroundColor_);
-
-    if (showBorder_) {
-      painter.setPen(borderColor_);
-      painter.drawRect((width() - backgroundWidth_) / 2, y,
-                       backgroundWidth_ - 1, backgroundHeight_ - 1);
-    }
+    fillRoundedRect((width() - backgroundWidth_) / 2, y, backgroundWidth_, backgroundHeight_,
+                    backgroundHeight_ / 8, showBorder_, borderColor_, backgroundColor_, &painter);
   } else {  // Vertical
     const int x =  (position_ == PanelPosition::Left)
                    ? 0 : width() - backgroundWidth_;
-    painter.fillRect(x, (height() - backgroundHeight_) / 2,
-                     backgroundWidth_, backgroundHeight_, backgroundColor_);
-
-    if (showBorder_) {
-      painter.setPen(borderColor_);
-      painter.drawRect(x, (height() - backgroundHeight_) / 2,
-                       backgroundWidth_ - 1, backgroundHeight_ - 1);
-    }
+    fillRoundedRect(x, (height() - backgroundHeight_) / 2, backgroundWidth_, backgroundHeight_,
+                    backgroundWidth_ / 8, showBorder_, borderColor_, backgroundColor_, &painter);
   }
 
   // Draw the items from the end to avoid zoomed items getting clipped by

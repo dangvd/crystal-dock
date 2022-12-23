@@ -71,6 +71,19 @@ inline void drawHighlightedIcon(QColor bgColor, int left, int top, int width, in
   painter->setRenderHint(QPainter::Antialiasing, false);
 }
 
+inline void fillRoundedRect(int x, int y, int width, int height, int radius, bool showBorder,
+                            QColor borderColor, QColor fillColor, QPainter* painter) {
+  painter->setRenderHint(QPainter::Antialiasing);
+  QPainterPath border;
+  border.addRoundedRect(x, y, width, height, radius, radius);
+  painter->fillPath(border, QBrush(fillColor));
+  if (showBorder) {
+    painter->setPen(borderColor);
+    painter->drawPath(border);
+  }
+  painter->setRenderHint(QPainter::Antialiasing, false);
+}
+
 }  // namespace crystaldock
 
 #endif  // CRYSTALDOCK_DRAW_UTILS_H_
