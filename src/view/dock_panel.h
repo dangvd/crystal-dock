@@ -35,6 +35,7 @@
 #include <QWidget>
 
 #include <KWindowSystem>
+#include <KX11Extras>
 
 #include "add_panel_dialog.h"
 #include "application_menu_settings_dialog.h"
@@ -196,7 +197,7 @@ class DockPanel : public QWidget {
   }
 
   int pagerItemCount() const {
-    return showPager_ ? KWindowSystem::numberOfDesktops() : 0;
+    return showPager_ ? KX11Extras::numberOfDesktops() : 0;
   }
 
   int clockItemCount() const {

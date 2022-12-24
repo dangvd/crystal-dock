@@ -23,6 +23,7 @@
 #include <QPainter>
 
 #include <KWindowSystem>
+#include <kx11extras.h>
 #include <netwm_def.h>
 
 #include <utils/draw_utils.h>
@@ -34,7 +35,7 @@ const int Tooltip::kPadding;
 Tooltip::Tooltip() : QWidget(), font_(QApplication::font()) {
   setAttribute(Qt::WA_TranslucentBackground);
   KWindowSystem::setType(winId(), NET::Dock);
-  KWindowSystem::setOnAllDesktops(winId(), true);
+  KX11Extras::setOnAllDesktops(winId(), true);
 }
 
 void Tooltip::setFontColor(const QColor& color) {

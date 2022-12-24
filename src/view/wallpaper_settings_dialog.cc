@@ -29,6 +29,7 @@
 #include <QScreen>
 
 #include <KWindowSystem>
+#include <KX11Extras>
 
 namespace crystaldock {
 
@@ -86,7 +87,7 @@ void WallpaperSettingsDialog::setFor(int desktop, int screen) {
 
 void WallpaperSettingsDialog::populateDesktopList() {
   ui->desktop->clear();
-  for (int desktop = 1; desktop <= KWindowSystem::numberOfDesktops();
+  for (int desktop = 1; desktop <= KX11Extras::numberOfDesktops();
        ++desktop) {
     ui->desktop->addItem(QString::number(desktop));
   }
@@ -163,7 +164,7 @@ void WallpaperSettingsDialog::saveData() {
       }
     }
     model_->saveAppearanceConfig();
-    if (desktop() == KWindowSystem::currentDesktop()) {
+    if (desktop() == KX11Extras::currentDesktop()) {
       if (desktopEnv_->supportSeparateSreenWallpapers()) {
         model_->notifyWallpaperChanged(screen());
       } else {

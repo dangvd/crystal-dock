@@ -22,6 +22,7 @@
 #include <QMessageBox>
 
 #include <KWindowSystem>
+#include <KX11Extras>
 
 #include "add_panel_dialog.h"
 
@@ -75,7 +76,7 @@ bool MultiDockView::setWallpaper(int screen) {
     return false;
   }
 
-  QString wallpaper = model_->wallpaper(KWindowSystem::currentDesktop(), screen);
+  QString wallpaper = model_->wallpaper(KX11Extras::currentDesktop(), screen);
   if (wallpaper.isEmpty()) {
     return false;  // nothing to do here.
   }

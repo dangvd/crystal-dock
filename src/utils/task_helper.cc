@@ -20,6 +20,7 @@
 
 #include <algorithm>
 #include <iostream>
+#include <kx11extras.h>
 #include <regex>
 #include <utility>
 
@@ -57,7 +58,7 @@ bool TaskInfo::operator<(const TaskInfo& taskInfo) const {
   if (program == taskInfo.program) {
     // If same program, sort by creation time.
     bool found = false;
-    for (const auto window : KWindowSystem::windows()) {
+    for (const auto window : KX11Extras::windows()) {
       if (window == wId) {
         found = true;
       } else if (window == taskInfo.wId) {
@@ -70,14 +71,14 @@ bool TaskInfo::operator<(const TaskInfo& taskInfo) const {
 }
 
 TaskHelper::TaskHelper()
-    : currentDesktop_(KWindowSystem::currentDesktop()) {
-  connect(KWindowSystem::self(), &KWindowSystem::currentDesktopChanged,
+    : currentDesktop_(KX11Extras::currentDesktop()) {
+  connect(KX11Extras::self(), &KX11Extras::currentDesktopChanged,
           this, &TaskHelper::onCurrentDesktopChanged);
 }
 
 std::vector<TaskInfo> TaskHelper::loadTasks(int screen, bool currentDesktopOnly) {
   std::vector<TaskInfo> tasks;
-  for (const auto wId : KWindowSystem::windows()) {
+  for (const auto wId : KX11Extras::windows()) {
     if (isValidTask(wId, screen, currentDesktopOnly)) {
       tasks.push_back(getTaskInfo(wId));
     }
@@ -88,7 +89,7 @@ std::vector<TaskInfo> TaskHelper::loadTasks(int screen, bool currentDesktopOnly)
 }
 
 bool TaskHelper::isValidTask(WId wId) {
-  if (!KWindowSystem::hasWId(wId)) {
+  if (!KX11Extras::hasWId(wId)) {
     return false;
   }
 
@@ -141,7 +142,7 @@ TaskInfo TaskHelper::getTaskInfo(WId wId) const {
   const auto program = getProgram(info);
   const auto command = getCommand(info);
   const auto name = info.visibleName();
-  QPixmap icon = KWindowSystem::icon(wId, kIconLoadSize, kIconLoadSize, true /* scale */);
+  QPixmap icon = KX11Extras::icon(wId, kIconLoadSize, kIconLoadSize, true /* scale */);
 
   return TaskInfo(wId, program, command, name, icon, info.state() == NET::DemandsAttention);
 }

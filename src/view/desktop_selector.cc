@@ -28,6 +28,7 @@
 #include <KWindowSystem>
 
 #include "dock_panel.h"
+#include <kx11extras.h>
 #include <utils/draw_utils.h>
 #include <utils/font_utils.h>
 
@@ -81,7 +82,7 @@ void DesktopSelector::mousePressEvent(QMouseEvent* e) {
     if (isCurrentDesktop()) {
       KWindowSystem::setShowingDesktop(!KWindowSystem::showingDesktop());
     } else {
-      KWindowSystem::setCurrentDesktop(desktop_);
+      KX11Extras::setCurrentDesktop(desktop_);
     }
   } else if (e->button() == Qt::RightButton) {
     // In case other DesktopSelectors have changed the config.

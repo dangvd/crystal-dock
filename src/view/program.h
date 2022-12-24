@@ -27,6 +27,7 @@
 #include <QTimer>
 
 #include <KWindowSystem>
+#include <KX11Extras>
 
 #include "icon_based_dock_item.h"
 
@@ -85,7 +86,7 @@ class Program : public QObject, public IconBasedDockItem {
 
   int getActiveTask() const {
     for (int i = 0; i < static_cast<int>(tasks_.size()); ++i) {
-      if (KWindowSystem::activeWindow() == tasks_[i].wId) {
+      if (KX11Extras::activeWindow() == tasks_[i].wId) {
         return i;
       }
     }

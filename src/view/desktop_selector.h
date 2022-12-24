@@ -29,6 +29,7 @@
 #include <QString>
 
 #include <KWindowSystem>
+#include <KX11Extras>
 
 #include <model/multi_dock_model.h>
 
@@ -62,7 +63,7 @@ class DesktopSelector : public QObject, public IconBasedDockItem {
 
  private:
   bool isCurrentDesktop() const {
-    return KWindowSystem::currentDesktop() == desktop_;
+    return KX11Extras::currentDesktop() == desktop_;
   }
 
   void createMenu();

@@ -27,6 +27,7 @@
 #include <KWindowSystem>
 
 #include "dock_panel.h"
+#include <kx11extras.h>
 #include <utils/command_utils.h>
 #include <utils/draw_utils.h>
 
@@ -102,16 +103,16 @@ void Program::mousePressEvent(QMouseEvent* e) {
           const auto activeTask = getActiveTask();
           if (activeTask >= 0) {
             if (tasks_.size() == 1) {
-              KWindowSystem::minimizeWindow(tasks_[0].wId);
+              KX11Extras::minimizeWindow(tasks_[0].wId);
             } else {
               // Cycles through tasks.
               auto nextTask = (activeTask < static_cast<int>(tasks_.size() - 1)) ?
                     (activeTask + 1) : 0;
-              KWindowSystem::forceActiveWindow(tasks_[nextTask].wId);
+              KX11Extras::forceActiveWindow(tasks_[nextTask].wId);
             }
           } else {
             for (unsigned i = 0; i < tasks_.size(); ++i) {
-              KWindowSystem::forceActiveWindow(tasks_[i].wId);
+              KX11Extras::forceActiveWindow(tasks_[i].wId);
             }
           }
         }
