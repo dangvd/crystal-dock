@@ -57,7 +57,7 @@ std::vector<Category> GnomeDesktopEnv::getApplicationMenuSystemCategories() cons
 
 std::vector<QString> GnomeDesktopEnv::getDefaultLaunchers() const {
   return {"org.gnome.Terminal.desktop", "org.gnome.Nautilus.desktop",
-          "gnome-control-center.desktop", "org.gnome.tweaks.desktop"};
+          "org.gnome.Settings.desktop", "org.gnome.tweaks.desktop"};
 }
 
 bool GnomeDesktopEnv::setWallpaper(int screen, const QString& wallpaper) {
