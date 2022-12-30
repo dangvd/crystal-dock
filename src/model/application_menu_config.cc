@@ -179,13 +179,30 @@ void ApplicationMenuConfig::reload() {
   emit configChanged();
 }
 
+// This needs to be synced with command_utils.h/areTheSameCommand()
 const ApplicationEntry* ApplicationMenuConfig::findApplication(
     const std::string& command) const {
+  if (entries_.count(command) > 0) {
+    return entries_.at(command);
+  }
+
   // Fix for Synaptic.
   if (command == "synaptic") {
-    return (entries_.count("synaptic-pkexec") > 0) ? entries_.at("synaptic-pkexec") : nullptr;
+    const auto command2 = "synaptic-pkexec";
+    if (entries_.count(command2) > 0) {
+      return entries_.at(command2);
+    }
   }
-  return (entries_.count(command) > 0) ? entries_.at(command) : nullptr;
+
+  // Fix for GNOME Nautilus etc.
+  if (command.find("org.gnome.") != std::string::npos) {
+    const auto command2 = command.substr(10);
+    if (entries_.count(command2) > 0) {
+      return entries_.at(command2);
+    }
+  }
+
+  return nullptr;
 }
 
 const ApplicationEntry* ApplicationMenuConfig::findApplicationFromFile(

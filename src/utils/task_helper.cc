@@ -44,10 +44,6 @@ QString getCommand(const KWindowInfo& info) {
     // To fix cases like cinnamon-settings
     return command.left(command.length() - 3);
   }
-  if (command.startsWith("org.gnome.")) {
-    // To fix cases like org.gnome.nautilus
-    return command.mid(command.lastIndexOf('.') + 1);
-  }
   return command;
 }
 

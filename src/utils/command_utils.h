@@ -48,22 +48,34 @@ inline bool isCommandLockScreen(const QString& command) {
 
 inline std::string getTaskCommand(const std::string& appCommand) {
   namespace fs = std::filesystem;
-  const auto command = appCommand.substr(0, appCommand.find_first_of(' '));
-  return fs::is_symlink(command) ?
+  auto command = appCommand.substr(0, appCommand.find_first_of(' '));
+  command = fs::is_symlink(command) ?
       fs::path(fs::read_symlink(command)).filename() :
       fs::path(command).filename();
+  return QString::fromStdString(command).toLower().toStdString();
 }
 
 inline QString getTaskCommand(const QString& appCommand) {
   return QString::fromStdString(getTaskCommand(appCommand.toStdString()));
 }
 
+// This needs to be synced with ApplicationMenuConfig::findApplication()
 inline bool areTheSameCommand(const QString& appTaskCommand, const QString& taskCommand) {
+  if (appTaskCommand == taskCommand) {
+    return true;
+  }
+
   // Fix for Synaptic.
   if (taskCommand == "synaptic" && appTaskCommand == "synaptic-pkexec") {
     return true;
   }
-  return appTaskCommand == taskCommand;
+
+    // Fix for GNOME Nautilus etc.
+  if ("org.gnome." + appTaskCommand == taskCommand) {
+    return true;
+  }
+
+  return false;
 }
 
 }  // namespace crystaldock
