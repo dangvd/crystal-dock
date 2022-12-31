@@ -73,7 +73,7 @@ ApplicationMenu::ApplicationMenu(
 void ApplicationMenu::draw(QPainter* painter) const {
   if (showingMenu_) {
     drawHighlightedIcon(model_->backgroundColor(), left_, top_, getWidth(), getHeight(),
-                        minSize_ / 4 - 4, size_ / 8, painter);
+                        minSize_ / 4 - 4, size_ / 4, painter);
   }
   IconBasedDockItem::draw(painter);
 }
