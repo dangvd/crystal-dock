@@ -74,10 +74,10 @@ void Program::init() {
 void Program::draw(QPainter *painter) const {
   if ((!tasks_.empty() && active()) || attentionStrong_) {
     drawHighlightedIcon(model_->backgroundColor(), left_, top_, getWidth(), getHeight(),
-                        5, size_ / 4, painter);
+                        minSize_ / 7, size_ / 4, painter);
   } else if (!tasks_.empty()) {
     drawHighlightedIcon(model_->backgroundColor(), left_, top_, getWidth(), getHeight(),
-                        5, size_ / 4, painter, 0.25);
+                        minSize_ / 7, size_ / 4, painter, 0.25);
   }
   IconBasedDockItem::draw(painter);
 }
