@@ -63,8 +63,8 @@ constexpr bool kDefaultShowTaskManager = true;
 constexpr bool kDefaultShowClock = false;
 
 constexpr char kDefaultApplicationMenuName[] = "Applications";
-constexpr int kDefaultApplicationMenuIconSize = 48;
-constexpr int kDefaultApplicationMenuFontSize = 18;
+constexpr int kDefaultApplicationMenuIconSize = 40;
+constexpr int kDefaultApplicationMenuFontSize = 16;
 constexpr float kDefaultApplicationMenuBackgroundAlpha = 0.8;
 constexpr bool kDefaultShowDesktopNumber = true;
 constexpr bool kDefaultCurrentDesktopTasksOnly = true;
