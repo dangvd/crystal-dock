@@ -18,8 +18,6 @@
 
 #include "xfce_desktop_env.h"
 
-#include <QProcess>
-
 namespace crystaldock {
 
 std::vector<Category> XfceDesktopEnv::getApplicationMenuSystemCategories() const {
@@ -58,13 +56,6 @@ std::vector<Category> XfceDesktopEnv::getApplicationMenuSystemCategories() const
 std::vector<QString> XfceDesktopEnv::getDefaultLaunchers() const {
   return {"xfce4-terminal-emulator.desktop", "thunar.desktop",
       "xfce-settings-manager.desktop"};
-}
-
-bool XfceDesktopEnv::setWallpaper(int screen, const QString& wallpaper) {
-  // TODO: Update screen/workspace number.
-  return QProcess::startDetached("xfconf-query", {"-c", "xfce4-desktop", "-p",
-                                                  "/backdrop/screen0/monitor0/workspace0/last-image",
-                                                  "-s", "file://" + wallpaper});
 }
 
 }  // namespace crystaldock

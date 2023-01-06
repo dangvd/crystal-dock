@@ -31,9 +31,11 @@ namespace crystaldock {
 // Currently supports KDE, GNOME, XFCE, LXQT, Cinnamon, MATE.
 class DesktopEnv {
  protected:
-  DesktopEnv() = default;
+  DesktopEnv() = default;  
 
  public:
+  virtual ~DesktopEnv() = default;
+
   static DesktopEnv* getDesktopEnv();
   static QString getDesktopEnvName();
 
@@ -46,6 +48,9 @@ class DesktopEnv {
   // e.g. File Manager, Console, System Settings.
   // Returns a list of desktop files.
   virtual std::vector<QString> getDefaultLaunchers() const { return {}; };
+
+  // Does the DE support setting wallpaper programmatically?
+  virtual bool canSetWallpaper() const { return true; }
 
   // Supports separate wallpapers for separate screens.
   virtual bool supportSeparateSreenWallpapers() const { return false; }

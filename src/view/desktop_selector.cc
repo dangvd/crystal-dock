@@ -40,6 +40,7 @@ DesktopSelector::DesktopSelector(DockPanel* parent, MultiDockModel* model,
           QString("Desktop ") + QString::number(desktop),
           orientation, "" /* no icon yet */, minSize, maxSize),
       model_(model),
+      desktopEnv_(DesktopEnv::getDesktopEnv()),
       desktop_(desktop),
       screen_(screen),
       desktopWidth_(parent->screenGeometry().width()),
@@ -115,13 +116,15 @@ void DesktopSelector::setIconScaled(const QPixmap& icon) {
 }
 
 void DesktopSelector::createMenu() {
-  menu_.addAction(
-      QIcon::fromTheme("preferences-desktop-wallpaper"),
-      QString("Set Wallpaper for Desktop ") + QString::number(desktop_),
-      parent_,
-      [this] {
-        parent_->showWallpaperSettingsDialog(desktop_);
-      });
+  if (desktopEnv_->canSetWallpaper()) {
+    menu_.addAction(
+        QIcon::fromTheme("preferences-desktop-wallpaper"),
+        QString("Set Wallpaper for Desktop ") + QString::number(desktop_),
+        parent_,
+        [this] {
+          parent_->showWallpaperSettingsDialog(desktop_);
+        });
+  }
   showDesktopNumberAction_ = menu_.addAction(
       QString("Show Desktop Number"), this,
       [this] {

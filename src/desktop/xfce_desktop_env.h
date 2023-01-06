@@ -29,10 +29,9 @@ class XfceDesktopEnv : public DesktopEnv {
 
   std::vector<QString> getDefaultLaunchers() const override;
 
-  bool setWallpaper(int screen, const QString& wallpaper) override;
+  bool canSetWallpaper() const override { return false; }
 };
 
 }  // namespace crystaldock
 
 #endif // CRYSTALDOCK_XFCE_DESKTOP_ENV_H_
-
