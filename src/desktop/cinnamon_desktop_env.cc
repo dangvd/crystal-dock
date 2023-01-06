@@ -61,7 +61,7 @@ std::vector<QString> CinnamonDesktopEnv::getDefaultLaunchers() const {
 
 bool CinnamonDesktopEnv::setWallpaper(int screen, const QString& wallpaper) {
   // Cinnamon doesn't support setting different wallpapers for different screens.
-  return QProcess::startDetached("gsettings", {"set", "org.gnome.desktop.background", "picture-uri",
+  return QProcess::startDetached("gsettings", {"set", "org.cinnamon.desktop.background", "picture-uri",
                                                "file://" + wallpaper});
 }
 
