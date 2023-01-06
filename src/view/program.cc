@@ -215,14 +215,12 @@ void Program::createMenu() {
           pinUnpin();
         });
     pinAction_->setCheckable(true);
-    pinAction_->setChecked(pinned_);
-
-    menu_.addAction(QIcon::fromTheme("list-add"), QString("&New Instance"), this,
-                    [this] { launch(); });
-
-    menu_.addSeparator();
+    pinAction_->setChecked(pinned_);    
   }
 
+  menu_.addAction(QIcon::fromTheme("list-add"), QString("&New Instance"), this,
+                  [this] { launch(); });
+  menu_.addSeparator();
   menu_.addAction(QIcon::fromTheme("configure"), QString("Edit &Launchers"), parent_,
                   [this] { parent_->showEditLaunchersDialog(); });
 
