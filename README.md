@@ -40,6 +40,10 @@ Dependencies development packages: to build from the source code, Qt5 and KWindo
 ```
 $ sudo apt install extra-cmake-modules qtbase5-dev libkf5windowsystem-dev
 ```
+- For OpenSUSE:
+```
+$ sudo zypper install extra-cmake-modules libqt5-qtbase-devel kwindowsystem-devel
+```
 - For Fedora, install the following packages: extra-cmake-modules qt5-devel kf5-kwindowsystem-devel
 
 To build, run:
