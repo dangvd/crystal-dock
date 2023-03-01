@@ -75,7 +75,7 @@ inline void fillRoundedRect(int x, int y, int width, int height, int radius, boo
                             QColor borderColor, QColor fillColor, QPainter* painter) {
   painter->setRenderHint(QPainter::Antialiasing);
   QPainterPath border;
-  border.addRoundedRect(x, y, width, height, radius, radius);
+  border.addRoundedRect(x + 0.5, y + 0.5, width, height, radius, radius);
   painter->fillPath(border, QBrush(fillColor));
   if (showBorder) {
     painter->setPen(borderColor);
