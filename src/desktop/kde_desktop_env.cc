@@ -38,7 +38,7 @@ std::vector<Category> KdeDesktopEnv::getApplicationMenuSystemCategories() const 
       {"Log Out",
         "",
         "system-log-out",
-        "qdbus org.kde.ksmserver /KSMServer logout -1 0 3",
+        "qdbus-qt5 org.kde.ksmserver /KSMServer logout -1 0 3",
         ""},
       }
     },
@@ -46,12 +46,12 @@ std::vector<Category> KdeDesktopEnv::getApplicationMenuSystemCategories() const 
       {"Reboot",
         "",
         "system-reboot",
-        "qdbus org.kde.ksmserver /KSMServer logout -1 1 3",
+        "qdbus-qt5 org.kde.ksmserver /KSMServer logout -1 1 3",
         ""},
       {"Shut Down",
         "",
         "system-shutdown",
-        "qdbus org.kde.ksmserver /KSMServer logout -1 2 3",
+        "qdbus-qt5 org.kde.ksmserver /KSMServer logout -1 2 3",
         ""}
       }
     }
