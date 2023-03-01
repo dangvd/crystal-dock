@@ -370,12 +370,12 @@ void DockPanel::paintEvent(QPaintEvent* e) {
     const int y = (position_ == PanelPosition::Top)
                   ? 0 : height() - backgroundHeight_;
     fillRoundedRect((width() - backgroundWidth_) / 2, y, backgroundWidth_ - 1, backgroundHeight_ - 1,
-                    backgroundHeight_ / 4, showBorder_, borderColor_, backgroundColor_, &painter);
+                    backgroundHeight_ / 16, showBorder_, borderColor_, backgroundColor_, &painter);
   } else {  // Vertical
     const int x =  (position_ == PanelPosition::Left)
                    ? 0 : width() - backgroundWidth_;
     fillRoundedRect(x, (height() - backgroundHeight_) / 2, backgroundWidth_ - 1, backgroundHeight_ - 1,
-                    backgroundWidth_ / 4, showBorder_, borderColor_, backgroundColor_, &painter);
+                    backgroundWidth_ / 16, showBorder_, borderColor_, backgroundColor_, &painter);
   }
 
   // Draw the items from the end to avoid zoomed items getting clipped by
