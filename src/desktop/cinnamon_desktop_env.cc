@@ -56,7 +56,7 @@ std::vector<Category> CinnamonDesktopEnv::getApplicationMenuSystemCategories() c
 }
 
 std::vector<QString> CinnamonDesktopEnv::getDefaultLaunchers() const {
-  return {"org.gnome.Terminal.desktop", "nemo.desktop", "cinnamon-settings.desktop"};
+  return {"org.gnome.Terminal.desktop", "nemo.desktop", "cinnamon-settings.desktop", "qt5ct.desktop"};
 }
 
 bool CinnamonDesktopEnv::setWallpaper(int screen, const QString& wallpaper) {
