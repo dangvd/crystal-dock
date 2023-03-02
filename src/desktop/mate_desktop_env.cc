@@ -51,7 +51,7 @@ std::vector<Category> MateDesktopEnv::getApplicationMenuSystemCategories() const
 }
 
 std::vector<QString> MateDesktopEnv::getDefaultLaunchers() const {
-  return {"mate-terminal.desktop", "caja.desktop", "matecc.desktop"};
+  return {"mate-terminal.desktop", "caja-browser.desktop", "matecc.desktop"};
 }
 
 bool MateDesktopEnv::setWallpaper(int screen, const QString& wallpaper) {
