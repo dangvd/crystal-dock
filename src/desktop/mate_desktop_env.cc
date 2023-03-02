@@ -57,7 +57,7 @@ std::vector<QString> MateDesktopEnv::getDefaultLaunchers() const {
 bool MateDesktopEnv::setWallpaper(int screen, const QString& wallpaper) {
   // MATE doesn't support setting different wallpapers for different screens.
   return QProcess::startDetached("gsettings", {"set", "org.mate.background", "picture-filename",
-                                               "file://" + wallpaper});
+                                               wallpaper});
 }
 
 }  // namespace crystaldock
