@@ -21,8 +21,6 @@
 
 #include "iconless_dock_item.h"
 
-#include <model/multi_dock_model.h>
-
 namespace crystaldock {
 
 // A digital Separator.
@@ -42,8 +40,6 @@ class Separator : public QObject, public IconlessDockItem {
 
  private:
   static constexpr float kWhRatio = 0.1;
-
-  MultiDockModel* model_;
 };
 
 }  // namespace crystaldock

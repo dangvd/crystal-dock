@@ -30,7 +30,6 @@
 
 #include "icon_based_dock_item.h"
 
-#include <model/multi_dock_model.h>
 #include <utils/command_utils.h>
 
 namespace crystaldock {
@@ -105,7 +104,6 @@ class Program : public QObject, public IconBasedDockItem {
   void setDemandsAttention(bool value);
   void updateDemandsAttention();
 
-  MultiDockModel* model_;
   QString command_;
   QString taskCommand_;
   // Is an entry on the App Menu, exluding system commands such as Lock Screen / Shut Down.

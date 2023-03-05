@@ -32,7 +32,6 @@
 #include <QString>
 
 #include <model/application_menu_config.h>
-#include <model/multi_dock_model.h>
 
 namespace crystaldock {
 
@@ -95,8 +94,6 @@ class ApplicationMenu : public QObject, public IconBasedDockItem {
   void resetSearchMenu();
 
   void createContextMenu();
-
-  MultiDockModel* model_;
 
   // The cascading popup menu that contains all application entries.
   QMenu menu_;

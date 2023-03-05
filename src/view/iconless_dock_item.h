@@ -26,10 +26,10 @@ namespace crystaldock {
 // Base class for dock items without an icon, such as clock.
 class IconlessDockItem : public DockItem {
  public:
-  IconlessDockItem(DockPanel* parent, const QString& label,
+  IconlessDockItem(DockPanel* parent, MultiDockModel* model, const QString& label,
       Qt::Orientation orientation, int minSize, int maxSize,
       float whRatio, bool reverseWhRatio = false)
-      : DockItem(parent, label, orientation, minSize, maxSize),
+      : DockItem(parent, model, label, orientation, minSize, maxSize),
         whRatio_(whRatio), reverseWhRatio_(reverseWhRatio) {}
   virtual ~IconlessDockItem() {}
 

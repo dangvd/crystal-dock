@@ -25,17 +25,18 @@ namespace crystaldock {
 
 const int IconBasedDockItem::kIconLoadSize;
 
-IconBasedDockItem::IconBasedDockItem(DockPanel* parent, const QString& label, Qt::Orientation orientation,
-                  const QString& iconName, int minSize, int maxSize)
-    : DockItem(parent, label, orientation, minSize, maxSize),
+IconBasedDockItem::IconBasedDockItem(DockPanel* parent, MultiDockModel* model, const QString& label,
+                                     Qt::Orientation orientation, const QString& iconName,
+                                     int minSize, int maxSize)
+    : DockItem(parent, model, label, orientation, minSize, maxSize),
     icons_(maxSize - minSize + 1) {
   setIconName(iconName);
 }
 
-IconBasedDockItem::IconBasedDockItem(DockPanel* parent, const QString& label,
-    Qt::Orientation orientation, const QPixmap& icon,
-    int minSize, int maxSize)
-    : DockItem(parent, label, orientation, minSize, maxSize),
+IconBasedDockItem::IconBasedDockItem(DockPanel* parent, MultiDockModel* model, const QString& label,
+                                     Qt::Orientation orientation, const QPixmap& icon,
+                                     int minSize, int maxSize)
+    : DockItem(parent, model, label, orientation, minSize, maxSize),
     icons_(maxSize - minSize + 1) {
   setIcon(icon);
 }
@@ -46,8 +47,8 @@ void IconBasedDockItem::draw(QPainter* painter) const {
     painter->drawPixmap(left_, top_, icon);
   } else {  // Fall-back "icon".
     painter->setRenderHint(QPainter::Antialiasing);
-    painter->setPen(QColor("#b1c4de"));
-    QColor fillColor = QColor("#638abd");
+    painter->setPen(model_->borderColor());
+    QColor fillColor = model_->backgroundColor();
     fillColor.setAlphaF(0.42);
     painter->setBrush(fillColor);
     painter->drawEllipse(left_, top_, size_, size_);

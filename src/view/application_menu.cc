@@ -48,9 +48,8 @@ int ApplicationMenuStyle::pixelMetric(
 ApplicationMenu::ApplicationMenu(
     DockPanel *parent, MultiDockModel* model, Qt::Orientation orientation,
     int minSize, int maxSize)
-    : IconBasedDockItem(parent, "" /* label */, orientation, model->applicationMenuIcon(),
+    : IconBasedDockItem(parent, model, "" /* label */, orientation, model->applicationMenuIcon(),
                         minSize, maxSize),
-      model_(model),
       showingMenu_(false),
       style_(model) {
   menu_.setAttribute(Qt::WA_TranslucentBackground);

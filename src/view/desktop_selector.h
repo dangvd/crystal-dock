@@ -31,7 +31,6 @@
 #include <KWindowSystem>
 
 #include <desktop/desktop_env.h>
-#include <model/multi_dock_model.h>
 
 namespace crystaldock {
 
@@ -70,7 +69,6 @@ class DesktopSelector : public QObject, public IconBasedDockItem {
 
   void saveConfig();
 
-  MultiDockModel* model_;
   DesktopEnv* desktopEnv_;
 
   // The desktop that this desktop selector manages, 1-based.

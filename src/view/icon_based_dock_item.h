@@ -33,10 +33,10 @@ namespace crystaldock {
 // Base class for icon-based dock items, such as launchers and pager icons.
 class IconBasedDockItem : public DockItem {
  public:
-  IconBasedDockItem(DockPanel* parent, const QString& label, Qt::Orientation orientation,
-                    const QString& iconName, int minSize, int maxSize);
-  IconBasedDockItem(DockPanel* parent, const QString& label, Qt::Orientation orientation,
-                    const QPixmap& icon, int minSize, int maxSize);
+  IconBasedDockItem(DockPanel* parent, MultiDockModel* model, const QString& label,
+                    Qt::Orientation orientation, const QString& iconName, int minSize, int maxSize);
+  IconBasedDockItem(DockPanel* parent, MultiDockModel* model, const QString& label,
+                    Qt::Orientation orientation, const QPixmap& icon, int minSize, int maxSize);
   virtual ~IconBasedDockItem() {}
 
   int getWidthForSize(int size) const override {

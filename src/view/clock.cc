@@ -36,9 +36,8 @@ constexpr float Clock::kDelta;
 
 Clock::Clock(DockPanel* parent, MultiDockModel* model,
              Qt::Orientation orientation, int minSize, int maxSize)
-    : IconlessDockItem(parent, "" /* label */, orientation, minSize, maxSize,
+    : IconlessDockItem(parent, model, "" /* label */, orientation, minSize, maxSize,
                        kWhRatio),
-      model_(model),
       calendar_(parent),
       fontFamilyGroup_(this) {
   createMenu();

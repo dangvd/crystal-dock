@@ -36,10 +36,9 @@ namespace crystaldock {
 DesktopSelector::DesktopSelector(DockPanel* parent, MultiDockModel* model,
                                  Qt::Orientation orientation, int minSize,
                                  int maxSize, int desktop, int screen)
-    : IconBasedDockItem(parent, 
+    : IconBasedDockItem(parent, model,
           QString("Desktop ") + QString::number(desktop),
           orientation, "" /* no icon yet */, minSize, maxSize),
-      model_(model),
       desktopEnv_(DesktopEnv::getDesktopEnv()),
       desktop_(desktop),
       screen_(screen),

@@ -26,9 +26,8 @@ constexpr float Separator::kWhRatio;
 
 Separator::Separator(DockPanel* parent, MultiDockModel* model, Qt::Orientation orientation,
                      int minSize, int maxSize)
-    : IconlessDockItem(parent, "" /* label */, orientation, minSize, maxSize,
-                       kWhRatio, /*reverseWhRatio=*/ true),
-      model_(model) {}
+    : IconlessDockItem(parent, model, "" /* label */, orientation, minSize, maxSize,
+                       kWhRatio, /*reverseWhRatio=*/ true) {}
 
 void Separator::draw(QPainter* painter) const {
   int x, y, w, h;

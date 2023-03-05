@@ -28,7 +28,6 @@
 #include <QString>
 
 #include "calendar.h"
-#include <model/multi_dock_model.h>
 
 namespace crystaldock {
 
@@ -70,8 +69,6 @@ class Clock : public QObject, public IconlessDockItem {
   void createMenu();
 
   void saveConfig();
-
-  MultiDockModel* model_;
 
   Calendar calendar_;
 

@@ -24,6 +24,7 @@
 #include <QString>
 #include <Qt>
 
+#include <model/multi_dock_model.h>
 #include <utils/task_helper.h>
 
 namespace crystaldock {
@@ -36,9 +37,9 @@ class DockPanel;
 // the dock's parabolic zooming effect smoother.
 class DockItem {
  public:
-  DockItem(DockPanel* parent, const QString& label,
+  DockItem(DockPanel* parent, MultiDockModel* model, const QString& label,
       Qt::Orientation orientation, int minSize, int maxSize)
-      : parent_(parent), label_(label), orientation_(orientation),
+      : parent_(parent), model_(model), label_(label), orientation_(orientation),
         minSize_(minSize), maxSize_(maxSize), size_(minSize) {}
   virtual ~DockItem() {}
 
@@ -142,6 +143,7 @@ class DockItem {
 
  protected:
   DockPanel* parent_;
+  MultiDockModel* model_;
   QString label_; // Label of the dock item.
   Qt::Orientation orientation_; // Orientation (horizontal/vertical).
   int minSize_;
