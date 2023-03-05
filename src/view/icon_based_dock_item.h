@@ -40,11 +40,13 @@ class IconBasedDockItem : public DockItem {
   virtual ~IconBasedDockItem() {}
 
   int getWidthForSize(int size) const override {
-    return getIcon(size).width();
+    const auto& icon = getIcon(size);
+    return !icon.isNull() ? icon.width() : size;
   }
 
   int getHeightForSize(int size) const override {
-    return getIcon(size).height();
+    const auto& icon = getIcon(size);
+    return !icon.isNull() ? icon.height() : size;
   }
 
   void draw(QPainter* painter) const override;

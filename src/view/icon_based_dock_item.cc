@@ -41,7 +41,19 @@ IconBasedDockItem::IconBasedDockItem(DockPanel* parent, const QString& label,
 }
 
 void IconBasedDockItem::draw(QPainter* painter) const {
-  painter->drawPixmap(left_, top_, icons_[size_ - minSize_]);
+  const auto& icon = icons_[size_ - minSize_];
+  if (!icon.isNull()) {
+    painter->drawPixmap(left_, top_, icon);
+  } else {  // Fall-back "icon".
+    painter->setRenderHint(QPainter::Antialiasing);
+    painter->setPen(QColor("#b1c4de"));
+    QColor fillColor = QColor("#638abd");
+    fillColor.setAlphaF(0.42);
+    painter->setBrush(fillColor);
+    painter->drawEllipse(left_, top_, size_, size_);
+    painter->setBrush(Qt::NoBrush);
+    painter->setRenderHint(QPainter::Antialiasing, false);
+  }
 }
 
 void IconBasedDockItem::setIcon(const QPixmap& icon) {
