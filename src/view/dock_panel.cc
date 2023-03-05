@@ -1,6 +1,6 @@
 /*
  * This file is part of Crystal Dock.
- * Copyright (C) 2022 Viet Dang (dangvd@gmail.com)
+ * Copyright (C) 2023 Viet Dang (dangvd@gmail.com)
  *
  * Crystal Dock is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -65,8 +65,8 @@ DockPanel::DockPanel(MultiDockView* parent, MultiDockModel* model, int dockId)
       showClock_(false),
       showBorder_(true),
       aboutDialog_(QMessageBox::Information, "About Crystal Dock",
-                   QString("<h3>Crystal Dock 1.0 beta4</h3>")
-                   + "<p>Copyright (C) 2022 Viet Dang (dangvd@gmail.com)"
+                   QString("<h3>Crystal Dock 1.0 RC1</h3>")
+                   + "<p>Copyright (C) 2023 Viet Dang (dangvd@gmail.com)"
                    + "<p><a href=\"https://github.com/dangvd/crystal-dock\">https://github.com/dangvd/crystal-dock</a>"
                    + "<p>License: GPLv3",
                    QMessageBox::Ok, this, Qt::Tool),
