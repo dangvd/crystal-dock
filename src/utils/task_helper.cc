@@ -138,10 +138,6 @@ TaskInfo TaskHelper::getTaskInfo(WId wId) const {
   const auto command = getCommand(info);
   const auto name = info.visibleName();
   QPixmap icon = KWindowSystem::icon(wId, kIconLoadSize, kIconLoadSize, true /* scale */);
-  if (icon.isNull()) {  // fallback.
-    icon = QPixmap(kIconLoadSize, kIconLoadSize);
-    icon.fill();
-  }
 
   return TaskInfo(wId, program, command, name, icon, info.state() == NET::DemandsAttention);
 }
