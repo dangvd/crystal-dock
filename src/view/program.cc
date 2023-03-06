@@ -123,7 +123,7 @@ void Program::mousePressEvent(QMouseEvent* e) {
 QString Program::getLabel() const {
   const unsigned taskCount = tasks_.size();
   return (taskCount > 1) ?
-      label_ + " (" + QString::number(tasks_.size()) + " instances)" :
+      label_ + " (" + QString::number(tasks_.size()) + " windows)" :
       label_;
 }
 
@@ -216,7 +216,7 @@ void Program::createMenu() {
     pinAction_->setChecked(pinned_);    
   }
 
-  menu_.addAction(QIcon::fromTheme("list-add"), QString("&New Instance"), this,
+  menu_.addAction(QIcon::fromTheme("list-add"), QString("&New Window"), this,
                   [this] { launch(); });
   menu_.addSeparator();
   menu_.addAction(QIcon::fromTheme("configure"), QString("Edit &Launchers"), parent_,
