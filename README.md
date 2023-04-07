@@ -6,14 +6,14 @@
 [Documentation](https://github.com/dangvd/crystal-dock/wiki/Documentation)
 [Screenshots](https://github.com/dangvd/crystal-dock/wiki/Screenshots)
 
-Crystal Dock is a cool dock (desktop panel) for Linux desktop, with the focus on attractive user interface, being simple and easy to use, and cross-desktop support.
+Crystal Dock is a cool dock (desktop panel) for Linux desktop, with the focus on attractive user interface, being simple and easy to use, and cross-desktop support. Currently Crystal Dock supports X11 only, but it will support Wayland eventually.
 
 ## Main features
 
 - Smooth parabolic zooming and translucent effect
 - Supported components: Application Menu, Pager, Programs/Task Manager, Clock
 - Multiple docks support
-- Integration with various desktop environments (KDE Plasma, GNOME, XFCE, MATE, Cinnamon, LXQt): special menu entries (e.g. Log Out), specific default launchers, setting wallpapers
+- Integration with various desktop environments (KDE Plasma, GNOME, MATE, Cinnamon, LXQt): special menu entries (e.g. Log Out), specific default launchers, setting wallpapers
 - Support for setting different wallpapers for different virtual desktops
 - Separate configs for separate desktop environments
 
