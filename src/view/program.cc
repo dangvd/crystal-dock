@@ -207,7 +207,8 @@ void Program::launch(const QString& command) {
 
 void Program::createMenu() {
   menu_.addSection(QIcon::fromTheme(iconName_), label_);
-  if (isAppMenuEntry_) {
+
+  if (isAppMenuEntry_ || pinned_) {
     pinAction_ = menu_.addAction(
         QString("Pinned"), this,
         [this] {
@@ -217,8 +218,11 @@ void Program::createMenu() {
     pinAction_->setChecked(pinned_);    
   }
 
-  menu_.addAction(QIcon::fromTheme("list-add"), QString("&New Window"), this,
-                  [this] { launch(); });
+  if (isAppMenuEntry_ || !pinned_) {
+    menu_.addAction(QIcon::fromTheme("list-add"), QString("&New Window"), this,
+                    [this] { launch(); });
+  }
+
   menu_.addSeparator();
   menu_.addAction(QIcon::fromTheme("configure"), QString("Edit &Launchers"), parent_,
                   [this] { parent_->showEditLaunchersDialog(); });
