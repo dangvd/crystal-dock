@@ -206,6 +206,7 @@ void Program::launch(const QString& command) {
 }
 
 void Program::createMenu() {
+  menu_.addSection(QIcon::fromTheme(iconName_), label_);
   if (isAppMenuEntry_) {
     pinAction_ = menu_.addAction(
         QString("Pinned"), this,
