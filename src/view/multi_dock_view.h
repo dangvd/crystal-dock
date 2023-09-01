@@ -39,6 +39,7 @@ class MultiDockView : public QObject {
   explicit MultiDockView(MultiDockModel* model);
   ~MultiDockView() = default;
 
+  bool checkPlatformSupported();
   void show();
 
  public slots:

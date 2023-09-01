@@ -18,6 +18,7 @@
 
 #include "multi_dock_view.h"
 
+#include <QCoreApplication>
 #include <QGuiApplication>
 #include <QMessageBox>
 
@@ -36,6 +37,15 @@ MultiDockView::MultiDockView(MultiDockModel* model)
   connect(KWindowSystem::self(), SIGNAL(currentDesktopChanged(int)),
           this, SLOT(setWallpaper()));
   loadData();
+}
+
+bool MultiDockView::checkPlatformSupported() {
+  if (!KWindowSystem::isPlatformX11()) {
+    QMessageBox::critical(nullptr, "Unsupported Platform",
+                          "Crystal Dock only supports X11 at the moment.");
+    return false;
+  }
+  return true;
 }
 
 void MultiDockView::show() {

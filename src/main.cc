@@ -47,6 +47,11 @@ int main(int argc, char** argv) {
 
   crystaldock::MultiDockModel model(QDir::homePath() + "/.crystal-dock");
   crystaldock::MultiDockView view(&model);
+  
+  if (!view.checkPlatformSupported()) {
+    return -1;
+  }
+  
   view.show();
   return app.exec();
 }
