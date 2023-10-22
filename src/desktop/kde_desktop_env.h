@@ -41,6 +41,7 @@ class KdeDesktopEnv : public DesktopEnv {
 
  private:
   QDBusInterface plasmaShellDBus_;
+  QString qdbusCommand_;
 };
 
 }  // namespace crystaldock

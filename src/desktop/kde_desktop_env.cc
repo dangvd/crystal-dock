@@ -18,6 +18,9 @@
 
 #include "kde_desktop_env.h"
 
+#include <cstdlib>
+#include <iostream>
+
 #include <QDBusMessage>
 
 namespace crystaldock {
@@ -25,7 +28,17 @@ namespace crystaldock {
 KdeDesktopEnv::KdeDesktopEnv()
   : plasmaShellDBus_("org.kde.plasmashell",
                      "/PlasmaShell",
-                     "org.kde.PlasmaShell") {}
+                     "org.kde.PlasmaShell") {
+  const char* commands[3] = {"qdbus", "qdbus6", "qdbus-qt5"};
+  for (const auto& command : commands) {
+    if (system(command) == 0) {
+      qdbusCommand_ = command;
+    }
+  }
+  if (qdbusCommand_.size() == 0) {
+    std::cerr << "Could not find QDBus command. Certain functionalities will not work." << std::endl;
+  }
+}
 
 std::vector<Category> KdeDesktopEnv::getApplicationMenuSystemCategories() const {
   static const std::vector<Category> kSystemCategories = {
@@ -38,7 +51,7 @@ std::vector<Category> KdeDesktopEnv::getApplicationMenuSystemCategories() const 
       {"Log Out",
         "",
         "system-log-out",
-        "qdbus-qt5 org.kde.ksmserver /KSMServer logout -1 0 3",
+        qdbusCommand_ + " org.kde.ksmserver /KSMServer logout -1 0 3",
         ""},
       }
     },
@@ -46,12 +59,12 @@ std::vector<Category> KdeDesktopEnv::getApplicationMenuSystemCategories() const 
       {"Reboot",
         "",
         "system-reboot",
-        "qdbus-qt5 org.kde.ksmserver /KSMServer logout -1 1 3",
+        qdbusCommand_ + " org.kde.ksmserver /KSMServer logout -1 1 3",
         ""},
       {"Shut Down",
         "",
         "system-shutdown",
-        "qdbus-qt5 org.kde.ksmserver /KSMServer logout -1 2 3",
+        qdbusCommand_ + " org.kde.ksmserver /KSMServer logout -1 2 3",
         ""}
       }
     }
