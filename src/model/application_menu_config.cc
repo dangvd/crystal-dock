@@ -19,6 +19,7 @@
 #include "application_menu_config.h"
 
 #include <algorithm>
+#include <iostream>
 
 #include <QApplication>
 #include <QDir>
@@ -153,7 +154,9 @@ bool ApplicationMenuConfig::loadEntry(const QString &file) {
     if (categoryMap_.count(category) > 0 &&
         namesToEntries_.count(desktopFile.name().toStdString()) == 0) {
       const QString command = filterFieldCodes(desktopFile.exec());
-      ApplicationEntry newEntry(desktopFile.name(),
+      const QString appId = QFileInfo(file).completeBaseName();
+      ApplicationEntry newEntry(appId,
+                                desktopFile.name(),
                                 desktopFile.genericName(),
                                 desktopFile.icon(),
                                 command,
@@ -163,7 +166,7 @@ bool ApplicationMenuConfig::loadEntry(const QString &file) {
       entries.insert(next, newEntry);
 
       auto* entry = &(*--next);
-      entries_[newEntry.taskCommand.toStdString()] = entry;
+      entries_[newEntry.appId.toStdString()] = entry;
       commandsToEntries_[newEntry.command.toStdString()] = entry;
       namesToEntries_[desktopFile.name().toStdString()] = entry;
       filesToEntries_[QFileInfo(file).fileName().toStdString()] = entry;
@@ -180,29 +183,8 @@ void ApplicationMenuConfig::reload() {
 }
 
 // This needs to be synced with command_utils.h/areTheSameCommand()
-const ApplicationEntry* ApplicationMenuConfig::findApplication(
-    const std::string& command) const {
-  if (entries_.count(command) > 0) {
-    return entries_.at(command);
-  }
-
-  // Fix for Synaptic.
-  if (command == "synaptic") {
-    const auto command2 = "synaptic-pkexec";
-    if (entries_.count(command2) > 0) {
-      return entries_.at(command2);
-    }
-  }
-
-  // Fix for GNOME Nautilus etc.
-  if (command.find("org.gnome.") != std::string::npos) {
-    const auto command2 = command.substr(10);
-    if (entries_.count(command2) > 0) {
-      return entries_.at(command2);
-    }
-  }
-
-  return nullptr;
+const ApplicationEntry* ApplicationMenuConfig::findApplication(const std::string& appId) const {
+  return entries_.count(appId) > 0 ? entries_.at(appId) : nullptr;
 }
 
 const ApplicationEntry* ApplicationMenuConfig::findApplicationFromFile(

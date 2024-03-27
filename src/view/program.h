@@ -26,7 +26,7 @@
 #include <QPixmap>
 #include <QTimer>
 
-#include <KWindowSystem>
+#include "display/window_system.h"
 
 #include "icon_based_dock_item.h"
 
@@ -35,26 +35,25 @@
 namespace crystaldock {
 
 struct ProgramTask {
-  WId wId;
+  std::string uuid;
   QString name;  // e.g. home -- Dolphin
   bool demandsAttention;
 
-  ProgramTask(WId wId2, QString name2, bool demandsAttention2)
-    : wId(wId2), name(name2), demandsAttention(demandsAttention2) {}
+  ProgramTask(std::string_view uuid2, QString name2, bool demandsAttention2)
+    : uuid(uuid2), name(name2), demandsAttention(demandsAttention2) {}
 };
 
 class Program : public QObject, public IconBasedDockItem {
   Q_OBJECT
 
  public:
-  Program(DockPanel* parent, MultiDockModel* model, const QString& label,
-      Qt::Orientation orientation, const QString& iconName, int minSize,
-      int maxSize, const QString& command, const QString& taskCommand,
-      bool isAppMenuEntry, bool pinned);
+  Program(DockPanel* parent, MultiDockModel* model, const QString& appId,
+          const QString& label, Qt::Orientation orientation, const QString& iconName,
+          int minSize, int maxSize, const QString& command, bool isAppMenuEntry, bool pinned);
 
-  Program(DockPanel* parent, MultiDockModel* model, const QString& label,
-      Qt::Orientation orientation, const QPixmap& icon, int minSize,
-      int maxSize, const QString& taskCommand);
+  Program(DockPanel* parent, MultiDockModel* model, const QString& appId,
+          const QString& label, Qt::Orientation orientation, const QPixmap& icon,
+          int minSize, int maxSize);
 
   void init();
 
@@ -66,13 +65,13 @@ class Program : public QObject, public IconBasedDockItem {
 
   QString getLabel() const override;
 
-  bool addTask(const TaskInfo& task) override;
+  bool addTask(const WindowInfo* task) override;
 
-  bool updateTask(const TaskInfo& task) override;
+  bool updateTask(const WindowInfo* task) override;
 
-  bool removeTask(WId wId) override;
+  bool removeTask(std::string_view uuid) override;
 
-  bool hasTask(WId wId) override;
+  bool hasTask(std::string_view uuid) override;
 
   bool beforeTask(const QString& program) override;
 
@@ -84,7 +83,7 @@ class Program : public QObject, public IconBasedDockItem {
 
   int getActiveTask() const {
     for (int i = 0; i < static_cast<int>(tasks_.size()); ++i) {
-      if (KWindowSystem::activeWindow() == tasks_[i].wId) {
+      if (WindowSystem::activeWindow() == tasks_[i].uuid) {
         return i;
       }
     }
@@ -104,8 +103,8 @@ class Program : public QObject, public IconBasedDockItem {
   void setDemandsAttention(bool value);
   void updateDemandsAttention();
 
+  QString appId_;
   QString command_;
-  QString taskCommand_;
   // Is an entry on the App Menu, exluding system commands such as Lock Screen / Shut Down.
   bool isAppMenuEntry_;
   bool pinned_;

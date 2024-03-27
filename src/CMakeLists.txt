@@ -6,28 +6,24 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # During development, uncomment this.
-# add_compile_options(-Wall -Werror)
+add_compile_options(-Wall -Werror)
 # During development, comment this.
-add_definitions(-DQT_NO_DEPRECATED_WARNINGS)
+# add_definitions(-DQT_NO_DEPRECATED_WARNINGS)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTOUIC ON)
 
-find_package(ECM REQUIRED NO_MODULE)
-set(CMAKE_MODULE_PATH ${ECM_MODULE_PATH})
-
-find_package(Qt5 5.11 REQUIRED COMPONENTS DBus Gui Test Widgets)
-find_package(KF5 5.7 REQUIRED COMPONENTS WindowSystem)
+find_package(Qt6 6.6 REQUIRED COMPONENTS DBus Gui Test Widgets)
+find_package(Wayland 1.22 REQUIRED COMPONENTS Client)
+find_package(LayerShellQt 6.0 REQUIRED)
 
 set(SRCS
-    desktop/cinnamon_desktop_env.cc
     desktop/desktop_env.cc
-    desktop/gnome_desktop_env.cc
     desktop/kde_desktop_env.cc
-    desktop/lxqt_desktop_env.cc
-    desktop/mate_desktop_env.cc
-    desktop/xfce_desktop_env.cc
+    display/window_system.cc
+    display/plasma_virtual_desktop.c
+    display/plasma_window_management.c
     model/application_menu_config.cc
     model/config_helper.cc
     model/launcher_config.cc
@@ -49,17 +45,13 @@ set(SRCS
     view/program.cc
     view/separator.cc
     view/task_manager_settings_dialog.cc
-    view/tooltip.cc
     view/wallpaper_settings_dialog.cc
     utils/desktop_file.cc
-    utils/task_helper.cc
-    desktop/cinnamon_desktop_env.h
     desktop/desktop_env.h
-    desktop/gnome_desktop_env.h
     desktop/kde_desktop_env.h
-    desktop/lxqt_desktop_env.h
-    desktop/mate_desktop_env.h
-    desktop/xfce_desktop_env.h
+    display/window_system.h
+    display/plasma_virtual_desktop.h
+    display/plasma_window_management.h
     model/application_menu_config.h
     model/application_menu_entry.h
     model/config_helper.h
@@ -83,14 +75,12 @@ set(SRCS
     view/program.h
     view/separator.h
     view/task_manager_settings_dialog.h
-    view/tooltip.h
     view/wallpaper_settings_dialog.h
     utils/command_utils.h
     utils/desktop_file.h
     utils/draw_utils.h
     utils/font_utils.h
     utils/math_utils.h
-    utils/task_helper.h
     view/add_panel_dialog.ui
     view/appearance_settings_dialog.ui
     view/application_menu_settings_dialog.ui
@@ -99,16 +89,20 @@ set(SRCS
     view/wallpaper_settings_dialog.ui)
 add_library(crystal-dock_lib ${SRCS})
 
-set(LIBS Qt5::DBus Qt5::Gui Qt5::Widgets KF5::WindowSystem stdc++fs)
+set(LIBS Qt6::DBus Qt6::Gui Qt6::Widgets Wayland::Client LayerShellQt::Interface stdc++fs)
 target_link_libraries(crystal-dock_lib ${LIBS})
 
 add_executable(crystal-dock main.cc)
 target_link_libraries(crystal-dock crystal-dock_lib ${LIBS})
 
+configure_file(crystal-dock.desktop.cmake
+    ${CMAKE_CURRENT_BINARY_DIR}/crystal-dock.desktop @ONLY)
+
 # Install
 
 install(TARGETS crystal-dock RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
-install(FILES crystal-dock.desktop DESTINATION ${CMAKE_INSTALL_PREFIX}/share/applications)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/crystal-dock.desktop
+    DESTINATION ${CMAKE_INSTALL_PREFIX}/share/applications)
 
 # Uninstall
 
@@ -125,9 +119,9 @@ add_custom_target(uninstall COMMAND ${CMAKE_COMMAND}
 enable_testing()
 
 add_executable(application_menu_config_test model/application_menu_config_test.cc)
-target_link_libraries(application_menu_config_test Qt5::Test crystal-dock_lib ${LIBS})
+target_link_libraries(application_menu_config_test Qt6::Test crystal-dock_lib ${LIBS})
 add_test(application_menu_config_test application_menu_config_test)
 
 add_executable(multi_dock_model_test model/multi_dock_model_test.cc)
-target_link_libraries(multi_dock_model_test Qt5::Test crystal-dock_lib ${LIBS})
+target_link_libraries(multi_dock_model_test Qt6::Test crystal-dock_lib ${LIBS})
 add_test(multi_dock_model_test multi_dock_model_test)

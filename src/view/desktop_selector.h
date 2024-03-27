@@ -28,7 +28,7 @@
 #include <QObject>
 #include <QString>
 
-#include <KWindowSystem>
+#include "display/window_system.h"
 
 #include <desktop/desktop_env.h>
 
@@ -41,7 +41,7 @@ class DesktopSelector : public QObject, public IconBasedDockItem {
  public:
   DesktopSelector(DockPanel* parent, MultiDockModel* model,
                   Qt::Orientation orientation, int minSize, int maxSize,
-                  int desktop, int screen);
+                  const VirtualDesktopInfo& desktop, int screen);
 
   virtual ~DesktopSelector() = default;
 
@@ -62,7 +62,7 @@ class DesktopSelector : public QObject, public IconBasedDockItem {
 
  private:
   bool isCurrentDesktop() const {
-    return KWindowSystem::currentDesktop() == desktop_;
+    return WindowSystem::currentDesktop() == desktop_.id;
   }
 
   void createMenu();
@@ -71,8 +71,7 @@ class DesktopSelector : public QObject, public IconBasedDockItem {
 
   DesktopEnv* desktopEnv_;
 
-  // The desktop that this desktop selector manages, 1-based.
-  int desktop_;
+  VirtualDesktopInfo desktop_;
   // The screen that the parent panel is on, 0-based.
   int screen_;
   QSettings* config_;

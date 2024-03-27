@@ -75,7 +75,7 @@ void Clock::mousePressEvent(QMouseEvent *e) {
   } else if (e->button() == Qt::RightButton) {
     // In case other docks have changed the config.
     loadConfig();
-    menu_.popup(e->globalPos());
+    menu_.popup(e->globalPosition().toPoint());
   }
 }
 

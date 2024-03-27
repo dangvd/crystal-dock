@@ -50,10 +50,7 @@ class ApplicationMenuConfig : public QObject {
   const std::vector<Category>& categories() const { return categories_; }
   const std::vector<Category>& systemCategories() const { return systemCategories_; }
 
-  const ApplicationEntry* findApplication(const std::string& command) const;
-  const ApplicationEntry* findApplication(const QString& command) const {
-    return findApplication(command.toStdString());
-  }
+  const ApplicationEntry* findApplication(const std::string& appId) const;
 
   const ApplicationEntry* findApplicationFromFile(const std::string& desktopFile) const;
   const ApplicationEntry* findApplicationFromFile(const QString& desktopFile) const {
@@ -98,7 +95,7 @@ class ApplicationMenuConfig : public QObject {
   // Map from category names to category indices in the above vector,
   // to make loading entries faster.
   std::unordered_map<std::string, int> categoryMap_;
-  // Map from task commands to application entries for fast look-up.
+  // Map from app ids to application entries for fast look-up.
   std::unordered_map<std::string, const ApplicationEntry*> entries_;
   // Map from commands to application entries for fast look-up.
   std::unordered_map<std::string, const ApplicationEntry*> commandsToEntries_;

@@ -28,7 +28,7 @@
 #include <QStringBuilder>
 #include <QUrl>
 
-#include <KWindowSystem>
+#include "display/window_system.h"
 
 #include "dock_panel.h"
 #include "program.h"
@@ -81,7 +81,7 @@ void ApplicationMenu::mousePressEvent(QMouseEvent *e) {
   if (e->button() == Qt::LeftButton) {
     menu_.popup(parent_->applicationMenuPosition(getMenuSize()));
   } else if (e->button() == Qt::RightButton) {
-    contextMenu_.popup(e->globalPos());
+    contextMenu_.popup(e->globalPosition().toPoint());
   }
 }
 

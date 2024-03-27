@@ -43,12 +43,14 @@ KdeDesktopEnv::KdeDesktopEnv()
 std::vector<Category> KdeDesktopEnv::getApplicationMenuSystemCategories() const {
   static const std::vector<Category> kSystemCategories = {
     {"Session", "Session", "system-log-out", {
-      {"Lock Screen",
+      {"lock-screen",
+        "Lock Screen",
         "",
         "system-lock-screen",
         "xdg-screensaver lock",
         ""},
-      {"Log Out",
+      {"log-out",
+        "Log Out",
         "",
         "system-log-out",
         qdbusCommand_ + " org.kde.ksmserver /KSMServer logout -1 0 3",
@@ -56,12 +58,14 @@ std::vector<Category> KdeDesktopEnv::getApplicationMenuSystemCategories() const 
       }
     },
     {"Power", "Power", "system-shutdown", {
-      {"Reboot",
+      {"reboot",
+        "Reboot",
         "",
         "system-reboot",
         qdbusCommand_ + " org.kde.ksmserver /KSMServer logout -1 1 3",
         ""},
-      {"Shut Down",
+      {"shutdown",
+        "Shut Down",
         "",
         "system-shutdown",
         qdbusCommand_ + " org.kde.ksmserver /KSMServer logout -1 2 3",

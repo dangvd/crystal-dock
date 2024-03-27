@@ -43,15 +43,15 @@ int main(int argc, char** argv) {
     }
   }
 
-  QApplication::setWindowIcon(QIcon::fromTheme("user-desktop"));
-
-  crystaldock::MultiDockModel model(QDir::homePath() + "/.crystal-dock");
-  crystaldock::MultiDockView view(&model);
-  
-  if (!view.checkPlatformSupported()) {
+  if (!crystaldock::MultiDockView::checkPlatformSupported(app)) {
     return -1;
   }
-  
+
+  QApplication::setWindowIcon(QIcon::fromTheme("user-desktop"));
+
+  crystaldock::MultiDockModel model(QDir::homePath() + "/.crystal-dock-2");
+  crystaldock::MultiDockView view(&model);
+
   view.show();
   return app.exec();
 }

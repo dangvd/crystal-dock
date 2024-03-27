@@ -18,16 +18,18 @@
 
 #include "launcher_config.h"
 
+#include <QFileInfo>
+
 #include "utils/desktop_file.h"
 
 namespace crystaldock {
 
 LauncherConfig::LauncherConfig(const QString& desktopFile) {
   DesktopFile entry(desktopFile);
+  appId = QFileInfo(desktopFile).completeBaseName();
   name = entry.name();
   icon = entry.icon();
   command = filterFieldCodes(entry.exec());
-  taskCommand = getTaskCommand(command);
 }
 
 void LauncherConfig::saveToFile(const QString &filePath) const {
@@ -36,7 +38,7 @@ void LauncherConfig::saveToFile(const QString &filePath) const {
   desktopFile.setIcon(icon);
   desktopFile.setExec(command);
   desktopFile.setType("Application");
-  desktopFile.write(filePath);
+  desktopFile.write(filePath + "/" + appId + ".desktop");
 }
 
 }  // namespace crystaldock

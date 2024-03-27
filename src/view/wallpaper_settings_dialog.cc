@@ -27,8 +27,9 @@
 #include <QGuiApplication>
 #include <QPixmap>
 #include <QScreen>
+#include <QVariant>
 
-#include <KWindowSystem>
+#include "display/window_system.h"
 
 namespace crystaldock {
 
@@ -86,9 +87,9 @@ void WallpaperSettingsDialog::setFor(int desktop, int screen) {
 
 void WallpaperSettingsDialog::populateDesktopList() {
   ui->desktop->clear();
-  for (int desktop = 1; desktop <= KWindowSystem::numberOfDesktops();
-       ++desktop) {
-    ui->desktop->addItem(QString::number(desktop));
+  for (const auto& desktop : WindowSystem::desktops()) {
+    ui->desktop->addItem(QString::number(desktop.number),
+                         QVariant(QString::fromStdString(desktop.id)));
   }
 }
 
@@ -142,8 +143,8 @@ int WallpaperSettingsDialog::screen() const {
   return ui->screen->currentIndex();
 }
 
-int WallpaperSettingsDialog::desktop() const {
-  return ui->desktop->currentIndex() + 1;
+std::string_view WallpaperSettingsDialog::desktop() const {
+  return ui->desktop->currentData().toString().toStdString();
 }
 
 void WallpaperSettingsDialog::loadData() {
@@ -163,7 +164,7 @@ void WallpaperSettingsDialog::saveData() {
       }
     }
     model_->saveAppearanceConfig();
-    if (desktop() == KWindowSystem::currentDesktop()) {
+    if (desktop() == WindowSystem::currentDesktop()) {
       if (desktopEnv_->supportSeparateSreenWallpapers()) {
         model_->notifyWallpaperChanged(screen());
       } else {

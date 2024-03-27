@@ -24,8 +24,8 @@
 #include <QString>
 #include <Qt>
 
+#include <display/window_system.h>
 #include <model/multi_dock_model.h>
-#include <utils/task_helper.h>
 
 namespace crystaldock {
 
@@ -61,16 +61,16 @@ class DockItem {
   virtual void loadConfig() {}
 
   // Handles adding the task, e.g. for a Program dock item.
-  virtual bool addTask(const TaskInfo& task) { return false; }
+  virtual bool addTask(const WindowInfo* task) { return false; }
 
   // Handles updating the task, e.g. for a Program dock item.
-  virtual bool updateTask(const TaskInfo& task) { return false; }
+  virtual bool updateTask(const WindowInfo* task) { return false; }
 
   // Handles removing the task, e.g. for a Program dock item.
-  virtual bool removeTask(WId wId) { return false; }
+  virtual bool removeTask(std::string_view uuid) { return false; }
 
   // Does this (Program) dock item already have this task?
-  virtual bool hasTask(WId wId) { return false; }
+  virtual bool hasTask(std::string_view uuid) { return false; }
 
   // Will this item be ordered before the Program item for this task?
   virtual bool beforeTask(const QString& program) { return true; }

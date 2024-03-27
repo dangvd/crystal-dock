@@ -80,6 +80,10 @@ const QPixmap& IconBasedDockItem::getIcon(int size) const {
 
 void IconBasedDockItem::generateIcons(const QPixmap& icon) {
   QImage image = icon.toImage(); // Convert to QImage for fast scaling.
+  if (image.isNull()) {
+    return;
+  }
+
   for (int size = minSize_; size <= maxSize_; ++size) {
     icons_[size - minSize_] = QPixmap::fromImage(
         (orientation_ == Qt::Horizontal)

@@ -25,7 +25,7 @@
 #include <QPainter>
 #include <QPixmap>
 
-#include <KWindowSystem>
+#include "display/window_system.h"
 
 #include "dock_panel.h"
 #include <utils/draw_utils.h>
@@ -35,9 +35,8 @@ namespace crystaldock {
 
 DesktopSelector::DesktopSelector(DockPanel* parent, MultiDockModel* model,
                                  Qt::Orientation orientation, int minSize,
-                                 int maxSize, int desktop, int screen)
-    : IconBasedDockItem(parent, model,
-          QString("Desktop ") + QString::number(desktop),
+                                 int maxSize, const VirtualDesktopInfo& desktop, int screen)
+    : IconBasedDockItem(parent, model, QString::fromStdString(desktop.name),
           orientation, "" /* no icon yet */, minSize, maxSize),
       desktopEnv_(DesktopEnv::getDesktopEnv()),
       desktop_(desktop),
@@ -65,7 +64,7 @@ void DesktopSelector::draw(QPainter* painter) const {
                                     0.5 /* scale factor */));
     painter->setRenderHint(QPainter::TextAntialiasing);
     drawBorderedText(left_, top_, getWidth(), getHeight(), Qt::AlignCenter,
-                     QString::number(desktop_), 1 /* borderWidth */, Qt::black,
+                     QString::number(desktop_.number), 1 /* borderWidth */, Qt::black,
                      Qt::white, painter);
   }
 
@@ -79,19 +78,19 @@ void DesktopSelector::draw(QPainter* painter) const {
 void DesktopSelector::mousePressEvent(QMouseEvent* e) {
   if (e->button() == Qt::LeftButton) {
     if (isCurrentDesktop()) {
-      KWindowSystem::setShowingDesktop(!KWindowSystem::showingDesktop());
+      WindowSystem::setShowingDesktop(!WindowSystem::showingDesktop());
     } else {
-      KWindowSystem::setCurrentDesktop(desktop_);
+      WindowSystem::setCurrentDesktop(desktop_.id);
     }
   } else if (e->button() == Qt::RightButton) {
     // In case other DesktopSelectors have changed the config.
     showDesktopNumberAction_->setChecked(model_->showDesktopNumber());
-    menu_.popup(e->globalPos());
+    menu_.popup(e->globalPosition().toPoint());
   }
 }
 
 void DesktopSelector::loadConfig() {
-  const auto& wallpaper = model_->wallpaper(desktop_, screen_);
+  const auto& wallpaper = model_->wallpaper(desktop_.id, screen_);
   if (!wallpaper.isEmpty() && QFile::exists(wallpaper)) {
     setIconScaled(QPixmap(wallpaper));
     hasCustomWallpaper_ = true;
@@ -118,10 +117,10 @@ void DesktopSelector::createMenu() {
   if (desktopEnv_->canSetWallpaper()) {
     menu_.addAction(
         QIcon::fromTheme("preferences-desktop-wallpaper"),
-        QString("Set Wallpaper for Desktop ") + QString::number(desktop_),
+        QString("Set Wallpaper for Desktop ") + QString::number(desktop_.number),
         parent_,
         [this] {
-          parent_->showWallpaperSettingsDialog(desktop_);
+          parent_->showWallpaperSettingsDialog(desktop_.number);
         });
   }
   showDesktopNumberAction_ = menu_.addAction(

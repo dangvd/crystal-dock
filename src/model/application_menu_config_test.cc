@@ -72,7 +72,7 @@ void ApplicationMenuConfigTest::loadEntries_singleDir() {
   QTemporaryDir entryDir;
   QVERIFY(entryDir.isValid());
   writeEntry(entryDir.path() + "/1.desktop",
-             {"Chrome", "Web Browser", "chrome", "chrome", ""},
+             {"chrome", "Chrome", "Web Browser", "chrome", "chrome", ""},
              "Internet");
 
   ApplicationMenuConfig ApplicationMenuConfig({ entryDir.path() });
@@ -90,13 +90,14 @@ void ApplicationMenuConfigTest::loadEntries_multipleDirs() {
   QTemporaryDir entryDir1;
   QVERIFY(entryDir1.isValid());
   writeEntry(entryDir1.path() + "/1.desktop",
-             {"Chrome", "Web Browser", "chrome", "chrome", ""},
+             {"chrome", "Chrome", "Web Browser", "chrome", "chrome", ""},
              "Internet");
   writeEntry(entryDir1.path() + "/2.desktop",
-             {"Mail", "Email Client", "mail", "mail", ""},
+             {"mail", "Mail", "Email Client", "mail", "mail", ""},
              "Internet;Office");
   writeEntry(entryDir1.path() + "/3.desktop",
-             {"ADesktop Settings", "", "adesktop-settings", "adesktop-settings", ""},
+             {"adesktop-settings", "ADesktop Settings", "", "adesktop-settings",
+              "adesktop-settings", ""},
              "Settings",
              {{"OnlyShowIn", "ADesktop"}});
 
@@ -107,19 +108,20 @@ void ApplicationMenuConfigTest::loadEntries_multipleDirs() {
   QTemporaryDir entryDir3;
   QVERIFY(entryDir3.isValid());
   writeEntry(entryDir3.path() + "/1.desktop",
-             {"System Settings", "", "systemsettings", "systemsettings", ""},
+             {"systemsettings", "System Settings", "", "systemsettings", "systemsettings", ""},
              "Settings",
              {{"OnlyShowIn", DesktopEnv::getDesktopEnvName().toStdString()}});
   writeEntry(entryDir3.path() + "/2.desktop",
-             {"ADesktop Settings", "", "adesktop-settings", "adesktop-settings", ""},
+             {"adesktop-settings", "ADesktop Settings", "", "adesktop-settings",
+              "adesktop-settings", ""},
              "Settings",
              {{"NotShowIn", DesktopEnv::getDesktopEnvName().toStdString()}});
   writeEntry(entryDir3.path() + "/3.desktop",
-             {"Chrome - HTML", "Web Browser", "chrome", "chrome", ""},
+             {"chrome", "Chrome - HTML", "Web Browser", "chrome", "chrome", ""},
              "Internet",
              {{"NoDisplay", "true"}});
   writeEntry(entryDir3.path() + "/4.desktop",
-             {"Chrome - Old", "Web Browser", "chrome", "chrome", ""},
+             {"chrome", "Chrome - Old", "Web Browser", "chrome", "chrome", ""},
              "Internet",
              {{"Hidden", "true"}});
 

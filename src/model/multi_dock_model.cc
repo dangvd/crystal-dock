@@ -20,9 +20,10 @@
 
 #include <iostream>
 
+#include <QFileInfo>
 #include <QProcess>
 
-#include <KWindowSystem>
+#include "display/window_system.h"
 
 #include <utils/command_utils.h>
 
@@ -80,7 +81,8 @@ void MultiDockModel::loadDocks() {
         configPath,
         std::make_unique<QSettings>(configPath, QSettings::IniFormat),
         launchersPath,
-        loadDockLaunchers(launchersPath));
+        std::vector<LauncherConfig>());
+    std::get<3>(dockConfigs_.at(dockId)) = loadDockLaunchers(dockId, launchersPath);
     ++dockId;
   }
   nextDockId_ = dockId;
@@ -132,7 +134,7 @@ int MultiDockModel::addDock(const std::tuple<QString, QString>& configs,
       configPath,
       std::make_unique<QSettings>(configPath, QSettings::IniFormat),
       launchersPath,
-      loadDockLaunchers(launchersPath));
+      loadDockLaunchers(dockId, launchersPath));
   setPanelPosition(dockId, position);
   setScreen(dockId, screen);
 
@@ -183,30 +185,30 @@ void MultiDockModel::syncDockLaunchersConfig(int dockId) {
     QDir::root().mkpath(launchersPath);
   }
 
-  int launcherId = 1;
+  QStringList appIds;
   for (const auto& item : dockLauncherConfigs(dockId)) {
-    item.saveToFile(QString("%1/%2 - %3.desktop")
-        .arg(launchersPath)
-        .arg(launcherId, 2, 10, QChar('0'))
-        .arg(item.name));
-    ++launcherId;
+    item.saveToFile(launchersPath);
+    appIds += item.appId;
   }
+  setLaunchersOrder(dockId, appIds);
 }
 
 std::vector<LauncherConfig> MultiDockModel::loadDockLaunchers(
-    const QString& dockLaunchersPath) {
+    int dockId, const QString& dockLaunchersPath) {
   QDir launchersDir(dockLaunchersPath);
-  QStringList files = launchersDir.entryList({"*.desktop"}, QDir::Files,
-                                             QDir::Name);
+  QStringList files = launchersDir.entryList({"*.desktop"}, QDir::Files, QDir::Name);
   if (files.empty()) {
     return createDefaultLaunchers();
   }
 
-  std::vector<LauncherConfig> launchers;
-  launchers.reserve(files.size());
-  for (int i = 0; i < files.size(); ++i) {
-    const QString& desktopFile = dockLaunchersPath + "/" + files.at(i);
-    launchers.push_back(LauncherConfig(desktopFile));
+  QStringList appIds = launchersOrder(dockId);
+  std::vector<LauncherConfig> launchers;    
+  launchers.reserve(appIds.size());
+  for (const auto& appId : appIds) {
+    const QString& desktopFile = dockLaunchersPath + "/" + appId + ".desktop";
+    if (QFileInfo(desktopFile).exists()) {
+      launchers.push_back(LauncherConfig(desktopFile));
+    }
   }
 
   return launchers;
@@ -218,12 +220,14 @@ std::vector<LauncherConfig> MultiDockModel::createDefaultLaunchers() {
   auto* defaultWebBrowser = getDefaultBrowser();
   if (defaultWebBrowser) {
     launchers.push_back(
-        LauncherConfig(defaultWebBrowser->name, defaultWebBrowser->icon, defaultWebBrowser->command));
+        LauncherConfig(defaultWebBrowser->appId, defaultWebBrowser->name,
+                       defaultWebBrowser->icon, defaultWebBrowser->command));
   } else {
     const auto* entry = applicationMenuConfig_.findApplicationFromFile(
           QString("firefox.desktop"));
     if (entry != nullptr) {
-      launchers.push_back(LauncherConfig(entry->name, entry->icon, entry->command));
+      launchers.push_back(LauncherConfig(entry->appId, entry->name, entry->icon,
+                                         entry->command));
     }
   }
 
@@ -232,14 +236,15 @@ std::vector<LauncherConfig> MultiDockModel::createDefaultLaunchers() {
   for (const auto& file : desktopEnvItems) {
     const auto* entry = applicationMenuConfig_.findApplicationFromFile(file);
     if (entry != nullptr) {
-      launchers.push_back(LauncherConfig(entry->name, entry->icon, entry->command));
+      launchers.push_back(LauncherConfig(entry->appId, entry->name, entry->icon,
+                                         entry->command));
     }
   }
 
   launchers.push_back(
-      LauncherConfig("Separator", "", kSeparatorCommand));
+      LauncherConfig("separator", "Separator", "", kSeparatorCommand));
   launchers.push_back(
-      LauncherConfig("Lock Screen", "system-lock-screen", kLockScreenCommand));
+      LauncherConfig("lock-screen", "Lock Screen", "system-lock-screen", kLockScreenCommand));
 
   return launchers;
 }

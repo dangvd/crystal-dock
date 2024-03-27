@@ -43,9 +43,9 @@ class ConfigHelper  {
     return configDir_.filePath(kAppearanceConfig);
   }
 
-  static QString wallpaperConfigKey(int desktop, int screen) {
+  static QString wallpaperConfigKey(std::string_view desktopId, int screen) {
     // Screen is 0-based.
-    return QString("wallpaper") + QString::number(desktop) +
+    return QString("wallpaper") + QString::fromStdString(std::string(desktopId)) +
         ((screen == 0) ? "" : (QString("_") + QString::number(screen + 1)));
   }
 

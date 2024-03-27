@@ -22,6 +22,7 @@
 #include <memory>
 #include <unordered_map>
 
+#include <QApplication>
 #include <QObject>
 
 #include "dock_panel.h"
@@ -39,7 +40,8 @@ class MultiDockView : public QObject {
   explicit MultiDockView(MultiDockModel* model);
   ~MultiDockView() = default;
 
-  bool checkPlatformSupported();
+  static bool checkPlatformSupported(const QApplication& app);
+
   void show();
 
  public slots:

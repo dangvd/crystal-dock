@@ -34,7 +34,7 @@
 #include <QTimer>
 #include <QWidget>
 
-#include <KWindowSystem>
+#include "display/window_system.h"
 
 #include "add_panel_dialog.h"
 #include "application_menu_settings_dialog.h"
@@ -42,9 +42,7 @@
 #include "dock_item.h"
 #include "edit_launchers_dialog.h"
 #include "task_manager_settings_dialog.h"
-#include "tooltip.h"
 #include "wallpaper_settings_dialog.h"
-#include "utils/task_helper.h"
 
 namespace crystaldock {
 
@@ -157,16 +155,16 @@ class DockPanel : public QWidget {
   void cloneDock();
   void removeDock();
 
-  void onWindowAdded(WId wId);
-  void onWindowRemoved(WId wId);
-  void onWindowChanged(WId wId, NET::Properties properties,
-                       NET::Properties2 properties2);
+  void onWindowAdded(const WindowInfo* info);
+  void onWindowRemoved(std::string uuid);
+  //void onWindowChanged(std::string_view uuid, NET::Properties properties,
+  //                     NET::Properties2 properties2);
 
  protected:
   virtual void paintEvent(QPaintEvent* e) override;
   virtual void mouseMoveEvent(QMouseEvent* e) override;
   virtual void mousePressEvent(QMouseEvent* e) override;
-  virtual void enterEvent(QEvent* e) override;
+  virtual void enterEvent(QEnterEvent* e) override;
   virtual void leaveEvent(QEvent* e) override;
 
  private:
@@ -196,7 +194,7 @@ class DockPanel : public QWidget {
   }
 
   int pagerItemCount() const {
-    return showPager_ ? KWindowSystem::numberOfDesktops() : 0;
+    return showPager_ ? WindowSystem::numberOfDesktops() : 0;
   }
 
   int clockItemCount() const {
@@ -218,10 +216,9 @@ class DockPanel : public QWidget {
   void initPager();
   void initTasks();
   void reloadTasks();
-  void addTask(const TaskInfo& task);
-  void addTask(WId wId) { addTask(taskHelper_.getTaskInfo(wId)); }
-  void removeTask(WId wId);
-  void updateTask(WId wId);
+  void addTask(const WindowInfo* task);
+  void removeTask(std::string_view uuid);
+  void updateTask(const WindowInfo* task);
   void initClock();
 
   void initLayoutVars();
@@ -274,6 +271,12 @@ class DockPanel : public QWidget {
 
   // Non-config variables.
 
+  int x_;
+  int y_;
+  int width_;
+  int height_;
+
+  int tooltipSize_;  // height if horizontal, width if vertical.
   int itemSpacing_;
   int minX_;  // X-coordinate when minimized.
   int minY_;  // Y-coordinate when minimized.
@@ -293,6 +296,7 @@ class DockPanel : public QWidget {
 
   // The list of all dock items.
   std::vector<std::unique_ptr<DockItem>> items_;
+  int activeItem_ = -1;
 
   // Context (right-click) menu.
   QMenu menu_;
@@ -319,11 +323,6 @@ class DockPanel : public QWidget {
   ApplicationMenuSettingsDialog applicationMenuSettingsDialog_;
   WallpaperSettingsDialog wallpaperSettingsDialog_;
   TaskManagerSettingsDialog taskManagerSettingsDialog_;
-
-  TaskHelper taskHelper_;
-
-  // The tooltip object to show tooltip for the active item.
-  Tooltip tooltip_;
 
   bool isMinimized_;
   bool isResizing_;

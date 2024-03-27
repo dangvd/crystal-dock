@@ -29,6 +29,9 @@ namespace crystaldock {
 
 // An application entry in the application menu.
 struct ApplicationEntry {
+  // App ID e.g. org.kde.dolphin
+  QString appId;
+
   // Name e.g. 'Chrome'.
   QString name;
 
@@ -41,17 +44,14 @@ struct ApplicationEntry {
   // Command to execute e.g. '/usr/bin/google-chrome-stable'.
   QString command;
 
-  // The task command, to compare with KWindowInfo.windowClassName, e.g. 'google-chrome'
-  QString taskCommand;
-
   // The path to the desktop file e.g. '/usr/share/applications/google-chrome.desktop'
   QString desktopFile;
 
-  ApplicationEntry(const QString& name2, const QString& genericName2,
+  ApplicationEntry(const QString& appId2, const QString& name2, const QString& genericName2,
                    const QString& icon2, const QString& command2,
                    const QString& desktopFile2)
-      : name(name2), genericName(genericName2), icon(icon2), command(command2),
-        taskCommand(getTaskCommand(command)), desktopFile(desktopFile2) {}
+      : appId(appId2), name(name2), genericName(genericName2), icon(icon2),
+        command(command2), desktopFile(desktopFile2) {}
 };
 
 inline bool operator<(const ApplicationEntry &e1, const ApplicationEntry &e2) {

@@ -51,7 +51,6 @@ EditLaunchersDialog::EditLaunchersDialog(QWidget* parent, MultiDockModel* model,
   setWindowFlag(Qt::Tool);
 
   qRegisterMetaType<LauncherInfo>();
-  qRegisterMetaTypeStreamOperators<LauncherInfo>("LauncherInfo");
 
   connect(ui->systemCommands, SIGNAL(currentIndexChanged(int)), this, SLOT(addSystemCommand(int)));
   connect(ui->addSeparator, SIGNAL(clicked()), this, SLOT(addSeparator()));
@@ -144,8 +143,8 @@ void EditLaunchersDialog::saveData() {
   for (int i = 0; i < launcherCount; ++i) {
     auto* listItem = ui->launchers->item(i);
     auto info = listItem->data(Qt::UserRole).value<LauncherInfo>();
-    launcherConfigs.push_back(LauncherConfig(
-                                listItem->text(), info.iconName, info.command));
+    // TODO.
+    launcherConfigs.push_back(LauncherConfig("", listItem->text(), info.iconName, info.command));
   }
   model_->setDockLauncherConfigs(dockId_, launcherConfigs);
   model_->saveDockLauncherConfigs(dockId_);

@@ -84,6 +84,16 @@ inline void fillRoundedRect(int x, int y, int width, int height, int radius, boo
   painter->setRenderHint(QPainter::Antialiasing, false);
 }
 
+inline void fillCircle(int x, int y, int width, int height, QColor bgColor, QPainter* painter) {
+  QColor fillColor = bgColor;
+  fillColor.setAlphaF(1.0);
+  painter->setRenderHint(QPainter::Antialiasing);
+  QPainterPath border;
+  border.addEllipse(x + 0.5, y + 0.5, width, height);
+  painter->fillPath(border, QBrush(fillColor));
+  painter->setRenderHint(QPainter::Antialiasing, false);
+}
+
 }  // namespace crystaldock
 
 #endif  // CRYSTALDOCK_DRAW_UTILS_H_

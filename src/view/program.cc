@@ -24,7 +24,7 @@
 #include <QSettings>
 #include <QTimer>
 
-#include <KWindowSystem>
+#include "display/window_system.h"
 
 #include "dock_panel.h"
 #include <utils/command_utils.h>
@@ -32,13 +32,13 @@
 
 namespace crystaldock {
 
-Program::Program(DockPanel* parent, MultiDockModel* model, const QString& label,
-    Qt::Orientation orientation, const QString& iconName, int minSize,
-    int maxSize, const QString& command, const QString& taskCommand,
-    bool isAppMenuEntry, bool pinned)
+Program::Program(DockPanel* parent, MultiDockModel* model, const QString& appId,
+                 const QString& label, Qt::Orientation orientation, const QString& iconName,
+                 int minSize, int maxSize, const QString& command, bool isAppMenuEntry,
+                 bool pinned)
     : IconBasedDockItem(parent, model, label, orientation, iconName, minSize, maxSize),
+      appId_(appId),
       command_(command),
-      taskCommand_(taskCommand),
       isAppMenuEntry_(isAppMenuEntry),
       pinned_(pinned),
       demandsAttention_(false),
@@ -46,12 +46,12 @@ Program::Program(DockPanel* parent, MultiDockModel* model, const QString& label,
   init();
 }
 
-Program::Program(DockPanel* parent, MultiDockModel* model, const QString& label,
-    Qt::Orientation orientation, const QPixmap& icon, int minSize,
-    int maxSize, const QString& taskCommand)
+Program::Program(DockPanel* parent, MultiDockModel* model, const QString& appId,
+                 const QString& label, Qt::Orientation orientation, const QPixmap& icon,
+                 int minSize, int maxSize)
     : IconBasedDockItem(parent, model, label, orientation, icon, minSize, maxSize),
-      command_(taskCommand),
-      taskCommand_(taskCommand),
+      appId_(appId),
+      command_(""),
       isAppMenuEntry_(false),
       pinned_(false),
       demandsAttention_(false),
@@ -74,8 +74,16 @@ void Program::draw(QPainter *painter) const {
     drawHighlightedIcon(model_->backgroundColor(), left_, top_, getWidth(), getHeight(),
                         minSize_ / 7, size_ / 4, painter);
   } else if (!tasks_.empty()) {
-    drawHighlightedIcon(model_->backgroundColor(), left_, top_, getWidth(), getHeight(),
-                        minSize_ / 7, size_ / 4, painter, 0.25);
+    int r = 4;
+    int cy = top_ + getHeight() + std::round(minSize_ / 9.0);
+    fillCircle(left_ + getWidth() / 2 - r, cy - r, 2 * r, 2 * r,
+               model_->backgroundColor().darker(30), painter);
+    r = 3;
+    fillCircle(left_ + getWidth() / 2 - r, cy - r, 2 * r, 2 * r,
+               model_->backgroundColor().lighter(300), painter);
+    r = 2;
+    fillCircle(left_ + getWidth() / 2 - r, cy - r, 2 * r, 2 * r,
+               model_->backgroundColor().lighter(500), painter);
   }
   IconBasedDockItem::draw(painter);
 }
@@ -83,7 +91,7 @@ void Program::draw(QPainter *painter) const {
 void Program::mousePressEvent(QMouseEvent* e) {
   if (e->button() == Qt::LeftButton) { // Run the application.
     if (command_ == kShowDesktopCommand) {
-      KWindowSystem::setShowingDesktop(!KWindowSystem::showingDesktop());
+      WindowSystem::setShowingDesktop(!WindowSystem::showingDesktop());
     } else if (isCommandLockScreen(command_)) {
       parent_->leaveEvent(nullptr);
       QTimer::singleShot(500, []() {
@@ -96,27 +104,25 @@ void Program::mousePressEvent(QMouseEvent* e) {
         const auto mod = QGuiApplication::keyboardModifiers();
         if (mod & Qt::ShiftModifier) {
           launch();
+        } else if (tasks_.size() == 1) {
+          WindowSystem::activateOrMinimizeWindow(tasks_[0].uuid);
         } else {
           const auto activeTask = getActiveTask();
           if (activeTask >= 0) {
-            if (tasks_.size() == 1) {
-              KWindowSystem::minimizeWindow(tasks_[0].wId);
-            } else {
-              // Cycles through tasks.
-              auto nextTask = (activeTask < static_cast<int>(tasks_.size() - 1)) ?
-                    (activeTask + 1) : 0;
-              KWindowSystem::forceActiveWindow(tasks_[nextTask].wId);
-            }
+            // Cycles through tasks.
+            auto nextTask = (activeTask < static_cast<int>(tasks_.size() - 1)) ?
+                (activeTask + 1) : 0;
+            WindowSystem::activateWindow(tasks_[nextTask].uuid);
           } else {
             for (unsigned i = 0; i < tasks_.size(); ++i) {
-              KWindowSystem::forceActiveWindow(tasks_[i].wId);
+              WindowSystem::activateWindow(tasks_[i].uuid);
             }
           }
         }
       }
     }
   } else if (e->button() == Qt::RightButton) {
-    menu_.popup(e->globalPos());
+    menu_.popup(e->globalPosition().toPoint());
   }
 }
 
@@ -127,10 +133,11 @@ QString Program::getLabel() const {
       label_;
 }
 
-bool Program::addTask(const TaskInfo& task) {
-  if (areTheSameCommand(taskCommand_, task.command)) {
-    tasks_.push_back(ProgramTask(task.wId, task.name, task.demandsAttention));
-    if (task.demandsAttention) {
+bool Program::addTask(const WindowInfo* task) {
+  if (task->appId == appId_.toStdString()) {
+    tasks_.push_back(ProgramTask(task->uuid, QString::fromStdString(task->title),
+                                 task->demandsAttention));
+    if (task->demandsAttention) {
       setDemandsAttention(true);
     }
     return true;
@@ -138,14 +145,14 @@ bool Program::addTask(const TaskInfo& task) {
   return false;
 }
 
-bool Program::updateTask(const TaskInfo& task) {
-  if (!areTheSameCommand(taskCommand_, task.command)) {
+bool Program::updateTask(const WindowInfo* task) {
+  if (task->appId != appId_.toStdString()) {
     return false;
   }
 
   for (auto& existingTask : tasks_) {
-    if (existingTask.wId == task.wId) {
-      existingTask.demandsAttention = task.demandsAttention;
+    if (existingTask.uuid == task->uuid) {
+      existingTask.demandsAttention = task->demandsAttention;
       updateDemandsAttention();
       return true;
     }
@@ -154,9 +161,9 @@ bool Program::updateTask(const TaskInfo& task) {
   return false;
 }
 
-bool Program::removeTask(WId wId) {
+bool Program::removeTask(std::string_view uuid) {
   for (int i = 0; i < static_cast<int>(tasks_.size()); ++i) {
-    if (tasks_[i].wId == wId) {
+    if (tasks_[i].uuid == uuid) {
       tasks_.erase(tasks_.begin() + i);
       return true;
     }
@@ -164,9 +171,9 @@ bool Program::removeTask(WId wId) {
   return false;
 }
 
-bool Program::hasTask(WId wId) {
+bool Program::hasTask(std::string_view uuid) {
   for (const auto& task : tasks_) {
-    if (task.wId == wId) {
+    if (task.uuid == uuid) {
       return true;
     }
   }
@@ -186,7 +193,7 @@ void Program::launch() {
 void Program::pinUnpin() {
   pinned_ = !pinned_;
   if (pinned_) {
-    model_->addLauncher(parent_->dockId(), LauncherConfig(label_, iconName_, command_));
+    model_->addLauncher(parent_->dockId(), LauncherConfig(appId_, label_, iconName_, command_));
   } else {  // !pinned
     model_->removeLauncher(parent_->dockId(), command_);
     if (shouldBeRemoved()) {

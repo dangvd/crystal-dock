@@ -23,12 +23,7 @@
 #include <QtGlobal>
 #include <QStringList>
 
-#include "cinnamon_desktop_env.h"
-#include "gnome_desktop_env.h"
 #include "kde_desktop_env.h"
-#include "lxqt_desktop_env.h"
-#include "mate_desktop_env.h"
-#include "xfce_desktop_env.h"
 #include <model/application_menu_config.h>
 #include <model/multi_dock_model.h>
 
@@ -39,21 +34,6 @@ DesktopEnv* DesktopEnv::getDesktopEnv() {
   if (currentDesktopEnv == "KDE") {
     static std::unique_ptr<KdeDesktopEnv> kde(new KdeDesktopEnv);
     return kde.get();
-  } else if (currentDesktopEnv == "GNOME") {
-    static std::unique_ptr<GnomeDesktopEnv> gnome(new GnomeDesktopEnv);
-    return gnome.get();
-  } else if (currentDesktopEnv == "XFCE") {
-      static std::unique_ptr<XfceDesktopEnv> xfce(new XfceDesktopEnv);
-      return xfce.get();
-  } else if (currentDesktopEnv == "MATE") {
-      static std::unique_ptr<MateDesktopEnv> mate(new MateDesktopEnv);
-      return mate.get();
-  } else if (currentDesktopEnv == "Cinnamon" || currentDesktopEnv == "X-Cinnamon") {
-    static std::unique_ptr<CinnamonDesktopEnv> cinnamon(new CinnamonDesktopEnv);
-    return cinnamon.get();
-  } else if (currentDesktopEnv == "LXQt") {
-    static std::unique_ptr<LxqtDesktopEnv> lxqt(new LxqtDesktopEnv);
-    return lxqt.get();
   }
 
   static std::unique_ptr<DesktopEnv> basic(new DesktopEnv);

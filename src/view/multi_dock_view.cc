@@ -22,7 +22,7 @@
 #include <QGuiApplication>
 #include <QMessageBox>
 
-#include <KWindowSystem>
+#include "display/window_system.h"
 
 #include "add_panel_dialog.h"
 
@@ -34,18 +34,26 @@ MultiDockView::MultiDockView(MultiDockModel* model)
   connect(model_, SIGNAL(dockAdded(int)), this, SLOT(onDockAdded(int)));
   connect(model_, SIGNAL(wallpaperChanged(int)), this,
           SLOT(setWallpaper(int)));
-  connect(KWindowSystem::self(), SIGNAL(currentDesktopChanged(int)),
+  connect(WindowSystem::self(), SIGNAL(currentDesktopChanged(int)),
           this, SLOT(setWallpaper()));
   loadData();
 }
 
-bool MultiDockView::checkPlatformSupported() {
-  if (!KWindowSystem::isPlatformX11()) {
+/* static */ bool MultiDockView::checkPlatformSupported(const QApplication& app) {
+  if (QGuiApplication::platformName().toLower() != "wayland") {
     QMessageBox::critical(nullptr, "Unsupported Platform",
-                          "Crystal Dock only supports X11 at the moment.");
+                          "Crystal Dock 2.x only supports Wayland.\n"
+                          "For X11, please use Crystal Dock 1.x");
     return false;
   }
-  return true;
+
+  QNativeInterface::QWaylandApplication* waylandApp =
+      app.nativeInterface<QNativeInterface::QWaylandApplication>();
+  if (!waylandApp) {
+    return false;
+  }
+
+  return WindowSystem::init(waylandApp->display());
 }
 
 void MultiDockView::show() {
@@ -85,7 +93,7 @@ bool MultiDockView::setWallpaper(int screen) {
     return false;
   }
 
-  QString wallpaper = model_->wallpaper(KWindowSystem::currentDesktop(), screen);
+  QString wallpaper = model_->wallpaper(WindowSystem::currentDesktop(), screen);
   if (wallpaper.isEmpty()) {
     return false;  // nothing to do here.
   }

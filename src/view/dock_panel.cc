@@ -21,6 +21,7 @@
 #include <algorithm>
 #include <cmath>
 #include <cstdlib>
+#include <iostream>
 #include <utility>
 
 #include <QColor>
@@ -35,9 +36,6 @@
 #include <QSize>
 #include <QStringList>
 #include <QVariant>
-#include <Qt>
-
-#include <netwm_def.h>
 
 #include "add_panel_dialog.h"
 #include "application_menu.h"
@@ -46,11 +44,26 @@
 #include "multi_dock_view.h"
 #include "program.h"
 #include "separator.h"
+#include <display/window_system.h>
 #include <utils/command_utils.h>
 #include <utils/draw_utils.h>
-#include <utils/task_helper.h>
 
 namespace crystaldock {
+
+namespace {
+  bool isValidTask(const WindowInfo* task, const MultiDockModel* model) {
+    if (task->skipTaskbar || std::string(task->appId) == "crystal-dock") {
+      return false;
+    }
+
+    if (task->onAllDesktops || !model->currentDesktopTasksOnly()
+        || task->desktop == WindowSystem::currentDesktop()) {
+      return true;
+    }
+
+    return false;
+  }
+}
 
 const int DockPanel::kTooltipSpacing;
 const int DockPanel::kAutoHideSize;
@@ -65,8 +78,8 @@ DockPanel::DockPanel(MultiDockView* parent, MultiDockModel* model, int dockId)
       showClock_(false),
       showBorder_(true),
       aboutDialog_(QMessageBox::Information, "About Crystal Dock",
-                   QString("<h3>Crystal Dock 1.0</h3>")
-                   + "<p>Copyright (C) 2023 Viet Dang (dangvd@gmail.com)"
+                   QString("<h3>Crystal Dock 2.0 alpha</h3>")
+                   + "<p>Copyright (C) 2024 Viet Dang (dangvd@gmail.com)"
                    + "<p><a href=\"https://github.com/dangvd/crystal-dock\">https://github.com/dangvd/crystal-dock</a>"
                    + "<p>License: GPLv3",
                    QMessageBox::Ok, this, Qt::Tool),
@@ -81,33 +94,35 @@ DockPanel::DockPanel(MultiDockView* parent, MultiDockModel* model, int dockId)
       isEntering_(false),
       isLeaving_(false),
       isAnimationActive_(false),
-      animationTimer_(std::make_unique<QTimer>(this)) {
+      animationTimer_(std::make_unique<QTimer>(this)) {  
   setAttribute(Qt::WA_TranslucentBackground);
-  KWindowSystem::setType(winId(), NET::Dock);
-  KWindowSystem::setOnAllDesktops(winId(), true);
-  KWindowSystem::setState(winId(), NET::SkipTaskbar | NET::SkipPager | NET::SkipSwitcher);
+  setWindowFlag(Qt::FramelessWindowHint);
   setMouseTracking(true);
+
   createMenu();
   loadDockConfig();
   loadAppearanceConfig();
   initUi();
+  WindowSystem::setDockType(this, minHeight_);
 
   connect(animationTimer_.get(), SIGNAL(timeout()), this,
       SLOT(updateAnimation()));
-  connect(KWindowSystem::self(), SIGNAL(numberOfDesktopsChanged(int)),
+  connect(WindowSystem::self(), SIGNAL(numberOfDesktopsChanged(int)),
       this, SLOT(updatePager()));
-  connect(KWindowSystem::self(), SIGNAL(currentDesktopChanged(int)),
+  connect(WindowSystem::self(), SIGNAL(currentDesktopChanged(std::string_view)),
           this, SLOT(onCurrentDesktopChanged()));
-  connect(KWindowSystem::self(), SIGNAL(activeWindowChanged(WId)),
+  connect(WindowSystem::self(), SIGNAL(activeWindowChanged(std::string_view)),
           this, SLOT(update()));
-  connect(KWindowSystem::self(), SIGNAL(windowAdded(WId)),
-          this, SLOT(onWindowAdded(WId)));
-  connect(KWindowSystem::self(), SIGNAL(windowRemoved(WId)),
-          this, SLOT(onWindowRemoved(WId)));
-  connect(KWindowSystem::self(),
-          SIGNAL(windowChanged(WId, NET::Properties, NET::Properties2)),
+  connect(WindowSystem::self(), SIGNAL(windowAdded(const WindowInfo*)),
+          this, SLOT(onWindowAdded(const WindowInfo*)));
+  connect(WindowSystem::self(), SIGNAL(windowRemoved(std::string)),
+          this, SLOT(onWindowRemoved(std::string)));
+  /*
+  connect(WindowSystem::self(),
+          SIGNAL(windowChanged(std::string_view, NET::Properties, NET::Properties2)),
           this,
-          SLOT(onWindowChanged(WId, NET::Properties, NET::Properties2)));
+          SLOT(onWindowChanged(std::string_view, NET::Properties, NET::Properties2)));
+  */
   connect(model_, SIGNAL(appearanceOutdated()), this, SLOT(update()));
   connect(model_, SIGNAL(appearanceChanged()), this, SLOT(reload()));
   connect(model_, SIGNAL(dockLaunchersChanged(int)),
@@ -141,7 +156,7 @@ void DockPanel::resize(int w, int h) {
   // This is to fix the bug that if launched from a KDE Plasma Quicklaunch,
   // the dock panel still doesn't show on all desktops even though
   // we've already called this in the constructor.
-  KWindowSystem::setOnAllDesktops(winId(), true);
+  // WindowSystem::setOnAllDesktops(winId(), true);
   isResizing_ = false;
 }
 
@@ -317,47 +332,54 @@ void DockPanel::removeDock() {
   }
 }
 
-void DockPanel::onWindowAdded(WId wId) {
+void DockPanel::onWindowAdded(const WindowInfo* info) {
+  if (info->appId == "crystal-dock") {
+    x_ = info->x;
+    y_ = info->y;
+  }
+
   if (!showTaskManager()) {
     return;
   }
 
-  if (taskHelper_.isValidTask(wId, screen_)) {
+  if (isValidTask(info, model_)) {
     // Now inserts it.
-    addTask(wId);
+    addTask(info);
     resizeTaskManager();
   }
 }
 
-void DockPanel::onWindowRemoved(WId wId) {
+void DockPanel::onWindowRemoved(std::string uuid) {
   if (!showTaskManager()) {
     return;
   }
 
-  removeTask(wId);
+  removeTask(uuid);
 }
 
-void DockPanel::onWindowChanged(WId wId, NET::Properties properties,
+/*
+void DockPanel::onWindowChanged(std::string_view uuid, NET::Properties properties,
                                 NET::Properties2 properties2) {
   if (!showTaskManager()) {
     return;
   }
 
-  if (wId != winId() && wId != tooltip_.winId() &&
-      taskHelper_.isValidTask(wId)) {
+  if (uuid != winId() && uuid != tooltip_.winId() &&
+      taskHelper_.isValidTask(uuid)) {
     auto screen = model_->currentScreenTasksOnly() ? screen_ : -1;
     if (properties & NET::WMDesktop || properties & NET::WMGeometry) {
-      if (taskHelper_.isValidTask(wId, screen, model_->currentDesktopTasksOnly())) {
-        addTask(wId);
+      if (taskHelper_.isValidTask(uuid, screen, model_->currentDesktopTasksOnly())) {
+        addTask(uuid);
         resizeTaskManager();
       } else {
-        removeTask(wId);
+        removeTask(uuid);
       }
     } else if (properties & NET::WMState) {
-      updateTask(wId);
+      updateTask(uuid);
     }
   }
 }
+*/
 
 void DockPanel::paintEvent(QPaintEvent* e) {
   if (isResizing_) {
@@ -383,16 +405,26 @@ void DockPanel::paintEvent(QPaintEvent* e) {
   for (int i = itemCount() - 1; i >= 0; --i) {
     items_[i]->draw(&painter);
   }
+
+  // Draw tooltip.
+  if (activeItem_ >= 0 && activeItem_ < static_cast<int>(items_.size())) {
+    QFont font;
+    font.setPointSize(24);
+    painter.setFont(font);
+    drawBorderedText(items_[activeItem_]->left_, itemSpacing_ + 10,
+                     items_[activeItem_]->getLabel(), 2 /* borderWidth */,
+                     Qt::black, Qt::white, &painter);
+  }
 }
 
 void DockPanel::mouseMoveEvent(QMouseEvent* e) {
   if (isEntering_ && !autoHide()) {
     // Don't do the parabolic zooming if the mouse is near the border.
     // Quite often the user was just scrolling a window etc.
-    if ((position_ == PanelPosition::Bottom && e->y() < itemSpacing_ / 2) ||
-        (position_ == PanelPosition::Top && e->y() > height() - itemSpacing_ / 2) ||
-        (position_ == PanelPosition::Left && e->x() > width() - itemSpacing_ / 2) ||
-        (position_ == PanelPosition::Right && e->x() < itemSpacing_ / 2)) {
+    if ((position_ == PanelPosition::Bottom && e->position().y() < itemSpacing_ / 2) ||
+        (position_ == PanelPosition::Top && e->position().y() > height() - itemSpacing_ / 2) ||
+        (position_ == PanelPosition::Left && e->position().x() > width() - itemSpacing_ / 2) ||
+        (position_ == PanelPosition::Right && e->position().x() < itemSpacing_ / 2)) {
       return;
     }
   }
@@ -402,9 +434,9 @@ void DockPanel::mouseMoveEvent(QMouseEvent* e) {
   }
 
   if (!isEntering_) {
-    showTooltip(e->x(), e->y());
+    showTooltip(e->position().x(), e->position().y());
   }
-  updateLayout(e->x(), e->y());
+  updateLayout(e->position().x(), e->position().y());
 }
 
 void DockPanel::mousePressEvent(QMouseEvent* e) {
@@ -412,7 +444,7 @@ void DockPanel::mousePressEvent(QMouseEvent* e) {
     return;
   }
 
-  int i = findActiveItem(e->x(), e->y());
+  int i = findActiveItem(e->position().x(), e->position().y());
   if (i < 0 || i >= itemCount()) {
     return;
   }
@@ -420,16 +452,16 @@ void DockPanel::mousePressEvent(QMouseEvent* e) {
   items_[i]->mousePressEvent(e);
 }
 
-void DockPanel::enterEvent (QEvent* e) {
+void DockPanel::enterEvent (QEnterEvent* e) {
   isEntering_ = true;
   if (windowsCanCover()) {
-    KWindowSystem::setState(winId(), NET::KeepAbove);
+    //WindowSystem::keepAbove(winId());
   }
 }
 
 void DockPanel::leaveEvent(QEvent* e) {
   if (windowsCanCover()) {
-    KWindowSystem::setState(winId(), NET::KeepBelow);
+    //WindowSystem::keepBelow(winId());
   }
 
   if (isMinimized_) {
@@ -438,7 +470,7 @@ void DockPanel::leaveEvent(QEvent* e) {
 
   isLeaving_ = true;
   updateLayout();
-  tooltip_.hide();
+  activeItem_ = -1;
 }
 
 void DockPanel::initUi() {
@@ -564,11 +596,11 @@ void DockPanel::setVisibility(PanelVisibility visibility) {
     case PanelVisibility::AlwaysVisible:  // fall through
     case PanelVisibility::AutoHide:  // fall through
     case PanelVisibility::WindowsGoBelow:
-      KWindowSystem::setState(winId(), NET::KeepAbove);
+      //WindowSystem::keepAbove(winId());
       break;
     case PanelVisibility::WindowsCanCover:  // fall through
     case PanelVisibility::WindowsCanCover_Quiet:
-      KWindowSystem::setState(winId(), NET::KeepBelow);
+      //WindowSystem::keepBelow(winId());
       break;
     default:
       break;
@@ -637,8 +669,8 @@ void DockPanel::initLaunchers() {
       items_.push_back(std::make_unique<Separator>(this, model_, orientation_, minSize_, maxSize_));
     } else {
       items_.push_back(std::make_unique<Program>(
-          this, model_, launcherConfig.name, orientation_, launcherConfig.icon, minSize_,
-          maxSize_, launcherConfig.command, launcherConfig.taskCommand,
+          this, model_, launcherConfig.appId, launcherConfig.name, orientation_,
+          launcherConfig.icon, minSize_, maxSize_, launcherConfig.command,
           model_->isAppMenuEntry(launcherConfig.command), /*pinned=*/true));
     }
   }
@@ -646,8 +678,7 @@ void DockPanel::initLaunchers() {
 
 void DockPanel::initPager() {
   if (showPager_) {
-    for (int desktop = 1; desktop <= KWindowSystem::numberOfDesktops();
-         ++desktop) {
+    for (const auto& desktop : WindowSystem::desktops()) {
       items_.push_back(std::make_unique<DesktopSelector>(
           this, model_, orientation_, minSize_, maxSize_, desktop, screen_));
     }
@@ -659,9 +690,10 @@ void DockPanel::initTasks() {
     return;
   }
 
-  auto screen = model_->currentScreenTasksOnly() ? screen_ : -1;
-  for (const auto& task : taskHelper_.loadTasks(screen, model_->currentDesktopTasksOnly())) {
-    addTask(task);
+  for (const auto* task : WindowSystem::windows()) {
+    if (isValidTask(task, model_)) {
+      addTask(task);
+    }
   }
 }
 
@@ -678,10 +710,10 @@ void DockPanel::reloadTasks() {
   resizeTaskManager();
 }
 
-void DockPanel::addTask(const TaskInfo& task) {
+void DockPanel::addTask(const WindowInfo* task) {
   // Checks is the task already exists.
   for (auto& item : items_) {
-    if (item->hasTask(task.wId)) {
+    if (item->hasTask(task->uuid)) {
       return;
     }
   }
@@ -694,26 +726,25 @@ void DockPanel::addTask(const TaskInfo& task) {
   }
 
   // Adds a new program.
-  auto app = model_->findApplication(task.command);
-  const QString& program = app ? app->name : task.program;
+  const QString appId = QString::fromStdString(task->appId);
+  auto app = model_->findApplication(task->appId);
+  const QString program = app ? app->name : QString::fromStdString(task->appId);
   int i = 0;
   for (; i < itemCount() && items_[i]->beforeTask(program); ++i);
   if (app && QIcon::hasThemeIcon(app->icon)) {
     items_.insert(items_.begin() + i, std::make_unique<Program>(
-        this, model_, app->name, orientation_, app->icon, minSize_,
-        maxSize_, app->command, app->taskCommand, /*isAppMenuEntry=*/true,
-        /*pinned=*/false));
+        this, model_, appId, program, orientation_, app->icon, minSize_,
+        maxSize_, app->command, /*isAppMenuEntry=*/true, /*pinned=*/false));
   } else {
     items_.insert(items_.begin() + i, std::make_unique<Program>(
-        this, model_, task.program, orientation_, task.icon, minSize_,
-        maxSize_, task.command));
+        this, model_, appId, program, orientation_, QPixmap(), minSize_, maxSize_));
   }
   items_[i]->addTask(task);
 }
 
-void DockPanel::removeTask(WId wId) {
+void DockPanel::removeTask(std::string_view uuid) {
   for (int i = 0; i < itemCount(); ++i) {
-    if (items_[i]->removeTask(wId)) {
+    if (items_[i]->removeTask(uuid)) {
       if (items_[i]->shouldBeRemoved()) {
         items_.erase(items_.begin() + i);
         resizeTaskManager();
@@ -723,8 +754,7 @@ void DockPanel::removeTask(WId wId) {
   }
 }
 
-void DockPanel::updateTask(WId wId) {
-  const TaskInfo& task = taskHelper_.getTaskInfo(wId);
+void DockPanel::updateTask(const WindowInfo* task) {
   for (auto& item : items_) {
     if (item->updateTask(task)) {
       return;
@@ -745,10 +775,7 @@ void DockPanel::initLayoutVars() {
   numAnimationSteps_ = 20;
   animationSpeed_ = 16;
 
-  tooltip_.setFontSize(tooltipFontSize_);
-  tooltip_.setFontBold(true);
-  tooltip_.setFontColor(Qt::white);
-  tooltip_.setBackgroundColor(Qt::black);
+  tooltipSize_ = 50;
 
   const int distance = minSize_ + itemSpacing_;
   // The difference between minWidth_ and maxWidth_
@@ -776,7 +803,7 @@ void DockPanel::initLayoutVars() {
     }
     minHeight_ = autoHide() ? kAutoHideSize : distance;
     maxWidth_ = minWidth_ + delta;
-    maxHeight_ = itemSpacing_ + maxSize_;
+    maxHeight_ = itemSpacing_ + maxSize_ + tooltipSize_;
   } else {  // Vertical
     minHeight_ = 0;
     for (const auto& item : items_) {
@@ -784,7 +811,7 @@ void DockPanel::initLayoutVars() {
     }
     minWidth_ = autoHide() ? kAutoHideSize : distance;
     maxHeight_ = minHeight_ + delta;
-    maxWidth_ = itemSpacing_ + maxSize_;
+    maxWidth_ = itemSpacing_ + maxSize_ + tooltipSize_;
   }
 }
 
@@ -922,7 +949,7 @@ void DockPanel::updateLayout(int x, int y) {
     if (position_ == PanelPosition::Top) {
       items_[i]->top_ = itemSpacing_ / 2;
     } else if (position_ == PanelPosition::Bottom) {
-      items_[i]->top_ = itemSpacing_ / 2 + maxSize_ - items_[i]->getHeight();
+      items_[i]->top_ = itemSpacing_ / 2 + tooltipSize_ + maxSize_ - items_[i]->getHeight();
     } else if (position_ == PanelPosition::Left) {
       items_[i]->left_ = itemSpacing_ / 2;
     } else {  // Right
@@ -1013,7 +1040,7 @@ void DockPanel::resizeTaskManager() {
   }
 
   const int itemsToKeep = (showApplicationMenu_ ? 1 : 0) +
-      (showPager_ ? KWindowSystem::numberOfDesktops() : 0);
+      (showPager_ ? WindowSystem::numberOfDesktops() : 0);
   int left = 0;
   int top = 0;
   for (int i = 0; i < itemCount(); ++i) {
@@ -1083,59 +1110,7 @@ void DockPanel::resizeTaskManager() {
 }
 
 void DockPanel::setStrut(int width) {
-  // Somehow if we use setExtendedStrut() as below when screen_ is 0,
-  // the strut extends the whole combined desktop instead of just the first
-  // screen.
-  if (screen_ == 0) {
-    if (position_ == PanelPosition::Top) {
-      KWindowSystem::setStrut(winId(), 0, 0, width, 0);
-    } else if (position_ == PanelPosition::Bottom) {
-      KWindowSystem::setStrut(winId(), 0, 0, 0, width);
-    } else if (position_ == PanelPosition::Left) {
-      KWindowSystem::setStrut(winId(), width, 0, 0, 0);
-    } else {  // Right
-      KWindowSystem::setStrut(winId(), 0, width, 0, 0);
-    }
-    return;
-  }
-
-  if (position_ == PanelPosition::Top) {
-    KWindowSystem::setExtendedStrut(
-        winId(),
-        0, 0, 0,
-        0, 0, 0,
-        width,
-        screenGeometry_.x(),
-        screenGeometry_.x() + screenGeometry_.width(),
-        0, 0, 0);
-  } else if (position_ == PanelPosition::Bottom) {
-    KWindowSystem::setExtendedStrut(
-        winId(),
-        0, 0, 0,
-        0, 0, 0,
-        0, 0, 0,
-        width,
-        screenGeometry_.x(),
-        screenGeometry_.x() + screenGeometry_.width());
-  } else if (position_ == PanelPosition::Left) {
-    KWindowSystem::setExtendedStrut(
-        winId(),
-        width,
-        screenGeometry_.y(),
-        screenGeometry_.y() + screenGeometry_.height(),
-        0, 0, 0,
-        0, 0, 0,
-        0, 0, 0);
-  } else {  // Right
-    KWindowSystem::setExtendedStrut(
-        winId(),
-        0, 0, 0,
-        width,
-        screenGeometry_.y(),
-        screenGeometry_.y() + screenGeometry_.height(),
-        0, 0, 0,
-        0, 0, 0);
-  }
+  return;
 }
 
 int DockPanel::findActiveItem(int x, int y) {
@@ -1149,39 +1124,11 @@ int DockPanel::findActiveItem(int x, int y) {
 }
 
 void DockPanel::showTooltip(int x, int y) {
-  int i = findActiveItem(x, y);
-  if (i < 0 || i >= itemCount()) {
-    tooltip_.hide();
-  } else {
-    showTooltip(i);
-    // Somehow we have to set this property again when re-showing.
-    KWindowSystem::setOnAllDesktops(tooltip_.winId(), true);
-  }
+  activeItem_ = findActiveItem(x, y);
+  update();
 }
 
 void DockPanel::showTooltip(int i) {
-  tooltip_.setText(items_[i]->getLabel());
-  int x, y;
-  if (position_ == PanelPosition::Top) {
-    x = geometry().x() + items_[i]->left_
-        - tooltip_.width() / 2 + items_[i]->getWidth() / 2;
-    y = geometry().y() + maxHeight_ + kTooltipSpacing;
-  } else if (position_ == PanelPosition::Bottom) {
-    x = geometry().x() + items_[i]->left_
-        - tooltip_.width() / 2 + items_[i]->getWidth() / 2;
-    // No need for additional tooltip spacing in this position.
-    y = geometry().y() - tooltip_.height();
-  } else if (position_ == PanelPosition::Left) {
-    x = geometry().x() + maxWidth_ + kTooltipSpacing;
-    y = geometry().y() + items_[i]->top_
-        - tooltip_.height() / 2 + items_[i]->getHeight() / 2;
-  } else {  // Right
-    x = geometry().x() - tooltip_.width() - kTooltipSpacing;
-    y = geometry().y() + items_[i]->top_
-        - tooltip_.height() / 2 + items_[i]->getHeight() / 2;
-  }
-  tooltip_.move(x, y);
-  tooltip_.show();
 }
 
 void DockPanel::showWaitCursor() {

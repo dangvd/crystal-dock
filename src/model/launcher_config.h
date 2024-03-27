@@ -26,16 +26,15 @@
 namespace crystaldock {
 
 struct LauncherConfig {
+  QString appId;
   QString name;
   QString icon;
   QString command;
-  QString taskCommand;
 
   LauncherConfig() = default;
-  LauncherConfig(const QString& name2, const QString& icon2,
+  LauncherConfig(const QString& appId2, const QString& name2, const QString& icon2,
                  const QString& command2)
-      : name(name2), icon(icon2), command(command2),
-        taskCommand(getTaskCommand(command)) {}
+      : appId(appId2), name(name2), icon(icon2), command(command2) {}
   LauncherConfig(const QString& desktopFile);
 
   // Saves to file in desktop file format.

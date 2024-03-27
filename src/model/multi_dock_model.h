@@ -207,15 +207,15 @@ class MultiDockModel : public QObject {
     setAppearanceProperty(kApplicationMenuCategory, kBackgroundAlpha, QString::number(value));
   }
 
-  QString wallpaper(int desktop, int screen) const {
+  QString wallpaper(std::string_view desktopId, int screen) const {
     return appearanceProperty(kPagerCategory,
-                              ConfigHelper::wallpaperConfigKey(desktop, screen),
+                              ConfigHelper::wallpaperConfigKey(desktopId, screen),
                               QString());
   }
 
-  void setWallpaper(int desktop, int screen, const QString& value) {
+  void setWallpaper(std::string_view desktopId, int screen, const QString& value) {
     setAppearanceProperty(kPagerCategory,
-                          ConfigHelper::wallpaperConfigKey(desktop, screen),
+                          ConfigHelper::wallpaperConfigKey(desktopId, screen),
                           value);
   }
 
@@ -341,8 +341,7 @@ class MultiDockModel : public QObject {
   }
 
   bool showPager(int dockId) const {
-    return dockProperty(dockId, kGeneralCategory, kShowPager,
-                        kDefaultShowPager);
+    return dockProperty(dockId, kGeneralCategory, kShowPager, kDefaultShowPager);
   }
 
   void setShowPager(int dockId, bool value) {
@@ -365,6 +364,15 @@ class MultiDockModel : public QObject {
 
   void setShowClock(int dockId, bool value) {
     setDockProperty(dockId, kGeneralCategory, kShowClock, value);
+  }
+
+  QStringList launchersOrder(int dockId) const {
+    return dockProperty(dockId, kGeneralCategory, kLaunchersOrder, QString())
+        .split(";", Qt::SkipEmptyParts);
+  }
+
+  void setLaunchersOrder(int dockId, QStringList value) {
+    setDockProperty(dockId, kGeneralCategory, kLaunchersOrder, value.join(";"));
   }
 
   void saveDockConfig(int dockId) {
@@ -420,8 +428,8 @@ class MultiDockModel : public QObject {
     return applicationMenuConfig_.systemCategories();
   }
 
-  const ApplicationEntry* findApplication(const QString& command) const {
-    return applicationMenuConfig_.findApplication(command);
+  const ApplicationEntry* findApplication(const std::string& appId) const {
+    return applicationMenuConfig_.findApplication(appId);
   }
 
   const std::vector<ApplicationEntry> searchApplications(const QString& text) const {
@@ -455,6 +463,7 @@ class MultiDockModel : public QObject {
   static constexpr char kShowClock[] = "showClock";
   static constexpr char kShowPager[] = "showPager";
   static constexpr char kShowTaskManager[] = "showTaskManager";
+  static constexpr char kLaunchersOrder[] = "launchersOrder";
 
   // Global appearance config's categories/properties.
 
@@ -475,7 +484,7 @@ class MultiDockModel : public QObject {
 
   static constexpr char kPagerCategory[] = "Pager";
   static constexpr char kWallpaper[] = "wallpaper";
-  static constexpr char kShowDesktopNumber[] = "showDesktopNumber";
+  static constexpr char kShowDesktopNumber[] = "showDesktopNumber";  
 
   static constexpr char kTaskManagerCategory[] = "TaskManager";
   static constexpr char kCurrentDesktopTasksOnly[] = "currentDesktopTasksOnly";
@@ -538,7 +547,7 @@ class MultiDockModel : public QObject {
   }
 
   std::vector<LauncherConfig> loadDockLaunchers(
-      const QString& dockLaunchersPath);
+      int dockId, const QString& dockLaunchersPath);
 
   std::vector<LauncherConfig> createDefaultLaunchers();
   const ApplicationEntry* getDefaultBrowser();
