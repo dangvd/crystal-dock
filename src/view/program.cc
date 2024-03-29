@@ -18,9 +18,11 @@
 
 #include "program.h"
 
+#include <QDir>
 #include <QGuiApplication>
 #include <QMessageBox>
 #include <QProcess>
+#include <QProcessEnvironment>
 #include <QSettings>
 #include <QTimer>
 
@@ -204,7 +206,15 @@ void Program::pinUnpin() {
 
 void Program::launch(const QString& command) {
   QStringList list = QProcess::splitCommand(command);
-  if (!QProcess::startDetached(list.at(0), list.mid(1))) {
+  QProcess process;
+  process.setProgram(list.at(0));
+  process.setArguments(list.mid(1));
+  auto env = QProcessEnvironment::systemEnvironment();
+  // Unset layer-shell env.
+  env.insert("QT_WAYLAND_SHELL_INTEGRATION", "");
+  process.setProcessEnvironment(env);
+  process.setWorkingDirectory(QDir::homePath());
+  if (!process.startDetached()) {
     QMessageBox warning(QMessageBox::Warning, "Error",
                         QString("Could not run command: ") + command,
                         QMessageBox::Ok, nullptr, Qt::Tool);
