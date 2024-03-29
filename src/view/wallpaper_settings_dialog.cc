@@ -44,8 +44,6 @@ WallpaperSettingsDialog::WallpaperSettingsDialog(QWidget* parent,
   ui->setupUi(this);
   setWindowFlag(Qt::Tool);
 
-  populateDesktopList();
-
   // Populate screen list.
   const int screenCount = QGuiApplication::screens().size();
   for (int i = 1; i <= screenCount; ++i) {
@@ -77,6 +75,7 @@ WallpaperSettingsDialog::~WallpaperSettingsDialog() {
 }
 
 void WallpaperSettingsDialog::setFor(int desktop, int screen) {
+  populateDesktopList();
   ui->desktop->setCurrentIndex(desktop - 1);
   if (multiScreen_) {
     ui->screen->setCurrentIndex(screen);
@@ -143,7 +142,7 @@ int WallpaperSettingsDialog::screen() const {
   return ui->screen->currentIndex();
 }
 
-std::string_view WallpaperSettingsDialog::desktop() const {
+std::string WallpaperSettingsDialog::desktop() const {
   return ui->desktop->currentData().toString().toStdString();
 }
 

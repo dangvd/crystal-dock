@@ -58,7 +58,7 @@ class WallpaperSettingsDialog : public QDialog {
   int screen() const;
 
   // Gets selecged desktop.
-  std::string_view desktop() const;
+  std::string desktop() const;
 
   void loadData();
   void saveData();
