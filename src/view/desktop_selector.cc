@@ -24,6 +24,7 @@
 #include <QIcon>
 #include <QPainter>
 #include <QPixmap>
+#include <QTimer>
 
 #include "display/window_system.h"
 
@@ -85,7 +86,9 @@ void DesktopSelector::mousePressEvent(QMouseEvent* e) {
   } else if (e->button() == Qt::RightButton) {
     // In case other DesktopSelectors have changed the config.
     showDesktopNumberAction_->setChecked(model_->showDesktopNumber());
-    menu_.popup(e->globalPosition().toPoint());
+    parent_->minimize();
+    // Not sure why we have to offset the cursor position here...
+    QTimer::singleShot(500, [this]{ menu_.exec(QCursor::pos() - QPoint(200, 0)); });
   }
 }
 

@@ -83,7 +83,8 @@ void ApplicationMenu::mousePressEvent(QMouseEvent *e) {
     parent_->minimize();
     QTimer::singleShot(500, [this]{ menu_.exec(); });
   } else if (e->button() == Qt::RightButton) {
-    contextMenu_.popup(e->globalPosition().toPoint());
+    parent_->minimize();
+    QTimer::singleShot(500, [this]{ contextMenu_.exec(); });
   }
 }
 

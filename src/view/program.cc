@@ -124,7 +124,9 @@ void Program::mousePressEvent(QMouseEvent* e) {
       }
     }
   } else if (e->button() == Qt::RightButton) {
-    menu_.popup(e->globalPosition().toPoint());
+      parent_->minimize();
+      // Not sure why we have to offset the cursor position here...
+      QTimer::singleShot(500, [this]{ menu_.exec(QCursor::pos() - QPoint(200, 0)); });
   }
 }
 
