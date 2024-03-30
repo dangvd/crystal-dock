@@ -18,6 +18,8 @@
 
 #include "program.h"
 
+#include <iostream>
+
 #include <QDir>
 #include <QGuiApplication>
 #include <QMessageBox>
@@ -212,8 +214,15 @@ void Program::launch(const QString& command) {
   process.setProgram(list.at(0));
   process.setArguments(list.mid(1));
   auto env = QProcessEnvironment::systemEnvironment();
+  // Unset XDG_ACTIVATION_TOKEN.
+  env.insert("XDG_ACTIVATION_TOKEN", "");
   // Unset layer-shell env.
   env.insert("QT_WAYLAND_SHELL_INTEGRATION", "");
+  std::cout << "Launching command: " << command.toStdString() << std::endl;
+  std::cout << "Process environment:" << std::endl;
+  for (const auto& var : env.toStringList()) {
+    std::cout << var.toStdString() << std::endl;
+  }
   process.setProcessEnvironment(env);
   process.setWorkingDirectory(QDir::homePath());
   if (!process.startDetached()) {
