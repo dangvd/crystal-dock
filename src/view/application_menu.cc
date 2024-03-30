@@ -26,6 +26,7 @@
 #include <QMimeData>
 #include <QSettings>
 #include <QStringBuilder>
+#include <QTimer>
 #include <QUrl>
 
 #include "display/window_system.h"
@@ -79,7 +80,8 @@ void ApplicationMenu::draw(QPainter* painter) const {
 
 void ApplicationMenu::mousePressEvent(QMouseEvent *e) {
   if (e->button() == Qt::LeftButton) {
-    menu_.popup(parent_->applicationMenuPosition(getMenuSize()));
+    parent_->minimize();
+    QTimer::singleShot(500, [this]{ menu_.exec(); });
   } else if (e->button() == Qt::RightButton) {
     contextMenu_.popup(e->globalPosition().toPoint());
   }

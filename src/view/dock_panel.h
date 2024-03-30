@@ -64,9 +64,6 @@ class DockPanel : public QWidget {
 
   QRect screenGeometry() { return screenGeometry_; }
 
-  // Gets the position to show the application menu.
-  QPoint applicationMenuPosition(const QSize& menuSize);
-
   void addPanelSettings(QMenu* menu);
 
  public slots:
@@ -159,6 +156,8 @@ class DockPanel : public QWidget {
   void onWindowRemoved(std::string uuid);
   //void onWindowChanged(std::string_view uuid, NET::Properties properties,
   //                     NET::Properties2 properties2);
+
+  void minimize() { leaveEvent(nullptr); }
 
  protected:
   virtual void paintEvent(QPaintEvent* e) override;

@@ -160,18 +160,6 @@ void DockPanel::resize(int w, int h) {
   isResizing_ = false;
 }
 
-QPoint DockPanel::applicationMenuPosition(const QSize& menuSize) {
-  if (position_ == PanelPosition::Top) {
-    return QPoint(minX_, minY_ + minHeight_);
-  } else if (position_ == PanelPosition::Bottom) {
-    return QPoint(minX_, minY_ - menuSize.height());
-  } else if (position_ == PanelPosition::Left) {
-    return QPoint(minX_ + minWidth_, minY_);
-  } else {  // Right
-    return QPoint(minX_ - menuSize.width(), minY_);
-  }
-}
-
 void DockPanel::reload() {
   loadAppearanceConfig();
   items_.clear();
