@@ -34,7 +34,7 @@ MultiDockView::MultiDockView(MultiDockModel* model)
   connect(model_, SIGNAL(dockAdded(int)), this, SLOT(onDockAdded(int)));
   connect(model_, SIGNAL(wallpaperChanged(int)), this,
           SLOT(setWallpaper(int)));
-  connect(WindowSystem::self(), SIGNAL(currentDesktopChanged(int)),
+  connect(WindowSystem::self(), SIGNAL(currentDesktopChanged(std::string_view)),
           this, SLOT(setWallpaper()));
   loadData();
 }
@@ -80,7 +80,7 @@ bool MultiDockView::setWallpaper() {
   }
 
   for (int screen = 0; screen < QGuiApplication::screens().size(); ++screen) {
-    if (setWallpaper(screen)) {
+    if (!setWallpaper(screen)) {
       return false;
     }
   }
