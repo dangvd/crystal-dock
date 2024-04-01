@@ -117,6 +117,8 @@ DockPanel::DockPanel(MultiDockView* parent, MultiDockModel* model, int dockId)
           this, SLOT(onWindowAdded(const WindowInfo*)));
   connect(WindowSystem::self(), SIGNAL(windowRemoved(std::string)),
           this, SLOT(onWindowRemoved(std::string)));
+  connect(WindowSystem::self(), SIGNAL(windowLeftCurrentDesktop(std::string_view)),
+          this, SLOT(onWindowLeftCurrentDesktop(std::string_view)));
   /*
   connect(WindowSystem::self(),
           SIGNAL(windowChanged(std::string_view, NET::Properties, NET::Properties2)),
@@ -343,6 +345,12 @@ void DockPanel::onWindowRemoved(std::string uuid) {
   }
 
   removeTask(uuid);
+}
+
+void DockPanel::onWindowLeftCurrentDesktop(std::string_view uuid) {
+  if (showTaskManager() && model_->currentDesktopTasksOnly()) {
+    removeTask(uuid);
+  }
 }
 
 /*

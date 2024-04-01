@@ -511,8 +511,17 @@ std::vector<struct org_kde_plasma_window*> WindowSystem::dockWindows_;
 /* static */ void WindowSystem::virtual_desktop_left(
     void *data,
     struct org_kde_plasma_window* window,
-    const char *is) {
-
+    const char *id) {
+  if (id != currentDesktop_) {
+    return;
+  }
+  if (windows_.count(window) == 0) {
+    return;
+  }
+  WindowInfo* info = windows_[window];
+  if (info) {
+    emit self()->windowLeftCurrentDesktop(info->uuid);
+  }
 }
 
 /* static */ void WindowSystem::application_menu(
