@@ -26,6 +26,8 @@
 
 #include <QColor>
 #include <QCursor>
+#include <QFont>
+#include <QFontMetrics>
 #include <QGuiApplication>
 #include <QIcon>
 #include <QListWidgetItem>
@@ -404,11 +406,17 @@ void DockPanel::paintEvent(QPaintEvent* e) {
 
   // Draw tooltip.
   if (activeItem_ >= 0 && activeItem_ < static_cast<int>(items_.size())) {
+    const auto& item = items_[activeItem_];
     QFont font;
-    font.setPointSize(24);
+    font.setPointSize(model_->tooltipFontSize());
+    font.setBold(true);
+    QFontMetrics metrics(font);
+    const auto tooltipWidth = metrics.boundingRect(item->getLabel()).width();
     painter.setFont(font);
-    drawBorderedText(items_[activeItem_]->left_, itemSpacing_ + 10,
-                     items_[activeItem_]->getLabel(), 2 /* borderWidth */,
+    int x = item->left_ + item->getWidth() / 2 - tooltipWidth / 2;
+    x = std::min(x, maxWidth_ - tooltipWidth);
+    x = std::max(x, 0);
+    drawBorderedText(x, itemSpacing_ + 10, item->getLabel(), /*borderWidth*/ 2,
                      Qt::black, Qt::white, &painter);
   }
 }
