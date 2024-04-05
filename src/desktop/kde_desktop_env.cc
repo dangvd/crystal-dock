@@ -29,7 +29,7 @@ KdeDesktopEnv::KdeDesktopEnv()
   : plasmaShellDBus_("org.kde.plasmashell",
                      "/PlasmaShell",
                      "org.kde.PlasmaShell") {
-  const char* commands[3] = {"qdbus", "qdbus6", "qdbus-qt5"};
+  const char* commands[2] = {"qdbus", "qdbus6"};
   for (const auto& command : commands) {
     if (system(command) == 0) {
       qdbusCommand_ = command;
@@ -53,7 +53,7 @@ std::vector<Category> KdeDesktopEnv::getApplicationMenuSystemCategories() const 
         "Log Out",
         "",
         "system-log-out",
-        qdbusCommand_ + " org.kde.ksmserver /KSMServer logout -1 0 3",
+        qdbusCommand_ + " org.kde.LogoutPrompt /LogoutPrompt promptLogout",
         ""},
       }
     },
@@ -62,13 +62,13 @@ std::vector<Category> KdeDesktopEnv::getApplicationMenuSystemCategories() const 
         "Reboot",
         "",
         "system-reboot",
-        qdbusCommand_ + " org.kde.ksmserver /KSMServer logout -1 1 3",
+        qdbusCommand_ + " org.kde.LogoutPrompt /LogoutPrompt promptReboot",
         ""},
       {"shutdown",
         "Shut Down",
         "",
         "system-shutdown",
-        qdbusCommand_ + " org.kde.ksmserver /KSMServer logout -1 2 3",
+        qdbusCommand_ + " org.kde.LogoutPrompt /LogoutPrompt promptShutDown",
         ""}
       }
     }
