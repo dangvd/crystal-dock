@@ -416,7 +416,7 @@ void DockPanel::paintEvent(QPaintEvent* e) {
     int x = item->left_ + item->getWidth() / 2 - tooltipWidth / 2;
     x = std::min(x, maxWidth_ - tooltipWidth);
     x = std::max(x, 0);
-    drawBorderedText(x, itemSpacing_ + 10, item->getLabel(), /*borderWidth*/ 2,
+    drawBorderedText(x, itemSpacing_ + tooltipSize_ / 2, item->getLabel(), /*borderWidth*/ 2,
                      Qt::black, Qt::white, &painter);
   }
 }
@@ -425,7 +425,7 @@ void DockPanel::mouseMoveEvent(QMouseEvent* e) {
   if (isEntering_ && !autoHide()) {
     // Don't do the parabolic zooming if the mouse is near the border.
     // Quite often the user was just scrolling a window etc.
-    if ((position_ == PanelPosition::Bottom && e->position().y() < itemSpacing_ / 2) ||
+    if ((position_ == PanelPosition::Bottom && e->position().y() < itemSpacing_) ||
         (position_ == PanelPosition::Top && e->position().y() > height() - itemSpacing_ / 2) ||
         (position_ == PanelPosition::Left && e->position().x() > width() - itemSpacing_ / 2) ||
         (position_ == PanelPosition::Right && e->position().x() < itemSpacing_ / 2)) {
@@ -774,12 +774,16 @@ void DockPanel::initClock() {
 }
 
 void DockPanel::initLayoutVars() {
-  itemSpacing_ = static_cast<int>(minSize_ * spacingFactor_);
-  parabolicMaxX_ = static_cast<int>(2.5 * (minSize_ + itemSpacing_));
+  itemSpacing_ = std::round(minSize_ / 1.7 * spacingFactor_);
+  parabolicMaxX_ = std::round(2.5 * (minSize_ + itemSpacing_));
   numAnimationSteps_ = 20;
   animationSpeed_ = 16;
 
-  tooltipSize_ = 50;
+  QFont font;
+  font.setPointSize(model_->tooltipFontSize());
+  font.setBold(true);
+  QFontMetrics metrics(font);
+  tooltipSize_ = metrics.boundingRect("Tooltip").height();
 
   const int distance = minSize_ + itemSpacing_;
   // The difference between minWidth_ and maxWidth_
@@ -801,13 +805,13 @@ void DockPanel::initLayoutVars() {
   }
 
   if (orientation_ == Qt::Horizontal) {
-    minWidth_ = 0;
+    minWidth_ = itemSpacing_;
     for (const auto& item : items_) {
       minWidth_ += (item->getMinWidth() + itemSpacing_);
     }
-    minHeight_ = autoHide() ? kAutoHideSize : distance;
+    minHeight_ = autoHide() ? kAutoHideSize : minSize_ + 2 * itemSpacing_;
     maxWidth_ = minWidth_ + delta;
-    maxHeight_ = itemSpacing_ + maxSize_ + tooltipSize_;
+    maxHeight_ = 2 * itemSpacing_ + maxSize_ + tooltipSize_;
   } else {  // Vertical
     minHeight_ = 0;
     for (const auto& item : items_) {
@@ -837,9 +841,9 @@ void DockPanel::updateLayout() {
   for (int i = 0; i < itemCount(); ++i) {
     items_[i]->size_ = minSize_;
     if (isHorizontal()) {
-      items_[i]->left_ = (i == 0) ? itemSpacing_ / 2
+      items_[i]->left_ = (i == 0) ? itemSpacing_
           : items_[i - 1]->left_ + items_[i - 1]->getMinWidth() + itemSpacing_;
-      items_[i]->top_ = itemSpacing_ / 2;
+      items_[i]->top_ = itemSpacing_;
       items_[i]->minCenter_ = items_[i]->left_ + items_[i]->getMinWidth() / 2;
     } else {  // Vertical
       items_[i]->left_ = itemSpacing_ / 2;
@@ -850,7 +854,7 @@ void DockPanel::updateLayout() {
   }
   if (isHorizontal()) {
     backgroundWidth_ = minWidth_;
-    backgroundHeight_ = distance;
+    backgroundHeight_ = minSize_ + 2 * itemSpacing_;
   } else {  // Vertical
     backgroundHeight_ = minHeight_;
     backgroundWidth_ = distance;
@@ -881,7 +885,7 @@ void DockPanel::updateLayout() {
     if (isHorizontal()) {
       endBackgroundWidth_ = minWidth_;
       backgroundWidth_ = startBackgroundWidth_;
-      endBackgroundHeight_ = autoHide() ? kAutoHideSize : distance;
+      endBackgroundHeight_ = autoHide() ? kAutoHideSize : minSize_ + 2 * itemSpacing_;
       backgroundHeight_ = startBackgroundHeight_;
     } else {  // Vertical
       endBackgroundHeight_ = minHeight_;
@@ -922,7 +926,7 @@ void DockPanel::updateLayout(int x, int y) {
     }
     if (isHorizontal()) {
       startBackgroundWidth_ = minWidth_;
-      startBackgroundHeight_ = autoHide() ? kAutoHideSize : distance;
+      startBackgroundHeight_ = autoHide() ? kAutoHideSize : minSize_ + 2 * itemSpacing_;
     } else {  // Vertical
       startBackgroundHeight_ = minHeight_;
       startBackgroundWidth_ = autoHide() ? kAutoHideSize : distance;
@@ -932,7 +936,7 @@ void DockPanel::updateLayout(int x, int y) {
   int first_update_index = -1;
   int last_update_index = 0;
   if (isHorizontal()) {
-    items_[0]->left_ = itemSpacing_ / 2;
+    items_[0]->left_ = itemSpacing_;
   } else {  // Vertical
     items_[0]->top_ = itemSpacing_ / 2;
   }
@@ -953,7 +957,7 @@ void DockPanel::updateLayout(int x, int y) {
     if (position_ == PanelPosition::Top) {
       items_[i]->top_ = itemSpacing_ / 2;
     } else if (position_ == PanelPosition::Bottom) {
-      items_[i]->top_ = itemSpacing_ / 2 + tooltipSize_ + maxSize_ - items_[i]->getHeight();
+      items_[i]->top_ = itemSpacing_ + tooltipSize_ + maxSize_ - items_[i]->getHeight();
     } else if (position_ == PanelPosition::Left) {
       items_[i]->left_ = itemSpacing_ / 2;
     } else {  // Right
@@ -972,7 +976,7 @@ void DockPanel::updateLayout(int x, int y) {
   for (int i = itemCount() - 1; i >= last_update_index + 1; --i) {
     if (isHorizontal()) {
       items_[i]->left_ = (i == itemCount() - 1)
-          ? maxWidth_ - itemSpacing_ / 2 - items_[i]->getMinWidth()
+          ? maxWidth_ - itemSpacing_ - items_[i]->getMinWidth()
           : items_[i + 1]->left_ - items_[i]->getMinWidth() - itemSpacing_;
     } else {  // Vertical
       items_[i]->top_ = (i == itemCount() - 1)
@@ -1000,7 +1004,7 @@ void DockPanel::updateLayout(int x, int y) {
     if (isHorizontal()) {
       endBackgroundWidth_ = maxWidth_;
       backgroundWidth_ = startBackgroundWidth_;
-      endBackgroundHeight_ = distance;
+      endBackgroundHeight_ = minSize_ + 2 * itemSpacing_;
       backgroundHeight_ = startBackgroundHeight_;
       mouseX_ = x + (maxWidth_ - minWidth_) / 2;
     } else {  // Vertical
@@ -1049,7 +1053,7 @@ void DockPanel::resizeTaskManager() {
   int top = 0;
   for (int i = 0; i < itemCount(); ++i) {
     if (isHorizontal()) {
-      left = (i == 0) ? itemSpacing_ / 2
+      left = (i == 0) ? itemSpacing_
                       : left + items_[i - 1]->getMinWidth() + itemSpacing_;
       if (i >= itemsToKeep) {
         items_[i]->minCenter_ = left + items_[i]->getMinWidth() / 2;
@@ -1080,7 +1084,7 @@ void DockPanel::resizeTaskManager() {
     if (position_ == PanelPosition::Top) {
       items_[i]->top_ = itemSpacing_ / 2;
     } else if (position_ == PanelPosition::Bottom) {
-      items_[i]->top_ = itemSpacing_ / 2 + maxSize_ - items_[i]->getHeight();
+      items_[i]->top_ = itemSpacing_ + maxSize_ - items_[i]->getHeight();
     } else if (position_ == PanelPosition::Left) {
       items_[i]->left_ = itemSpacing_ / 2;
     } else {  // Right
@@ -1101,7 +1105,7 @@ void DockPanel::resizeTaskManager() {
        i >= std::max(itemsToKeep, last_update_index + 1); --i) {
     if (isHorizontal()) {
       items_[i]->left_ = (i == itemCount() - 1)
-          ? maxWidth_ - itemSpacing_ / 2 - items_[i]->getMinWidth()
+          ? maxWidth_ - itemSpacing_ - items_[i]->getMinWidth()
           : items_[i + 1]->left_ - items_[i]->getMinWidth() - itemSpacing_;
     } else {  // Vertical
       items_[i]->top_ = (i == itemCount() - 1)
