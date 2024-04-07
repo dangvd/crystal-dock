@@ -53,6 +53,7 @@ struct WindowInfo {
   bool onAllDesktops;
   bool demandsAttention;
   bool minimized;
+  bool restoreAfterShowDesktop;
   int32_t x;
   int32_t y;
   uint32_t width;

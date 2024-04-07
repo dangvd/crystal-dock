@@ -73,11 +73,41 @@ std::vector<struct org_kde_plasma_window*> WindowSystem::dockWindows_;
 }
 
 /* static */ void WindowSystem::setShowingDesktop(bool show) {
-  std::cout << "set show desktop: " << show << std::endl;
+  // This does not work because it would hide Crystal Dock.
+  /*
   org_kde_plasma_window_management_show_desktop(
       window_management_,
       show ? ORG_KDE_PLASMA_WINDOW_MANAGEMENT_SHOW_DESKTOP_ENABLED
            : ORG_KDE_PLASMA_WINDOW_MANAGEMENT_SHOW_DESKTOP_DISABLED);
+  */
+
+  // So we make our own implementation.
+  for (const auto& uuid : stackingOrder_) {
+    auto* window = uuids_[uuid];
+    auto* windowInfo = windows_[window];
+    if (windowInfo->desktop != currentDesktop_) {
+      continue;
+    }
+
+    if (show) {
+      windowInfo->restoreAfterShowDesktop = !windowInfo->minimized;
+      if (!windowInfo->minimized) {
+        org_kde_plasma_window_set_state(
+            window,
+            ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_MINIMIZED,
+            ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_MINIMIZED);
+      }
+      showingDesktop_ = true;
+    } else {
+      if (windowInfo->restoreAfterShowDesktop) {
+        org_kde_plasma_window_set_state(
+            window,
+            ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_ACTIVE,
+            ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_ACTIVE);
+      }
+      showingDesktop_ = false;
+    }
+  }
 }
 
 /* static */ std::vector<const WindowInfo*> WindowSystem::windows() {
@@ -308,7 +338,8 @@ std::vector<struct org_kde_plasma_window*> WindowSystem::dockWindows_;
     void *data,
     struct org_kde_plasma_window_management *org_kde_plasma_window_management,
     uint32_t state) {
-  showingDesktop_ = state & ORG_KDE_PLASMA_WINDOW_MANAGEMENT_SHOW_DESKTOP_ENABLED;
+  // Ignore and use our own state.
+  //showingDesktop_ = state & ORG_KDE_PLASMA_WINDOW_MANAGEMENT_SHOW_DESKTOP_ENABLED;
 }
 
 /* static */ void WindowSystem::window(
