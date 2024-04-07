@@ -38,15 +38,17 @@ Crystal Dock is written in C++ and depends on:
 ## Build from the source code
 
 Dependencies development packages: to build from the source code, Qt6, LayerShellQt6 and Wayland development packages are required.
-- On Debian-based distributions, it can be installed by running:
-```
-$ sudo apt install qt6-base-dev libwayland-dev <layer shell qt6 dev package>
-```
-- For OpenSUSE:
+To install them:
+
+- On OpenSUSE:
 ```
 $ sudo zypper install qt6-base-devel wayland-devel layer-shell-qt6-devel
 ```
-- For Fedora, install the following packages: <TBA>
+- On Fedora: TBA
+- On Debian-based distributions:
+```
+$ sudo apt install qt6-base-dev libwayland-dev <layer shell qt6 dev package>
+```
 
 To build and install, run:
 ```
