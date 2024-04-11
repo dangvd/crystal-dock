@@ -166,7 +166,8 @@ std::string WindowSystem::activeUuid_;
   }
 }
 
-/* static */ void WindowSystem::setDockType(QWidget* widget, uint32_t strutSize) {
+/* static */ void WindowSystem::setAnchorAndStrut(
+    QWidget* widget, LayerShellQt::Window::Anchors anchors, uint32_t strutSize) {
   widget->winId();  // we need this for widget->windowHandle() to not return nullptr.
   QWindow* win = widget->windowHandle();
   if (win == nullptr) {
@@ -181,8 +182,8 @@ std::string WindowSystem::activeUuid_;
   }
 
   layerShellWin->setLayer(LayerShellQt::Window::LayerTop);
+  layerShellWin->setAnchors(anchors);
   layerShellWin->setExclusiveZone(strutSize);
-  layerShellWin->setAnchors(LayerShellQt::Window::AnchorBottom);
 }
 
 /* static */ void WindowSystem::keepAbove(std::string_view uuid) {}

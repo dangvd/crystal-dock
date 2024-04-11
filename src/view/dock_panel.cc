@@ -39,6 +39,8 @@
 #include <QStringList>
 #include <QVariant>
 
+#include <LayerShellQt/Window>
+
 #include "add_panel_dialog.h"
 #include "application_menu.h"
 #include "clock.h"
@@ -104,7 +106,6 @@ DockPanel::DockPanel(MultiDockView* parent, MultiDockModel* model, int dockId)
   loadDockConfig();
   loadAppearanceConfig();
   initUi();
-  WindowSystem::setDockType(this, minHeight_);
 
   connect(animationTimer_.get(), SIGNAL(timeout()), this,
       SLOT(updateAnimation()));
@@ -1077,7 +1078,23 @@ void DockPanel::resizeTaskManager() {
 }
 
 void DockPanel::setStrut(int width) {
-  return;
+  LayerShellQt::Window::Anchors anchor;
+  switch (position_) {
+    case PanelPosition::Top:
+      anchor = LayerShellQt::Window::AnchorTop;
+      break;
+    case PanelPosition::Bottom:
+      anchor = LayerShellQt::Window::AnchorBottom;
+      break;
+    case PanelPosition::Left:
+      anchor = LayerShellQt::Window::AnchorLeft;
+      break;
+    case PanelPosition::Right:
+      anchor = LayerShellQt::Window::AnchorRight;
+      break;
+  }
+
+  WindowSystem::setAnchorAndStrut(this, anchor, width);
 }
 
 int DockPanel::findActiveItem(int x, int y) {

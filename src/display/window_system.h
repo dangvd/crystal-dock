@@ -34,6 +34,8 @@
 #include "plasma_virtual_desktop.h"
 #include "plasma_window_management.h"
 
+#include <LayerShellQt/Window>
+
 namespace crystaldock {
 
 struct VirtualDesktopInfo {
@@ -92,7 +94,8 @@ class WindowSystem : public QObject {
   static void activateWindow(const std::string& uuid);
   static void activateOrMinimizeWindow(const std::string& uuid);
 
-  static void setDockType(QWidget* widget, uint32_t strutSize);
+  static void setAnchorAndStrut(QWidget* widget, LayerShellQt::Window::Anchors anchors,
+                                uint32_t strutSize);
   static void keepAbove(std::string_view uuid);
   static void keepBelow(std::string_view uuid);
 
