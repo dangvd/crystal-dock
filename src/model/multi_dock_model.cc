@@ -74,15 +74,10 @@ void MultiDockModel::loadDocks() {
   // Dock ID starts from 1.
   int dockId = 1;
   dockConfigs_.clear();
-  for (const auto& configs : configHelper_.findAllDockConfigs()) {
-    const auto& configPath = std::get<0>(configs);
-    const auto& launchersPath = std::get<1>(configs);
+  for (const auto& configPath : configHelper_.findAllDockConfigs()) {
     dockConfigs_[dockId] = std::make_tuple(
         configPath,
-        std::make_unique<QSettings>(configPath, QSettings::IniFormat),
-        launchersPath,
-        std::vector<LauncherConfig>());
-    std::get<3>(dockConfigs_.at(dockId)) = loadDockLaunchers(dockId, launchersPath);
+        std::make_unique<QSettings>(configPath, QSettings::IniFormat));
     ++dockId;
   }
   nextDockId_ = dockId;
@@ -91,9 +86,10 @@ void MultiDockModel::loadDocks() {
 void MultiDockModel::addDock(PanelPosition position, int screen,
                              bool showApplicationMenu, bool showPager,
                              bool showTaskManager, bool showClock) {
-  auto configs = configHelper_.findNextDockConfigs();
-  auto dockId = addDock(configs, position, screen);
+  auto configPath = configHelper_.findNextDockConfig();
+  auto dockId = addDock(configPath, position, screen);
   setVisibility(dockId, kDefaultVisibility);
+  setLaunchers(dockId, defaultLaunchers());
   setShowApplicationMenu(dockId, showApplicationMenu);
   setShowPager(dockId, showPager);
   setShowTaskManager(dockId, showTaskManager);
@@ -121,20 +117,15 @@ void MultiDockModel::addDock(PanelPosition position, int screen,
     syncAppearanceConfig();
   }
   syncDockConfig(dockId);
-  syncDockLaunchersConfig(dockId);
 }
 
-int MultiDockModel::addDock(const std::tuple<QString, QString>& configs,
+int MultiDockModel::addDock(const QString& configPath,
                             PanelPosition position, int screen) {
   const auto dockId = nextDockId_;
   ++nextDockId_;
-  const auto& configPath = std::get<0>(configs);
-  const auto& launchersPath = std::get<1>(configs);
   dockConfigs_[dockId] = std::make_tuple(
       configPath,
-      std::make_unique<QSettings>(configPath, QSettings::IniFormat),
-      launchersPath,
-      loadDockLaunchers(dockId, launchersPath));
+      std::make_unique<QSettings>(configPath, QSettings::IniFormat));
   setPanelPosition(dockId, position);
   setScreen(dockId, screen);
 
@@ -143,23 +134,18 @@ int MultiDockModel::addDock(const std::tuple<QString, QString>& configs,
 
 void MultiDockModel::cloneDock(int srcDockId, PanelPosition position,
                                int screen) {
-  auto configs = configHelper_.findNextDockConfigs();
+  auto configPath = configHelper_.findNextDockConfig();
 
-  // Clone the dock config and launchers.
-  QFile::copy(dockConfigPath(srcDockId), std::get<0>(configs));
-  ConfigHelper::copyLaunchersDir(dockLaunchersPath(srcDockId),
-                                 std::get<1>(configs));
-
-  auto dockId = addDock(configs, position, screen);
+  // Clone the dock config.
+  QFile::copy(dockConfigPath(srcDockId), configPath);
+  auto dockId = addDock(configPath, position, screen);
   emit dockAdded(dockId);
 
   syncDockConfig(dockId);
-  syncDockLaunchersConfig(dockId);
 }
 
 void MultiDockModel::removeDock(int dockId) {
   QFile::remove(dockConfigPath(dockId));
-  ConfigHelper::removeLaunchersDir(dockLaunchersPath(dockId));
   dockConfigs_.erase(dockId);
   // No need to emit a signal here.
 }
@@ -173,88 +159,67 @@ bool MultiDockModel::hasPager() const {
   return false;
 }
 
-void MultiDockModel::syncDockLaunchersConfig(int dockId) {
-  const auto& launchersPath = dockLaunchersPath(dockId);
-  QDir launchersDir(launchersPath);
-  if (launchersDir.exists()) {
-    QStringList files = launchersDir.entryList(QDir::Files, QDir::Name);
-    for (int i = 0; i < files.size(); ++i) {
-      launchersDir.remove(files.at(i));
+const std::vector<LauncherConfig> MultiDockModel::launcherConfigs(int dockId) const {
+  std::vector<LauncherConfig> entries;
+  for (const auto& appId : launchers(dockId)) {
+    if (appId == "separator") {
+      entries.push_back(LauncherConfig(kSeparatorId, "", "", ""));
+      continue;
     }
-  } else {
-    QDir::root().mkpath(launchersPath);
-  }
 
-  QStringList appIds;
-  for (const auto& item : dockLauncherConfigs(dockId)) {
-    item.saveToFile(launchersPath);
-    appIds += item.appId;
-  }
-  setLaunchersOrder(dockId, appIds);
-}
-
-std::vector<LauncherConfig> MultiDockModel::loadDockLaunchers(
-    int dockId, const QString& dockLaunchersPath) {
-  QDir launchersDir(dockLaunchersPath);
-  QStringList files = launchersDir.entryList({"*.desktop"}, QDir::Files, QDir::Name);
-  if (files.empty()) {
-    return createDefaultLaunchers();
-  }
-
-  QStringList appIds = launchersOrder(dockId);
-  std::vector<LauncherConfig> launchers;    
-  launchers.reserve(appIds.size());
-  for (const auto& appId : appIds) {
-    const QString& desktopFile = dockLaunchersPath + "/" + appId + ".desktop";
-    if (QFileInfo(desktopFile).exists()) {
-      launchers.push_back(LauncherConfig(desktopFile));
-    }
-  }
-
-  return launchers;
-}
-
-std::vector<LauncherConfig> MultiDockModel::createDefaultLaunchers() {
-  std::vector<LauncherConfig> launchers;
-
-  auto* defaultWebBrowser = getDefaultBrowser();
-  if (defaultWebBrowser) {
-    launchers.push_back(
-        LauncherConfig(defaultWebBrowser->appId, defaultWebBrowser->name,
-                       defaultWebBrowser->icon, defaultWebBrowser->command));
-  } else {
-    const auto* entry = applicationMenuConfig_.findApplicationFromFile(
-          QString("firefox.desktop"));
+    const auto* entry = applicationMenuConfig_.findApplication(appId.toStdString());
     if (entry != nullptr) {
-      launchers.push_back(LauncherConfig(entry->appId, entry->name, entry->icon,
-                                         entry->command));
+      entries.push_back(LauncherConfig(entry->appId, entry->name, entry->icon,
+                                       entry->command));
+    }
+  }
+  return entries;
+}
+
+void MultiDockModel::setLauncherConfigs(
+    int dockId, const std::vector<LauncherConfig>& launcherConfigs) {
+  QStringList appIds;
+  for (const auto& config : launcherConfigs) {
+    appIds.append(config.appId);
+  }
+  setLaunchers(dockId, appIds);
+}
+
+QStringList MultiDockModel::defaultLaunchers() {
+  QStringList launchers;
+
+  auto* defaultWebBrowser = defaultBrowser();
+  if (defaultWebBrowser) {
+    launchers.append(defaultWebBrowser->appId);
+  } else {
+    const auto* entry = applicationMenuConfig_.findApplication("firefox");
+    if (entry != nullptr) {
+      launchers.append("firefox");
     }
   }
 
   auto desktopEnvItems = desktopEnv_->getDefaultLaunchers();
   launchers.reserve(desktopEnvItems.size() + 3);
-  for (const auto& file : desktopEnvItems) {
-    const auto* entry = applicationMenuConfig_.findApplicationFromFile(file);
+  for (const auto& appId : desktopEnvItems) {
+    const auto* entry = applicationMenuConfig_.findApplication(appId.toStdString());
     if (entry != nullptr) {
-      launchers.push_back(LauncherConfig(entry->appId, entry->name, entry->icon,
-                                         entry->command));
+      launchers.append(appId);
     }
   }
 
-  launchers.push_back(
-      LauncherConfig("separator", "Separator", "", kSeparatorCommand));
-  launchers.push_back(
-      LauncherConfig("lock-screen", "Lock Screen", "system-lock-screen", kLockScreenCommand));
+  launchers.append("separator");
+  launchers.append("lock-screen");
 
   return launchers;
 }
 
-const ApplicationEntry* MultiDockModel::getDefaultBrowser() {
+const ApplicationEntry* MultiDockModel::defaultBrowser() {
   QProcess process;
   process.start("xdg-settings", {"get", "default-web-browser"});
   process.waitForFinished(1000 /*msecs*/);
-  QString browserEntry = process.readAllStandardOutput().trimmed();
-  return applicationMenuConfig_.findApplicationFromFile(browserEntry);
+  QString desktopFile = process.readAllStandardOutput().trimmed();
+  auto appId = desktopFile.first(desktopFile.lastIndexOf('.'));
+  return applicationMenuConfig_.findApplication(appId.toStdString());
 }
 
 }  // namespace crystaldock

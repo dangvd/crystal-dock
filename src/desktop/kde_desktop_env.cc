@@ -78,8 +78,7 @@ std::vector<Category> KdeDesktopEnv::getApplicationMenuSystemCategories() const 
 }
 
 std::vector<QString> KdeDesktopEnv::getDefaultLaunchers() const {
-  return {"org.kde.konsole.desktop", "org.kde.dolphin.desktop",
-          "systemsettings.desktop"};
+  return {"org.kde.konsole", "org.kde.dolphin", "systemsettings"};
 }
 
 bool KdeDesktopEnv::setWallpaper(int screen, const QString& wallpaper) {

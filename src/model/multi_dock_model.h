@@ -72,6 +72,8 @@ constexpr bool kDefaultCurrentScreenTasksOnly = false;
 constexpr bool kDefaultUse24HourClock = true;
 constexpr float kDefaultClockFontScaleFactor = kLargeClockFontScaleFactor;
 
+constexpr char kSeparatorId[] = "separator";
+
 // The model.
 class MultiDockModel : public QObject {
   Q_OBJECT
@@ -366,13 +368,13 @@ class MultiDockModel : public QObject {
     setDockProperty(dockId, kGeneralCategory, kShowClock, value);
   }
 
-  QStringList launchersOrder(int dockId) const {
-    return dockProperty(dockId, kGeneralCategory, kLaunchersOrder, QString())
+  QStringList launchers(int dockId) const {
+    return dockProperty(dockId, kGeneralCategory, kLaunchers, QString())
         .split(";", Qt::SkipEmptyParts);
   }
 
-  void setLaunchersOrder(int dockId, QStringList value) {
-    setDockProperty(dockId, kGeneralCategory, kLaunchersOrder, value.join(";"));
+  void setLaunchers(int dockId, QStringList value) {
+    setDockProperty(dockId, kGeneralCategory, kLaunchers, value.join(";"));
   }
 
   void saveDockConfig(int dockId) {
@@ -380,38 +382,27 @@ class MultiDockModel : public QObject {
     // No need to emit signal here.
   }
 
-  QString dockLaunchersPath(int dockId) const {
-    return std::get<2>(dockConfigs_.at(dockId));
-  }
+  const std::vector<LauncherConfig> launcherConfigs(int dockId) const;
 
-  const std::vector<LauncherConfig> dockLauncherConfigs(int dockId) const {
-    return std::get<3>(dockConfigs_.at(dockId));
-  }
-
-  void setDockLauncherConfigs(
-      int dockId, const std::vector<LauncherConfig>& launcherConfigs) {
-    std::get<3>(dockConfigs_[dockId]) = launcherConfigs;
-  }
-
-  void saveDockLauncherConfigs(int dockId) {
-    syncDockLaunchersConfig(dockId);
-    emit dockLaunchersChanged(dockId);
-  }
+  void setLauncherConfigs(
+      int dockId, const std::vector<LauncherConfig>& launcherConfigs);
 
   void addLauncher(int dockId, const LauncherConfig& launcher) {
-    auto& launchers = std::get<3>(dockConfigs_[dockId]);
+    auto entries = launchers(dockId);
     unsigned int i = 0;
-    for (; i < launchers.size() && launchers[i].command != kSeparatorCommand; ++i) {}
-    launchers.insert(launchers.begin() + i, launcher);
-    syncDockLaunchersConfig(dockId);
+    for (; i < entries.size() && entries[i] != kSeparatorId; ++i) {}
+    entries.insert(i, launcher.appId);
+    setLaunchers(dockId, entries);
+    syncDockConfig(dockId);
   }
 
-  void removeLauncher(int dockId, const QString& command) {
-    auto& launchers = std::get<3>(dockConfigs_[dockId]);
-    for (unsigned i = 0; i < launchers.size(); ++i) {
-      if (launchers[i].command == command) {
-        launchers.erase(launchers.begin() + i);
-        syncDockLaunchersConfig(dockId);
+  void removeLauncher(int dockId, const QString& appId) {
+    auto entries = launchers(dockId);
+    for (unsigned i = 0; i < entries.size(); ++i) {
+      if (entries[i] == appId) {
+        entries.remove(i);
+        setLaunchers(dockId, entries);
+        syncDockConfig(dockId);
         return;
       }
     }
@@ -432,12 +423,12 @@ class MultiDockModel : public QObject {
     return applicationMenuConfig_.findApplication(appId);
   }
 
-  const std::vector<ApplicationEntry> searchApplications(const QString& text) const {
-    return applicationMenuConfig_.searchApplications(text);
+  bool isAppMenuEntry(const std::string& appId) const {
+    return applicationMenuConfig_.isAppMenuEntry(appId);
   }
 
-  bool isAppMenuEntry(const QString& command) const {
-    return applicationMenuConfig_.isAppMenuEntry(command);
+  const std::vector<ApplicationEntry> searchApplications(const QString& text) const {
+    return applicationMenuConfig_.searchApplications(text);
   }
 
  signals:
@@ -463,7 +454,7 @@ class MultiDockModel : public QObject {
   static constexpr char kShowClock[] = "showClock";
   static constexpr char kShowPager[] = "showPager";
   static constexpr char kShowTaskManager[] = "showTaskManager";
-  static constexpr char kLaunchersOrder[] = "launchersOrder";
+  static constexpr char kLaunchers[] = "launchers";
 
   // Global appearance config's categories/properties.
 
@@ -546,16 +537,12 @@ class MultiDockModel : public QObject {
     return std::get<1>(dockConfigs_[dockId]).get();
   }
 
-  std::vector<LauncherConfig> loadDockLaunchers(
-      int dockId, const QString& dockLaunchersPath);
-
-  std::vector<LauncherConfig> createDefaultLaunchers();
-  const ApplicationEntry* getDefaultBrowser();
+  QStringList defaultLaunchers();
+  const ApplicationEntry* defaultBrowser();
 
   void loadDocks();
 
-  int addDock(const std::tuple<QString, QString>& configs,
-              PanelPosition position, int screen);
+  int addDock(const QString& configPath, PanelPosition position, int screen);
 
   void syncAppearanceConfig() {
     appearanceConfig_.sync();
@@ -564,8 +551,6 @@ class MultiDockModel : public QObject {
   void syncDockConfig(int dockId) {
     dockConfig(dockId)->sync();
   }
-
-  void syncDockLaunchersConfig(int dockId);
 
   // Helper(s).
   ConfigHelper configHelper_;
@@ -577,14 +562,10 @@ class MultiDockModel : public QObject {
 
   // Dock configs, as map from dockIds to tuples of:
   // (dock config file path,
-  //  dock config,
-  //  launchers dir path,
-  //  list of launcher configs)
+  //  dock config)
   std::unordered_map<int,
                      std::tuple<QString,
-                                std::unique_ptr<QSettings>,
-                                QString,
-                                std::vector<LauncherConfig>>> dockConfigs_;
+                                std::unique_ptr<QSettings>>> dockConfigs_;
 
   // ID for the next dock.
   int nextDockId_;

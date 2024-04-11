@@ -33,7 +33,6 @@
 
 #include "application_menu_entry.h"
 #include <desktop/desktop_env.h>
-#include <utils/command_utils.h>
 
 namespace crystaldock {
 
@@ -52,15 +51,11 @@ class ApplicationMenuConfig : public QObject {
 
   const ApplicationEntry* findApplication(const std::string& appId) const;
 
-  const ApplicationEntry* findApplicationFromFile(const std::string& desktopFile) const;
-  const ApplicationEntry* findApplicationFromFile(const QString& desktopFile) const {
-    return findApplicationFromFile(desktopFile.toStdString());
+  bool isAppMenuEntry(const std::string& appId) const {
+    return entries_.count(appId) > 0;
   }
 
   const std::vector<ApplicationEntry> searchApplications(const QString& text) const;
-
-  bool isAppMenuEntry(const std::string& command) const ;
-  bool isAppMenuEntry(const QString& command) const { return isAppMenuEntry(command.toStdString()); }
 
  signals:
   void configChanged();
@@ -97,13 +92,6 @@ class ApplicationMenuConfig : public QObject {
   std::unordered_map<std::string, int> categoryMap_;
   // Map from app ids to application entries for fast look-up.
   std::unordered_map<std::string, const ApplicationEntry*> entries_;
-  // Map from commands to application entries for fast look-up.
-  std::unordered_map<std::string, const ApplicationEntry*> commandsToEntries_;
-  // Map from names to application entries for fast look-up.
-  std::unordered_map<std::string, const ApplicationEntry*> namesToEntries_;
-  // Map from desktop files to application entries for fast look-up.
-  // Keys are filenames only, not full paths.
-  std::unordered_map<std::string, const ApplicationEntry*> filesToEntries_;
 
   QFileSystemWatcher fileWatcher_;
 

@@ -94,9 +94,6 @@ void ApplicationMenuConfig::clearEntries() {
     category.entries.clear();
   }
   entries_.clear();
-  commandsToEntries_.clear();
-  namesToEntries_.clear();
-  filesToEntries_.clear();
 }
 
 bool ApplicationMenuConfig::loadEntries() {
@@ -149,12 +146,12 @@ bool ApplicationMenuConfig::loadEntry(const QString &file) {
     return false;
   }
 
+  const QString appId = QFileInfo(file).completeBaseName();
   for (int i = 0; i < categories.size(); ++i) {
     const std::string category = categories[i].toStdString();
     if (categoryMap_.count(category) > 0 &&
-        namesToEntries_.count(desktopFile.name().toStdString()) == 0) {
+        entries_.count(appId.toStdString()) == 0) {
       const QString command = filterFieldCodes(desktopFile.exec());
-      const QString appId = QFileInfo(file).completeBaseName();
       ApplicationEntry newEntry(appId,
                                 desktopFile.name(),
                                 desktopFile.genericName(),
@@ -167,9 +164,6 @@ bool ApplicationMenuConfig::loadEntry(const QString &file) {
 
       auto* entry = &(*--next);
       entries_[newEntry.appId.toStdString()] = entry;
-      commandsToEntries_[newEntry.command.toStdString()] = entry;
-      namesToEntries_[desktopFile.name().toStdString()] = entry;
-      filesToEntries_[QFileInfo(file).fileName().toStdString()] = entry;
     }
   }
 
@@ -182,14 +176,15 @@ void ApplicationMenuConfig::reload() {
   emit configChanged();
 }
 
-// This needs to be synced with command_utils.h/areTheSameCommand()
 const ApplicationEntry* ApplicationMenuConfig::findApplication(const std::string& appId) const {
+  for (const auto& category : systemCategories_) {
+    for (const auto& entry : category.entries) {
+      if (entry.appId.toStdString() == appId) {
+        return &entry;
+      }
+    }
+  }
   return entries_.count(appId) > 0 ? entries_.at(appId) : nullptr;
-}
-
-const ApplicationEntry* ApplicationMenuConfig::findApplicationFromFile(
-    const std::string& desktopFile) const {
-  return (filesToEntries_.count(desktopFile) > 0) ? filesToEntries_.at(desktopFile) : nullptr;
 }
 
 const std::vector<ApplicationEntry> ApplicationMenuConfig::searchApplications(const QString& text) const {
@@ -210,14 +205,6 @@ const std::vector<ApplicationEntry> ApplicationMenuConfig::searchApplications(co
   }
   std::sort(entries.begin(), entries.end());
   return entries;
-}
-
-bool ApplicationMenuConfig::isAppMenuEntry(const std::string& command) const {
-  // Fix for Synaptic.
-  if (command == "synaptic") {
-    return entries_.count("synaptic-pkexec") > 0;
-  }
-  return commandsToEntries_.count(command) > 0;
 }
 
 }  // namespace crystaldock

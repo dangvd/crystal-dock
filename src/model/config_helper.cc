@@ -36,9 +36,8 @@ ConfigHelper::ConfigHelper(const QString& configDir)
   }
 }
 
-std::vector<std::tuple<QString, QString>> ConfigHelper::findAllDockConfigs()
-    const {
-  std::vector<std::tuple<QString, QString>> allConfigs;
+std::vector<QString> ConfigHelper::findAllDockConfigs() const {
+  std::vector<QString> allConfigs;
   QStringList files = configDir_.entryList(
       {kConfigPattern}, QDir::Files, QDir::Name);
   if (files.isEmpty()) {
@@ -47,42 +46,17 @@ std::vector<std::tuple<QString, QString>> ConfigHelper::findAllDockConfigs()
 
   for (int i = 0; i < files.size(); ++i) {
     const QString& configFile = files.at(i);
-    allConfigs.push_back(std::make_tuple(
-        dockConfigPath(configFile),
-        dockLaunchersPathForConfigFile(configFile)));
+    allConfigs.push_back(dockConfigPath(configFile));
   }
   return allConfigs;
 }
 
-std::tuple<QString, QString> ConfigHelper::findNextDockConfigs() const {
+QString ConfigHelper::findNextDockConfig() const {
   for (int fileId = 1; ; ++fileId) {
     if (!configDir_.exists(dockConfigFile(fileId))) {
-      return std::make_tuple(dockConfigPath(fileId),
-                             dockLaunchersPath(fileId));
+      return dockConfigPath(fileId);
     }
   }
-}
-
-void ConfigHelper::copyLaunchersDir(const QString& launchersDir,
-                                    const QString& newLaunchersDir) {
-  QDir::root().mkpath(newLaunchersDir);
-  QDir dir(launchersDir);
-  QStringList files = dir.entryList({"*.desktop"}, QDir::Files, QDir::Name);
-  for (int i = 0; i < files.size(); ++i) {
-    const auto srcFile = launchersDir + "/" + files.at(i);
-    const auto destFile = newLaunchersDir + "/" + files.at(i);
-    QFile::copy(srcFile, destFile);
-  }
-}
-
-void ConfigHelper::removeLaunchersDir(const QString& launchersDir) {
-  QDir dir(launchersDir);
-  QStringList files = dir.entryList({"*.desktop"}, QDir::Files, QDir::Name);
-  for (int i = 0; i < files.size(); ++i) {
-    const auto launcherFile = launchersDir + "/" + files.at(i);
-    QFile::remove(launcherFile);
-  }
-  QDir::root().rmdir(launchersDir);
 }
 
 }  // namespace crystaldock

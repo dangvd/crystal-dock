@@ -19,7 +19,6 @@
 #ifndef CRYSTALDOCK_CONFIG_HELPER_H_
 #define CRYSTALDOCK_CONFIG_HELPER_H_
 
-#include <tuple>
 #include <vector>
 
 #include <QDir>
@@ -50,18 +49,11 @@ class ConfigHelper  {
   }
 
   // Finds the configs of all existing docks.
-  // Returns a list of a tuple of <dock config path, dock launchers path>.
-  std::vector<std::tuple<QString, QString>> findAllDockConfigs() const;
+  // Returns a list of dock config paths.
+  std::vector<QString> findAllDockConfigs() const;
 
   // Finds the next available configs for a new dock.
-  std::tuple<QString, QString> findNextDockConfigs() const;
-
-  // Copies a launchers directory.
-  static void copyLaunchersDir(const QString& launchersDir,
-                               const QString& newLaunchersDir);
-
-  // Removes a launchers directory.
-  static void removeLaunchersDir(const QString& launchersDir);
+  QString findNextDockConfig() const;
 
  private:
   // Gets the config file name of a dock.
@@ -76,21 +68,6 @@ class ConfigHelper  {
 
   QString dockConfigPath(QString configFile) const {
     return configDir_.filePath(configFile);
-  }
-
-  static QString dockLaunchersDir(int fileId) {
-    return QString("panel_") + QString::number(fileId) + "_launchers";
-  }
-
-  // Gets the launchers dir path of a dock.
-  QString dockLaunchersPath(int fileId) const {
-    return configDir_.filePath(dockLaunchersDir(fileId));
-  }
-
-  QString dockLaunchersPathForConfigFile(const QString& configFile) const {
-    QString launchersDir = configFile;
-    launchersDir.replace(".conf", "_launchers");
-    return configDir_.filePath(launchersDir);
   }
 
   QDir configDir_;

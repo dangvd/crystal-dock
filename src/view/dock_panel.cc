@@ -668,14 +668,14 @@ void DockPanel::initApplicationMenu() {
 }
 
 void DockPanel::initLaunchers() {
-  for (const auto& launcherConfig : model_->dockLauncherConfigs(dockId_)) {
-    if (launcherConfig.command == kSeparatorCommand) {
+  for (const auto& launcherConfig : model_->launcherConfigs(dockId_)) {
+    if (launcherConfig.appId == kSeparatorId) {
       items_.push_back(std::make_unique<Separator>(this, model_, orientation_, minSize_, maxSize_));
     } else {
       items_.push_back(std::make_unique<Program>(
           this, model_, launcherConfig.appId, launcherConfig.name, orientation_,
           launcherConfig.icon, minSize_, maxSize_, launcherConfig.command,
-          model_->isAppMenuEntry(launcherConfig.command), /*pinned=*/true));
+          model_->isAppMenuEntry(launcherConfig.appId.toStdString()), /*pinned=*/true));
     }
   }
 }

@@ -190,7 +190,7 @@ class DockPanel : public QWidget {
   int applicationMenuItemCount() const { return showApplicationMenu_ ? 1 : 0; }
 
   int launcherItemCount() const {
-    return model_->dockLauncherConfigs(dockId_).size();
+    return model_->launcherConfigs(dockId_).size();
   }
 
   int pagerItemCount() const {

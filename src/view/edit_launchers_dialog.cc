@@ -123,7 +123,7 @@ void EditLaunchersDialog::initSystemCommands() {
 
 void EditLaunchersDialog::loadData() {
   ui->launchers->clear();
-  for (const auto& item : model_->dockLauncherConfigs(dockId_)) {
+  for (const auto& item : model_->launcherConfigs(dockId_)) {
     QPixmap icon = QIcon::fromTheme(item.icon).pixmap(kListIconSize);
     QListWidgetItem* listItem = new QListWidgetItem(
           icon, item.name);
@@ -146,8 +146,7 @@ void EditLaunchersDialog::saveData() {
     // TODO.
     launcherConfigs.push_back(LauncherConfig("", listItem->text(), info.iconName, info.command));
   }
-  model_->setDockLauncherConfigs(dockId_, launcherConfigs);
-  model_->saveDockLauncherConfigs(dockId_);
+  model_->setLauncherConfigs(dockId_, launcherConfigs);
 }
 
 }  // namespace crystaldock
