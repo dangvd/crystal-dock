@@ -57,8 +57,6 @@ class DockPanel : public QWidget {
   DockPanel(MultiDockView* parent, MultiDockModel* model, int dockId);
   virtual ~DockPanel() = default;
 
-  void resize(int w, int h);
-
   int dockId() const { return dockId_; }
   PanelPosition position() const { return position_; }
 
@@ -271,15 +269,8 @@ class DockPanel : public QWidget {
 
   // Non-config variables.
 
-  int x_;
-  int y_;
-  int width_;
-  int height_;
-
   int tooltipSize_;  // height if horizontal, width if vertical.
   int itemSpacing_;
-  int minX_;  // X-coordinate when minimized.
-  int minY_;  // Y-coordinate when minimized.
   int minWidth_;
   int maxWidth_;
   int minHeight_;
@@ -325,7 +316,6 @@ class DockPanel : public QWidget {
   TaskManagerSettingsDialog taskManagerSettingsDialog_;
 
   bool isMinimized_;
-  bool isResizing_;
   bool isEntering_;
   bool isLeaving_;
   bool isAnimationActive_;

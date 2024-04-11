@@ -92,7 +92,6 @@ DockPanel::DockPanel(MultiDockView* parent, MultiDockModel* model, int dockId)
       wallpaperSettingsDialog_(this, model),
       taskManagerSettingsDialog_(this, model),
       isMinimized_(true),
-      isResizing_(false),
       isEntering_(false),
       isLeaving_(false),
       isAnimationActive_(false),
@@ -131,37 +130,6 @@ DockPanel::DockPanel(MultiDockView* parent, MultiDockModel* model, int dockId)
   connect(model_, SIGNAL(appearanceChanged()), this, SLOT(reload()));
   connect(model_, SIGNAL(dockLaunchersChanged(int)),
           this, SLOT(onDockLaunchersChanged(int)));
-}
-
-void DockPanel::resize(int w, int h) {
-  isResizing_ = true;
-  QWidget::resize(w, h);
-  int x, y;
-  if (position_ == PanelPosition::Top) {
-    x = (screenGeometry_.width() - w) / 2;
-    y = 0;
-  } else if (position_ == PanelPosition::Bottom) {
-    x = (screenGeometry_.width() - w) / 2;
-    y = screenGeometry_.height() - h;
-  } else if (position_ == PanelPosition::Left) {
-    x = 0;
-    y = (screenGeometry_.height() - h) / 2;
-  } else {  // Right
-    x = screenGeometry_.width() - w;
-    y = (screenGeometry_.height() - h) / 2;
-  }
-  if (isMinimized_) {
-    move(x + screenGeometry_.x(), y + screenGeometry_.y());
-  }
-  if (w == minWidth_ && h == minHeight_) {
-    minX_ = x + screenGeometry_.x();
-    minY_ = y + screenGeometry_.y();
-  }
-  // This is to fix the bug that if launched from a KDE Plasma Quicklaunch,
-  // the dock panel still doesn't show on all desktops even though
-  // we've already called this in the constructor.
-  // WindowSystem::setOnAllDesktops(winId(), true);
-  isResizing_ = false;
 }
 
 void DockPanel::reload() {
@@ -325,11 +293,6 @@ void DockPanel::removeDock() {
 }
 
 void DockPanel::onWindowAdded(const WindowInfo* info) {
-  if (info->appId == "crystal-dock") {
-    x_ = info->x;
-    y_ = info->y;
-  }
-
   if (!showTaskManager()) {
     return;
   }
@@ -380,10 +343,6 @@ void DockPanel::onWindowChanged(std::string_view uuid, NET::Properties propertie
 */
 
 void DockPanel::paintEvent(QPaintEvent* e) {
-  if (isResizing_) {
-    return;  // to avoid potential flicker.
-  }
-
   QPainter painter(this);
 
   if (isHorizontal()) {
