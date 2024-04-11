@@ -163,12 +163,10 @@ void DockPanel::setStrut() {
     case PanelVisibility::AlwaysVisible:
       setStrut(isHorizontal() ? minHeight_ : minWidth_);
       break;
-    case PanelVisibility::AutoHide:  // fall through
-    case PanelVisibility::WindowsCanCover:
+    case PanelVisibility::AutoHide:
       setStrut(1);
       break;
     case PanelVisibility::WindowsGoBelow:  // fall through
-    case PanelVisibility::WindowsCanCover_Quiet:
     default:
       setStrut(0);
       break;
@@ -418,16 +416,9 @@ void DockPanel::mousePressEvent(QMouseEvent* e) {
 
 void DockPanel::enterEvent (QEnterEvent* e) {
   isEntering_ = true;
-  if (windowsCanCover()) {
-    //WindowSystem::keepAbove(winId());
-  }
 }
 
 void DockPanel::leaveEvent(QEvent* e) {
-  if (windowsCanCover()) {
-    //WindowSystem::keepBelow(winId());
-  }
-
   if (isMinimized_) {
     return;
   }
@@ -506,14 +497,6 @@ void DockPanel::createMenu() {
       QString("Auto &Hide"), this,
       [this]() { updateVisibility(PanelVisibility::AutoHide); });
   visibilityAutoHideAction_->setCheckable(true);
-  visibilityWindowsCanCoverAction_ = visibility->addAction(
-      QString("Windows Can &Cover"), this,
-      [this]() { updateVisibility(PanelVisibility::WindowsCanCover); });
-  visibilityWindowsCanCoverAction_->setCheckable(true);
-  visibilityWindowsCanCoverQuietAction_ = visibility->addAction(
-      QString("Windows Can Cover (&Quiet)"), this,
-      [this]() { updateVisibility(PanelVisibility::WindowsCanCover_Quiet); });
-  visibilityWindowsCanCoverQuietAction_->setCheckable(true);
   visibilityWindowsGoBelowAction_ = visibility->addAction(
       QString("Windows Go &Below"), this,
       [this]() { updateVisibility(PanelVisibility::WindowsGoBelow); });
@@ -556,28 +539,10 @@ void DockPanel::setPosition(PanelPosition position) {
 
 void DockPanel::setVisibility(PanelVisibility visibility) {
   visibility_ = visibility;
-  switch(visibility_) {
-    case PanelVisibility::AlwaysVisible:  // fall through
-    case PanelVisibility::AutoHide:  // fall through
-    case PanelVisibility::WindowsGoBelow:
-      //WindowSystem::keepAbove(winId());
-      break;
-    case PanelVisibility::WindowsCanCover:  // fall through
-    case PanelVisibility::WindowsCanCover_Quiet:
-      //WindowSystem::keepBelow(winId());
-      break;
-    default:
-      break;
-  }
-
   visibilityAlwaysVisibleAction_->setChecked(
       visibility_ == PanelVisibility::AlwaysVisible);
   visibilityAutoHideAction_->setChecked(
       visibility_ == PanelVisibility::AutoHide);
-  visibilityWindowsCanCoverAction_->setChecked(
-      visibility_ == PanelVisibility::WindowsCanCover);
-  visibilityWindowsCanCoverQuietAction_->setChecked(
-      visibility_ == PanelVisibility::WindowsCanCover_Quiet);
   visibilityWindowsGoBelowAction_->setChecked(
       visibility_ == PanelVisibility::WindowsGoBelow);
 }

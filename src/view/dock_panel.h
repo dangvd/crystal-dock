@@ -175,9 +175,6 @@ class DockPanel : public QWidget {
   bool isHorizontal() { return orientation_ == Qt::Horizontal; }
 
   bool autoHide() { return visibility_ == PanelVisibility::AutoHide; }
-  bool windowsCanCover() {
-    return visibility_ == PanelVisibility::WindowsCanCover;
-  }
 
   void setPosition(PanelPosition position);
 
@@ -297,8 +294,6 @@ class DockPanel : public QWidget {
   QAction* positionRight_;
   QAction* visibilityAlwaysVisibleAction_;
   QAction* visibilityAutoHideAction_;
-  QAction* visibilityWindowsCanCoverAction_;
-  QAction* visibilityWindowsCanCoverQuietAction_;
   QAction* visibilityWindowsGoBelowAction_;
   QAction* applicationMenuAction_;
   QAction* pagerAction_;

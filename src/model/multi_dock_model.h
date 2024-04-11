@@ -40,8 +40,7 @@ namespace crystaldock {
 
 enum class PanelPosition { Top, Bottom, Left, Right };
 
-enum class PanelVisibility { AlwaysVisible, AutoHide, WindowsCanCover,
-                             WindowsGoBelow, WindowsCanCover_Quiet };
+enum class PanelVisibility { AlwaysVisible, AutoHide, WindowsGoBelow };
 
 constexpr int kDefaultMinSize = 48;
 constexpr int kDefaultMaxSize = 128;
