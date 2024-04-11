@@ -824,8 +824,7 @@ void DockPanel::updateLayout() {
     for (const auto& item : items_) {
       item->endSize_ = item->size_;
       if (isHorizontal()) {
-        item->endLeft_ = item->left_ + (screenGeometry_.width() - minWidth_) / 2
-            - x() + screenGeometry_.x();
+        item->endLeft_ = item->left_ + (width() - minWidth_) / 2;
         if (position_ == PanelPosition::Top) {
           item->endTop_ = item->top_ + minHeight_ - distance;
         } else {  // Bottom
