@@ -20,8 +20,6 @@ std::unordered_map<std::string, struct org_kde_plasma_window*> WindowSystem::uui
 std::vector<std::string> WindowSystem::stackingOrder_;
 std::string WindowSystem::activeUuid_;
 
-std::vector<struct org_kde_plasma_window*> WindowSystem::dockWindows_;
-
 /* static */ WindowSystem* WindowSystem::self() {
   static WindowSystem* self = nullptr;
   if (!self) {
@@ -304,11 +302,6 @@ std::vector<struct org_kde_plasma_window*> WindowSystem::dockWindows_;
     if (currentDesktop_ != pos->id) {
       currentDesktop_ = pos->id;
       emit self()->currentDesktopChanged(currentDesktop_);
-
-      // Workaround for On-All-Desktops.
-      for (auto* window : dockWindows_) {
-        org_kde_plasma_window_request_enter_virtual_desktop(window, currentDesktop_.c_str());
-      }
     }
   }
 }
@@ -409,9 +402,7 @@ std::vector<struct org_kde_plasma_window*> WindowSystem::dockWindows_;
     info->appId = app_id;
   }
 
-  // On all desktops and Skip taskbar not working somehow.
   if (std::string(app_id) == "crystal-dock") {
-    dockWindows_.push_back(window);
     org_kde_plasma_window_set_state(
         window,
         ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_ON_ALL_DESKTOPS |
@@ -420,7 +411,6 @@ std::vector<struct org_kde_plasma_window*> WindowSystem::dockWindows_;
         ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_ON_ALL_DESKTOPS |
             ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_SKIPTASKBAR |
             ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_KEEP_ABOVE);
-    org_kde_plasma_window_request_enter_virtual_desktop(window, currentDesktop_.c_str());
   }
 }
 
@@ -438,12 +428,12 @@ std::vector<struct org_kde_plasma_window*> WindowSystem::dockWindows_;
     info->demandsAttention = flags & ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_DEMANDS_ATTENTION;
     info->minimized = flags & ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_MINIMIZED;
 
-    if (!info->appId.empty() && info->appId != "crystal-dock" &&
-        flags & ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_ACTIVE) {
-      if (activeUuid_ != info->uuid) {
-        activeUuid_ = info->uuid;
-        emit self()->activeWindowChanged(activeUuid_);
-      }
+    if (info->minimized && activeUuid_ == info->uuid) {
+      activeUuid_ = "";
+      emit self()->activeWindowChanged(activeUuid_);
+    } else if (flags & ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_ACTIVE && activeUuid_ != info->uuid) {
+      activeUuid_ = info->uuid;
+      emit self()->activeWindowChanged(activeUuid_);
     }
   }
 }

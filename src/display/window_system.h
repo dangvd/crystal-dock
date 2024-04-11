@@ -332,9 +332,6 @@ class WindowSystem : public QObject {
   static std::vector<std::string> stackingOrder_;
   // Active window's UUID.
   static std::string activeUuid_;
-
-  // All Crystal Dock's dock windows.
-  static std::vector<struct org_kde_plasma_window*> dockWindows_;
 };
 
 }  // namespace crystaldock
