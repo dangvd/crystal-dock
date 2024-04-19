@@ -383,9 +383,6 @@ class MultiDockModel : public QObject {
 
   const std::vector<LauncherConfig> launcherConfigs(int dockId) const;
 
-  void setLauncherConfigs(
-      int dockId, const std::vector<LauncherConfig>& launcherConfigs);
-
   void addLauncher(int dockId, const LauncherConfig& launcher) {
     auto entries = launchers(dockId);
     unsigned int i = 0;

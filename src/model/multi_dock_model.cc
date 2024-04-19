@@ -176,15 +176,6 @@ const std::vector<LauncherConfig> MultiDockModel::launcherConfigs(int dockId) co
   return entries;
 }
 
-void MultiDockModel::setLauncherConfigs(
-    int dockId, const std::vector<LauncherConfig>& launcherConfigs) {
-  QStringList appIds;
-  for (const auto& config : launcherConfigs) {
-    appIds.append(config.appId);
-  }
-  setLaunchers(dockId, appIds);
-}
-
 QStringList MultiDockModel::defaultLaunchers() {
   QStringList launchers;
 

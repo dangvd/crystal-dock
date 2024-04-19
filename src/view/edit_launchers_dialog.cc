@@ -32,12 +32,12 @@
 namespace crystaldock {
 
 QDataStream &operator<<(QDataStream &out, const LauncherInfo& launcher) {
-  out << launcher.iconName << launcher.command;
+  out << launcher.iconName << launcher.appId;
   return out;
 }
 
 QDataStream &operator>>(QDataStream &in, LauncherInfo& launcher) {
-  in >> launcher.iconName >> launcher.command;
+  in >> launcher.iconName >> launcher.appId;
   return in;
 }
 
@@ -65,12 +65,18 @@ EditLaunchersDialog::EditLaunchersDialog(QWidget* parent, MultiDockModel* model,
 }
 
 void EditLaunchersDialog::addLauncher(const QString& name,
-    const QString& command, const QString& iconName) {
-  QListWidgetItem* item = new QListWidgetItem(getListItemIcon(iconName), name);
-  item->setData(Qt::UserRole, QVariant::fromValue(
-      LauncherInfo(iconName, command)));
-  ui->launchers->addItem(item);
-  ui->launchers->setCurrentItem(item);
+    const QString& appId, const QString& iconName) {
+  QListWidgetItem* listItem;
+  if (appId == kSeparatorId) {
+    listItem = new QListWidgetItem("--- Separator ---");
+  } else {
+    listItem = new QListWidgetItem(
+        QIcon::fromTheme(iconName).pixmap(kListIconSize), name);
+  }
+  listItem->setData(Qt::UserRole,
+                    QVariant::fromValue(LauncherInfo(iconName, appId)));
+  ui->launchers->addItem(listItem);
+  ui->launchers->setCurrentItem(listItem);
 }
 
 void EditLaunchersDialog::accept() {
@@ -91,11 +97,11 @@ void EditLaunchersDialog::addSystemCommand(int index) {
   }
 
   LauncherInfo info = ui->systemCommands->currentData().value<LauncherInfo>();
-  addLauncher(ui->systemCommands->currentText(), info.command, info.iconName);
+  addLauncher(ui->systemCommands->currentText(), info.appId, info.iconName);
 }
 
 void EditLaunchersDialog::addSeparator() {
-  addLauncher("Separator", kSeparatorCommand, /*iconName=*/"");
+  addLauncher("Separator", kSeparatorId, /*iconName=*/"");
 }
 
 void EditLaunchersDialog::removeSelectedLauncher() {
@@ -110,13 +116,11 @@ void EditLaunchersDialog::removeAllLaunchers() {
 }
 
 void EditLaunchersDialog::initSystemCommands() {
-  ui->systemCommands->addItem(getListItemIcon("user-desktop"), "Show Desktop",
-                              QVariant::fromValue(LauncherInfo("user-desktop", kShowDesktopCommand)));
-
   for (const auto& category : model_->applicationMenuSystemCategories()) {
     for (const auto& entry : category.entries) {
-      ui->systemCommands->addItem(getListItemIcon(entry.icon), entry.name,
-                                  QVariant::fromValue(LauncherInfo(entry.icon, entry.command)));
+      ui->systemCommands->addItem(
+          getListItemIcon(entry.icon), entry.name,
+          QVariant::fromValue(LauncherInfo(entry.icon, entry.appId)));
     }
   }
 }
@@ -124,12 +128,7 @@ void EditLaunchersDialog::initSystemCommands() {
 void EditLaunchersDialog::loadData() {
   ui->launchers->clear();
   for (const auto& item : model_->launcherConfigs(dockId_)) {
-    QPixmap icon = QIcon::fromTheme(item.icon).pixmap(kListIconSize);
-    QListWidgetItem* listItem = new QListWidgetItem(
-          icon, item.name);
-    listItem->setData(Qt::UserRole, QVariant::fromValue(
-                        LauncherInfo(item.icon, item.command)));
-    ui->launchers->addItem(listItem);
+    addLauncher(item.name, item.appId, item.icon);
   }
   ui->launchers->setCurrentRow(0);
 
@@ -138,15 +137,13 @@ void EditLaunchersDialog::loadData() {
 
 void EditLaunchersDialog::saveData() {
   const int launcherCount = ui->launchers->count();
-  std::vector<LauncherConfig> launcherConfigs;
-  launcherConfigs.reserve(launcherCount);
+  QStringList launchers;
   for (int i = 0; i < launcherCount; ++i) {
     auto* listItem = ui->launchers->item(i);
     auto info = listItem->data(Qt::UserRole).value<LauncherInfo>();
-    // TODO.
-    launcherConfigs.push_back(LauncherConfig("", listItem->text(), info.iconName, info.command));
+    launchers.append(info.appId);
   }
-  model_->setLauncherConfigs(dockId_, launcherConfigs);
+  model_->setLaunchers(dockId_, launchers);
 }
 
 }  // namespace crystaldock

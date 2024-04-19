@@ -37,11 +37,11 @@ namespace crystaldock {
 struct LauncherInfo {
   // The name(label) is already stored as item text in QListWidget/QComboBox.
   QString iconName;
-  QString command;
+  QString appId;
 
   LauncherInfo() {}
-  LauncherInfo(QString iconName2, QString command2)
-      : iconName(iconName2), command(command2) {}
+  LauncherInfo(QString iconName2, QString appId2)
+      : iconName(iconName2), appId(appId2) {}
 };
 
 QDataStream &operator<<(QDataStream &out, const LauncherInfo& launcher);
