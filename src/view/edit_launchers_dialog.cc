@@ -144,6 +144,7 @@ void EditLaunchersDialog::saveData() {
     launchers.append(info.appId);
   }
   model_->setLaunchers(dockId_, launchers);
+  model_->saveDockConfig(dockId_);
 }
 
 }  // namespace crystaldock

@@ -378,7 +378,7 @@ class MultiDockModel : public QObject {
 
   void saveDockConfig(int dockId) {
     syncDockConfig(dockId);
-    // No need to emit signal here.
+    emit dockLaunchersChanged(dockId);
   }
 
   const std::vector<LauncherConfig> launcherConfigs(int dockId) const;
