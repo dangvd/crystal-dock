@@ -201,7 +201,7 @@ void Program::pinUnpin() {
   if (pinned_) {
     model_->addLauncher(parent_->dockId(), LauncherConfig(appId_, label_, iconName_, command_));
   } else {  // !pinned
-    model_->removeLauncher(parent_->dockId(), command_);
+    model_->removeLauncher(parent_->dockId(), appId_);
     if (shouldBeRemoved()) {
       parent_->delayedRefresh();
     }
