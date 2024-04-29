@@ -8,6 +8,21 @@
 
 namespace crystaldock {
 
+namespace {
+
+LayerShellQt::Window* getLayerShellWin(QWidget* widget) {
+  widget->winId();  // we need this for widget->windowHandle() to not return nullptr.
+  QWindow* win = widget->windowHandle();
+  if (win == nullptr) {
+    std::cerr << "Null QWindow" << std::endl;
+    return nullptr;
+  }
+
+  return LayerShellQt::Window::get(win);
+}
+
+}  // namespace
+
 org_kde_plasma_virtual_desktop_management* WindowSystem::virtual_desktop_management_;
 org_kde_plasma_window_management* WindowSystem::window_management_;
 
@@ -168,22 +183,19 @@ std::string WindowSystem::activeUuid_;
 
 /* static */ void WindowSystem::setAnchorAndStrut(
     QWidget* widget, LayerShellQt::Window::Anchors anchors, uint32_t strutSize) {
-  widget->winId();  // we need this for widget->windowHandle() to not return nullptr.
-  QWindow* win = widget->windowHandle();
-  if (win == nullptr) {
-    std::cerr << "Null QWindow" << std::endl;
-    return;
+  auto* layerShellWin = getLayerShellWin(widget);
+  if (layerShellWin) {
+    layerShellWin->setLayer(LayerShellQt::Window::LayerBottom);
+    layerShellWin->setAnchors(anchors);
+    layerShellWin->setExclusiveZone(strutSize);
   }
+}
 
-  LayerShellQt::Window* layerShellWin = LayerShellQt::Window::get(win);
-  if (layerShellWin == nullptr) {
-    std::cerr << "Null LayerShellWindow" << std::endl;
-    return;
+/*static*/ void WindowSystem::setLayer(QWidget* widget, LayerShellQt::Window::Layer layer) {
+  auto* layerShellWin = getLayerShellWin(widget);
+  if (layerShellWin) {
+    layerShellWin->setLayer(layer);
   }
-
-  layerShellWin->setLayer(LayerShellQt::Window::LayerTop);
-  layerShellWin->setAnchors(anchors);
-  layerShellWin->setExclusiveZone(strutSize);
 }
 
 /* static */ void WindowSystem::keepAbove(std::string_view uuid) {}

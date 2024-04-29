@@ -64,6 +64,8 @@ class DockPanel : public QWidget {
 
   void addPanelSettings(QMenu* menu);
 
+  int itemSpacing() { return itemSpacing_; }
+
  public slots:
   // Reloads the items and updates the dock.
   void reload();
@@ -211,7 +213,9 @@ class DockPanel : public QWidget {
   void initPager();
   void initTasks();
   void reloadTasks();
-  void addTask(const WindowInfo* task);
+
+  // Returns true if it changes the dock layout (i.e. adding a new program icon).
+  bool addTask(const WindowInfo* task);
   void removeTask(std::string_view uuid);
   void updateTask(const WindowInfo* task);
   void initClock();
@@ -231,13 +235,8 @@ class DockPanel : public QWidget {
 
   void setStrut(int width);
 
-  // Finds the active item given the mouse position.
-  int findActiveItem(int x, int y);
-
-  // Shows the appropriate tooltip given the mouse position.
-  void showTooltip(int x, int y);
-  // Shows tool tip for the item at the specified index.
-  void showTooltip(int i);
+  // Updates the active item given the mouse position.
+  void updateActiveItem(int x, int y);
 
   // Returns the size given the distance to the mouse.
   int parabolic(int x);

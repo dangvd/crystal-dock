@@ -87,8 +87,7 @@ void DesktopSelector::mousePressEvent(QMouseEvent* e) {
     // In case other DesktopSelectors have changed the config.
     showDesktopNumberAction_->setChecked(model_->showDesktopNumber());
     parent_->minimize();
-    // Not sure why we have to offset the cursor position here...
-    QTimer::singleShot(500, [this]{ menu_.exec(QCursor::pos() - QPoint(200, 0)); });
+    QTimer::singleShot(500, [this]{ menu_.exec(QPoint(left_, top_)); });
   }
 }
 

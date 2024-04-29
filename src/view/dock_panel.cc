@@ -204,8 +204,6 @@ void DockPanel::updateAnimation() {
     if (isLeaving_) {
       isLeaving_ = false;
       updateLayout();
-    } else {
-      showTooltip(mouseX_, mouseY_);
     }
   }
   repaint();
@@ -297,9 +295,11 @@ void DockPanel::onWindowAdded(const WindowInfo* info) {
   }
 
   if (isValidTask(info, model_)) {
-    // Now inserts it.
-    addTask(info);
-    resizeTaskManager();
+    if (addTask(info)) {
+      resizeTaskManager();
+    } else {
+      update();
+    }
   }
 }
 
@@ -363,7 +363,8 @@ void DockPanel::paintEvent(QPaintEvent* e) {
   }
 
   // Draw tooltip.
-  if (activeItem_ >= 0 && activeItem_ < static_cast<int>(items_.size())) {
+  if (!isAnimationActive_ && activeItem_ >= 0 &&
+      activeItem_ < static_cast<int>(items_.size())) {
     const auto& item = items_[activeItem_];
     QFont font;
     font.setPointSize(model_->tooltipFontSize());
@@ -380,13 +381,22 @@ void DockPanel::paintEvent(QPaintEvent* e) {
 }
 
 void DockPanel::mouseMoveEvent(QMouseEvent* e) {
+  const auto x = e->position().x();
+  const auto y = e->position().y();
   if (isEntering_ && !autoHide()) {
+    // Don't do the parabolic zooming if the mouse is outside the minimized area.
+
     // Don't do the parabolic zooming if the mouse is near the border.
     // Quite often the user was just scrolling a window etc.
-    if ((position_ == PanelPosition::Bottom && e->position().y() < itemSpacing_) ||
-        (position_ == PanelPosition::Top && e->position().y() > height() - itemSpacing_ / 2) ||
-        (position_ == PanelPosition::Left && e->position().x() > width() - itemSpacing_ / 2) ||
-        (position_ == PanelPosition::Right && e->position().x() < itemSpacing_ / 2)) {
+    if ((position_ == PanelPosition::Bottom && y < itemSpacing_ + maxHeight_ - minHeight_) ||
+        (position_ == PanelPosition::Top && y > height() - itemSpacing_ / 2) ||
+        (position_ == PanelPosition::Left && x > width() - itemSpacing_ / 2) ||
+        (position_ == PanelPosition::Right && x < itemSpacing_ / 2)) {
+      return;
+    }
+
+    if (isHorizontal() &&
+        (x < (maxWidth_ - minWidth_) / 2 || x > (maxWidth_ + minWidth_) / 2)) {
       return;
     }
   }
@@ -395,10 +405,7 @@ void DockPanel::mouseMoveEvent(QMouseEvent* e) {
     return;
   }
 
-  if (!isEntering_) {
-    showTooltip(e->position().x(), e->position().y());
-  }
-  updateLayout(e->position().x(), e->position().y());
+  updateLayout(x, y);
 }
 
 void DockPanel::mousePressEvent(QMouseEvent* e) {
@@ -406,12 +413,9 @@ void DockPanel::mousePressEvent(QMouseEvent* e) {
     return;
   }
 
-  int i = findActiveItem(e->position().x(), e->position().y());
-  if (i < 0 || i >= itemCount()) {
-    return;
+  if (activeItem_ >= 0 && activeItem_ < static_cast<int>(items_.size())) {
+    items_[activeItem_]->mousePressEvent(e);
   }
-
-  items_[i]->mousePressEvent(e);
 }
 
 void DockPanel::enterEvent (QEnterEvent* e) {
@@ -639,18 +643,18 @@ void DockPanel::reloadTasks() {
   resizeTaskManager();
 }
 
-void DockPanel::addTask(const WindowInfo* task) {
+bool DockPanel::addTask(const WindowInfo* task) {
   // Checks is the task already exists.
   for (auto& item : items_) {
     if (item->hasTask(task->uuid)) {
-      return;
+      return false;
     }
   }
 
   // Tries adding the task to existing programs.
   for (auto& item : items_) {
     if (item->addTask(task)) {
-      return;
+      return false;
     }
   }
 
@@ -669,6 +673,8 @@ void DockPanel::addTask(const WindowInfo* task) {
         this, model_, appId, program, orientation_, QPixmap(), minSize_, maxSize_));
   }
   items_[i]->addTask(task);
+
+  return true;
 }
 
 void DockPanel::removeTask(std::string_view uuid) {
@@ -746,6 +752,8 @@ void DockPanel::initLayoutVars() {
     maxHeight_ = minHeight_ + delta;
     maxWidth_ = itemSpacing_ + maxSize_ + tooltipSize_;
   }
+
+  resize(maxWidth_, maxHeight_);
 }
 
 void DockPanel::updateLayout() {
@@ -755,7 +763,7 @@ void DockPanel::updateLayout() {
       item->setAnimationStartAsCurrent();
       if (isHorizontal()) {
         startBackgroundWidth_ = backgroundWidth_;
-        startBackgroundHeight_ = distance;
+        startBackgroundHeight_ = minSize_ + 2 * itemSpacing_;
       } else {  // Vertical
         startBackgroundHeight_ = backgroundHeight_;
         startBackgroundWidth_ = distance;
@@ -766,9 +774,9 @@ void DockPanel::updateLayout() {
   for (int i = 0; i < itemCount(); ++i) {
     items_[i]->size_ = minSize_;
     if (isHorizontal()) {
-      items_[i]->left_ = (i == 0) ? itemSpacing_
+      items_[i]->left_ = (i == 0) ? itemSpacing_ + (maxWidth_ - minWidth_) / 2
           : items_[i - 1]->left_ + items_[i - 1]->getMinWidth() + itemSpacing_;
-      items_[i]->top_ = itemSpacing_;
+      items_[i]->top_ = itemSpacing_ + maxHeight_ - minHeight_;
       items_[i]->minCenter_ = items_[i]->left_ + items_[i]->getMinWidth() / 2;
     } else {  // Vertical
       items_[i]->left_ = itemSpacing_ / 2;
@@ -789,11 +797,11 @@ void DockPanel::updateLayout() {
     for (const auto& item : items_) {
       item->endSize_ = item->size_;
       if (isHorizontal()) {
-        item->endLeft_ = item->left_ + (width() - minWidth_) / 2;
+        item->endLeft_ = item->left_;
         if (position_ == PanelPosition::Top) {
           item->endTop_ = item->top_ + minHeight_ - distance;
         } else {  // Bottom
-          item->endTop_ = item->top_ + (maxHeight_ - minHeight_);
+          item->endTop_ = item->top_;
         }
       } else {  // Vertical
         item->endTop_ = item->top_ + (screenGeometry_.height() - minHeight_) / 2
@@ -821,8 +829,8 @@ void DockPanel::updateLayout() {
     isAnimationActive_ = true;
     animationTimer_->start(32 - animationSpeed_);
   } else {
+    WindowSystem::setLayer(this, LayerShellQt::Window::LayerBottom);
     isMinimized_ = true;
-    resize(minWidth_, minHeight_);
     update();
   }
 }
@@ -833,11 +841,11 @@ void DockPanel::updateLayout(int x, int y) {
     for (const auto& item : items_) {
       item->startSize_ = item->size_;
       if (isHorizontal()) {
-        item->startLeft_ = item->left_ + (maxWidth_ - minWidth_) / 2;
+        item->startLeft_ = item->left_;
         if (position_ == PanelPosition::Top) {
           item->startTop_ = item->top_ + minHeight_ - distance;
         } else {  // Bottom
-          item->startTop_ = item->top_ + (maxHeight_ - minHeight_);
+          item->startTop_ = item->top_;
         }
       } else {  // Vertical
         item->startTop_ = item->top_ + (maxHeight_ - minHeight_) / 2;
@@ -867,7 +875,7 @@ void DockPanel::updateLayout(int x, int y) {
   for (int i = 0; i < itemCount(); ++i) {
     int delta;
     if (isHorizontal()) {
-      delta = std::abs(items_[i]->minCenter_ - x + (width() - minWidth_) / 2);
+      delta = std::abs(items_[i]->minCenter_ - x);
     } else {  // Vertical
       delta = std::abs(items_[i]->minCenter_ - y + (height() - minHeight_) / 2);
     }
@@ -930,26 +938,26 @@ void DockPanel::updateLayout(int x, int y) {
       backgroundWidth_ = startBackgroundWidth_;
       endBackgroundHeight_ = minSize_ + 2 * itemSpacing_;
       backgroundHeight_ = startBackgroundHeight_;
-      mouseX_ = x + (maxWidth_ - minWidth_) / 2;
     } else {  // Vertical
       endBackgroundHeight_ = maxHeight_;
       backgroundHeight_ = startBackgroundHeight_;
       endBackgroundWidth_ = distance;
       backgroundWidth_ = startBackgroundWidth_;
-      mouseY_ = y + (maxHeight_ - minHeight_) / 2;
     }
 
     currentAnimationStep_ = 0;
     isAnimationActive_ = true;
     isEntering_ = false;
     animationTimer_->start(32 - animationSpeed_);
-  } else {
-    mouseX_ = x;
-    mouseY_ = y;
   }
 
-  resize(maxWidth_, maxHeight_);
+  mouseX_ = x;
+  mouseY_ = y;
+
+  //resize(maxWidth_, maxHeight_);
+  WindowSystem::setLayer(this, LayerShellQt::Window::LayerTop);
   isMinimized_ = false;
+  updateActiveItem(x, y);
   update();
 }
 
@@ -963,7 +971,7 @@ void DockPanel::resizeTaskManager() {
   } else {
     // Need to call QWidget::resize(), not DockPanel::resize(), in order not to
     // mess up the zooming.
-    QWidget::resize(maxWidth_, maxHeight_);
+    //QWidget::resize(maxWidth_, maxHeight_);
     if (isHorizontal()) {
       backgroundWidth_ = maxWidth_;
     } else {
@@ -977,7 +985,7 @@ void DockPanel::resizeTaskManager() {
   int top = 0;
   for (int i = 0; i < itemCount(); ++i) {
     if (isHorizontal()) {
-      left = (i == 0) ? itemSpacing_
+      left = (i == 0) ? itemSpacing_ + (maxWidth_ - minWidth_) / 2
                       : left + items_[i - 1]->getMinWidth() + itemSpacing_;
       if (i >= itemsToKeep) {
         items_[i]->minCenter_ = left + items_[i]->getMinWidth() / 2;
@@ -995,8 +1003,7 @@ void DockPanel::resizeTaskManager() {
   for (int i = itemsToKeep; i < itemCount(); ++i) {
     int delta;
     if (isHorizontal()) {
-      delta = std::abs(items_[i]->minCenter_ - mouseX_ +
-                       (width() - minWidth_) / 2);
+      delta = std::abs(items_[i]->minCenter_ - mouseX_);
     } else {  // Vertical
       delta = std::abs(items_[i]->minCenter_ - mouseY_ +
                        (height() - minHeight_) / 2);
@@ -1008,7 +1015,7 @@ void DockPanel::resizeTaskManager() {
     if (position_ == PanelPosition::Top) {
       items_[i]->top_ = itemSpacing_ / 2;
     } else if (position_ == PanelPosition::Bottom) {
-      items_[i]->top_ = itemSpacing_ + maxSize_ - items_[i]->getHeight();
+      items_[i]->top_ = itemSpacing_ + tooltipSize_ + maxSize_ - items_[i]->getHeight();
     } else if (position_ == PanelPosition::Left) {
       items_[i]->left_ = itemSpacing_ / 2;
     } else {  // Right
@@ -1061,22 +1068,14 @@ void DockPanel::setStrut(int width) {
   WindowSystem::setAnchorAndStrut(this, anchor, width);
 }
 
-int DockPanel::findActiveItem(int x, int y) {
+void DockPanel::updateActiveItem(int x, int y) {
   int i = 0;
   while (i < itemCount() &&
       ((orientation_ == Qt::Horizontal && items_[i]->left_ < x) ||
       (orientation_ == Qt::Vertical && items_[i]->top_ < y))) {
     ++i;
   }
-  return i - 1;
-}
-
-void DockPanel::showTooltip(int x, int y) {
-  activeItem_ = findActiveItem(x, y);
-  update();
-}
-
-void DockPanel::showTooltip(int i) {
+  activeItem_ = i - 1;
 }
 
 void DockPanel::showWaitCursor() {

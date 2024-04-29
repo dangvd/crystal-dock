@@ -96,6 +96,8 @@ class WindowSystem : public QObject {
 
   static void setAnchorAndStrut(QWidget* widget, LayerShellQt::Window::Anchors anchors,
                                 uint32_t strutSize);
+  static void setLayer(QWidget* widget, LayerShellQt::Window::Layer layer);
+
   static void keepAbove(std::string_view uuid);
   static void keepBelow(std::string_view uuid);
 

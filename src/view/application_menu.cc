@@ -81,10 +81,10 @@ void ApplicationMenu::draw(QPainter* painter) const {
 void ApplicationMenu::mousePressEvent(QMouseEvent *e) {
   if (e->button() == Qt::LeftButton) {
     parent_->minimize();
-    QTimer::singleShot(500, [this]{ menu_.exec(); });
+    QTimer::singleShot(500, [this]{ menu_.exec(QPoint(left_ - parent_->itemSpacing(), top_)); });
   } else if (e->button() == Qt::RightButton) {
     parent_->minimize();
-    QTimer::singleShot(500, [this]{ contextMenu_.exec(); });
+    QTimer::singleShot(500, [this]{ contextMenu_.exec(QPoint(left_, top_)); });
   }
 }
 
