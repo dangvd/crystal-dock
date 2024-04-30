@@ -344,6 +344,15 @@ void DockPanel::onWindowChanged(std::string_view uuid, NET::Properties propertie
 void DockPanel::paintEvent(QPaintEvent* e) {
   QPainter painter(this);
 
+  if (visibility_ == PanelVisibility::AutoHide && isMinimized_) {
+    if (isHorizontal()) {
+      const int y = (position_ == PanelPosition::Top) ? 0 : height() - 1;
+      painter.setPen(borderColor_);
+      painter.drawLine((maxWidth_ - minWidth_) / 2, y, (maxWidth_ + minWidth_) / 2, y);
+    }
+    return;
+  }
+
   if (isHorizontal()) {
     const int y = (position_ == PanelPosition::Top)
                   ? 0 : height() - backgroundHeight_;
@@ -383,12 +392,14 @@ void DockPanel::paintEvent(QPaintEvent* e) {
 void DockPanel::mouseMoveEvent(QMouseEvent* e) {
   const auto x = e->position().x();
   const auto y = e->position().y();
-  if (isEntering_ && !autoHide()) {
+  if (isEntering_) {
     // Don't do the parabolic zooming if the mouse is outside the minimized area.
 
     // Don't do the parabolic zooming if the mouse is near the border.
     // Quite often the user was just scrolling a window etc.
-    if ((position_ == PanelPosition::Bottom && y < itemSpacing_ + maxHeight_ - minHeight_) ||
+    if ((position_ == PanelPosition::Bottom &&
+         ((!autoHide() && y < itemSpacing_ + maxHeight_ - minHeight_) ||
+          (autoHide() && y < maxHeight_ - 2))) ||
         (position_ == PanelPosition::Top && y > height() - itemSpacing_ / 2) ||
         (position_ == PanelPosition::Left && x > width() - itemSpacing_ / 2) ||
         (position_ == PanelPosition::Right && x < itemSpacing_ / 2)) {
