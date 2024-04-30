@@ -166,7 +166,6 @@ void DockPanel::setStrut() {
     case PanelVisibility::AutoHide:
       setStrut(1);
       break;
-    case PanelVisibility::WindowsGoBelow:  // fall through
     default:
       setStrut(0);
       break;
@@ -512,10 +511,6 @@ void DockPanel::createMenu() {
       QString("Auto &Hide"), this,
       [this]() { updateVisibility(PanelVisibility::AutoHide); });
   visibilityAutoHideAction_->setCheckable(true);
-  visibilityWindowsGoBelowAction_ = visibility->addAction(
-      QString("Windows Go &Below"), this,
-      [this]() { updateVisibility(PanelVisibility::WindowsGoBelow); });
-  visibilityWindowsGoBelowAction_->setCheckable(true);
 
   QMenu* extraComponents = menu_.addMenu(QString("&Optional Features"));
   applicationMenuAction_ = extraComponents->addAction(QString("Application Menu"), this,
@@ -558,8 +553,6 @@ void DockPanel::setVisibility(PanelVisibility visibility) {
       visibility_ == PanelVisibility::AlwaysVisible);
   visibilityAutoHideAction_->setChecked(
       visibility_ == PanelVisibility::AutoHide);
-  visibilityWindowsGoBelowAction_->setChecked(
-      visibility_ == PanelVisibility::WindowsGoBelow);
 }
 
 void DockPanel::loadDockConfig() {
