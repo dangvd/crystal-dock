@@ -63,9 +63,16 @@ ApplicationMenu::ApplicationMenu(
   createContextMenu();
 
   connect(&menu_, &QMenu::aboutToShow, this,
-          [this]() { showingMenu_ = true; resetSearchMenu(); } );
+          [this]() {
+            resetSearchMenu();
+            showingMenu_ = true;
+            parent_->update();
+          });
   connect(&menu_, &QMenu::aboutToHide, this,
-          [this]() { showingMenu_ = false; } );
+          [this]() {
+            showingMenu_ = false;
+            parent_->update();
+          });
   connect(model_, SIGNAL(applicationMenuConfigChanged()),
           this, SLOT(reloadMenu()));
 }
