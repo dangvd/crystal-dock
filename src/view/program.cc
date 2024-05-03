@@ -79,7 +79,8 @@ void Program::draw(QPainter *painter) const {
                         minSize_ / 7, size_ / 4, painter);
   } else if (!tasks_.empty()) {
     int r = 4;
-    int cy = top_ + getHeight() + std::round(minSize_ / 8.0);
+    int cy = parent_->isTop() ? parent_->itemSpacing() - std::round(minSize_ / 8.0) - 1
+                              : top_ + getHeight() + std::round(minSize_ / 8.0);
     fillCircle(left_ + getWidth() / 2 - r, cy - r, 2 * r, 2 * r,
                model_->backgroundColor().darker(30), painter);
     r = 3;

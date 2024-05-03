@@ -380,11 +380,13 @@ void DockPanel::paintEvent(QPaintEvent* e) {
     QFontMetrics metrics(font);
     const auto tooltipWidth = metrics.boundingRect(item->getLabel()).width();
     painter.setFont(font);
-    int x = item->left_ + item->getWidth() / 2 - tooltipWidth / 2;
-    x = std::min(x, maxWidth_ - tooltipWidth);
-    x = std::max(x, 0);
-    drawBorderedText(x, itemSpacing_ + tooltipSize_ / 2, item->getLabel(), /*borderWidth*/ 2,
-                     Qt::black, Qt::white, &painter);
+    if (isHorizontal()) {
+      int x = item->left_ + item->getWidth() / 2 - tooltipWidth / 2;
+      x = std::min(x, maxWidth_ - tooltipWidth);
+      x = std::max(x, 0);
+      int y = isTop() ? maxHeight_ - itemSpacing_ : itemSpacing_ + tooltipSize_ / 2;
+      drawBorderedText(x, y, item->getLabel(), /*borderWidth*/ 2, Qt::black, Qt::white, &painter);
+    }
   }
 }
 
@@ -780,7 +782,7 @@ void DockPanel::updateLayout() {
     if (isHorizontal()) {
       items_[i]->left_ = (i == 0) ? itemSpacing_ + (maxWidth_ - minWidth_) / 2
           : items_[i - 1]->left_ + items_[i - 1]->getMinWidth() + itemSpacing_;
-      items_[i]->top_ = itemSpacing_ + maxHeight_ - minHeight_;
+      items_[i]->top_ = isTop() ? itemSpacing_ : itemSpacing_ + maxHeight_ - minHeight_;
       items_[i]->minCenter_ = items_[i]->left_ + items_[i]->getMinWidth() / 2;
     } else {  // Vertical
       items_[i]->left_ = itemSpacing_ / 2;
@@ -802,11 +804,7 @@ void DockPanel::updateLayout() {
       item->endSize_ = item->size_;
       if (isHorizontal()) {
         item->endLeft_ = item->left_;
-        if (position_ == PanelPosition::Top) {
-          item->endTop_ = item->top_ + minHeight_ - distance;
-        } else {  // Bottom
-          item->endTop_ = item->top_;
-        }
+        item->endTop_ = item->top_;
       } else {  // Vertical
         item->endTop_ = item->top_ + (screenGeometry_.height() - minHeight_) / 2
             - y() + screenGeometry_.y();
@@ -846,11 +844,7 @@ void DockPanel::updateLayout(int x, int y) {
       item->startSize_ = item->size_;
       if (isHorizontal()) {
         item->startLeft_ = item->left_;
-        if (position_ == PanelPosition::Top) {
-          item->startTop_ = item->top_ + minHeight_ - distance;
-        } else {  // Bottom
-          item->startTop_ = item->top_;
-        }
+        item->startTop_ = item->top_;
       } else {  // Vertical
         item->startTop_ = item->top_ + (maxHeight_ - minHeight_) / 2;
         if (position_ == PanelPosition::Left) {
@@ -891,7 +885,7 @@ void DockPanel::updateLayout(int x, int y) {
     }
     items_[i]->size_ = parabolic(delta);
     if (position_ == PanelPosition::Top) {
-      items_[i]->top_ = itemSpacing_ / 2;
+      items_[i]->top_ = itemSpacing_;
     } else if (position_ == PanelPosition::Bottom) {
       items_[i]->top_ = itemSpacing_ + tooltipSize_ + maxSize_ - items_[i]->getHeight();
     } else if (position_ == PanelPosition::Left) {
@@ -1017,7 +1011,7 @@ void DockPanel::resizeTaskManager() {
     }
     items_[i]->size_ = parabolic(delta);
     if (position_ == PanelPosition::Top) {
-      items_[i]->top_ = itemSpacing_ / 2;
+      items_[i]->top_ = itemSpacing_;
     } else if (position_ == PanelPosition::Bottom) {
       items_[i]->top_ = itemSpacing_ + tooltipSize_ + maxSize_ - items_[i]->getHeight();
     } else if (position_ == PanelPosition::Left) {

@@ -66,6 +66,10 @@ class DockPanel : public QWidget {
 
   int itemSpacing() { return itemSpacing_; }
 
+  bool isHorizontal() { return orientation_ == Qt::Horizontal; }
+  bool isTop() { return position_ == PanelPosition::Top; }
+  bool isLeft() { return position_ == PanelPosition::Left; }
+
  public slots:
   // Reloads the items and updates the dock.
   void reload();
@@ -173,8 +177,6 @@ class DockPanel : public QWidget {
 
   // Width/height of the panel in Auto Hide mode.
   static constexpr int kAutoHideSize = 1;
-
-  bool isHorizontal() { return orientation_ == Qt::Horizontal; }
 
   bool autoHide() { return visibility_ == PanelVisibility::AutoHide; }
 
