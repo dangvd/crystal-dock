@@ -36,6 +36,8 @@
 
 #include <LayerShellQt/Window>
 
+#include <model/application_menu_config.h>
+
 namespace crystaldock {
 
 struct VirtualDesktopInfo {
@@ -337,6 +339,8 @@ class WindowSystem : public QObject {
   static std::vector<std::string> stackingOrder_;
   // Active window's UUID.
   static std::string activeUuid_;
+
+  static ApplicationMenuConfig applicationMenuConfig_;
 };
 
 }  // namespace crystaldock

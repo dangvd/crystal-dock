@@ -35,6 +35,8 @@ std::unordered_map<std::string, struct org_kde_plasma_window*> WindowSystem::uui
 std::vector<std::string> WindowSystem::stackingOrder_;
 std::string WindowSystem::activeUuid_;
 
+ApplicationMenuConfig WindowSystem::applicationMenuConfig_;
+
 /* static */ WindowSystem* WindowSystem::self() {
   static WindowSystem* self = nullptr;
   if (!self) {
@@ -424,6 +426,26 @@ std::string WindowSystem::activeUuid_;
         ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_ON_ALL_DESKTOPS |
             ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_SKIPTASKBAR |
             ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_KEEP_ABOVE);
+  }
+
+  std::cout << "original app id: " << app_id << std::endl;
+  if (applicationMenuConfig_.findApplication(app_id) == nullptr) {
+    // Try to fix the app ID.
+
+    // E.g. Krita
+    std::string fixedAppId = std::string{"org.kde."} + app_id;
+    if (applicationMenuConfig_.findApplication(fixedAppId) != nullptr) {
+      info->appId = fixedAppId;
+      return;
+    }
+
+    // E.g. GIMP
+    QString id = app_id;
+    fixedAppId = id.mid(0, id.indexOf("-")).toLower().toStdString();
+    if (applicationMenuConfig_.findApplication(fixedAppId) != nullptr) {
+      info->appId = fixedAppId;
+      return;
+    }
   }
 }
 
