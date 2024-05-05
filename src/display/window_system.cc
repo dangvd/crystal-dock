@@ -432,15 +432,22 @@ ApplicationMenuConfig WindowSystem::applicationMenuConfig_;
   if (applicationMenuConfig_.findApplication(app_id) == nullptr) {
     // Try to fix the app ID.
 
+    // E.g. Google Chrome
+    QString id = app_id;
+    std::string fixedAppId = id.toLower().toStdString();
+    if (applicationMenuConfig_.findApplication(fixedAppId) != nullptr) {
+      info->appId = fixedAppId;
+      return;
+    }
+
     // E.g. Krita
-    std::string fixedAppId = std::string{"org.kde."} + app_id;
+    fixedAppId = std::string{"org.kde."} + app_id;
     if (applicationMenuConfig_.findApplication(fixedAppId) != nullptr) {
       info->appId = fixedAppId;
       return;
     }
 
     // E.g. GIMP
-    QString id = app_id;
     fixedAppId = id.mid(0, id.indexOf("-")).toLower().toStdString();
     if (applicationMenuConfig_.findApplication(fixedAppId) != nullptr) {
       info->appId = fixedAppId;
