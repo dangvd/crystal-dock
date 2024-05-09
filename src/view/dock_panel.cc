@@ -489,6 +489,26 @@ void DockPanel::createMenu() {
   menu_.addAction(
       QIcon::fromTheme("configure"), QString("Appearance &Settings"), this,
       SLOT(showAppearanceSettingsDialog()));
+  menu_.addAction(QIcon::fromTheme("help-contents"),
+                  QString("Online &Documentation"),
+                  this, SLOT(showOnlineDocumentation()));
+  menu_.addAction(QIcon::fromTheme("help-about"), QString("A&bout Crystal Dock"),
+      this, SLOT(about()));
+  menu_.addSeparator();
+
+  QMenu* extraComponents = menu_.addMenu(QString("&Optional Features"));
+  applicationMenuAction_ = extraComponents->addAction(QString("Application Menu"), this,
+      SLOT(toggleApplicationMenu()));
+  applicationMenuAction_->setCheckable(true);
+  pagerAction_ = extraComponents->addAction(QString("Pager"), this,
+      SLOT(togglePager()));
+  pagerAction_->setCheckable(true);
+  taskManagerAction_ = extraComponents->addAction(QString("Task Manager"), this,
+      SLOT(toggleTaskManager()));
+  taskManagerAction_->setCheckable(true);
+  clockAction_ = extraComponents->addAction(QString("Clock"), this,
+      SLOT(toggleClock()));
+  clockAction_->setCheckable(true);
 
   QMenu* position = menu_.addMenu(QString("&Position"));
   positionTop_ = position->addAction(QString("&Top"), this,
@@ -530,26 +550,6 @@ void DockPanel::createMenu() {
       [this]() { updateVisibility(PanelVisibility::AutoHide); });
   visibilityAutoHideAction_->setCheckable(true);
 
-  QMenu* extraComponents = menu_.addMenu(QString("&Optional Features"));
-  applicationMenuAction_ = extraComponents->addAction(QString("Application Menu"), this,
-      SLOT(toggleApplicationMenu()));
-  applicationMenuAction_->setCheckable(true);
-  pagerAction_ = extraComponents->addAction(QString("Pager"), this,
-      SLOT(togglePager()));
-  pagerAction_->setCheckable(true);
-  taskManagerAction_ = extraComponents->addAction(QString("Task Manager"), this,
-      SLOT(toggleTaskManager()));
-  taskManagerAction_->setCheckable(true);
-  clockAction_ = extraComponents->addAction(QString("Clock"), this,
-      SLOT(toggleClock()));
-  clockAction_->setCheckable(true);
-
-  menu_.addSeparator();
-  menu_.addAction(QIcon::fromTheme("help-contents"),
-                  QString("Online &Documentation"),
-                  this, SLOT(showOnlineDocumentation()));
-  menu_.addAction(QIcon::fromTheme("help-about"), QString("A&bout Crystal Dock"),
-      this, SLOT(about()));
   menu_.addSeparator();
   menu_.addAction(QString("E&xit"), parent_, SLOT(exit()));
 }
