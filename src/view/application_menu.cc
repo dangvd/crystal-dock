@@ -34,6 +34,7 @@
 #include "dock_panel.h"
 #include "program.h"
 #include <utils/draw_utils.h>
+#include <utils/menu_utils.h>
 
 namespace crystaldock {
 
@@ -170,6 +171,13 @@ void ApplicationMenu::buildMenu() {
   addToMenu(model_->applicationMenuCategories());
   menu_.addSeparator();
   addToMenu(model_->applicationMenuSystemCategories());
+  const auto numSubMenus = menu_.actions().size();
+  for (int i = 0; i < numSubMenus; ++i) {
+    QMenu* menu = menu_.actions()[i]->menu();
+    if (menu != nullptr) {
+      patchMenu(static_cast<int>((numSubMenus - i) * 1.25), menu);
+    }
+  }
 }
 
 void ApplicationMenu::addSearchMenu() {
@@ -218,6 +226,7 @@ void ApplicationMenu::resetSearchMenu() {
   for (int i = 1; i < actions.size(); ++i) {
     searchMenu_->removeAction(actions[i]);
   }
+  patchMenu(static_cast<int>(menu_.actions().size() * 1.25), searchMenu_);
 }
 
 QIcon ApplicationMenu::loadIcon(const QString &icon) {

@@ -81,6 +81,7 @@ set(SRCS
     utils/draw_utils.h
     utils/font_utils.h
     utils/math_utils.h
+    utils/menu_utils.h
     view/add_panel_dialog.ui
     view/appearance_settings_dialog.ui
     view/application_menu_settings_dialog.ui
