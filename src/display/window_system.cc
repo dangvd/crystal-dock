@@ -183,6 +183,17 @@ ApplicationMenuConfig WindowSystem::applicationMenuConfig_;
   }
 }
 
+/*static*/ void WindowSystem::closeWindow(const std::string& uuid) {
+  if (uuids_.count(uuid) == 0) {
+    return;
+  }
+
+  auto* window = uuids_[uuid];
+  if (window) {
+    org_kde_plasma_window_close(window);
+  }
+}
+
 /* static */ void WindowSystem::setAnchorAndStrut(
     QWidget* widget, LayerShellQt::Window::Anchors anchors, uint32_t strutSize) {
   auto* layerShellWin = getLayerShellWin(widget);

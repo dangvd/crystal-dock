@@ -95,6 +95,7 @@ class WindowSystem : public QObject {
   static std::string_view activeWindow();
   static void activateWindow(const std::string& uuid);
   static void activateOrMinimizeWindow(const std::string& uuid);
+  static void closeWindow(const std::string& uuid);
 
   static void setAnchorAndStrut(QWidget* widget, LayerShellQt::Window::Anchors anchors,
                                 uint32_t strutSize);
