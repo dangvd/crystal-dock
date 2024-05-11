@@ -97,11 +97,15 @@ class Program : public QObject, public IconBasedDockItem {
   static void launch(const QString& command);
   static void lockScreen() { launch(kLockScreenCommand); }
 
+  void closeAllWindows();
+
  private:
   void createMenu();
 
   void setDemandsAttention(bool value);
   void updateDemandsAttention();
+
+  void updateMenu();
 
   QString appId_;
   QString command_;
@@ -113,6 +117,7 @@ class Program : public QObject, public IconBasedDockItem {
   // Context (right-click) menu.
   QMenu menu_;
   QAction* pinAction_;
+  QAction* closeAction_;
 
   // Demands attention logic.
   bool demandsAttention_;

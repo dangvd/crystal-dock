@@ -160,6 +160,7 @@ bool Program::addTask(const WindowInfo* task) {
     if (task->demandsAttention) {
       setDemandsAttention(true);
     }
+    updateMenu();
     return true;
   }
   return false;
@@ -185,6 +186,7 @@ bool Program::removeTask(std::string_view uuid) {
   for (int i = 0; i < static_cast<int>(tasks_.size()); ++i) {
     if (tasks_[i].uuid == uuid) {
       tasks_.erase(tasks_.begin() + i);
+      updateMenu();
       return true;
     }
   }
@@ -246,6 +248,12 @@ void Program::launch(const QString& command) {
   }
 }
 
+void Program::closeAllWindows() {
+  for (const auto& task : tasks_) {
+    WindowSystem::closeWindow(task.uuid);
+  }
+}
+
 void Program::createMenu() {
   menu_.addSection(QIcon::fromTheme(iconName_), label_);
 
@@ -264,6 +272,9 @@ void Program::createMenu() {
                     [this] { launch(); });
   }
 
+  closeAction_ = menu_.addAction(QIcon::fromTheme("window-close"), QString("&Close Window"), this,
+                                 [this] { closeAllWindows(); });
+
   menu_.addSeparator();
   menu_.addAction(QIcon::fromTheme("configure"), QString("Edit &Launchers"), parent_,
                   [this] { parent_->showEditLaunchersDialog(); });
@@ -277,6 +288,7 @@ void Program::createMenu() {
 
   menu_.addSeparator();
   parent_->addPanelSettings(&menu_);
+  updateMenu();
 }
 
 void Program::setDemandsAttention(bool value) {
@@ -300,6 +312,11 @@ void Program::updateDemandsAttention() {
     }
   }
   setDemandsAttention(false);
+}
+
+void Program::updateMenu() {
+  closeAction_->setVisible(!tasks_.empty());
+  closeAction_->setText(tasks_.size() > 1 ? "&Close All Windows" : "&Close Window");
 }
 
 }  // namespace crystaldock
