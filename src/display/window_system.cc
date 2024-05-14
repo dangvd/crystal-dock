@@ -247,8 +247,6 @@ ApplicationMenuConfig WindowSystem::applicationMenuConfig_;
                 << "Maybe another client has already bound it?" << std::endl;
     }
   }
-  std::cout << "interface: " << interface
-            << " version: " << version << " name: " << name << std::endl;
 }
 
 /* static */ void WindowSystem::registry_global_remove(
@@ -342,7 +340,6 @@ ApplicationMenuConfig WindowSystem::applicationMenuConfig_;
     void *data,
     struct org_kde_plasma_virtual_desktop *org_kde_plasma_virtual_desktop) {
   // Ignore.
-  std::cout << "desktop_done" << std::endl;
 }
 
 /* static */ void WindowSystem::desktop_removed(
@@ -432,14 +429,11 @@ ApplicationMenuConfig WindowSystem::applicationMenuConfig_;
     org_kde_plasma_window_set_state(
         window,
         ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_ON_ALL_DESKTOPS |
-            ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_SKIPTASKBAR |
-            ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_KEEP_ABOVE,
+            ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_SKIPTASKBAR,
         ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_ON_ALL_DESKTOPS |
-            ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_SKIPTASKBAR |
-            ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_KEEP_ABOVE);
+            ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_SKIPTASKBAR);
   }
 
-  std::cout << "original app id: " << app_id << std::endl;
   if (applicationMenuConfig_.findApplication(app_id) == nullptr) {
     // Try to fix the app ID.
 
