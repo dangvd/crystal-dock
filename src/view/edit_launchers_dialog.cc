@@ -27,8 +27,6 @@
 #include <Qt>
 #include <QSettings>
 
-#include <utils/command_utils.h>
-
 namespace crystaldock {
 
 QDataStream &operator<<(QDataStream &out, const LauncherInfo& launcher) {

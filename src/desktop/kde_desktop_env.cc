@@ -23,18 +23,15 @@
 
 #include <QDBusMessage>
 
+#include <utils/command_utils.h>
+
 namespace crystaldock {
 
 KdeDesktopEnv::KdeDesktopEnv()
   : plasmaShellDBus_("org.kde.plasmashell",
                      "/PlasmaShell",
                      "org.kde.PlasmaShell") {
-  const char* commands[2] = {"qdbus", "qdbus6"};
-  for (const auto& command : commands) {
-    if (system(command) == 0) {
-      qdbusCommand_ = command;
-    }
-  }
+  qdbusCommand_ = commandExists({"qdbus", "qdbus6"});
   if (qdbusCommand_.size() == 0) {
     std::cerr << "Could not find QDBus command. Certain functionalities will not work." << std::endl;
   }

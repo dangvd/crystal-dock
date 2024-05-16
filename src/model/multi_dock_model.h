@@ -34,7 +34,6 @@
 #include "config_helper.h"
 #include "launcher_config.h"
 #include <desktop/desktop_env.h>
-#include <utils/command_utils.h>
 
 namespace crystaldock {
 
@@ -72,6 +71,7 @@ constexpr bool kDefaultUse24HourClock = true;
 constexpr float kDefaultClockFontScaleFactor = kLargeClockFontScaleFactor;
 
 constexpr char kSeparatorId[] = "separator";
+constexpr char kLockScreenId[] = "lock-screen";
 
 // The model.
 class MultiDockModel : public QObject {

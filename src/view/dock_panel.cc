@@ -49,7 +49,6 @@
 #include "program.h"
 #include "separator.h"
 #include <display/window_system.h>
-#include <utils/command_utils.h>
 #include <utils/draw_utils.h>
 
 namespace crystaldock {

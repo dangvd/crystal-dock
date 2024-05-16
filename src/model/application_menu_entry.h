@@ -23,8 +23,6 @@
 
 #include <QString>
 
-#include <utils/command_utils.h>
-
 namespace crystaldock {
 
 // An application entry in the application menu.

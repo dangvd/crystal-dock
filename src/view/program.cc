@@ -31,7 +31,6 @@
 #include "display/window_system.h"
 
 #include "dock_panel.h"
-#include <utils/command_utils.h>
 #include <utils/draw_utils.h>
 
 namespace crystaldock {
@@ -109,9 +108,7 @@ void Program::draw(QPainter *painter) const {
 
 void Program::mousePressEvent(QMouseEvent* e) {
   if (e->button() == Qt::LeftButton) { // Run the application.
-    if (command_ == kShowDesktopCommand) {
-      WindowSystem::setShowingDesktop(!WindowSystem::showingDesktop());
-    } else if (isCommandLockScreen(command_)) {
+    if (appId_ == kLockScreenId) {
       parent_->leaveEvent(nullptr);
       QTimer::singleShot(500, []() {
         lockScreen();

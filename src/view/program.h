@@ -30,8 +30,6 @@
 
 #include "icon_based_dock_item.h"
 
-#include <utils/command_utils.h>
-
 namespace crystaldock {
 
 struct ProgramTask {
@@ -95,7 +93,7 @@ class Program : public QObject, public IconBasedDockItem {
 
   void launch();
   static void launch(const QString& command);
-  static void lockScreen() { launch(kLockScreenCommand); }
+  static void lockScreen() { launch("xdg-screensaver lock"); }
 
   void closeAllWindows();
 

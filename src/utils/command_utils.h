@@ -19,15 +19,13 @@
 #ifndef CRYSTALDOCK_COMMAND_UTILS_H_
 #define CRYSTALDOCK_COMMAND_UTILS_H_
 
-#include <filesystem>
+#include <vector>
 
+#include <QDir>
 #include <QString>
+#include <QStringList>
 
 namespace crystaldock {
-
-static constexpr char kSeparatorCommand[] = "SEPARATOR";
-static constexpr char kShowDesktopCommand[] = "SHOW_DESKTOP";
-static constexpr char kLockScreenCommand[] = "xdg-screensaver lock";
 
 inline QString filterFieldCodes(const QString& command) {
   QString filtered = command.contains('%')
@@ -42,40 +40,18 @@ inline QString filterFieldCodes(const QString& command) {
   return filtered;
 }
 
-inline bool isCommandLockScreen(const QString& command) {
-  return command == kLockScreenCommand;
-}
-
-inline std::string getTaskCommand(const std::string& appCommand) {
-  namespace fs = std::filesystem;
-  auto command = appCommand.substr(0, appCommand.find_first_of(' '));
-  command = fs::is_symlink(command) ?
-      fs::path(fs::read_symlink(command)).filename() :
-      fs::path(command).filename();
-  return QString::fromStdString(command).toLower().toStdString();
-}
-
-inline QString getTaskCommand(const QString& appCommand) {
-  return QString::fromStdString(getTaskCommand(appCommand.toStdString()));
-}
-
-// This needs to be synced with ApplicationMenuConfig::findApplication()
-inline bool areTheSameCommand(const QString& appTaskCommand, const QString& taskCommand) {
-  if (appTaskCommand == taskCommand) {
-    return true;
+// Returns a command in the list that exists in the system.
+inline QString commandExists(std::vector<const char*> commands) {
+  QStringList paths = qEnvironmentVariable("PATH").split(":", Qt::SkipEmptyParts);
+  for (const auto& path : paths) {
+    QDir dir(path);
+    for (const auto& command : commands) {
+      if (dir.exists(command)) {
+        return command;
+      }
+    }
   }
-
-  // Fix for Synaptic.
-  if (taskCommand == "synaptic" && appTaskCommand == "synaptic-pkexec") {
-    return true;
-  }
-
-    // Fix for GNOME Nautilus etc.
-  if ("org.gnome." + appTaskCommand == taskCommand) {
-    return true;
-  }
-
-  return false;
+  return QString();
 }
 
 }  // namespace crystaldock

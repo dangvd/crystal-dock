@@ -25,8 +25,6 @@
 
 #include "display/window_system.h"
 
-#include <utils/command_utils.h>
-
 namespace crystaldock {
 
 constexpr char MultiDockModel::kGeneralCategory[];
