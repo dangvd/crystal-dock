@@ -682,16 +682,16 @@ bool DockPanel::addTask(const WindowInfo* task) {
   // Adds a new program.
   const QString appId = QString::fromStdString(task->appId);
   auto app = model_->findApplication(task->appId);
-  const QString program = app ? app->name : QString::fromStdString(task->appId);
+  const QString label = app ? app->name : QString::fromStdString(task->title);
   int i = 0;
-  for (; i < itemCount() && items_[i]->beforeTask(program); ++i);
+  for (; i < itemCount() && items_[i]->beforeTask(label); ++i);
   if (app && QIcon::hasThemeIcon(app->icon)) {
     items_.insert(items_.begin() + i, std::make_unique<Program>(
-        this, model_, appId, program, orientation_, app->icon, minSize_,
+        this, model_, appId, label, orientation_, app->icon, minSize_,
         maxSize_, app->command, /*isAppMenuEntry=*/true, /*pinned=*/false));
   } else {
     items_.insert(items_.begin() + i, std::make_unique<Program>(
-        this, model_, appId, program, orientation_, QPixmap(), minSize_, maxSize_));
+        this, model_, appId, label, orientation_, QPixmap(), minSize_, maxSize_));
   }
   items_[i]->addTask(task);
 
