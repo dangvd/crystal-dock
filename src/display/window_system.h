@@ -19,12 +19,14 @@
 #ifndef CRYSTALDOCK_WINDOW_SYSTEM_H_
 #define CRYSTALDOCK_WINDOW_SYSTEM_H_
 
+#include <memory>
 #include <string>
 #include <vector>
 #include <unordered_map>
 
 #include <wayland-client.h>
 
+#include <QDBusInterface>
 #include <QObject>
 #include <QPixmap>
 #include <QRect>
@@ -53,6 +55,7 @@ struct WindowInfo {
   std::string title;
   uint32_t screen;
   std::string desktop;
+  std::string activity;
   bool skipTaskbar;
   bool onAllDesktops;
   bool demandsAttention;
@@ -78,6 +81,7 @@ class WindowSystem : public QObject {
   void windowAdded(const WindowInfo*);
   void windowRemoved(std::string);
   void windowLeftCurrentDesktop(std::string_view);
+  void windowLeftCurrentActivity(std::string_view);
 
  public:
   static WindowSystem* self();
@@ -89,6 +93,8 @@ class WindowSystem : public QObject {
   static void setCurrentDesktop(std::string_view);
   static bool showingDesktop();
   static void setShowingDesktop(bool show);
+
+  static std::string_view currentActivity() { return currentActivity_; }
 
   static std::vector<const WindowInfo*> windows();
   static bool hasUuid(std::string_view uuid);
@@ -334,6 +340,9 @@ class WindowSystem : public QObject {
   // Current desktop ID.
   static std::string currentDesktop_;
   static bool showingDesktop_;
+
+  static std::unique_ptr<QDBusInterface> activityManager_;
+  static std::string currentActivity_;
 
   static std::unordered_map<struct org_kde_plasma_window*, WindowInfo*> windows_;
   static std::unordered_map<std::string, struct org_kde_plasma_window*> uuids_;

@@ -3,6 +3,8 @@
 #include <iostream>
 #include <string>
 
+#include <QDBusReply>
+
 #include <LayerShellQt/Shell>
 #include <LayerShellQt/Window>
 
@@ -29,6 +31,8 @@ org_kde_plasma_window_management* WindowSystem::window_management_;
 std::vector<VirtualDesktopInfo> WindowSystem::desktops_;
 std::string WindowSystem::currentDesktop_;
 bool WindowSystem::showingDesktop_;
+std::unique_ptr<QDBusInterface> WindowSystem::activityManager_;
+std::string WindowSystem::currentActivity_;
 
 std::unordered_map<struct org_kde_plasma_window*, WindowInfo*> WindowSystem::windows_;
 std::unordered_map<std::string, struct org_kde_plasma_window*> WindowSystem::uuids_;
@@ -63,6 +67,16 @@ ApplicationMenuConfig WindowSystem::applicationMenuConfig_;
       window_management_, &window_management_listener_, NULL);
 
   LayerShellQt::Shell::useLayerShell();
+
+  activityManager_ = std::make_unique<QDBusInterface>(
+      "org.kde.ActivityManager", "/ActivityManager/Activities",
+      "org.kde.ActivityManager.Activities");
+  if (activityManager_->isValid()) {
+    const QDBusReply<QString> reply = activityManager_->call("CurrentActivity");
+    if (reply.isValid()) {
+      currentActivity_ = reply.value().toStdString();
+    }
+  }
 
   return true;
 }
@@ -604,14 +618,29 @@ ApplicationMenuConfig WindowSystem::applicationMenuConfig_;
     void *data,
     struct org_kde_plasma_window* window,
     const char *id) {
-
+  if (windows_.count(window) == 0) {
+    return;
+  }
+  WindowInfo* info = windows_[window];
+  if (info) {
+    info->activity = id;
+  }
 }
 
 /* static */ void WindowSystem::activity_left(
     void *data,
     struct org_kde_plasma_window* window,
     const char *id) {
-
+  if (id != currentActivity_) {
+    return;
+  }
+  if (windows_.count(window) == 0) {
+    return;
+  }
+  WindowInfo* info = windows_[window];
+  if (info) {
+    emit self()->windowLeftCurrentActivity(info->uuid);
+  }
 }
 
 /* static */ void WindowSystem::resource_name_changed(

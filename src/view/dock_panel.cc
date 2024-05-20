@@ -59,12 +59,16 @@ namespace {
       return false;
     }
 
-    if (task->onAllDesktops || !model->currentDesktopTasksOnly()
-        || task->desktop == WindowSystem::currentDesktop()) {
-      return true;
+    if (!task->onAllDesktops && model->currentDesktopTasksOnly()
+        && task->desktop != WindowSystem::currentDesktop()) {
+      return false;
     }
 
-    return false;
+    if (task->activity != WindowSystem::currentActivity()) {
+      return false;
+    }
+
+    return true;
   }
 }
 
