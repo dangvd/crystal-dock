@@ -126,6 +126,8 @@ DockPanel::DockPanel(MultiDockView* parent, MultiDockModel* model, int dockId)
           this, SLOT(onWindowLeftCurrentDesktop(std::string_view)));
   connect(WindowSystem::self(), SIGNAL(windowLeftCurrentActivity(std::string_view)),
           this, SLOT(onWindowLeftCurrentActivity(std::string_view)));
+  connect(WindowSystem::self(), SIGNAL(currentActivityChanged(std::string_view)),
+          this, SLOT(onCurrentActivityChanged()));
   /*
   connect(WindowSystem::self(),
           SIGNAL(windowChanged(std::string_view, NET::Properties, NET::Properties2)),
@@ -160,6 +162,10 @@ void DockPanel::delayedRefresh() {
 }
 
 void DockPanel::onCurrentDesktopChanged() {
+  reloadTasks();
+}
+
+void DockPanel::onCurrentActivityChanged() {
   reloadTasks();
 }
 

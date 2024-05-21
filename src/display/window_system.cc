@@ -32,7 +32,6 @@ std::vector<VirtualDesktopInfo> WindowSystem::desktops_;
 std::string WindowSystem::currentDesktop_;
 bool WindowSystem::showingDesktop_;
 std::unique_ptr<QDBusInterface> WindowSystem::activityManager_;
-std::string WindowSystem::currentActivity_;
 
 std::unordered_map<struct org_kde_plasma_window*, WindowInfo*> WindowSystem::windows_;
 std::unordered_map<std::string, struct org_kde_plasma_window*> WindowSystem::uuids_;
@@ -74,8 +73,10 @@ ApplicationMenuConfig WindowSystem::applicationMenuConfig_;
   if (activityManager_->isValid()) {
     const QDBusReply<QString> reply = activityManager_->call("CurrentActivity");
     if (reply.isValid()) {
-      currentActivity_ = reply.value().toStdString();
+      WindowSystem::self()->setCurrentActivity(reply.value().toStdString());
     }
+    connect(activityManager_.get(), SIGNAL(CurrentActivityChanged(QString)),
+            WindowSystem::self(), SLOT(onCurrentActivityChanged(QString)));
   }
 
   return true;
@@ -631,7 +632,7 @@ ApplicationMenuConfig WindowSystem::applicationMenuConfig_;
     void *data,
     struct org_kde_plasma_window* window,
     const char *id) {
-  if (id != currentActivity_) {
+  if (id != WindowSystem::currentActivity()) {
     return;
   }
   if (windows_.count(window) == 0) {

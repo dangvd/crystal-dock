@@ -81,6 +81,7 @@ class DockPanel : public QWidget {
   void delayedRefresh();
 
   void onCurrentDesktopChanged();
+  void onCurrentActivityChanged();
 
   void onDockLaunchersChanged(int dockId) {
     if (dockId_ == dockId) {

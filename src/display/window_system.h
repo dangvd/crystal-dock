@@ -81,7 +81,23 @@ class WindowSystem : public QObject {
   void windowAdded(const WindowInfo*);
   void windowRemoved(std::string);
   void windowLeftCurrentDesktop(std::string_view);
+
+  void currentActivityChanged(std::string_view);
   void windowLeftCurrentActivity(std::string_view);
+
+ private:
+  // We need this to be non-static for the slot.
+  std::string currentActivity_;
+
+ public:
+  static std::string_view currentActivity() { return WindowSystem::self()->currentActivity_; }
+  void setCurrentActivity(std::string_view activity) { currentActivity_ = activity; }
+
+ public slots:
+  void onCurrentActivityChanged(QString activity) {
+    currentActivity_ = activity.toStdString();
+    emit currentActivityChanged(activity.toStdString());
+  }
 
  public:
   static WindowSystem* self();
@@ -92,9 +108,7 @@ class WindowSystem : public QObject {
   static std::string_view currentDesktop();
   static void setCurrentDesktop(std::string_view);
   static bool showingDesktop();
-  static void setShowingDesktop(bool show);
-
-  static std::string_view currentActivity() { return currentActivity_; }
+  static void setShowingDesktop(bool show);  
 
   static std::vector<const WindowInfo*> windows();
   static bool hasUuid(std::string_view uuid);
@@ -342,7 +356,6 @@ class WindowSystem : public QObject {
   static bool showingDesktop_;
 
   static std::unique_ptr<QDBusInterface> activityManager_;
-  static std::string currentActivity_;
 
   static std::unordered_map<struct org_kde_plasma_window*, WindowInfo*> windows_;
   static std::unordered_map<std::string, struct org_kde_plasma_window*> uuids_;
