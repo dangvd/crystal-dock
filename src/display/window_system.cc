@@ -143,7 +143,9 @@ ApplicationMenuConfig WindowSystem::applicationMenuConfig_;
 /* static */ std::vector<const WindowInfo*> WindowSystem::windows() {
   std::vector<const WindowInfo*> windows;
   for (const auto& element : windows_) {
-    windows.push_back(element.second);
+    if (element.second != nullptr) {
+      windows.push_back(element.second);
+    }
   }
   return windows;
 }

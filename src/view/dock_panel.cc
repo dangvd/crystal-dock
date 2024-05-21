@@ -55,7 +55,11 @@ namespace crystaldock {
 
 namespace {
   bool isValidTask(const WindowInfo* task, const MultiDockModel* model) {
-    if (task->skipTaskbar || std::string(task->appId) == "crystal-dock") {
+    if (task == nullptr) {
+      return false;
+    }
+
+    if (task->skipTaskbar) {
       return false;
     }
 
