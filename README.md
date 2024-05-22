@@ -8,7 +8,7 @@
 
 Crystal Dock is a cool dock (desktop panel) for Linux desktop, with the focus on attractive user interface, being simple and easy to use, and cross-desktop support.
 
-The currently work-in-progress version (2.0 alpha) supports KDE Plasma 6 on Wayland, while the previous version (1.0) supports KDE Plasma, GNOME, LXQt, Cinnamon and MATE on X11. 
+The current version (version 2) supports KDE Plasma 6 on Wayland. Other desktop environments will be considered when they run on Wayland and provide sufficient APIs. The previous version (version 1) supports KDE Plasma 5, GNOME, LXQt, Cinnamon and MATE on X11.
 
 ## Main features
 
@@ -38,16 +38,10 @@ Crystal Dock is written in C++ and depends on:
 ## Build from the source code
 
 Dependencies development packages: to build from the source code, Qt6, LayerShellQt6 and Wayland development packages are required.
-To install them:
+For example, on OpenSUSE, you can run the following command to install them:
 
-- On OpenSUSE:
 ```
 $ sudo zypper install qt6-base-devel wayland-devel layer-shell-qt6-devel
-```
-- On Fedora: TBA
-- On Debian-based distributions:
-```
-$ sudo apt install qt6-base-dev libwayland-dev <layer shell qt6 dev package>
 ```
 
 To build and install, run:
@@ -56,7 +50,7 @@ $ mkdir -p build && cd build && cmake ../src
 $ sudo make install
 ```
 
-After the installation, Crystal Dock can be launched from the Application Menu (Utilities category), or from the command line:
+After the installation, Crystal Dock can be launched from the Application list (Utilities category), or from the command line:
 ```
 $ crystal-dock
 ```
