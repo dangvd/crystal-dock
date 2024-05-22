@@ -150,10 +150,6 @@ ApplicationMenuConfig WindowSystem::applicationMenuConfig_;
   return windows;
 }
 
-/* static */ bool WindowSystem::hasUuid(std::string_view uuid) {
-  return true;
-}
-
 /* static */ std::string_view WindowSystem::activeWindow() {
   return activeUuid_;
 }
@@ -226,17 +222,6 @@ ApplicationMenuConfig WindowSystem::applicationMenuConfig_;
   if (layerShellWin) {
     layerShellWin->setLayer(layer);
   }
-}
-
-/* static */ void WindowSystem::keepAbove(std::string_view uuid) {}
-/* static */ void WindowSystem::keepBelow(std::string_view uuid) {}
-
-/* static */ QPixmap WindowSystem::icon(std::string_view uuid, int w, int h, bool scale) {
-  return QPixmap();
-}
-
-/* static */ WindowInfo WindowSystem::windowInfo(std::string_view uuid) {
-  return WindowInfo();
 }
 
 // wl_registry interface.

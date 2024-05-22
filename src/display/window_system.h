@@ -111,7 +111,6 @@ class WindowSystem : public QObject {
   static void setShowingDesktop(bool show);  
 
   static std::vector<const WindowInfo*> windows();
-  static bool hasUuid(std::string_view uuid);
   static std::string_view activeWindow();
   static void activateWindow(const std::string& uuid);
   static void activateOrMinimizeWindow(const std::string& uuid);
@@ -120,13 +119,6 @@ class WindowSystem : public QObject {
   static void setAnchorAndStrut(QWidget* widget, LayerShellQt::Window::Anchors anchors,
                                 uint32_t strutSize);
   static void setLayer(QWidget* widget, LayerShellQt::Window::Layer layer);
-
-  static void keepAbove(std::string_view uuid);
-  static void keepBelow(std::string_view uuid);
-
-  static QPixmap icon(std::string_view uuid, int w, int h, bool scale);
-
-  static WindowInfo windowInfo(std::string_view uuid);
 
  private:
 
