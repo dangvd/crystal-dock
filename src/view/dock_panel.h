@@ -161,8 +161,6 @@ class DockPanel : public QWidget {
   void onWindowRemoved(std::string uuid);
   void onWindowLeftCurrentDesktop(std::string_view uuid);
   void onWindowLeftCurrentActivity(std::string_view uuid);
-  //void onWindowChanged(std::string_view uuid, NET::Properties properties,
-  //                     NET::Properties2 properties2);
 
   void minimize() { leaveEvent(nullptr); }
 

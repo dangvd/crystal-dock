@@ -132,12 +132,6 @@ DockPanel::DockPanel(MultiDockView* parent, MultiDockModel* model, int dockId)
           this, SLOT(onWindowLeftCurrentActivity(std::string_view)));
   connect(WindowSystem::self(), SIGNAL(currentActivityChanged(std::string_view)),
           this, SLOT(onCurrentActivityChanged()));
-  /*
-  connect(WindowSystem::self(),
-          SIGNAL(windowChanged(std::string_view, NET::Properties, NET::Properties2)),
-          this,
-          SLOT(onWindowChanged(std::string_view, NET::Properties, NET::Properties2)));
-  */
   connect(model_, SIGNAL(appearanceOutdated()), this, SLOT(update()));
   connect(model_, SIGNAL(appearanceChanged()), this, SLOT(reload()));
   connect(model_, SIGNAL(dockLaunchersChanged(int)),
@@ -336,30 +330,6 @@ void DockPanel::onWindowLeftCurrentActivity(std::string_view uuid) {
     removeTask(uuid);
   }
 }
-
-/*
-void DockPanel::onWindowChanged(std::string_view uuid, NET::Properties properties,
-                                NET::Properties2 properties2) {
-  if (!showTaskManager()) {
-    return;
-  }
-
-  if (uuid != winId() && uuid != tooltip_.winId() &&
-      taskHelper_.isValidTask(uuid)) {
-    auto screen = model_->currentScreenTasksOnly() ? screen_ : -1;
-    if (properties & NET::WMDesktop || properties & NET::WMGeometry) {
-      if (taskHelper_.isValidTask(uuid, screen, model_->currentDesktopTasksOnly())) {
-        addTask(uuid);
-        resizeTaskManager();
-      } else {
-        removeTask(uuid);
-      }
-    } else if (properties & NET::WMState) {
-      updateTask(uuid);
-    }
-  }
-}
-*/
 
 void DockPanel::paintEvent(QPaintEvent* e) {
   QPainter painter(this);
