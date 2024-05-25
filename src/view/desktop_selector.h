@@ -60,6 +60,9 @@ class DesktopSelector : public QObject, public IconBasedDockItem {
   // Sets the icon but scales the pixmap to the screen's width/height ratio.
   void setIconScaled(const QPixmap& icon);
 
+ public slots:
+  void onDesktopNameChanged(std::string_view desktopId, std::string_view desktopName);
+
  private:
   bool isCurrentDesktop() const {
     return WindowSystem::currentDesktop() == desktop_.id;

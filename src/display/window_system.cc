@@ -316,6 +316,7 @@ ApplicationMenuConfig WindowSystem::applicationMenuConfig_;
                [virtual_desktop](auto& e) { return e.virtual_desktop == virtual_desktop; });
   if (pos != desktops_.end()) {
     pos->name = name;
+    emit WindowSystem::self()->desktopNameChanged(pos->id, pos->name);
   }
 }
 

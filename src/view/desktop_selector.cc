@@ -18,6 +18,8 @@
 
 #include "desktop_selector.h"
 
+#include <string>
+
 #include <QBrush>
 #include <QColor>
 #include <QFile>
@@ -47,6 +49,8 @@ DesktopSelector::DesktopSelector(DockPanel* parent, MultiDockModel* model,
       hasCustomWallpaper_(false) {
   createMenu();
   loadConfig();
+  connect(WindowSystem::self(), SIGNAL(desktopNameChanged(std::string_view, std::string_view)),
+          this, SLOT(onDesktopNameChanged(std::string_view, std::string_view)));
 }
 
 void DesktopSelector::draw(QPainter* painter) const {
@@ -112,6 +116,13 @@ void DesktopSelector::setIconScaled(const QPixmap& icon) {
     setIcon(scaledIcon);
   } else {
     setIcon(icon);
+  }
+}
+
+void DesktopSelector::onDesktopNameChanged(
+    std::string_view desktopId, std::string_view desktopName) {
+  if (desktop_.id == desktopId) {
+    setLabel(QString::fromStdString(std::string{desktopName}));
   }
 }
 
