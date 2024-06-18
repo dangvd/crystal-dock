@@ -43,6 +43,7 @@ constexpr char MultiDockModel::kMaximumIconSize[];
 constexpr char MultiDockModel::kMinimumIconSize[];
 constexpr char MultiDockModel::kSpacingFactor[];
 constexpr char MultiDockModel::kShowBorder[];
+constexpr char MultiDockModel::kFloatingMargin[];
 constexpr char MultiDockModel::kTooltipFontSize[];
 constexpr char MultiDockModel::kApplicationMenuCategory[];
 constexpr char MultiDockModel::kLabel[];

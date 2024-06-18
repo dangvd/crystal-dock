@@ -49,6 +49,7 @@ constexpr float kDefaultBackgroundAlpha = 0.42;
 constexpr char kDefaultBackgroundColor[] = "#638abd";
 constexpr bool kDefaultShowBorder = true;
 constexpr char kDefaultBorderColor[] = "#b1c4de";
+constexpr int kDefaultFloatingMargin = 6;
 constexpr float kLargeClockFontScaleFactor = 1.0;
 constexpr float kMediumClockFontScaleFactor = 0.8;
 constexpr float kSmallClockFontScaleFactor = 0.6;
@@ -165,6 +166,15 @@ class MultiDockModel : public QObject {
 
   void setTooltipFontSize(int value) {
     setAppearanceProperty(kGeneralCategory, kTooltipFontSize, value);
+  }
+
+  int floatingMargin() const {
+    return appearanceProperty(kGeneralCategory, kFloatingMargin,
+                              kDefaultFloatingMargin);
+  }
+
+  void setFloatingMargin(int value) {
+    setAppearanceProperty(kGeneralCategory, kFloatingMargin, value);
   }
 
   QString applicationMenuName() const {
@@ -462,6 +472,7 @@ class MultiDockModel : public QObject {
   static constexpr char kSpacingFactor[] = "spacingFactor";
   static constexpr char kShowBorder[] = "showBorder";
   static constexpr char kTooltipFontSize[] = "tooltipFontSize";
+  static constexpr char kFloatingMargin[] = "floatingMargin";
 
   static constexpr char kApplicationMenuCategory[] = "Application Menu";
   static constexpr char kLabel[] = "label";

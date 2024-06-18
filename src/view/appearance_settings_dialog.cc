@@ -71,6 +71,7 @@ void AppearanceSettingsDialog::loadData() {
   ui->showBorder->setChecked(model_->showBorder());
   borderColor_->setColor(model_->borderColor());
   ui->tooltipFontSize->setValue(model_->tooltipFontSize());
+  ui->floatingMargin->setValue(model_->floatingMargin());
 }
 
 void AppearanceSettingsDialog::resetData() {
@@ -82,6 +83,7 @@ void AppearanceSettingsDialog::resetData() {
   ui->showBorder->setChecked(kDefaultShowBorder);
   borderColor_->setColor(QColor(kDefaultBorderColor));
   ui->tooltipFontSize->setValue(kDefaultTooltipFontSize);
+  ui->floatingMargin->setValue(kDefaultFloatingMargin);
 }
 
 void AppearanceSettingsDialog::saveData() {
@@ -94,6 +96,7 @@ void AppearanceSettingsDialog::saveData() {
   model_->setShowBorder(ui->showBorder->isChecked());
   model_->setBorderColor(borderColor_->color());
   model_->setTooltipFontSize(ui->tooltipFontSize->value());
+  model_->setFloatingMargin(ui->floatingMargin->value());
   model_->saveAppearanceConfig();
 }
 

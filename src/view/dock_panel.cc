@@ -736,7 +736,7 @@ void DockPanel::initClock() {
 
 void DockPanel::initLayoutVars() {
   itemSpacing_ = std::round(minSize_ / 1.7 * spacingFactor_);
-  floatingMargin_ = 6;
+  floatingMargin_ = model_->floatingMargin();
   parabolicMaxX_ = std::round(2.5 * (minSize_ + itemSpacing_));
   numAnimationSteps_ = 20;
   animationSpeed_ = 16;
