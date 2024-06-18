@@ -103,6 +103,13 @@ class DockPanel : public QWidget {
     saveDockConfig();
   }
 
+  void changeFloatingStyle() {
+    panelStyle_ = (panelStyle_ == PanelStyle::Floating)
+        ? PanelStyle::NonFloating : PanelStyle::Floating;
+    model_->setPanelStyle(panelStyle_);
+    model_->saveAppearanceConfig();
+  }
+
   void toggleApplicationMenu() {
     showApplicationMenu_ = !showApplicationMenu_;
     reload();
@@ -180,11 +187,13 @@ class DockPanel : public QWidget {
 
   bool autoHide() { return visibility_ == PanelVisibility::AutoHide; }
 
-  bool isFloating() { return visibility_ == PanelVisibility::AlwaysVisibleFloating; }
+  bool isFloating() { return panelStyle_ == PanelStyle::Floating; }
 
   void setPosition(PanelPosition position);
 
   void setVisibility(PanelVisibility visibility);
+
+  void setPanelStyle(PanelStyle panelStyle);
 
   int itemCount() const { return static_cast<int>(items_.size()); }
 
@@ -266,6 +275,7 @@ class DockPanel : public QWidget {
   bool showBorder_;
   QColor borderColor_;  // no alpha.
   int tooltipFontSize_;
+  PanelStyle panelStyle_;
 
   // Non-config variables.
 
@@ -297,12 +307,12 @@ class DockPanel : public QWidget {
   QAction* positionLeft_;
   QAction* positionRight_;
   QAction* visibilityAlwaysVisibleAction_;
-  QAction* visibilityAlwaysVisibleFloatingAction_;
   QAction* visibilityAutoHideAction_;
   QAction* applicationMenuAction_;
   QAction* pagerAction_;
   QAction* taskManagerAction_;
   QAction* clockAction_;
+  QAction* floatingStyleAction_;
   // Actions to set the dock on a specific screen.
   std::vector<QAction*> screenActions_;
 

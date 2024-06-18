@@ -39,7 +39,9 @@ namespace crystaldock {
 
 enum class PanelPosition { Top, Bottom, Left, Right };
 
-enum class PanelVisibility { AlwaysVisible, AutoHide, AlwaysVisibleFloating };
+enum class PanelVisibility { AlwaysVisible, AutoHide };
+
+enum class PanelStyle { Floating, NonFloating };
 
 constexpr int kDefaultMinSize = 48;
 constexpr int kDefaultMaxSize = 128;
@@ -60,6 +62,7 @@ constexpr bool kDefaultShowApplicationMenu = true;
 constexpr bool kDefaultShowPager = false;
 constexpr bool kDefaultShowTaskManager = true;
 constexpr bool kDefaultShowClock = false;
+constexpr PanelStyle kDefaultPanelStyle = PanelStyle::Floating;
 
 constexpr char kDefaultApplicationMenuName[] = "Applications";
 constexpr int kDefaultApplicationMenuIconSize = 40;
@@ -166,6 +169,16 @@ class MultiDockModel : public QObject {
 
   void setTooltipFontSize(int value) {
     setAppearanceProperty(kGeneralCategory, kTooltipFontSize, value);
+  }
+
+  PanelStyle panelStyle() {
+    return static_cast<PanelStyle>(
+        appearanceProperty(kGeneralCategory, kPanelStyle,
+                           static_cast<int>(kDefaultPanelStyle)));
+  }
+
+  void setPanelStyle(PanelStyle value) {
+    setAppearanceProperty(kGeneralCategory, kPanelStyle, static_cast<int>(value));
   }
 
   int floatingMargin() const {
@@ -472,6 +485,7 @@ class MultiDockModel : public QObject {
   static constexpr char kSpacingFactor[] = "spacingFactor";
   static constexpr char kShowBorder[] = "showBorder";
   static constexpr char kTooltipFontSize[] = "tooltipFontSize";
+  static constexpr char kPanelStyle[] = "panelStyle";
   static constexpr char kFloatingMargin[] = "floatingMargin";
 
   static constexpr char kApplicationMenuCategory[] = "Application Menu";

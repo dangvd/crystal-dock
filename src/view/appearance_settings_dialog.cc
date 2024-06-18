@@ -72,6 +72,7 @@ void AppearanceSettingsDialog::loadData() {
   borderColor_->setColor(model_->borderColor());
   ui->tooltipFontSize->setValue(model_->tooltipFontSize());
   ui->floatingMargin->setValue(model_->floatingMargin());
+  ui->floatingMargin->setEnabled(model_->panelStyle() == PanelStyle::Floating);
 }
 
 void AppearanceSettingsDialog::resetData() {

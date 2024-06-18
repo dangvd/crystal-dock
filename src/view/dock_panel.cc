@@ -168,15 +168,15 @@ void DockPanel::onCurrentActivityChanged() {
 }
 
 void DockPanel::setStrut() {
+  int strut = 0;
   switch(visibility_) {
     case PanelVisibility::AlwaysVisible:
-      setStrut(isHorizontal() ? minHeight_ : minWidth_);
+      strut = isHorizontal() ? minHeight_ : minWidth_;
+      if (isFloating()) { strut += 2 * floatingMargin_; }
+      setStrut(strut);
       break;
     case PanelVisibility::AutoHide:
       setStrut(1);
-      break;
-    case PanelVisibility::AlwaysVisibleFloating:
-      setStrut(isHorizontal() ? minHeight_ + 2 * floatingMargin_ : minWidth_ + 2 * floatingMargin_);
       break;
     default:
       setStrut(0);
@@ -491,6 +491,15 @@ void DockPanel::createMenu() {
   menu_.addAction(
       QIcon::fromTheme("configure"), QString("Appearance &Settings"), this,
       SLOT(showAppearanceSettingsDialog()));
+
+  floatingStyleAction_ = menu_.addAction(
+      QString("Style: Floating"), this,
+      [this] {
+        changeFloatingStyle();
+      });
+  floatingStyleAction_->setCheckable(true);
+  floatingStyleAction_->setChecked(isFloating());
+
   menu_.addAction(QIcon::fromTheme("help-contents"),
                   QString("Online &Documentation"),
                   this, SLOT(showOnlineDocumentation()));
@@ -547,10 +556,6 @@ void DockPanel::createMenu() {
       QString("Always &Visible"), this,
       [this]() { updateVisibility(PanelVisibility::AlwaysVisible); });
   visibilityAlwaysVisibleAction_->setCheckable(true);
-  visibilityAlwaysVisibleFloatingAction_ = visibility->addAction(
-      QString("Always &Visible (Floating)"), this,
-      [this]() { updateVisibility(PanelVisibility::AlwaysVisibleFloating); });
-  visibilityAlwaysVisibleFloatingAction_->setCheckable(true);
   visibilityAutoHideAction_ = visibility->addAction(
       QString("Auto &Hide"), this,
       [this]() { updateVisibility(PanelVisibility::AutoHide); });
@@ -575,10 +580,13 @@ void DockPanel::setVisibility(PanelVisibility visibility) {
   visibility_ = visibility;
   visibilityAlwaysVisibleAction_->setChecked(
       visibility_ == PanelVisibility::AlwaysVisible);
-  visibilityAlwaysVisibleFloatingAction_->setChecked(
-      visibility_ == PanelVisibility::AlwaysVisibleFloating);
   visibilityAutoHideAction_->setChecked(
       visibility_ == PanelVisibility::AutoHide);
+}
+
+void DockPanel::setPanelStyle(PanelStyle panelStyle) {
+  panelStyle_ = panelStyle;
+  floatingStyleAction_->setChecked(isFloating());
 }
 
 void DockPanel::loadDockConfig() {
@@ -617,6 +625,7 @@ void DockPanel::loadAppearanceConfig() {
   showBorder_ = model_->showBorder();
   borderColor_ = model_->borderColor();
   tooltipFontSize_ = model_->tooltipFontSize();
+  setPanelStyle(model_->panelStyle());
 }
 
 void DockPanel::initApplicationMenu() {
