@@ -111,6 +111,9 @@ class MultiDockModel : public QObject {
   }
 
   void setMinIconSize(int value) {
+    if (value > maxIconSize()) {
+      setMaxIconSize(value);
+    }
     setAppearanceProperty(kGeneralCategory, kMinimumIconSize, value);
   }
 
@@ -120,6 +123,9 @@ class MultiDockModel : public QObject {
   }
 
   void setMaxIconSize(int value) {
+    if (value < minIconSize()) {
+      setMinIconSize(value);
+    }
     setAppearanceProperty(kGeneralCategory, kMaximumIconSize, value);
   }
 
