@@ -78,7 +78,7 @@ void Program::draw(QPainter *painter) const {
                         minSize_ / 7, size_ / 4, painter);
   } else if (!tasks_.empty()) {
     if (isHorizontal()) {
-      int cy = parent_->isTop() ? parent_->itemSpacing() - std::round(minSize_ / 8.0) - 1
+      int cy = parent_->isTop() ? top_ - std::round(minSize_ / 8.0) - 1
                                 : top_ + getHeight() + std::round(minSize_ / 8.0);
       int r = 4;
       fillCircle(left_ + getWidth() / 2 - r, cy - r, 2 * r, 2 * r,
@@ -90,7 +90,7 @@ void Program::draw(QPainter *painter) const {
       fillCircle(left_ + getWidth() / 2 - r, cy - r, 2 * r, 2 * r,
                  model_->backgroundColor().lighter(500), painter);
     } else {  // Vertical.
-      int cx = parent_->isLeft() ? parent_->itemSpacing() - std::round(minSize_ / 8.0) - 1
+      int cx = parent_->isLeft() ? left_ - std::round(minSize_ / 8.0) - 1
                                  : left_ + getWidth() + std::round(minSize_ / 8.0);
       int r = 4;
       fillCircle(cx - r, top_ + getWidth() / 2 - r, 2 * r, 2 * r,

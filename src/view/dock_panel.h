@@ -180,6 +180,8 @@ class DockPanel : public QWidget {
 
   bool autoHide() { return visibility_ == PanelVisibility::AutoHide; }
 
+  bool isFloating() { return visibility_ == PanelVisibility::AlwaysVisibleFloating; }
+
   void setPosition(PanelPosition position);
 
   void setVisibility(PanelVisibility visibility);
@@ -268,7 +270,8 @@ class DockPanel : public QWidget {
   // Non-config variables.
 
   int tooltipSize_;  // height if horizontal, width if vertical.
-  int itemSpacing_;
+  int itemSpacing_;  // space between items.
+  int floatingMargin_;  // margin around the dock in floating mode.
   int minWidth_;
   int maxWidth_;
   int minHeight_;
@@ -294,6 +297,7 @@ class DockPanel : public QWidget {
   QAction* positionLeft_;
   QAction* positionRight_;
   QAction* visibilityAlwaysVisibleAction_;
+  QAction* visibilityAlwaysVisibleFloatingAction_;
   QAction* visibilityAutoHideAction_;
   QAction* applicationMenuAction_;
   QAction* pagerAction_;

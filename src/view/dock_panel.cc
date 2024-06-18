@@ -89,7 +89,7 @@ DockPanel::DockPanel(MultiDockView* parent, MultiDockModel* model, int dockId)
       showClock_(false),
       showBorder_(true),
       aboutDialog_(QMessageBox::Information, "About Crystal Dock",
-                   QString("<h3>Crystal Dock 2.0</h3>")
+                   QString("<h3>Crystal Dock 2.1 alpha</h3>")
                    + "<p>Copyright (C) 2024 Viet Dang (dangvd@gmail.com)"
                    + "<p><a href=\"https://github.com/dangvd/crystal-dock\">https://github.com/dangvd/crystal-dock</a>"
                    + "<p>License: GPLv3",
@@ -174,6 +174,9 @@ void DockPanel::setStrut() {
       break;
     case PanelVisibility::AutoHide:
       setStrut(1);
+      break;
+    case PanelVisibility::AlwaysVisibleFloating:
+      setStrut(isHorizontal() ? minHeight_ + 2 * floatingMargin_ : minWidth_ + 2 * floatingMargin_);
       break;
     default:
       setStrut(0);
@@ -348,12 +351,16 @@ void DockPanel::paintEvent(QPaintEvent* e) {
 
   if (isHorizontal()) {
     const int y = isTop()
-                  ? 0 : maxHeight_ - backgroundHeight_;
+        ? isFloating() ? floatingMargin_ : 0
+        : isFloating() ? maxHeight_ - backgroundHeight_ - floatingMargin_
+                       : maxHeight_ - backgroundHeight_;
     fillRoundedRect((maxWidth_ - backgroundWidth_) / 2, y, backgroundWidth_ - 1, backgroundHeight_ - 1,
                     backgroundHeight_ / 16, showBorder_, borderColor_, backgroundColor_, &painter);
   } else {  // Vertical
     const int x =  isLeft()
-                   ? 0 : maxWidth_ - backgroundWidth_;
+        ? isFloating() ? floatingMargin_ : 0
+        : isFloating() ? maxWidth_ - backgroundWidth_ - floatingMargin_
+                       : maxWidth_ - backgroundWidth_;
     fillRoundedRect(x, (maxHeight_ - backgroundHeight_) / 2, backgroundWidth_ - 1, backgroundHeight_ - 1,
                     backgroundWidth_ / 16, showBorder_, borderColor_, backgroundColor_, &painter);
   }
@@ -378,7 +385,11 @@ void DockPanel::paintEvent(QPaintEvent* e) {
       int x = item->left_ + item->getWidth() / 2 - tooltipWidth / 2;
       x = std::min(x, maxWidth_ - tooltipWidth);
       x = std::max(x, 0);
-      int y = isTop() ? maxHeight_ - itemSpacing_ : itemSpacing_ + tooltipSize_ / 2;
+      int y = isTop()
+          ? isFloating() ? maxHeight_ - itemSpacing_ + floatingMargin_
+                         : maxHeight_ - itemSpacing_
+          : isFloating() ? itemSpacing_ + tooltipSize_ / 2 - floatingMargin_
+                         : itemSpacing_ + tooltipSize_ / 2;
       drawBorderedText(x, y, item->getLabel(), /*borderWidth*/ 2, Qt::black, Qt::white, &painter);
     } else {  // Vertical
       // Do not draw tooltip for Vertical positions for now because the total
@@ -536,6 +547,10 @@ void DockPanel::createMenu() {
       QString("Always &Visible"), this,
       [this]() { updateVisibility(PanelVisibility::AlwaysVisible); });
   visibilityAlwaysVisibleAction_->setCheckable(true);
+  visibilityAlwaysVisibleFloatingAction_ = visibility->addAction(
+      QString("Always &Visible (Floating)"), this,
+      [this]() { updateVisibility(PanelVisibility::AlwaysVisibleFloating); });
+  visibilityAlwaysVisibleFloatingAction_->setCheckable(true);
   visibilityAutoHideAction_ = visibility->addAction(
       QString("Auto &Hide"), this,
       [this]() { updateVisibility(PanelVisibility::AutoHide); });
@@ -560,6 +575,8 @@ void DockPanel::setVisibility(PanelVisibility visibility) {
   visibility_ = visibility;
   visibilityAlwaysVisibleAction_->setChecked(
       visibility_ == PanelVisibility::AlwaysVisible);
+  visibilityAlwaysVisibleFloatingAction_->setChecked(
+      visibility_ == PanelVisibility::AlwaysVisibleFloating);
   visibilityAutoHideAction_->setChecked(
       visibility_ == PanelVisibility::AutoHide);
 }
@@ -719,6 +736,7 @@ void DockPanel::initClock() {
 
 void DockPanel::initLayoutVars() {
   itemSpacing_ = std::round(minSize_ / 1.7 * spacingFactor_);
+  floatingMargin_ = 6;
   parabolicMaxX_ = std::round(2.5 * (minSize_ + itemSpacing_));
   numAnimationSteps_ = 20;
   animationSpeed_ = 16;
@@ -788,10 +806,16 @@ void DockPanel::updateLayout() {
     if (isHorizontal()) {
       items_[i]->left_ = (i == 0) ? itemSpacing_ + (maxWidth_ - minWidth_) / 2
           : items_[i - 1]->left_ + items_[i - 1]->getMinWidth() + itemSpacing_;
-      items_[i]->top_ = isTop() ? itemSpacing_ : itemSpacing_ + maxHeight_ - minHeight_;
+      items_[i]->top_ = isTop()
+          ? isFloating() ? itemSpacing_ + floatingMargin_ : itemSpacing_
+          : isFloating() ? itemSpacing_ + maxHeight_ - minHeight_ - floatingMargin_
+                         : itemSpacing_ + maxHeight_ - minHeight_;
       items_[i]->minCenter_ = items_[i]->left_ + items_[i]->getMinWidth() / 2;
     } else {  // Vertical
-      items_[i]->left_ = isLeft() ? itemSpacing_ : itemSpacing_ + maxWidth_ - minWidth_;
+      items_[i]->left_ = isLeft()
+          ? isFloating() ? itemSpacing_ + floatingMargin_ : itemSpacing_
+          : isFloating() ? itemSpacing_ + maxWidth_ - minWidth_ - floatingMargin_
+                         : itemSpacing_ + maxWidth_ - minWidth_;
       items_[i]->top_ = (i == 0) ? itemSpacing_ + (maxHeight_ - minHeight_) / 2
           : items_[i - 1]->top_ + items_[i - 1]->getMinHeight() + itemSpacing_;
       items_[i]->minCenter_ = items_[i]->top_ + items_[i]->getMinHeight() / 2;
@@ -871,11 +895,17 @@ void DockPanel::updateLayout(int x, int y) {
     }
     items_[i]->size_ = parabolic(delta);
     if (isHorizontal()) {
-      items_[i]->top_ = isTop() ? itemSpacing_
-                                : itemSpacing_ + tooltipSize_ + maxSize_ - items_[i]->getHeight();
+      items_[i]->top_ = isTop()
+          ? isFloating() ? itemSpacing_ + floatingMargin_ : itemSpacing_
+          : isFloating() ? itemSpacing_ + tooltipSize_ + maxSize_ - items_[i]->getHeight()
+                           - floatingMargin_
+                         : itemSpacing_ + tooltipSize_ + maxSize_ - items_[i]->getHeight();
     } else {
-      items_[i]->left_ = isLeft() ? itemSpacing_
-                                  : itemSpacing_ + tooltipSize_ + maxSize_ - items_[i]->getWidth();
+      items_[i]->left_ = isLeft()
+          ? isFloating() ? itemSpacing_ + floatingMargin_ : itemSpacing_
+          : isFloating() ? itemSpacing_ + tooltipSize_ + maxSize_ - items_[i]->getWidth()
+                           - floatingMargin_
+                         : itemSpacing_ + tooltipSize_ + maxSize_ - items_[i]->getWidth();
     }
     if (i > 0) {
       if (isHorizontal()) {
