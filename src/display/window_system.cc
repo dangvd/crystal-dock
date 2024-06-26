@@ -590,7 +590,7 @@ ApplicationMenuConfig WindowSystem::applicationMenuConfig_;
     return;
   }
   WindowInfo* info = windows_[window];
-  if (info) {
+  if (info && !info->onAllDesktops) {
     emit self()->windowLeftCurrentDesktop(info->uuid);
   }
 }
