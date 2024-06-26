@@ -68,6 +68,9 @@ MultiDockModel::MultiDockModel(const QString& configDir)
   loadDocks();
   connect(&applicationMenuConfig_, SIGNAL(configChanged()),
           this, SIGNAL(applicationMenuConfigChanged()));
+  if (maxIconSize() < minIconSize()) {
+    setMaxIconSize(minIconSize());
+  }
 }
 
 void MultiDockModel::loadDocks() {
