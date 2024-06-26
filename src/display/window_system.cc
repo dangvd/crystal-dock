@@ -480,11 +480,10 @@ ApplicationMenuConfig WindowSystem::applicationMenuConfig_;
 
     if (info->minimized && activeUuid_ == info->uuid) {
       activeUuid_ = "";
-      emit self()->activeWindowChanged(activeUuid_);
     } else if (flags & ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_ACTIVE && activeUuid_ != info->uuid) {
       activeUuid_ = info->uuid;
-      emit self()->activeWindowChanged(activeUuid_);
     }
+    emit self()->windowStateChanged(info->uuid);
   }
 }
 

@@ -120,7 +120,7 @@ DockPanel::DockPanel(MultiDockView* parent, MultiDockModel* model, int dockId)
       this, SLOT(updatePager()));
   connect(WindowSystem::self(), SIGNAL(currentDesktopChanged(std::string_view)),
           this, SLOT(onCurrentDesktopChanged()));
-  connect(WindowSystem::self(), SIGNAL(activeWindowChanged(std::string_view)),
+  connect(WindowSystem::self(), SIGNAL(windowStateChanged(std::string_view)),
           this, SLOT(update()));
   connect(WindowSystem::self(), SIGNAL(windowAdded(const WindowInfo*)),
           this, SLOT(onWindowAdded(const WindowInfo*)));
