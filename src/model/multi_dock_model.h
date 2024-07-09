@@ -41,7 +41,8 @@ enum class PanelPosition { Top, Bottom, Left, Right };
 
 enum class PanelVisibility { AlwaysVisible, AutoHide };
 
-enum class PanelStyle { Floating, NonFloating };
+// 3D styles only apply to bottom dock. For left/right/top docks, they will revert to 2D.
+enum class PanelStyle { Floating3D, NonFloating3D, Floating2D, NonFloating2D };
 
 constexpr int kDefaultMinSize = 48;
 constexpr int kDefaultMaxSize = 128;
@@ -62,7 +63,7 @@ constexpr bool kDefaultShowApplicationMenu = true;
 constexpr bool kDefaultShowPager = false;
 constexpr bool kDefaultShowTaskManager = true;
 constexpr bool kDefaultShowClock = false;
-constexpr PanelStyle kDefaultPanelStyle = PanelStyle::Floating;
+constexpr PanelStyle kDefaultPanelStyle = PanelStyle::Floating3D;
 
 constexpr char kDefaultApplicationMenuName[] = "Applications";
 constexpr int kDefaultApplicationMenuIconSize = 40;

@@ -89,7 +89,7 @@ DockPanel::DockPanel(MultiDockView* parent, MultiDockModel* model, int dockId)
       showClock_(false),
       showBorder_(true),
       aboutDialog_(QMessageBox::Information, "About Crystal Dock",
-                   QString("<h3>Crystal Dock 2.1</h3>")
+                   QString("<h3>Crystal Dock 2.2 alpha</h3>")
                    + "<p>Copyright (C) 2024 Viet Dang (dangvd@gmail.com)"
                    + "<p><a href=\"https://github.com/dangvd/crystal-dock\">https://github.com/dangvd/crystal-dock</a>"
                    + "<p>License: GPLv3",
@@ -350,12 +350,20 @@ void DockPanel::paintEvent(QPaintEvent* e) {
   }
 
   if (isHorizontal()) {
-    const int y = isTop()
+    int y = isTop()
         ? isFloating() ? floatingMargin_ : 0
         : isFloating() ? maxHeight_ - backgroundHeight_ - floatingMargin_
                        : maxHeight_ - backgroundHeight_;
-    fillRoundedRect((maxWidth_ - backgroundWidth_) / 2, y, backgroundWidth_ - 1, backgroundHeight_ - 1,
-                    backgroundHeight_ / 16, showBorder_, borderColor_, backgroundColor_, &painter);
+    if (is3D() && isBottom()) {  // 3D styles only apply to bottom dock.
+      y -= k3DPanelThickness;
+      draw3dDockPanel(
+          (maxWidth_ - backgroundWidth_) / 2, y, backgroundWidth_ - 1, backgroundHeight_ - 1,
+           backgroundHeight_ / 16, borderColor_, backgroundColor_, &painter);
+    } else {
+      fillRoundedRect(
+          (maxWidth_ - backgroundWidth_) / 2, y, backgroundWidth_ - 1, backgroundHeight_ - 1,
+           backgroundHeight_ / 16, showBorder_, borderColor_, backgroundColor_, &painter);
+    }
   } else {  // Vertical
     const int x =  isLeft()
         ? isFloating() ? floatingMargin_ : 0
@@ -500,6 +508,14 @@ void DockPanel::createMenu() {
   floatingStyleAction_->setCheckable(true);
   floatingStyleAction_->setChecked(isFloating());
 
+  style3DAction_ = menu_.addAction(
+      QString("Style: 3D (bottom dock only)"), this,
+      [this] {
+        change3DStyle();
+      });
+  style3DAction_->setCheckable(true);
+  style3DAction_->setChecked(is3D());
+
   menu_.addAction(QIcon::fromTheme("help-contents"),
                   QString("Online &Documentation"),
                   this, SLOT(showOnlineDocumentation()));
@@ -587,6 +603,7 @@ void DockPanel::setVisibility(PanelVisibility visibility) {
 void DockPanel::setPanelStyle(PanelStyle panelStyle) {
   panelStyle_ = panelStyle;
   floatingStyleAction_->setChecked(isFloating());
+  style3DAction_->setChecked(is3D());
 }
 
 void DockPanel::loadDockConfig() {
@@ -819,6 +836,7 @@ void DockPanel::updateLayout() {
           ? isFloating() ? itemSpacing_ + floatingMargin_ : itemSpacing_
           : isFloating() ? itemSpacing_ + maxHeight_ - minHeight_ - floatingMargin_
                          : itemSpacing_ + maxHeight_ - minHeight_;
+      if (is3D() && isBottom()) { items_[i]->top_ -= k3DPanelThickness; }
       items_[i]->minCenter_ = items_[i]->left_ + items_[i]->getMinWidth() / 2;
     } else {  // Vertical
       items_[i]->left_ = isLeft()
@@ -909,6 +927,7 @@ void DockPanel::updateLayout(int x, int y) {
           : isFloating() ? itemSpacing_ + tooltipSize_ + maxSize_ - items_[i]->getHeight()
                            - floatingMargin_
                          : itemSpacing_ + tooltipSize_ + maxSize_ - items_[i]->getHeight();
+      if (is3D() && isBottom()) { items_[i]->top_ -= k3DPanelThickness; }
     } else {
       items_[i]->left_ = isLeft()
           ? isFloating() ? itemSpacing_ + floatingMargin_ : itemSpacing_

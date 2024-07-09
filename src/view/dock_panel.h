@@ -68,6 +68,7 @@ class DockPanel : public QWidget {
 
   bool isHorizontal() { return orientation_ == Qt::Horizontal; }
   bool isTop() { return position_ == PanelPosition::Top; }
+  bool isBottom() { return position_ == PanelPosition::Bottom; }
   bool isLeft() { return position_ == PanelPosition::Left; }
 
  public slots:
@@ -104,8 +105,13 @@ class DockPanel : public QWidget {
   }
 
   void changeFloatingStyle() {
-    panelStyle_ = (panelStyle_ == PanelStyle::Floating)
-        ? PanelStyle::NonFloating : PanelStyle::Floating;
+    panelStyle_ = static_cast<PanelStyle>(static_cast<int>(panelStyle_) ^ 1);
+    model_->setPanelStyle(panelStyle_);
+    model_->saveAppearanceConfig();
+  }
+
+  void change3DStyle() {
+    panelStyle_ = static_cast<PanelStyle>(static_cast<int>(panelStyle_) ^ 2);
     model_->setPanelStyle(panelStyle_);
     model_->saveAppearanceConfig();
   }
@@ -185,9 +191,17 @@ class DockPanel : public QWidget {
   // Width/height of the panel in Auto Hide mode.
   static constexpr int kAutoHideSize = 1;
 
+  static constexpr int k3DPanelThickness = 4;
+
   bool autoHide() { return visibility_ == PanelVisibility::AutoHide; }
 
-  bool isFloating() { return panelStyle_ == PanelStyle::Floating; }
+  bool isFloating() {
+    return panelStyle_ == PanelStyle::Floating3D || panelStyle_ == PanelStyle::Floating2D;
+  }
+
+  bool is3D() {
+    return panelStyle_ == PanelStyle::Floating3D || panelStyle_ == PanelStyle::NonFloating3D;
+  }
 
   void setPosition(PanelPosition position);
 
@@ -313,6 +327,7 @@ class DockPanel : public QWidget {
   QAction* taskManagerAction_;
   QAction* clockAction_;
   QAction* floatingStyleAction_;
+  QAction* style3DAction_;
   // Actions to set the dock on a specific screen.
   std::vector<QAction*> screenActions_;
 

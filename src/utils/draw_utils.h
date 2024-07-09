@@ -84,6 +84,40 @@ inline void fillRoundedRect(int x, int y, int width, int height, int radius, boo
   painter->setRenderHint(QPainter::Antialiasing, false);
 }
 
+inline void draw3dDockPanel(int x, int y, int width, int height, int radius,
+                            QColor borderColor, QColor fillColor, QPainter* painter) {
+  painter->setRenderHint(QPainter::Antialiasing);
+  QPainterPath surface;
+  QPolygonF polygon;
+  polygon << QPointF(x + height / 2, y + height / 2)
+          << QPointF(x + width - height / 2, y + height / 2)
+          << QPointF(x + width, y + height) << QPointF(x, y + height);
+  surface.addPolygon(polygon);
+  surface.closeSubpath();
+  painter->fillPath(surface, QBrush(fillColor));
+  painter->setPen(borderColor);
+  painter->drawPath(surface);
+
+  QPainterPath side;
+  QPolygonF polygon2;
+  polygon2 << QPointF(x + height / 2, y + height / 2)
+          << QPointF(x + height / 2, y + height / 2 + 2)
+          << QPointF(x, y + height + 2) << QPointF(x, y + height) ;
+  side.addPolygon(polygon2);
+  side.closeSubpath();
+  QPolygonF polygon3;
+  polygon3 << QPointF(x + width - height / 2, y + height / 2)
+          << QPointF(x + width - height / 2, y + height / 2 + 2)
+          << QPointF(x + width, y + height + 2) << QPointF(x + width, y + height);
+  side.addPolygon(polygon3);
+  side.closeSubpath();
+  painter->fillPath(side, QBrush(fillColor));
+
+  painter->fillRect(x + height / 2, y + height / 2, width - height, 2, QBrush(fillColor));
+  painter->fillRect(x, y + height, width, 3, QBrush(borderColor));
+  painter->setRenderHint(QPainter::Antialiasing, false);
+}
+
 inline void fillCircle(int x, int y, int width, int height, QColor bgColor, QPainter* painter) {
   QColor fillColor = bgColor;
   fillColor.setAlphaF(1.0);
