@@ -27,7 +27,11 @@ constexpr float Separator::kWhRatio;
 Separator::Separator(DockPanel* parent, MultiDockModel* model, Qt::Orientation orientation,
                      int minSize, int maxSize)
     : IconlessDockItem(parent, model, "" /* label */, orientation, minSize, maxSize,
-                       kWhRatio, /*reverseWhRatio=*/ true) {}
+                       kWhRatio, /*reverseWhRatio=*/ true) {
+  if (parent_->isBottom() && parent_->is3D()) {
+    whRatio_ = 0.5;
+  }
+}
 
 void Separator::draw(QPainter* painter) const {
   int x, y, w, h;
@@ -46,7 +50,12 @@ void Separator::draw(QPainter* painter) const {
     w = getMinWidth();
     h = 1;
   }
-  painter->fillRect(x, y, w, h, model_->borderColor());
+
+  if (parent_->isBottom() && parent_->is3D()) {
+    // For 3D style, do not draw anything for now.
+  } else {
+    painter->fillRect(x, y, w, h, model_->borderColor());
+  }
 }
 
 }  // namespace crystaldock

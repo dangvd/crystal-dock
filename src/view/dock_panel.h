@@ -71,6 +71,10 @@ class DockPanel : public QWidget {
   bool isBottom() { return position_ == PanelPosition::Bottom; }
   bool isLeft() { return position_ == PanelPosition::Left; }
 
+  bool is3D() {
+    return panelStyle_ == PanelStyle::Floating3D || panelStyle_ == PanelStyle::NonFloating3D;
+  }
+
  public slots:
   // Reloads the items and updates the dock.
   void reload();
@@ -197,10 +201,6 @@ class DockPanel : public QWidget {
 
   bool isFloating() {
     return panelStyle_ == PanelStyle::Floating3D || panelStyle_ == PanelStyle::Floating2D;
-  }
-
-  bool is3D() {
-    return panelStyle_ == PanelStyle::Floating3D || panelStyle_ == PanelStyle::NonFloating3D;
   }
 
   void setPosition(PanelPosition position);
