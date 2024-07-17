@@ -53,6 +53,8 @@ class DockPanel : public QWidget {
   Q_OBJECT
 
  public:
+  static constexpr int k3DPanelThickness = 4;
+
   // No pointer ownership.
   DockPanel(MultiDockView* parent, MultiDockModel* model, int dockId);
   virtual ~DockPanel() = default;
@@ -74,6 +76,9 @@ class DockPanel : public QWidget {
   bool is3D() {
     return panelStyle_ == PanelStyle::Floating3D || panelStyle_ == PanelStyle::NonFloating3D;
   }
+
+  // position of task indicators, y-coordinate if horizontal, x if vertical.
+  int taskIndicatorPos();
 
  public slots:
   // Reloads the items and updates the dock.
@@ -194,8 +199,6 @@ class DockPanel : public QWidget {
 
   // Width/height of the panel in Auto Hide mode.
   static constexpr int kAutoHideSize = 1;
-
-  static constexpr int k3DPanelThickness = 4;
 
   bool autoHide() { return visibility_ == PanelVisibility::AutoHide; }
 

@@ -73,36 +73,26 @@ void Program::init() {
 }
 
 void Program::draw(QPainter *painter) const {
-  if ((!tasks_.empty() && active()) || attentionStrong_) {
-    drawHighlightedIcon(model_->backgroundColor(), left_, top_, getWidth(), getHeight(),
-                        minSize_ / 7, size_ / 4, painter);
-  } else if (!tasks_.empty()) {
-    if (isHorizontal()) {
-      int cy = parent_->isTop() ? top_ - std::round(minSize_ / 8.0) - 1
-                                : top_ + getHeight() + std::round(minSize_ / 8.0);
-      int r = 4;
-      fillCircle(left_ + getWidth() / 2 - r, cy - r, 2 * r, 2 * r,
-                 model_->backgroundColor().darker(30), painter);
-      r = 3;
-      fillCircle(left_ + getWidth() / 2 - r, cy - r, 2 * r, 2 * r,
-                 model_->backgroundColor().lighter(300), painter);
-      r = 2;
-      fillCircle(left_ + getWidth() / 2 - r, cy - r, 2 * r, 2 * r,
-                 model_->backgroundColor().lighter(500), painter);
-    } else {  // Vertical.
-      int cx = parent_->isLeft() ? left_ - std::round(minSize_ / 8.0) - 1
-                                 : left_ + getWidth() + std::round(minSize_ / 8.0);
-      int r = 4;
-      fillCircle(cx - r, top_ + getWidth() / 2 - r, 2 * r, 2 * r,
-                 model_->backgroundColor().darker(30), painter);
-      r = 3;
-      fillCircle(cx - r, top_ + getWidth() / 2 - r, 2 * r, 2 * r,
-                 model_->backgroundColor().lighter(300), painter);
-      r = 2;
-      fillCircle(cx - r, top_ + getWidth() / 2 - r, 2 * r, 2 * r,
-                 model_->backgroundColor().lighter(500), painter);
+  painter->setRenderHint(QPainter::Antialiasing);
+  if (!tasks_.empty()) {  // Draws the task indicator.
+    const QColor baseColor = active() || attentionStrong_ ? QColor("lime") : QColor("aqua");
+    // Size (width if horizontal, or height if vertical) of the indicator.
+    const int size = active() ? 32 : 18;
+    for (int i = 0; i <= size; i++) {
+      int brightness = 100 - (2 * i - size) * (2 * i - size) * 100 / (size * size);
+      if (brightness < 10) { brightness = 10; }
+      QColor color = baseColor.lighter(brightness * 16 / 10);
+      if (isHorizontal()) {
+        painter->fillRect(left_ + getWidth() / 2 - size / 2 + i, parent_->taskIndicatorPos(),
+                          1, DockPanel::k3DPanelThickness, color);
+      } else {  // Vertical.
+        painter->fillRect(parent_->taskIndicatorPos(), top_ + getHeight() / 2 - size / 2 + i,
+                          DockPanel::k3DPanelThickness, 1, color);
+      }
     }
   }
+  painter->setRenderHint(QPainter::Antialiasing, false);
+
   IconBasedDockItem::draw(painter);
 }
 

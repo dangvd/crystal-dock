@@ -334,6 +334,22 @@ void DockPanel::onWindowLeftCurrentActivity(std::string_view uuid) {
   }
 }
 
+int DockPanel::taskIndicatorPos() {
+  if (isHorizontal()) {
+    int y = isTop()
+        ? isFloating() ? floatingMargin_ : 0
+        : isFloating() ? maxHeight_ - floatingMargin_ - k3DPanelThickness
+                       : maxHeight_ - k3DPanelThickness;
+    if (isBottom() && is3D()) { y -= 2; }
+    return y;
+  } else {
+    return isLeft()
+        ? isFloating() ? floatingMargin_ : 0
+                       : isFloating() ? maxWidth_ - k3DPanelThickness - floatingMargin_
+                                      : maxWidth_ - k3DPanelThickness;
+  }
+}
+
 void DockPanel::paintEvent(QPaintEvent* e) {
   QPainter painter(this);
 
