@@ -389,10 +389,30 @@ void DockPanel::paintEvent(QPaintEvent* e) {
                     backgroundWidth_ / 16, showBorder_, borderColor_, backgroundColor_, &painter);
   }
 
-  // Draw the items from the end to avoid zoomed items getting clipped by
-  // non-zoomed items.
-  for (int i = itemCount() - 1; i >= 0; --i) {
-    items_[i]->draw(&painter);
+  if (isBottom() && is3D()) {
+    QImage mainImage(width(), height(), QImage::Format_ARGB32);
+    mainImage.fill(0);
+    QPainter mainPainter(&mainImage);
+    // Draw the items from the end to avoid zoomed items getting clipped by
+    // non-zoomed items.
+    for (int i = itemCount() - 1; i >= 0; --i) {
+      items_[i]->draw(&mainPainter);
+    }
+    painter.drawImage(0, 0, mainImage);
+
+    int y = height() - itemSpacing_ - k3DPanelThickness;
+    if (isFloating()) { y -= floatingMargin_; }
+    QImage toMirrorImage = mainImage.copy(0, y - itemSpacing_ + 2, width(), itemSpacing_ - 2);
+    QImage mirrorImage = toMirrorImage.mirrored();
+    painter.setOpacity(0.3);
+    painter.drawImage(0, y, mirrorImage);
+    painter.setOpacity(1.0);
+  } else {
+    // Draw the items from the end to avoid zoomed items getting clipped by
+    // non-zoomed items.
+    for (int i = itemCount() - 1; i >= 0; --i) {
+      items_[i]->draw(&painter);
+    }
   }
 
   // Draw tooltip.
