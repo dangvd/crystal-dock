@@ -80,8 +80,12 @@ ApplicationMenu::ApplicationMenu(
 
 void ApplicationMenu::draw(QPainter* painter) const {
   if (showingMenu_) {
-    drawHighlightedIcon(model_->backgroundColor(), left_, top_, getWidth(), getHeight(),
-                        minSize_ / 4 - 4, size_ / 4, painter);
+    const QColor baseColor = QColor("lime");
+    // Size (width if horizontal, or height if vertical) of the indicator.
+    const int size = DockPanel::kActiveIndicatorSize;
+    drawIndicator(orientation_, left_ + getWidth() / 2, parent_->taskIndicatorPos(),
+                  parent_->taskIndicatorPos(), top_ + getHeight() / 2,
+                  size, DockPanel::k3DPanelThickness, baseColor, painter);
   }
   IconBasedDockItem::draw(painter);
 }
