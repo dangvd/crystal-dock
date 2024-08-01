@@ -128,6 +128,24 @@ inline void fillCircle(int x, int y, int width, int height, QColor bgColor, QPai
   painter->setRenderHint(QPainter::Antialiasing, false);
 }
 
+inline void drawIndicator(Qt::Orientation orientation, int hx, int hy, int vx, int vy,
+                          int size, int thickness, QColor baseColor, QPainter* painter) {
+  for (int i = 0; i <= size; i++) {
+    int brightness = 100 - (2 * i - size) * (2 * i - size) * 100 / (size * size);
+    if (brightness < 10) { brightness = 10; }
+    QColor color = baseColor.lighter(brightness * 16 / 10);
+    if (orientation == Qt::Horizontal) {
+      painter->fillRect(hx - size / 2 + i, hy, 1, thickness, color);
+      painter->fillRect(hx - size / 2 + i, hy, 1, 1, color.darker(300));
+      painter->fillRect(hx - size / 2 + i, hy + thickness, 1, 1, color.darker(300));
+    } else {  // Vertical.
+      painter->fillRect(vx, vy - size / 2 + i, thickness, 1, color);
+      painter->fillRect(vx, vy - size / 2 + i, 1, 1, color.darker(300));
+      painter->fillRect(vx + thickness, vy - size / 2 + i, 1, 1, color.darker(300));
+    }
+  }
+}
+
 }  // namespace crystaldock
 
 #endif  // CRYSTALDOCK_DRAW_UTILS_H_

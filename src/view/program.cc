@@ -77,19 +77,11 @@ void Program::draw(QPainter *painter) const {
   if (!tasks_.empty()) {  // Draws the task indicator.
     const QColor baseColor = active() || attentionStrong_ ? QColor("lime") : QColor("aqua");
     // Size (width if horizontal, or height if vertical) of the indicator.
-    const int size = active() ? 32 : 18;
-    for (int i = 0; i <= size; i++) {
-      int brightness = 100 - (2 * i - size) * (2 * i - size) * 100 / (size * size);
-      if (brightness < 10) { brightness = 10; }
-      QColor color = baseColor.lighter(brightness * 16 / 10);
-      if (isHorizontal()) {
-        painter->fillRect(left_ + getWidth() / 2 - size / 2 + i, parent_->taskIndicatorPos(),
-                          1, DockPanel::k3DPanelThickness, color);
-      } else {  // Vertical.
-        painter->fillRect(parent_->taskIndicatorPos(), top_ + getHeight() / 2 - size / 2 + i,
-                          DockPanel::k3DPanelThickness, 1, color);
-      }
-    }
+    const int size = active() ? DockPanel::kActiveIndicatorSize
+                              : DockPanel::kInactiveIndicatorSize;
+    drawIndicator(orientation_, left_ + getWidth() / 2, parent_->taskIndicatorPos(),
+                  parent_->taskIndicatorPos(), top_ + getHeight() / 2,
+                  size, DockPanel::k3DPanelThickness, baseColor, painter);
   }
   painter->setRenderHint(QPainter::Antialiasing, false);
 

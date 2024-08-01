@@ -54,6 +54,8 @@ class DockPanel : public QWidget {
 
  public:
   static constexpr int k3DPanelThickness = 4;
+  static constexpr int kActiveIndicatorSize = 32;
+  static constexpr int kInactiveIndicatorSize = 18;
 
   // No pointer ownership.
   DockPanel(MultiDockView* parent, MultiDockModel* model, int dockId);
