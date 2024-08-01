@@ -21,6 +21,8 @@
 #include <QIcon>
 #include <QImage>
 
+#include <utils/draw_utils.h>
+
 namespace crystaldock {
 
 const int IconBasedDockItem::kIconLoadSize;
@@ -46,14 +48,9 @@ void IconBasedDockItem::draw(QPainter* painter) const {
   if (!icon.isNull()) {
     painter->drawPixmap(left_, top_, icon);
   } else {  // Fall-back "icon".
-    painter->setRenderHint(QPainter::Antialiasing);
-    painter->setPen(model_->borderColor());
     QColor fillColor = model_->backgroundColor();
-    fillColor.setAlphaF(0.42);
-    painter->setBrush(fillColor);
-    painter->drawEllipse(left_, top_, size_, size_);
-    painter->setBrush(Qt::NoBrush);
-    painter->setRenderHint(QPainter::Antialiasing, false);
+    fillColor.setAlphaF(kDefaultBackgroundAlpha);
+    drawFallbackIcon(left_, top_, size_, model_->borderColor(), fillColor, painter);
   }
 }
 

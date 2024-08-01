@@ -146,6 +146,20 @@ inline void drawIndicator(Qt::Orientation orientation, int hx, int hy, int vx, i
   }
 }
 
+inline void drawFallbackIcon(int left, int top, int size,
+                             QColor borderColor, QColor fillColor, QPainter* painter) {
+  painter->setRenderHint(QPainter::Antialiasing);
+  painter->setPen(borderColor);
+  painter->setBrush(fillColor);
+  painter->drawEllipse(left, top, size, size);
+  painter->setBrush(Qt::NoBrush);
+  painter->setPen(fillColor.lighter());
+  painter->drawEllipse(left + 1, top + 1, size - 2, size - 2);
+  painter->setPen(fillColor);
+  painter->drawEllipse(left + 2, top + 2, size - 4, size - 4);
+  painter->setRenderHint(QPainter::Antialiasing, false);
+}
+
 }  // namespace crystaldock
 
 #endif  // CRYSTALDOCK_DRAW_UTILS_H_
