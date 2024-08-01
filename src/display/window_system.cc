@@ -154,6 +154,11 @@ ApplicationMenuConfig WindowSystem::applicationMenuConfig_;
   return activeUuid_;
 }
 
+/* static */ void WindowSystem::resetActiveWindow() {
+  activeUuid_ = "";
+  emit WindowSystem::self()->windowStateChanged("");
+}
+
 /* static */ void WindowSystem::activateWindow(const std::string& uuid) {
   if (uuids_.count(uuid) == 0) {
     return;

@@ -75,6 +75,10 @@ class Program : public QObject, public IconBasedDockItem {
 
   bool shouldBeRemoved() override { return taskCount() == 0 && !pinned_; }
 
+  virtual void maybeResetActiveWindow(QMouseEvent* e) override {
+    if (e->button() != Qt::LeftButton) { WindowSystem::resetActiveWindow(); }
+  }
+
   int taskCount() const { return static_cast<int>(tasks_.size()); }
 
   bool active() const { return getActiveTask() >= 0; }

@@ -113,6 +113,11 @@ class WindowSystem : public QObject {
 
   static std::vector<const WindowInfo*> windows();
   static std::string_view activeWindow();
+  // We manually reset active window, usually when the new active window is the dock itself.
+  // We don't want to always do this (e.g. handle this in state_change() handler) because
+  // otherwise we wouldn't be able to click on an active window's icon to minimize it
+  // (the click action would change the active window to be the dock).
+  static void resetActiveWindow();
   static void activateWindow(const std::string& uuid);
   static void activateOrMinimizeWindow(const std::string& uuid);
   static void closeWindow(const std::string& uuid);

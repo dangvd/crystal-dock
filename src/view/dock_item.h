@@ -55,6 +55,14 @@ class DockItem {
   // Mouse press event handler.
   virtual void mousePressEvent(QMouseEvent* e) = 0;
 
+  // We manually reset active window on the dock's mouse event.
+  // We don't want to always do this (e.g. handle this in window_system::state_change() handler)
+  // because otherwise we wouldn't be able to click on an active window's icon to minimize it
+  // (the click action would change the active window to be the dock).
+  virtual void maybeResetActiveWindow(QMouseEvent* e) {
+    WindowSystem::resetActiveWindow();
+  }
+
   // Some dock items (e.g. Application Menu or Clock) have their own global
   // (i.e. not dock-specific) config that they need to reload when the config
   // has been changed by another dock (not their parent dock).

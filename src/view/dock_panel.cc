@@ -488,6 +488,7 @@ void DockPanel::mousePressEvent(QMouseEvent* e) {
   }
 
   if (activeItem_ >= 0 && activeItem_ < static_cast<int>(items_.size())) {
+    items_[activeItem_]->maybeResetActiveWindow(e);
     items_[activeItem_]->mousePressEvent(e);
   }
 }
