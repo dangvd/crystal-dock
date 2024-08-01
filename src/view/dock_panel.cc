@@ -778,6 +778,7 @@ void DockPanel::initClock() {
 
 void DockPanel::initLayoutVars() {
   itemSpacing_ = std::round(minSize_ / 1.7 * spacingFactor_);
+  margin3D_ = 2 * itemSpacing_;
   floatingMargin_ = model_->floatingMargin();
   parabolicMaxX_ = std::round(2.5 * (minSize_ + itemSpacing_));
   numAnimationSteps_ = 20;
@@ -810,6 +811,7 @@ void DockPanel::initLayoutVars() {
 
   if (orientation_ == Qt::Horizontal) {
     minWidth_ = itemSpacing_;
+    if (isBottom() && is3D()) { minWidth_ += 2 * margin3D_; }
     for (const auto& item : items_) {
       minWidth_ += (item->getMinWidth() + itemSpacing_);
     }
@@ -846,8 +848,10 @@ void DockPanel::updateLayout() {
   for (int i = 0; i < itemCount(); ++i) {
     items_[i]->size_ = minSize_;
     if (isHorizontal()) {
-      items_[i]->left_ = (i == 0) ? itemSpacing_ + (maxWidth_ - minWidth_) / 2
-          : items_[i - 1]->left_ + items_[i - 1]->getMinWidth() + itemSpacing_;
+      items_[i]->left_ =
+          (i == 0) ? isBottom() && is3D() ? itemSpacing_ + (maxWidth_ - minWidth_) / 2 + margin3D_
+                                          : itemSpacing_ + (maxWidth_ - minWidth_) / 2
+                   : items_[i - 1]->left_ + items_[i - 1]->getMinWidth() + itemSpacing_;
       items_[i]->top_ = isTop()
           ? isFloating() ? itemSpacing_ + floatingMargin_ : itemSpacing_
           : isFloating() ? itemSpacing_ + maxHeight_ - minHeight_ - floatingMargin_
@@ -919,7 +923,8 @@ void DockPanel::updateLayout(int x, int y) {
   int first_update_index = -1;
   int last_update_index = 0;
   if (isHorizontal()) {
-    items_[0]->left_ = itemSpacing_;
+    items_[0]->left_ = isBottom() && is3D() ? itemSpacing_ + margin3D_
+                                            : itemSpacing_;
   } else {  // Vertical
     items_[0]->top_ = itemSpacing_;
   }
@@ -964,7 +969,8 @@ void DockPanel::updateLayout(int x, int y) {
   for (int i = itemCount() - 1; i >= last_update_index + 1; --i) {
     if (isHorizontal()) {
       items_[i]->left_ = (i == itemCount() - 1)
-          ? maxWidth_ - itemSpacing_ - items_[i]->getMinWidth()
+          ? isBottom() && is3D() ? maxWidth_ - itemSpacing_ - items_[i]->getMinWidth() - margin3D_
+                                 : maxWidth_ - itemSpacing_ - items_[i]->getMinWidth()
           : items_[i + 1]->left_ - items_[i]->getMinWidth() - itemSpacing_;
     } else {  // Vertical
       items_[i]->top_ = (i == itemCount() - 1)
@@ -1041,7 +1047,8 @@ void DockPanel::resizeTaskManager() {
   int top = 0;
   for (int i = 0; i < itemCount(); ++i) {
     if (isHorizontal()) {
-      left = (i == 0) ? itemSpacing_ + (maxWidth_ - minWidth_) / 2
+      left = (i == 0) ? isBottom() && is3D() ? itemSpacing_ + (maxWidth_ - minWidth_) / 2 + margin3D_
+                                             : itemSpacing_ + (maxWidth_ - minWidth_) / 2
                       : left + items_[i - 1]->getMinWidth() + itemSpacing_;
       if (i >= itemsToKeep) {
         items_[i]->minCenter_ = left + items_[i]->getMinWidth() / 2;
@@ -1089,7 +1096,8 @@ void DockPanel::resizeTaskManager() {
        i >= std::max(itemsToKeep, last_update_index + 1); --i) {
     if (isHorizontal()) {
       items_[i]->left_ = (i == itemCount() - 1)
-          ? maxWidth_ - itemSpacing_ - items_[i]->getMinWidth()
+          ? isBottom() && is3D() ? maxWidth_ - itemSpacing_ - items_[i]->getMinWidth() - margin3D_
+                                 : maxWidth_ - itemSpacing_ - items_[i]->getMinWidth()
           : items_[i + 1]->left_ - items_[i]->getMinWidth() - itemSpacing_;
     } else {  // Vertical
       items_[i]->top_ = (i == itemCount() - 1)
