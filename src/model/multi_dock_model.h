@@ -52,6 +52,8 @@ constexpr float kDefaultBackgroundAlpha = 0.42;
 constexpr char kDefaultBackgroundColor[] = "#638abd";
 constexpr bool kDefaultShowBorder = true;
 constexpr char kDefaultBorderColor[] = "#b1c4de";
+constexpr char kDefaultActiveIndicatorColor[] = "lime";
+constexpr char kDefaultInactiveIndicatorColor[] = "aqua";
 constexpr int kDefaultFloatingMargin = 6;
 constexpr float kLargeClockFontScaleFactor = 1.0;
 constexpr float kMediumClockFontScaleFactor = 0.8;
@@ -167,6 +169,24 @@ class MultiDockModel : public QObject {
 
   void setBorderColor(const QColor& value) {
     setAppearanceProperty(kGeneralCategory, kBorderColor, value.name(QColor::HexRgb));
+  }
+
+  QColor activeIndicatorColor() const {
+    return QColor(appearanceProperty(kGeneralCategory, kActiveIndicatorColor,
+                                     QString(kDefaultActiveIndicatorColor)));
+  }
+
+  void setActiveIndicatorColor(const QColor& value) {
+    setAppearanceProperty(kGeneralCategory, kActiveIndicatorColor, value.name(QColor::HexRgb));
+  }
+
+  QColor inactiveIndicatorColor() const {
+    return QColor(appearanceProperty(kGeneralCategory, kInactiveIndicatorColor,
+                                     QString(kDefaultInactiveIndicatorColor)));
+  }
+
+  void setInactiveIndicatorColor(const QColor& value) {
+    setAppearanceProperty(kGeneralCategory, kInactiveIndicatorColor, value.name(QColor::HexRgb));
   }
 
   int tooltipFontSize() const {
@@ -487,6 +507,8 @@ class MultiDockModel : public QObject {
   // General category.
   static constexpr char kBackgroundColor[] = "backgroundColor";
   static constexpr char kBorderColor[] = "borderColor";
+  static constexpr char kActiveIndicatorColor[] = "activeIndicatorColor";
+  static constexpr char kInactiveIndicatorColor[] = "inactiveIndicatorColor";
   static constexpr char kMaximumIconSize[] = "maximumIconSize";
   static constexpr char kMinimumIconSize[] = "minimumIconSize";
   static constexpr char kSpacingFactor[] = "spacingFactor";

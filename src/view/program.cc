@@ -75,7 +75,8 @@ void Program::init() {
 void Program::draw(QPainter *painter) const {
   painter->setRenderHint(QPainter::Antialiasing);
   if (!tasks_.empty()) {  // Draws the task indicator.
-    const QColor baseColor = active() || attentionStrong_ ? QColor("lime") : QColor("aqua");
+    const QColor baseColor = active() || attentionStrong_
+        ? model_->activeIndicatorColor() : model_->inactiveIndicatorColor();
     // Size (width if horizontal, or height if vertical) of the indicator.
     const int size = active() ? DockPanel::kActiveIndicatorSize
                               : DockPanel::kInactiveIndicatorSize;

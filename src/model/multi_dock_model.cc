@@ -40,6 +40,8 @@ constexpr char MultiDockModel::kPanelStyle[];
 
 constexpr char MultiDockModel::kBackgroundColor[];
 constexpr char MultiDockModel::kBorderColor[];
+constexpr char MultiDockModel::kActiveIndicatorColor[];
+constexpr char MultiDockModel::kInactiveIndicatorColor[];
 constexpr char MultiDockModel::kMaximumIconSize[];
 constexpr char MultiDockModel::kMinimumIconSize[];
 constexpr char MultiDockModel::kSpacingFactor[];

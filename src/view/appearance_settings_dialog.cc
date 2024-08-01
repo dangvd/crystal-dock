@@ -37,6 +37,11 @@ AppearanceSettingsDialog::AppearanceSettingsDialog(QWidget* parent,
   borderColor_ = new ColorButton(this);
   borderColor_->setGeometry(QRect(660, 150, 80, 40));
 
+  activeIndicatorColor_ = new ColorButton(this);
+  activeIndicatorColor_->setGeometry(QRect(260, 210, 80, 40));
+  inactiveIndicatorColor_ = new ColorButton(this);
+  inactiveIndicatorColor_->setGeometry(QRect(660, 210, 80, 40));
+
   connect(ui->buttonBox, SIGNAL(clicked(QAbstractButton*)),
       this, SLOT(buttonClicked(QAbstractButton*)));
 
@@ -70,6 +75,8 @@ void AppearanceSettingsDialog::loadData() {
   ui->backgroundTransparency->setValue(alphaFToTransparencyPercent(backgroundColor.alphaF()));
   ui->showBorder->setChecked(model_->showBorder());
   borderColor_->setColor(model_->borderColor());
+  activeIndicatorColor_->setColor(model_->activeIndicatorColor());
+  inactiveIndicatorColor_->setColor(model_->inactiveIndicatorColor());
   ui->tooltipFontSize->setValue(model_->tooltipFontSize());
   ui->floatingMargin->setValue(model_->floatingMargin());
   ui->floatingMargin->setEnabled(model_->panelStyle() == PanelStyle::Floating3D ||
@@ -84,6 +91,8 @@ void AppearanceSettingsDialog::resetData() {
   ui->backgroundTransparency->setValue(alphaFToTransparencyPercent(kDefaultBackgroundAlpha));
   ui->showBorder->setChecked(kDefaultShowBorder);
   borderColor_->setColor(QColor(kDefaultBorderColor));
+  activeIndicatorColor_->setColor(QColor(kDefaultActiveIndicatorColor));
+  inactiveIndicatorColor_->setColor(QColor(kDefaultInactiveIndicatorColor));
   ui->tooltipFontSize->setValue(kDefaultTooltipFontSize);
   ui->floatingMargin->setValue(kDefaultFloatingMargin);
 }
@@ -97,6 +106,8 @@ void AppearanceSettingsDialog::saveData() {
   model_->setBackgroundColor(backgroundColor);
   model_->setShowBorder(ui->showBorder->isChecked());
   model_->setBorderColor(borderColor_->color());
+  model_->setActiveIndicatorColor(activeIndicatorColor_->color());
+  model_->setInactiveIndicatorColor(inactiveIndicatorColor_->color());
   model_->setTooltipFontSize(ui->tooltipFontSize->value());
   model_->setFloatingMargin(ui->floatingMargin->value());
   model_->saveAppearanceConfig();

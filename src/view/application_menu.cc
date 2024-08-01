@@ -80,7 +80,7 @@ ApplicationMenu::ApplicationMenu(
 
 void ApplicationMenu::draw(QPainter* painter) const {
   if (showingMenu_) {
-    const QColor baseColor = QColor("lime");
+    const QColor baseColor = model_->activeIndicatorColor();
     // Size (width if horizontal, or height if vertical) of the indicator.
     const int size = DockPanel::kActiveIndicatorSize;
     drawIndicator(orientation_, left_ + getWidth() / 2, parent_->taskIndicatorPos(),

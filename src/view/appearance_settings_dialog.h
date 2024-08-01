@@ -51,6 +51,8 @@ class AppearanceSettingsDialog : public QDialog {
   Ui::AppearanceSettingsDialog *ui;
   ColorButton* backgroundColor_;
   ColorButton* borderColor_;
+  ColorButton* activeIndicatorColor_;
+  ColorButton* inactiveIndicatorColor_;
 
   MultiDockModel* model_;
 
