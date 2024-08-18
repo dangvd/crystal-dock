@@ -328,6 +328,7 @@ class DockPanel : public QWidget {
   QAction* positionRight_;
   QAction* visibilityAlwaysVisibleAction_;
   QAction* visibilityAutoHideAction_;
+  QAction* visibilityAlwaysTopAction_;
   QAction* applicationMenuAction_;
   QAction* pagerAction_;
   QAction* taskManagerAction_;

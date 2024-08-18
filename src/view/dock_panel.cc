@@ -173,7 +173,7 @@ void DockPanel::setStrut() {
     case PanelVisibility::AlwaysVisible:
       strut = isHorizontal() ? minHeight_ : minWidth_;
       if (isFloating()) { strut += 2 * floatingMargin_; }
-      setStrut(strut);
+        setStrut(strut);
       break;
     case PanelVisibility::AutoHide:
       setStrut(1);
@@ -612,7 +612,11 @@ void DockPanel::createMenu() {
   visibilityAutoHideAction_ = visibility->addAction(
       QString("Auto &Hide"), this,
       [this]() { updateVisibility(PanelVisibility::AutoHide); });
-  visibilityAutoHideAction_->setCheckable(true);
+  visibilityAlwaysVisibleAction_->setCheckable(true);
+  visibilityAlwaysTopAction_ = visibility->addAction(
+      QString("Always &Top"), this,
+      [this]() { updateVisibility(PanelVisibility::AlwaysTop); });
+  visibilityAlwaysTopAction_->setCheckable(true);
 
   menu_.addSeparator();
   menu_.addAction(QString("E&xit"), parent_, SLOT(exit()));
@@ -632,9 +636,12 @@ void DockPanel::setPosition(PanelPosition position) {
 void DockPanel::setVisibility(PanelVisibility visibility) {
   visibility_ = visibility;
   visibilityAlwaysVisibleAction_->setChecked(
-      visibility_ == PanelVisibility::AlwaysVisible);
+      visibility == PanelVisibility::AlwaysVisible);
   visibilityAutoHideAction_->setChecked(
-      visibility_ == PanelVisibility::AutoHide);
+      visibility == PanelVisibility::AutoHide);
+  visibilityAlwaysTopAction_->setChecked(
+      visibility == PanelVisibility::AlwaysTop);
+
 }
 
 void DockPanel::setPanelStyle(PanelStyle panelStyle) {
@@ -919,7 +926,10 @@ void DockPanel::updateLayout() {
     isAnimationActive_ = true;
     animationTimer_->start(32 - animationSpeed_);
   } else {
-    WindowSystem::setLayer(this, LayerShellQt::Window::LayerBottom);
+    if ( visibility_ == PanelVisibility::AlwaysTop )
+      WindowSystem::setLayer(this, LayerShellQt::Window::LayerTop);
+    else
+      WindowSystem::setLayer(this, LayerShellQt::Window::LayerBottom);
     isMinimized_ = true;
     update();
   }
