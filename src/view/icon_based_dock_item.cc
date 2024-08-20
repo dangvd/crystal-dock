@@ -86,6 +86,8 @@ void IconBasedDockItem::generateIcons(const QPixmap& icon) {
         (orientation_ == Qt::Horizontal)
             ? image.scaledToHeight(size, Qt::SmoothTransformation)
             : image.scaledToWidth(size, Qt::SmoothTransformation));
+    //https://doc.qt.io/qt-6/highdpi.html
+    icons_[size - minSize_].setDevicePixelRatio(1.0f);
   }
 }
 
