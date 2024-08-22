@@ -442,7 +442,14 @@ void DockPanel::paintEvent(QPaintEvent* e) {
   }
 }
 
+constexpr int kAutoHideActivationDelayMs = 750;
 void DockPanel::mouseMoveEvent(QMouseEvent* e) {
+  if (autoHide() && QDateTime::currentMSecsSinceEpoch() - enterTime_ < kAutoHideActivationDelayMs) {
+    lastMouseX_ = e->position().x();
+    lastMouseY_ = e->position().y();
+    return;
+  }
+
   const auto x = e->position().x();
   const auto y = e->position().y();
   if (isEntering_) {
@@ -494,10 +501,25 @@ void DockPanel::mousePressEvent(QMouseEvent* e) {
 }
 
 void DockPanel::enterEvent (QEnterEvent* e) {
+  if (autoHide()) {
+    enterTime_ = QDateTime::currentMSecsSinceEpoch();
+    QTimer::singleShot(kAutoHideActivationDelayMs, [this] {
+      if (enterTime_ > 0) {
+        isEntering_ = true;
+        updateLayout(lastMouseX_, lastMouseY_);
+      }
+    });
+    return;
+  }
+
   isEntering_ = true;
 }
 
 void DockPanel::leaveEvent(QEvent* e) {
+  if (autoHide()) {
+    enterTime_ = 0;
+  }
+
   if (isMinimized_) {
     return;
   }

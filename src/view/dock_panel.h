@@ -363,6 +363,11 @@ class DockPanel : public QWidget {
   int mouseX_;
   int mouseY_;
 
+  // For activation delay.
+  qint64 enterTime_;
+  int lastMouseX_;
+  int lastMouseY_;
+
   friend class Program;  // for leaveEvent.
   friend class DockPanelTest;
   friend class ConfigDialogTest;
