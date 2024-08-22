@@ -35,12 +35,12 @@ AppearanceSettingsDialog::AppearanceSettingsDialog(QWidget* parent,
   backgroundColor_->setGeometry(QRect(260, 150, 80, 40));
 
   borderColor_ = new ColorButton(this);
-  borderColor_->setGeometry(QRect(660, 150, 80, 40));
+  borderColor_->setGeometry(QRect(700, 150, 80, 40));
 
   activeIndicatorColor_ = new ColorButton(this);
   activeIndicatorColor_->setGeometry(QRect(260, 210, 80, 40));
   inactiveIndicatorColor_ = new ColorButton(this);
-  inactiveIndicatorColor_->setGeometry(QRect(660, 210, 80, 40));
+  inactiveIndicatorColor_->setGeometry(QRect(700, 210, 80, 40));
 
   connect(ui->buttonBox, SIGNAL(clicked(QAbstractButton*)),
       this, SLOT(buttonClicked(QAbstractButton*)));
@@ -81,6 +81,7 @@ void AppearanceSettingsDialog::loadData() {
   ui->floatingMargin->setValue(model_->floatingMargin());
   ui->floatingMargin->setEnabled(model_->panelStyle() == PanelStyle::Floating3D ||
                                  model_->panelStyle() == PanelStyle::Floating2D);
+  ui->autoHideActivationDelay->setValue(model_->autoHideActivationDelay());
 }
 
 void AppearanceSettingsDialog::resetData() {
@@ -95,6 +96,7 @@ void AppearanceSettingsDialog::resetData() {
   inactiveIndicatorColor_->setColor(QColor(kDefaultInactiveIndicatorColor));
   ui->tooltipFontSize->setValue(kDefaultTooltipFontSize);
   ui->floatingMargin->setValue(kDefaultFloatingMargin);
+  ui->autoHideActivationDelay->setValue(kDefaultAutoHideActivationDelay);
 }
 
 void AppearanceSettingsDialog::saveData() {
@@ -110,6 +112,7 @@ void AppearanceSettingsDialog::saveData() {
   model_->setInactiveIndicatorColor(inactiveIndicatorColor_->color());
   model_->setTooltipFontSize(ui->tooltipFontSize->value());
   model_->setFloatingMargin(ui->floatingMargin->value());
+  model_->setAutoHideActivationDelay(ui->autoHideActivationDelay->value());
   model_->saveAppearanceConfig();
 }
 

@@ -55,6 +55,8 @@ constexpr char kDefaultBorderColor[] = "#b1c4de";
 constexpr char kDefaultActiveIndicatorColor[] = "lime";
 constexpr char kDefaultInactiveIndicatorColor[] = "aqua";
 constexpr int kDefaultFloatingMargin = 6;
+constexpr int kDefaultAutoHideActivationDelay = 750;  // miliseconds
+
 constexpr float kLargeClockFontScaleFactor = 1.0;
 constexpr float kMediumClockFontScaleFactor = 0.8;
 constexpr float kSmallClockFontScaleFactor = 0.6;
@@ -215,6 +217,15 @@ class MultiDockModel : public QObject {
 
   void setFloatingMargin(int value) {
     setAppearanceProperty(kGeneralCategory, kFloatingMargin, value);
+  }
+
+  int autoHideActivationDelay() const {
+    return appearanceProperty(kGeneralCategory, kAutoHideActivationDelay,
+                              kDefaultAutoHideActivationDelay);
+  }
+
+  void setAutoHideActivationDelay(int value) {
+    setAppearanceProperty(kGeneralCategory, kAutoHideActivationDelay, value);
   }
 
   QString applicationMenuName() const {
@@ -516,6 +527,7 @@ class MultiDockModel : public QObject {
   static constexpr char kTooltipFontSize[] = "tooltipFontSize";
   static constexpr char kPanelStyle[] = "panelStyle";
   static constexpr char kFloatingMargin[] = "floatingMargin";
+  static constexpr char kAutoHideActivationDelay[] = "autoHideActivationDelay";
 
   static constexpr char kApplicationMenuCategory[] = "Application Menu";
   static constexpr char kLabel[] = "label";
