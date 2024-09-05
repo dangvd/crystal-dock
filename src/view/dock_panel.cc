@@ -195,7 +195,8 @@ void DockPanel::setScreen(int screen) {
   for (int i = 0; i < static_cast<int>(screenActions_.size()); ++i) {
     screenActions_[i]->setChecked(i == screen);
   }
-  screenGeometry_ = QGuiApplication::screens()[screen]->geometry();
+  screenGeometry_ = WindowSystem::screens()[screen]->geometry();
+  WindowSystem::setScreen(this, screen);
 }
 
 void DockPanel::updateAnimation() {
@@ -610,7 +611,7 @@ void DockPanel::createMenu() {
       [this]() { updatePosition(PanelPosition::Right); });
   positionRight_->setCheckable(true);
 
-  const int numScreens = QGuiApplication::screens().size();
+  const int numScreens = WindowSystem::screens().size();
   if (numScreens > 1) {
     QMenu* screen = menu_.addMenu(QString("Scr&een"));
     for (int i = 0; i < numScreens; ++i) {

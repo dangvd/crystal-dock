@@ -21,6 +21,8 @@
 
 #include <QGuiApplication>
 
+#include <display/window_system.h>
+
 namespace crystaldock {
 
 AddPanelDialog::AddPanelDialog(QWidget* parent, MultiDockModel* model,
@@ -34,7 +36,7 @@ AddPanelDialog::AddPanelDialog(QWidget* parent, MultiDockModel* model,
   setWindowFlag(Qt::Tool);
 
   // Populate screen list.
-  const int screenCount = QGuiApplication::screens().size();
+  const int screenCount = WindowSystem::screens().size();
   for (int i = 1; i <= screenCount; ++i) {
     ui->screen->addItem(QString::number(i));
   }

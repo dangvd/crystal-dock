@@ -21,6 +21,8 @@
 
 #include <QGuiApplication>
 
+#include <display/window_system.h>
+
 namespace crystaldock {
 
 TaskManagerSettingsDialog::TaskManagerSettingsDialog(QWidget* parent, MultiDockModel* model) :
@@ -31,7 +33,7 @@ TaskManagerSettingsDialog::TaskManagerSettingsDialog(QWidget* parent, MultiDockM
   ui->setupUi(this);
 
   // Adjust the UI for single/multi-screen.
-  isSingleScreen_ = (QGuiApplication::screens().size() == 1);
+  isSingleScreen_ = (WindowSystem::screens().size() == 1);
   ui->showCurrentScreenOnly->setVisible(!isSingleScreen_);
   if (isSingleScreen_) {
     ui->buttonBox->move(40, 150);

@@ -45,7 +45,7 @@ WallpaperSettingsDialog::WallpaperSettingsDialog(QWidget* parent,
   setWindowFlag(Qt::Tool);
 
   // Populate screen list.
-  const int screenCount = QGuiApplication::screens().size();
+  const int screenCount = WindowSystem::screens().size();
   for (int i = 1; i <= screenCount; ++i) {
     ui->screen->addItem(QString::number(i));
   }
@@ -120,7 +120,7 @@ void WallpaperSettingsDialog::browseWallpaper() {
 }
 
 void WallpaperSettingsDialog::adjustUiForScreen() {
-  const auto screenGeometry = QGuiApplication::screens()[screen()]->geometry();
+  const auto screenGeometry = WindowSystem::screens()[screen()]->geometry();
   const int w = ui->preview->width();
   const int h = w * screenGeometry.height() / screenGeometry.width();
   const int delta = h - ui->preview->height();
@@ -154,7 +154,7 @@ void WallpaperSettingsDialog::loadData() {
 void WallpaperSettingsDialog::saveData() {
   if (!wallpaper_.isEmpty() &&
       (wallpaper_ != model_->wallpaper(desktop(), screen()))) {
-    const int screenCount = QGuiApplication::screens().size();
+    const int screenCount = WindowSystem::screens().size();
     if (desktopEnv_->supportSeparateSreenWallpapers()) {
       model_->setWallpaper(desktop(), screen(), wallpaper_);
     } else {

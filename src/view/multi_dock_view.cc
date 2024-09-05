@@ -79,7 +79,7 @@ bool MultiDockView::setWallpaper() {
     return false;
   }
 
-  for (int screen = 0; screen < QGuiApplication::screens().size(); ++screen) {
+  for (unsigned int screen = 0; screen < WindowSystem::screens().size(); ++screen) {
     if (!setWallpaper(screen)) {
       return false;
     }

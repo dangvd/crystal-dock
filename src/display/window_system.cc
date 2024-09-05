@@ -4,6 +4,8 @@
 #include <string>
 
 #include <QDBusReply>
+#include <QGuiApplication>
+#include <QWindow>
 
 #include <LayerShellQt/Shell>
 #include <LayerShellQt/Window>
@@ -12,9 +14,13 @@ namespace crystaldock {
 
 namespace {
 
-LayerShellQt::Window* getLayerShellWin(QWidget* widget) {
+QWindow* getWindow(QWidget* widget) {
   widget->winId();  // we need this for widget->windowHandle() to not return nullptr.
-  QWindow* win = widget->windowHandle();
+  return widget->windowHandle();
+}
+
+LayerShellQt::Window* getLayerShellWin(QWidget* widget) {
+  QWindow* win = getWindow(widget);
   if (win == nullptr) {
     std::cerr << "Null QWindow" << std::endl;
     return nullptr;
@@ -31,6 +37,7 @@ org_kde_plasma_window_management* WindowSystem::window_management_;
 std::vector<VirtualDesktopInfo> WindowSystem::desktops_;
 std::string WindowSystem::currentDesktop_;
 bool WindowSystem::showingDesktop_;
+std::vector<QScreen*> WindowSystem::screens_;
 std::unique_ptr<QDBusInterface> WindowSystem::activityManager_;
 
 std::unordered_map<struct org_kde_plasma_window*, WindowInfo*> WindowSystem::windows_;
@@ -78,6 +85,8 @@ ApplicationMenuConfig WindowSystem::applicationMenuConfig_;
     connect(activityManager_.get(), SIGNAL(CurrentActivityChanged(QString)),
             WindowSystem::self(), SLOT(onCurrentActivityChanged(QString)));
   }
+
+  initScreens();
 
   return true;
 }
@@ -219,6 +228,7 @@ ApplicationMenuConfig WindowSystem::applicationMenuConfig_;
     layerShellWin->setLayer(LayerShellQt::Window::LayerBottom);
     layerShellWin->setAnchors(anchors);
     layerShellWin->setExclusiveZone(strutSize);
+    layerShellWin->setScreenConfiguration(LayerShellQt::Window::ScreenFromQWindow);
   }
 }
 
@@ -226,6 +236,28 @@ ApplicationMenuConfig WindowSystem::applicationMenuConfig_;
   auto* layerShellWin = getLayerShellWin(widget);
   if (layerShellWin) {
     layerShellWin->setLayer(layer);
+  }
+}
+
+void WindowSystem::initScreens() {
+  screens_.clear();
+  auto* screen1 = QGuiApplication::screenAt(QPoint(0, 0));
+  screens_.push_back(screen1);
+  for (auto* screen : QGuiApplication::screens()) {
+    if (screen->name() != screen1->name()) {
+      screens_.push_back(screen);
+    }
+  }
+}
+
+/*static*/ std::vector<QScreen*> WindowSystem::screens() {
+  return screens_;
+}
+
+/*static*/ void WindowSystem::setScreen(QWidget* widget, int screen) {
+  QWindow* win = getWindow(widget);
+  if (win) {
+    win->setScreen(WindowSystem::screens()[screen]);
   }
 }
 

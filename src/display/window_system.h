@@ -30,6 +30,7 @@
 #include <QObject>
 #include <QPixmap>
 #include <QRect>
+#include <QScreen>
 #include <QString>
 #include <QWidget>
 
@@ -125,6 +126,10 @@ class WindowSystem : public QObject {
   static void setAnchorAndStrut(QWidget* widget, LayerShellQt::Window::Anchors anchors,
                                 uint32_t strutSize);
   static void setLayer(QWidget* widget, LayerShellQt::Window::Layer layer);
+
+  static std::vector<QScreen*> screens();
+  // Sets the widget to display on the screen with index `screen` (0-based).
+  static void setScreen(QWidget* widget, int screen);
 
  private:
 
@@ -348,10 +353,14 @@ class WindowSystem : public QObject {
       resource_name_changed,
   };
 
+  static void initScreens();
+
   static std::vector<VirtualDesktopInfo> desktops_;
   // Current desktop ID.
   static std::string currentDesktop_;
   static bool showingDesktop_;
+
+  static std::vector<QScreen*> screens_;
 
   static std::unique_ptr<QDBusInterface> activityManager_;
 
