@@ -960,6 +960,7 @@ void DockPanel::updateLayout() {
                               ? LayerShellQt::Window::LayerTop
                               : LayerShellQt::Window::LayerBottom);
     isMinimized_ = true;
+    setMask();
     update();
   }
 }
@@ -1079,6 +1080,7 @@ void DockPanel::updateLayout(int x, int y) {
   //resize(maxWidth_, maxHeight_);
   WindowSystem::setLayer(this, LayerShellQt::Window::LayerTop);
   isMinimized_ = false;
+  setMask();
   updateActiveItem(x, y);
   update();
 }
@@ -1187,6 +1189,25 @@ void DockPanel::setStrut(int width) {
   }
 
   WindowSystem::setAnchorAndStrut(this, anchor, width);
+}
+
+void DockPanel::setMask() {
+  if (isMinimized_) {
+    constexpr int kBuffer = 20;  // to avoid some visual clipping.
+    if (isHorizontal()) {
+      const int x = (maxWidth_ - minWidth_) / 2 - kBuffer;
+      const int y = isTop() ? 0 : maxHeight_ - minHeight_ - kBuffer;
+      QWidget::setMask(
+          QRegion(x, y, minWidth_ + 2 * kBuffer, minHeight_ + kBuffer));
+    } else {  // Vertical.
+        const int x = isLeft() ? 0 : maxWidth_ - minWidth_ - kBuffer;
+        const int y = (maxHeight_ - minHeight_) / 2 - kBuffer;
+        QWidget::setMask(
+            QRegion(x, y, minWidth_ + kBuffer, minHeight_ + 2 * kBuffer));
+    }
+  } else {
+    QWidget::setMask(QRegion(0, 0, width(), height()));
+  }
 }
 
 void DockPanel::updateActiveItem(int x, int y) {

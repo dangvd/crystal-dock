@@ -269,6 +269,9 @@ class DockPanel : public QWidget {
 
   void setStrut(int width);
 
+  // Sets the visibility and mouse event region mask appropriately.
+  void setMask();
+
   // Updates the active item given the mouse position.
   void updateActiveItem(int x, int y);
 
