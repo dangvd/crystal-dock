@@ -157,6 +157,8 @@ class DockPanel : public QWidget {
   // Thus 0 is screen 1 and so on.
   // This doesn't refresh the dock.
   void setScreen(int screen);
+  // Moves the dock to the new screen.
+  void changeScreen(int screen);
 
   // Slot to update zoom animation.
   void updateAnimation();

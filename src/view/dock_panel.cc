@@ -199,6 +199,15 @@ void DockPanel::setScreen(int screen) {
   WindowSystem::setScreen(this, screen);
 }
 
+void DockPanel::changeScreen(int screen) {
+  if (screen_ == screen) {
+    return;
+  }
+  model_->cloneDock(dockId_, position_, screen);
+  deleteLater();
+  model_->removeDock(dockId_);
+}
+
 void DockPanel::updateAnimation() {
   for (const auto& item : items_) {
     item->nextAnimationStep();
@@ -618,9 +627,7 @@ void DockPanel::createMenu() {
       QAction* action = screen->addAction(
           "Screen " + QString::number(i + 1), this,
           [this, i]() {
-            setScreen(i);
-            reload();
-            saveDockConfig();
+            changeScreen(i);
           });
       action->setCheckable(true);
       screenActions_.push_back(action);
