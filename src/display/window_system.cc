@@ -1,5 +1,6 @@
 #include "window_system.h"
 
+#include <algorithm>
 #include <iostream>
 #include <string>
 
@@ -241,13 +242,12 @@ ApplicationMenuConfig WindowSystem::applicationMenuConfig_;
 
 void WindowSystem::initScreens() {
   screens_.clear();
-  auto* screen1 = QGuiApplication::screenAt(QPoint(0, 0));
-  screens_.push_back(screen1);
   for (auto* screen : QGuiApplication::screens()) {
-    if (screen->name() != screen1->name()) {
-      screens_.push_back(screen);
-    }
+    screens_.push_back(screen);
   }
+  std::sort(screens_.begin(), screens_.end(), [](QScreen* s1, QScreen* s2) {
+    return s1->geometry().center().manhattanLength() < s2->geometry().center().manhattanLength();
+  });
 }
 
 /*static*/ std::vector<QScreen*> WindowSystem::screens() {
