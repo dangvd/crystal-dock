@@ -226,7 +226,6 @@ ApplicationMenuConfig WindowSystem::applicationMenuConfig_;
     QWidget* widget, LayerShellQt::Window::Anchors anchors, uint32_t strutSize) {
   auto* layerShellWin = getLayerShellWin(widget);
   if (layerShellWin) {
-    layerShellWin->setLayer(LayerShellQt::Window::LayerBottom);
     layerShellWin->setAnchors(anchors);
     layerShellWin->setExclusiveZone(strutSize);
     layerShellWin->setScreenConfiguration(LayerShellQt::Window::ScreenFromQWindow);

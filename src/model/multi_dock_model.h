@@ -39,7 +39,7 @@ namespace crystaldock {
 
 enum class PanelPosition { Top, Bottom, Left, Right };
 
-enum class PanelVisibility { AlwaysVisible, AutoHide };
+enum class PanelVisibility { AlwaysVisible, AutoHide, AlwaysOnTop };
 
 // 3D styles only apply to bottom dock. For left/right/top docks, they will revert to 2D.
 enum class PanelStyle { Floating3D, NonFloating3D, Floating2D, NonFloating2D };
