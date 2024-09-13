@@ -3,8 +3,8 @@
 # Crystal Dock
 
 [Releases](https://github.com/dangvd/crystal-dock/releases)
-[Documentation](https://github.com/dangvd/crystal-dock/wiki/Documentation)
 [Screenshots](https://github.com/dangvd/crystal-dock/wiki/Screenshots)
+[Documentation](https://github.com/dangvd/crystal-dock/wiki/Documentation)
 [Author & Contributors](https://github.com/dangvd/crystal-dock/wiki/Author-&-Contributors)
 
 Crystal Dock is a cool dock (desktop panel) for Linux desktop, with the focus on attractive user interface, being simple and easy to use and customize, and cross-desktop support.
