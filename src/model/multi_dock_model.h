@@ -110,6 +110,8 @@ class MultiDockModel : public QObject {
   // Removes a dock.
   void removeDock(int dockId);
 
+  void maybeAddDockForMultiScreen();
+
   int minIconSize() const {
     return appearanceProperty(kGeneralCategory, kMinimumIconSize,
                               kDefaultMinSize);
@@ -226,6 +228,12 @@ class MultiDockModel : public QObject {
 
   void setAutoHideActivationDelay(int value) {
     setAppearanceProperty(kGeneralCategory, kAutoHideActivationDelay, value);
+  }
+
+  bool firstRunMultiScreen() {
+    const auto value = appearanceProperty(kGeneralCategory, kFirstRunMultiScreen, true);
+    setAppearanceProperty(kGeneralCategory, kFirstRunMultiScreen, false);
+    return value;
   }
 
   QString applicationMenuName() const {
@@ -528,6 +536,8 @@ class MultiDockModel : public QObject {
   static constexpr char kPanelStyle[] = "panelStyle";
   static constexpr char kFloatingMargin[] = "floatingMargin";
   static constexpr char kAutoHideActivationDelay[] = "autoHideActivationDelay";
+
+  static constexpr char kFirstRunMultiScreen[] = "firstRunMultiScreen";
 
   static constexpr char kApplicationMenuCategory[] = "Application Menu";
   static constexpr char kLabel[] = "label";

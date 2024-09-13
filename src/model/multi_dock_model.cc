@@ -48,6 +48,8 @@ constexpr char MultiDockModel::kSpacingFactor[];
 constexpr char MultiDockModel::kShowBorder[];
 constexpr char MultiDockModel::kFloatingMargin[];
 constexpr char MultiDockModel::kAutoHideActivationDelay[];
+constexpr char MultiDockModel::kFirstRunMultiScreen[];
+
 constexpr char MultiDockModel::kTooltipFontSize[];
 constexpr char MultiDockModel::kApplicationMenuCategory[];
 constexpr char MultiDockModel::kLabel[];
@@ -87,6 +89,8 @@ void MultiDockModel::loadDocks() {
     ++dockId;
   }
   nextDockId_ = dockId;
+
+  maybeAddDockForMultiScreen();
 }
 
 void MultiDockModel::addDock(PanelPosition position, int screen,
@@ -154,6 +158,20 @@ void MultiDockModel::removeDock(int dockId) {
   QFile::remove(dockConfigPath(dockId));
   dockConfigs_.erase(dockId);
   // No need to emit a signal here.
+}
+
+void MultiDockModel::maybeAddDockForMultiScreen() {
+  const auto screenCount = static_cast<int>(WindowSystem::screens().size());
+  if (screenCount > 1 && dockCount() == 1 && firstRunMultiScreen()) {
+    const auto dockId = dockConfigs_.cbegin()->first;
+    const auto dockPosition = panelPosition(dockId);
+    const auto dockScreen = screen(dockId);
+    for (int screen = 0; screen < screenCount; ++screen) {
+      if (screen != dockScreen) {
+        cloneDock(dockId, dockPosition, screen);
+      }
+    }
+  }
 }
 
 bool MultiDockModel::hasPager() const {

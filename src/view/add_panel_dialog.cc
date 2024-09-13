@@ -78,6 +78,8 @@ void AddPanelDialog::setMode(Mode mode) {
 
   if (mode == Mode::Welcome) {
     ui->buttonBox->setStandardButtons(QDialogButtonBox::Ok);
+    ui->screenLabel->setVisible(false);
+    ui->screen->setVisible(false);
   } else {
     ui->buttonBox->setStandardButtons(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
   }
@@ -86,7 +88,7 @@ void AddPanelDialog::setMode(Mode mode) {
   ui->positionLabel->move(90, 280 - deltaY);
   ui->position->move(340, 270 - deltaY);
   ui->screenLabel->move(90, 320 - deltaY);
-  ui->screen->move(440, 320 - deltaY);
+  ui->screen->move(340, 320 - deltaY);
   ui->buttonBox->move(70, 390 - deltaY);
   resize(540, 450 - deltaY);
 
@@ -109,6 +111,7 @@ void AddPanelDialog::accept() {
         position, screen, ui->showApplicationMenu->isChecked(),
         ui->showPager->isChecked(), ui->showTaskManager->isChecked(),
         ui->showClock->isChecked());
+    model_->maybeAddDockForMultiScreen();
   }
 }
 
