@@ -122,7 +122,7 @@ void Program::mousePressEvent(QMouseEvent* e) {
     }
   } else if (e->button() == Qt::RightButton) {
       parent_->minimize();
-      QTimer::singleShot(500, [this]{ menu_.exec(QPoint(left_, top_)); });
+      QTimer::singleShot(500, [this]{ menu_.exec(parent_->mapToGlobal(QPoint(left_, top_))); });
   }
 }
 

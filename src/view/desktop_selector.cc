@@ -91,7 +91,7 @@ void DesktopSelector::mousePressEvent(QMouseEvent* e) {
     // In case other DesktopSelectors have changed the config.
     showDesktopNumberAction_->setChecked(model_->showDesktopNumber());
     parent_->minimize();
-    QTimer::singleShot(500, [this]{ menu_.exec(QPoint(left_, top_)); });
+    QTimer::singleShot(500, [this]{ menu_.exec(parent_->mapToGlobal(QPoint(left_, top_))); });
   }
 }
 
