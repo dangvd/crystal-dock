@@ -330,7 +330,7 @@ void DockPanel::onWindowGeometryChanged(const WindowInfo* task) {
       removeTask(task->uuid);
     }
   } else {
-    if (windowGeometry.intersects(screenGeometry_)) {
+    if (windowGeometry.intersects(screenGeometry_) && isValidTask(task)) {
       addTask(task);
     }
   }
@@ -818,6 +818,10 @@ void DockPanel::updateTask(const WindowInfo* task) {
 
 bool DockPanel::isValidTask(const WindowInfo* task) {
   if (task == nullptr) {
+    return false;
+  }
+
+  if (task->appId == "crystal-dock") {
     return false;
   }
 
