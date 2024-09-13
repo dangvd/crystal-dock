@@ -54,7 +54,6 @@ struct WindowInfo {
   std::string uuid;
   std::string appId;
   std::string title;
-  uint32_t screen;
   std::string desktop;
   std::string activity;
   bool skipTaskbar;
@@ -82,6 +81,8 @@ class WindowSystem : public QObject {
   void windowAdded(const WindowInfo*);
   void windowRemoved(std::string);
   void windowLeftCurrentDesktop(std::string_view);
+  void windowGeometryChanged(const WindowInfo*);
+
   void desktopNameChanged(std::string_view desktopId, std::string_view desktopName);
 
   void currentActivityChanged(std::string_view);

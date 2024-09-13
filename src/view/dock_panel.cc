@@ -53,29 +53,6 @@
 
 namespace crystaldock {
 
-namespace {
-  bool isValidTask(const WindowInfo* task, const MultiDockModel* model) {
-    if (task == nullptr) {
-      return false;
-    }
-
-    if (task->skipTaskbar) {
-      return false;
-    }
-
-    if (!task->onAllDesktops && model->currentDesktopTasksOnly()
-        && task->desktop != WindowSystem::currentDesktop()) {
-      return false;
-    }
-
-    if (task->activity != WindowSystem::currentActivity()) {
-      return false;
-    }
-
-    return true;
-  }
-}
-
 const int DockPanel::kTooltipSpacing;
 const int DockPanel::kAutoHideSize;
 
@@ -130,6 +107,8 @@ DockPanel::DockPanel(MultiDockView* parent, MultiDockModel* model, int dockId)
           this, SLOT(onWindowLeftCurrentDesktop(std::string_view)));
   connect(WindowSystem::self(), SIGNAL(windowLeftCurrentActivity(std::string_view)),
           this, SLOT(onWindowLeftCurrentActivity(std::string_view)));
+  connect(WindowSystem::self(), SIGNAL(windowGeometryChanged(const WindowInfo*)),
+          this, SLOT(onWindowGeometryChanged(const WindowInfo*)));
   connect(WindowSystem::self(), SIGNAL(currentActivityChanged(std::string_view)),
           this, SLOT(onCurrentActivityChanged()));
   connect(model_, SIGNAL(appearanceOutdated()), this, SLOT(update()));
@@ -315,7 +294,7 @@ void DockPanel::onWindowAdded(const WindowInfo* info) {
     return;
   }
 
-  if (isValidTask(info, model_)) {
+  if (isValidTask(info)) {
     if (addTask(info)) {
       resizeTaskManager();
     } else {
@@ -341,6 +320,19 @@ void DockPanel::onWindowLeftCurrentDesktop(std::string_view uuid) {
 void DockPanel::onWindowLeftCurrentActivity(std::string_view uuid) {
   if (showTaskManager()) {
     removeTask(uuid);
+  }
+}
+
+void DockPanel::onWindowGeometryChanged(const WindowInfo* task) {
+  QRect windowGeometry(task->x, task->y, task->width, task->height);
+  if (hasTask(task->uuid)) {
+    if (!windowGeometry.intersects(screenGeometry_)) {
+      removeTask(task->uuid);
+    }
+  } else {
+    if (windowGeometry.intersects(screenGeometry_)) {
+      addTask(task);
+    }
   }
 }
 
@@ -753,7 +745,7 @@ void DockPanel::initTasks() {
   }
 
   for (const auto* task : WindowSystem::windows()) {
-    if (isValidTask(task, model_)) {
+    if (isValidTask(task)) {
       addTask(task);
     }
   }
@@ -774,10 +766,8 @@ void DockPanel::reloadTasks() {
 
 bool DockPanel::addTask(const WindowInfo* task) {
   // Checks is the task already exists.
-  for (auto& item : items_) {
-    if (item->hasTask(task->uuid)) {
-      return false;
-    }
+  if (hasTask(task->uuid)) {
+    return false;
   }
 
   // Tries adding the task to existing programs.
@@ -824,6 +814,41 @@ void DockPanel::updateTask(const WindowInfo* task) {
       return;
     }
   }
+}
+
+bool DockPanel::isValidTask(const WindowInfo* task) {
+  if (task == nullptr) {
+    return false;
+  }
+
+  if (task->skipTaskbar) {
+    return false;
+  }
+
+  if (!task->onAllDesktops && model_->currentDesktopTasksOnly()
+      && task->desktop != WindowSystem::currentDesktop()) {
+    return false;
+  }
+
+  if (model_->currentScreenTasksOnly() &&
+      !screenGeometry_.intersects(QRect(task->x, task->y, task->width, task->height))) {
+    return false;
+  }
+
+  if (task->activity != WindowSystem::currentActivity()) {
+    return false;
+  }
+
+  return true;
+}
+
+bool DockPanel::hasTask(std::string_view uuid) {
+  for (auto& item : items_) {
+    if (item->hasTask(uuid)) {
+      return true;
+    }
+  }
+  return false;
 }
 
 void DockPanel::initClock() {

@@ -187,6 +187,7 @@ class DockPanel : public QWidget {
   void onWindowRemoved(std::string uuid);
   void onWindowLeftCurrentDesktop(std::string_view uuid);
   void onWindowLeftCurrentActivity(std::string_view uuid);
+  void onWindowGeometryChanged(const WindowInfo* task);
 
   void minimize() { leaveEvent(nullptr); }
 
@@ -252,6 +253,9 @@ class DockPanel : public QWidget {
   bool addTask(const WindowInfo* task);
   void removeTask(std::string_view uuid);
   void updateTask(const WindowInfo* task);
+  bool isValidTask(const WindowInfo* task);
+  bool hasTask(std::string_view uuid);
+
   void initClock();
 
   void initLayoutVars();

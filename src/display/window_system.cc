@@ -585,6 +585,7 @@ void WindowSystem::initScreens() {
     info->y = y;
     info->width = width;
     info->height = height;
+    emit self()->windowGeometryChanged(info);
   }
 }
 
