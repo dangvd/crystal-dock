@@ -86,7 +86,11 @@ void MultiDockModel::loadDocks() {
     dockConfigs_[dockId] = std::make_tuple(
         configPath,
         std::make_unique<QSettings>(configPath, QSettings::IniFormat));
-    ++dockId;
+    if (screen(dockId) < static_cast<int>(WindowSystem::screens().size())) {
+      ++dockId;
+    } else {  // Invalid screen.
+      dockConfigs_.erase(dockId);
+    }
   }
   nextDockId_ = dockId;
 
