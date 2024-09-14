@@ -331,7 +331,9 @@ void DockPanel::onWindowGeometryChanged(const WindowInfo* task) {
     }
   } else {
     if (windowGeometry.intersects(screenGeometry_) && isValidTask(task)) {
-      addTask(task);
+      if (addTask(task)) {
+        resizeTaskManager();
+      }
     }
   }
 }
