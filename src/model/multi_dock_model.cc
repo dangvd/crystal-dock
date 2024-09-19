@@ -49,6 +49,7 @@ constexpr char MultiDockModel::kShowBorder[];
 constexpr char MultiDockModel::kFloatingMargin[];
 constexpr char MultiDockModel::kAutoHideActivationDelay[];
 constexpr char MultiDockModel::kFirstRunMultiScreen[];
+constexpr char MultiDockModel::kFirstRunWindowCountIndicator[];
 
 constexpr char MultiDockModel::kTooltipFontSize[];
 constexpr char MultiDockModel::kApplicationMenuCategory[];
@@ -75,6 +76,10 @@ MultiDockModel::MultiDockModel(const QString& configDir)
           this, SIGNAL(applicationMenuConfigChanged()));
   if (maxIconSize() < minIconSize()) {
     setMaxIconSize(minIconSize());
+  }
+  if (firstRunWindowCountIndicator()) {
+    setActiveIndicatorColor(kDefaultActiveIndicatorColor);
+    setInactiveIndicatorColor(kDefaultInactiveIndicatorColor);
   }
 }
 

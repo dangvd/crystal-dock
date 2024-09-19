@@ -52,8 +52,8 @@ constexpr float kDefaultBackgroundAlpha = 0.42;
 constexpr char kDefaultBackgroundColor[] = "#638abd";
 constexpr bool kDefaultShowBorder = true;
 constexpr char kDefaultBorderColor[] = "#b1c4de";
-constexpr char kDefaultActiveIndicatorColor[] = "lime";
-constexpr char kDefaultInactiveIndicatorColor[] = "aqua";
+constexpr char kDefaultActiveIndicatorColor[] = "darkorange";
+constexpr char kDefaultInactiveIndicatorColor[] = "darkcyan";
 constexpr int kDefaultFloatingMargin = 6;
 constexpr int kDefaultAutoHideActivationDelay = 750;  // miliseconds
 
@@ -233,6 +233,12 @@ class MultiDockModel : public QObject {
   bool firstRunMultiScreen() {
     const auto value = appearanceProperty(kGeneralCategory, kFirstRunMultiScreen, true);
     setAppearanceProperty(kGeneralCategory, kFirstRunMultiScreen, false);
+    return value;
+  }
+
+  bool firstRunWindowCountIndicator() {
+    const auto value = appearanceProperty(kGeneralCategory, kFirstRunWindowCountIndicator, true);
+    setAppearanceProperty(kGeneralCategory, kFirstRunWindowCountIndicator, false);
     return value;
   }
 
@@ -538,6 +544,7 @@ class MultiDockModel : public QObject {
   static constexpr char kAutoHideActivationDelay[] = "autoHideActivationDelay";
 
   static constexpr char kFirstRunMultiScreen[] = "firstRunMultiScreen";
+  static constexpr char kFirstRunWindowCountIndicator[] = "firstRunWindowCountIndicator";
 
   static constexpr char kApplicationMenuCategory[] = "Application Menu";
   static constexpr char kLabel[] = "label";

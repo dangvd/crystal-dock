@@ -74,15 +74,25 @@ void Program::init() {
 
 void Program::draw(QPainter *painter) const {
   painter->setRenderHint(QPainter::Antialiasing);
-  if (!tasks_.empty()) {  // Draws the task indicator.
-    const QColor baseColor = active() || attentionStrong_
-        ? model_->activeIndicatorColor() : model_->inactiveIndicatorColor();
+  if (!tasks_.empty()) {  // Show task count indicator.
+    auto taskCount = static_cast<int>(tasks_.size());
+    if (taskCount > 3) { taskCount = 3; }
+    auto activeTask = getActiveTask();
+    if (activeTask > 2) { activeTask = 2; }
+
     // Size (width if horizontal, or height if vertical) of the indicator.
-    const int size = active() ? DockPanel::kActiveIndicatorSize
-                              : DockPanel::kInactiveIndicatorSize;
-    drawIndicator(orientation_, left_ + getWidth() / 2, parent_->taskIndicatorPos(),
-                  parent_->taskIndicatorPos(), top_ + getHeight() / 2,
-                  size, DockPanel::k3DPanelThickness, baseColor, painter);
+    const int size = DockPanel::kIndicatorSize;
+    const auto spacing = DockPanel::kIndicatorSpacing;
+    const auto totalSize = taskCount * size + (taskCount - 1) * spacing;
+    auto x = left_ + (getWidth() - totalSize) / 2 + size / 2;
+    for (int i = 0; i < taskCount; ++i) {
+      const auto baseColor = (i == activeTask) || attentionStrong_
+          ? model_->activeIndicatorColor() : model_->inactiveIndicatorColor();
+      drawIndicator(orientation_, x, parent_->taskIndicatorPos(),
+                    parent_->taskIndicatorPos(), top_ + getHeight() / 2,
+                    size, DockPanel::k3DPanelThickness, baseColor, painter);
+      x += (size + spacing);
+    }
   }
   painter->setRenderHint(QPainter::Antialiasing, false);
 
