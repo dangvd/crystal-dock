@@ -85,13 +85,15 @@ void Program::draw(QPainter *painter) const {
     const auto spacing = DockPanel::kIndicatorSpacing;
     const auto totalSize = taskCount * size + (taskCount - 1) * spacing;
     auto x = left_ + (getWidth() - totalSize) / 2 + size / 2;
+    auto y = top_ + (getHeight() - totalSize) / 2 + size / 2;
     for (int i = 0; i < taskCount; ++i) {
       const auto baseColor = (i == activeTask) || attentionStrong_
           ? model_->activeIndicatorColor() : model_->inactiveIndicatorColor();
       drawIndicator(orientation_, x, parent_->taskIndicatorPos(),
-                    parent_->taskIndicatorPos(), top_ + getHeight() / 2,
+                    parent_->taskIndicatorPos(), y,
                     size, DockPanel::k3DPanelThickness, baseColor, painter);
       x += (size + spacing);
+      y += (size + spacing);
     }
   }
   painter->setRenderHint(QPainter::Antialiasing, false);
