@@ -823,10 +823,6 @@ bool DockPanel::isValidTask(const WindowInfo* task) {
     return false;
   }
 
-  if (task->appId == "crystal-dock") {
-    return false;
-  }
-
   if (task->skipTaskbar) {
     return false;
   }
