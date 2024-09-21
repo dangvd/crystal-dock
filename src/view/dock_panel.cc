@@ -1054,6 +1054,15 @@ void DockPanel::updateLayout(int x, int y) {
       }
     }
   }
+
+  if (first_update_index == -1) {
+    if ((isHorizontal() && x < maxWidth_ / 2) || (!isHorizontal() && y < maxHeight_ / 2)) {
+      first_update_index = last_update_index = 0;
+    } else {
+      first_update_index = last_update_index = itemCount() - 1;
+    }
+  }
+
   for (int i = itemCount() - 1; i >= last_update_index + 1; --i) {
     if (isHorizontal()) {
       items_[i]->left_ = (i == itemCount() - 1)
