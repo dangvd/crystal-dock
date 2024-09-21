@@ -74,7 +74,7 @@ void Program::init() {
 
 void Program::draw(QPainter *painter) const {
   painter->setRenderHint(QPainter::Antialiasing);
-  if (!tasks_.empty()) {  // Show task count indicator.
+  if (parent_->showTaskManager() && !tasks_.empty()) {  // Show task count indicator.
     auto taskCount = static_cast<int>(tasks_.size());
     if (taskCount > 3) { taskCount = 3; }
     auto activeTask = getActiveTask();
