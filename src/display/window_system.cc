@@ -157,6 +157,10 @@ ApplicationMenuConfig WindowSystem::applicationMenuConfig_;
       windows.push_back(element.second);
     }
   }
+  std::sort(windows.begin(), windows.end(),
+            [](const WindowInfo* w1, const WindowInfo* w2) {
+    return w1->mapping_order < w2->mapping_order;
+  });
   return windows;
 }
 
@@ -431,6 +435,8 @@ void WindowSystem::initScreens() {
       org_kde_plasma_window_management_get_window_by_uuid(window_management_, uuid);  
   WindowInfo* info = new WindowInfo();
   info->uuid = std::string(uuid);
+  static uint32_t mapping_order = 0;
+  info->mapping_order = mapping_order++;
   windows_[window] = info;
   uuids_[info->uuid] = window;
 
