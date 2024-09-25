@@ -349,12 +349,30 @@ int DockPanel::taskIndicatorPos() {
         : isFloating() ? maxHeight_ - floatingMargin_ - k3DPanelThickness
                        : maxHeight_ - k3DPanelThickness;
     if (isBottom() && is3D()) { y -= 2; }
+
+    if (!is3D()) {
+      if (isTop()) {
+        y += kIndicatorSize2D / 2;
+      } else {
+        y -= kIndicatorSize2D;
+      }
+    }
+
     return y;
   } else {
-    return isLeft()
+    int x = isLeft()
         ? isFloating() ? floatingMargin_ : 0
                        : isFloating() ? maxWidth_ - k3DPanelThickness - floatingMargin_
                                       : maxWidth_ - k3DPanelThickness;
+    if (!is3D()) {
+      if (isLeft()) {
+        x += kIndicatorSize2D / 2;
+      } else {
+        x -= kIndicatorSize2D;
+      }
+    }
+
+    return x;
   }
 }
 
@@ -373,54 +391,10 @@ void DockPanel::paintEvent(QPaintEvent* e) {
     return;
   }
 
-  if (isHorizontal()) {
-    int y = isTop()
-        ? isFloating() ? floatingMargin_ : 0
-        : isFloating() ? maxHeight_ - backgroundHeight_ - floatingMargin_
-                       : maxHeight_ - backgroundHeight_;
-    if (is3D() && isBottom()) {  // 3D styles only apply to bottom dock.
-      y -= k3DPanelThickness;
-      draw3dDockPanel(
-          (maxWidth_ - backgroundWidth_) / 2, y, backgroundWidth_ - 1, backgroundHeight_ - 1,
-           backgroundHeight_ / 16, borderColor_, backgroundColor_, &painter);
-    } else {
-      fillRoundedRect(
-          (maxWidth_ - backgroundWidth_) / 2, y, backgroundWidth_ - 1, backgroundHeight_ - 1,
-           backgroundHeight_ / 16, showBorder_, borderColor_, backgroundColor_, &painter);
-    }
-  } else {  // Vertical
-    const int x =  isLeft()
-        ? isFloating() ? floatingMargin_ : 0
-        : isFloating() ? maxWidth_ - backgroundWidth_ - floatingMargin_
-                       : maxWidth_ - backgroundWidth_;
-    fillRoundedRect(x, (maxHeight_ - backgroundHeight_) / 2, backgroundWidth_ - 1, backgroundHeight_ - 1,
-                    backgroundWidth_ / 16, showBorder_, borderColor_, backgroundColor_, &painter);
-  }
-
-  if (isBottom() && is3D()) {
-    QImage mainImage(width(), height(), QImage::Format_ARGB32);
-    mainImage.fill(0);
-    QPainter mainPainter(&mainImage);
-    // Draw the items from the end to avoid zoomed items getting clipped by
-    // non-zoomed items.
-    for (int i = itemCount() - 1; i >= 0; --i) {
-      items_[i]->draw(&mainPainter);
-    }
-    painter.drawImage(0, 0, mainImage);
-
-    int y = height() - itemSpacing_ - k3DPanelThickness;
-    if (isFloating()) { y -= floatingMargin_; }
-    QImage toMirrorImage = mainImage.copy(0, y - itemSpacing_ + 2, width(), itemSpacing_ - 2);
-    QImage mirrorImage = toMirrorImage.mirrored();
-    painter.setOpacity(0.3);
-    painter.drawImage(0, y, mirrorImage);
-    painter.setOpacity(1.0);
+  if (is3D()) {
+    drawGlass3D(painter);
   } else {
-    // Draw the items from the end to avoid zoomed items getting clipped by
-    // non-zoomed items.
-    for (int i = itemCount() - 1; i >= 0; --i) {
-      items_[i]->draw(&painter);
-    }
+    drawFlat2D(painter);
   }
 
   // Draw tooltip.
@@ -447,6 +421,83 @@ void DockPanel::paintEvent(QPaintEvent* e) {
       // Do not draw tooltip for Vertical positions for now because the total
       // area of the dock would take too much desktop space.
     }
+  }
+}
+
+void DockPanel::drawGlass3D(QPainter& painter) {
+  if (isHorizontal()) {
+    int y = isTop()
+        ? isFloating() ? floatingMargin_ : 0
+        : isFloating() ? maxHeight_ - backgroundHeight_ - floatingMargin_
+                       : maxHeight_ - backgroundHeight_;
+    if (isBottom()) {  // 3D styles only apply to bottom dock.
+      y -= k3DPanelThickness;
+      draw3dDockPanel(
+          (maxWidth_ - backgroundWidth_) / 2, y, backgroundWidth_ - 1, backgroundHeight_ - 1,
+           backgroundHeight_ / 16, borderColor_, backgroundColor_, &painter);
+    } else {
+      fillRoundedRect(
+          (maxWidth_ - backgroundWidth_) / 2, y, backgroundWidth_ - 1, backgroundHeight_ - 1,
+           backgroundHeight_ / 16, /*showBorder=*/true, borderColor_, backgroundColor_, &painter);
+    }
+  } else {  // Vertical
+    const int x =  isLeft()
+        ? isFloating() ? floatingMargin_ : 0
+        : isFloating() ? maxWidth_ - backgroundWidth_ - floatingMargin_
+                       : maxWidth_ - backgroundWidth_;
+    fillRoundedRect(x, (maxHeight_ - backgroundHeight_) / 2, backgroundWidth_ - 1, backgroundHeight_ - 1,
+                    backgroundWidth_ / 16, /*showBorder=*/true, borderColor_, backgroundColor_, &painter);
+  }
+
+  if (isBottom()) {
+    QImage mainImage(width(), height(), QImage::Format_ARGB32);
+    mainImage.fill(0);
+    QPainter mainPainter(&mainImage);
+    // Draw the items from the end to avoid zoomed items getting clipped by
+    // non-zoomed items.
+    for (int i = itemCount() - 1; i >= 0; --i) {
+      items_[i]->draw(&mainPainter);
+    }
+    painter.drawImage(0, 0, mainImage);
+
+    int y = height() - itemSpacing_ - k3DPanelThickness;
+    if (isFloating()) { y -= floatingMargin_; }
+    QImage toMirrorImage = mainImage.copy(0, y - itemSpacing_ + 2, width(), itemSpacing_ - 2);
+    QImage mirrorImage = toMirrorImage.mirrored();
+    painter.setOpacity(0.3);
+    painter.drawImage(0, y, mirrorImage);
+    painter.setOpacity(1.0);
+  } else {
+    // Draw the items from the end to avoid zoomed items getting clipped by
+    // non-zoomed items.
+    for (int i = itemCount() - 1; i >= 0; --i) {
+      items_[i]->draw(&painter);
+    }
+  }
+}
+
+void DockPanel::drawFlat2D(QPainter& painter) {
+  if (isHorizontal()) {
+    int y = isTop()
+        ? isFloating() ? floatingMargin_ : 0
+        : isFloating() ? maxHeight_ - backgroundHeight_ - floatingMargin_
+                       : maxHeight_ - backgroundHeight_;
+    fillRoundedRect(
+        (maxWidth_ - backgroundWidth_) / 2, y, backgroundWidth_ - 1, backgroundHeight_ - 1,
+         backgroundHeight_ / 4, /*showBorder=*/false, QColor(), model_->backgroundColor2D(), &painter);
+  } else {  // Vertical
+    const int x =  isLeft()
+        ? isFloating() ? floatingMargin_ : 0
+        : isFloating() ? maxWidth_ - backgroundWidth_ - floatingMargin_
+                       : maxWidth_ - backgroundWidth_;
+    fillRoundedRect(x, (maxHeight_ - backgroundHeight_) / 2, backgroundWidth_ - 1, backgroundHeight_ - 1,
+                    backgroundWidth_ / 4, /*showBorder=*/false, QColor(), model_->backgroundColor2D(), &painter);
+  }
+
+  // Draw the items from the end to avoid zoomed items getting clipped by
+  // non-zoomed items.
+  for (int i = itemCount() - 1; i >= 0; --i) {
+    items_[i]->draw(&painter);
   }
 }
 
@@ -568,20 +619,25 @@ void DockPanel::createMenu() {
       SLOT(showAppearanceSettingsDialog()));
 
   floatingStyleAction_ = menu_.addAction(
-      QString("Style: Floating"), this,
+      QString("Floating Panel"), this,
       [this] {
         changeFloatingStyle();
       });
   floatingStyleAction_->setCheckable(true);
   floatingStyleAction_->setChecked(isFloating());
 
-  style3DAction_ = menu_.addAction(
-      QString("Style: 3D (bottom dock only)"), this,
+  glass3DStyleAction_ = menu_.addAction(
+      QString("Style: Glass 3D"), this,
       [this] {
         change3DStyle();
       });
-  style3DAction_->setCheckable(true);
-  style3DAction_->setChecked(is3D());
+  glass3DStyleAction_->setCheckable(true);
+  flat2DStyleAction_ = menu_.addAction(
+      QString("Style: Flat 2D"), this,
+      [this] {
+        change3DStyle();
+      });
+  flat2DStyleAction_->setCheckable(true);
 
   menu_.addAction(QIcon::fromTheme("help-contents"),
                   QString("Online &Documentation"),
@@ -674,7 +730,8 @@ void DockPanel::setVisibility(PanelVisibility visibility) {
 void DockPanel::setPanelStyle(PanelStyle panelStyle) {
   panelStyle_ = panelStyle;
   floatingStyleAction_->setChecked(isFloating());
-  style3DAction_->setChecked(is3D());
+  glass3DStyleAction_->setChecked(is3D());
+  flat2DStyleAction_->setChecked(!is3D());
 }
 
 void DockPanel::loadDockConfig() {

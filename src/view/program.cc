@@ -81,17 +81,27 @@ void Program::draw(QPainter *painter) const {
     if (activeTask > 2) { activeTask = 2; }
 
     // Size (width if horizontal, or height if vertical) of the indicator.
-    const int size = DockPanel::kIndicatorSize;
+    const int size = parent_->is3D() ? DockPanel::kIndicatorSize3D : DockPanel::kIndicatorSize2D;
     const auto spacing = DockPanel::kIndicatorSpacing;
     const auto totalSize = taskCount * size + (taskCount - 1) * spacing;
     auto x = left_ + (getWidth() - totalSize) / 2 + size / 2;
     auto y = top_ + (getHeight() - totalSize) / 2 + size / 2;
     for (int i = 0; i < taskCount; ++i) {
-      const auto baseColor = (i == activeTask) || attentionStrong_
-          ? model_->activeIndicatorColor() : model_->inactiveIndicatorColor();
-      drawIndicator(orientation_, x, parent_->taskIndicatorPos(),
-                    parent_->taskIndicatorPos(), y,
-                    size, DockPanel::k3DPanelThickness, baseColor, painter);
+      if (parent_->is3D()) {
+        const auto baseColor = (i == activeTask) || attentionStrong_
+            ? model_->activeIndicatorColor() : model_->inactiveIndicatorColor();
+        drawIndicator(orientation_, x, parent_->taskIndicatorPos(),
+                      parent_->taskIndicatorPos(), y,
+                      size, DockPanel::k3DPanelThickness, baseColor, painter);
+      } else {
+        const auto baseColor = (i == activeTask) || attentionStrong_
+            ? model_->activeIndicatorColor2D() : model_->inactiveIndicatorColor2D();
+        if (isHorizontal()) {
+          fillCircle(x - size / 2, parent_->taskIndicatorPos(), size, size, baseColor, painter);
+        } else {
+          fillCircle(parent_->taskIndicatorPos(), y - size / 2, size, size, baseColor, painter);
+        }
+      }
       x += (size + spacing);
       y += (size + spacing);
     }

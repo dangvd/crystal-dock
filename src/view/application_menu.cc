@@ -80,12 +80,24 @@ ApplicationMenu::ApplicationMenu(
 
 void ApplicationMenu::draw(QPainter* painter) const {
   if (showingMenu_) {
-    const QColor baseColor = model_->activeIndicatorColor();
-    // Size (width if horizontal, or height if vertical) of the indicator.
-    const int size = DockPanel::kIndicatorSize;
-    drawIndicator(orientation_, left_ + getWidth() / 2, parent_->taskIndicatorPos(),
-                  parent_->taskIndicatorPos(), top_ + getHeight() / 2,
-                  size, DockPanel::k3DPanelThickness, baseColor, painter);
+    const auto x = left_ + getWidth() / 2;
+    const auto y = top_ + getHeight() / 2;
+    if (parent_->is3D()) {
+      const QColor baseColor = model_->activeIndicatorColor();
+      // Size (width if horizontal, or height if vertical) of the indicator.
+      const auto size = DockPanel::kIndicatorSize3D;
+      drawIndicator(orientation_, x, parent_->taskIndicatorPos(),
+                    parent_->taskIndicatorPos(), y,
+                    size, DockPanel::k3DPanelThickness, baseColor, painter);
+    } else {
+      const auto baseColor = model_->activeIndicatorColor2D();
+      const auto size = DockPanel::kIndicatorSize2D;
+      if (isHorizontal()) {
+        fillCircle(x - size / 2, parent_->taskIndicatorPos(), size, size, baseColor, painter);
+      } else {
+        fillCircle(parent_->taskIndicatorPos(), y - size / 2, size, size, baseColor, painter);
+      }
+    }
   }
   IconBasedDockItem::draw(painter);
 }

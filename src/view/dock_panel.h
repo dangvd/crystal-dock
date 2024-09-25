@@ -34,7 +34,8 @@
 #include <QTimer>
 #include <QWidget>
 
-#include "display/window_system.h"
+#include <display/window_system.h>
+#include <model/multi_dock_model.h>
 
 #include "add_panel_dialog.h"
 #include "application_menu_settings_dialog.h"
@@ -54,7 +55,8 @@ class DockPanel : public QWidget {
 
  public:
   static constexpr int k3DPanelThickness = 4;
-  static constexpr int kIndicatorSize = 12;
+  static constexpr int kIndicatorSize3D = 12;
+  static constexpr int kIndicatorSize2D = 6;
   static constexpr int kIndicatorSpacing = 3;
 
   // No pointer ownership.
@@ -76,7 +78,7 @@ class DockPanel : public QWidget {
   bool isLeft() { return position_ == PanelPosition::Left; }
 
   bool is3D() {
-    return panelStyle_ == PanelStyle::Floating3D || panelStyle_ == PanelStyle::NonFloating3D;
+    return panelStyle_ == PanelStyle::Glass3D_Floating || panelStyle_ == PanelStyle::Glass3D_NonFloating;
   }
 
   // position of task indicators, y-coordinate if horizontal, x if vertical.
@@ -208,7 +210,7 @@ class DockPanel : public QWidget {
   bool autoHide() { return visibility_ == PanelVisibility::AutoHide; }
 
   bool isFloating() {
-    return panelStyle_ == PanelStyle::Floating3D || panelStyle_ == PanelStyle::Floating2D;
+    return panelStyle_ == PanelStyle::Glass3D_Floating || panelStyle_ == PanelStyle::Flat2D_Floating;
   }
 
   void setPosition(PanelPosition position);
@@ -279,6 +281,10 @@ class DockPanel : public QWidget {
   // Updates the active item given the mouse position.
   void updateActiveItem(int x, int y);
 
+  // Drawing logic for each dock style.
+  void drawGlass3D(QPainter& painter);
+  void drawFlat2D(QPainter& painter);
+
   // Returns the size given the distance to the mouse.
   int parabolic(int x);
 
@@ -343,7 +349,8 @@ class DockPanel : public QWidget {
   QAction* taskManagerAction_;
   QAction* clockAction_;
   QAction* floatingStyleAction_;
-  QAction* style3DAction_;
+  QAction* glass3DStyleAction_;
+  QAction* flat2DStyleAction_;
   // Actions to set the dock on a specific screen.
   std::vector<QAction*> screenActions_;
 

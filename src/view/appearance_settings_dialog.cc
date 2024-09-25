@@ -42,6 +42,8 @@ AppearanceSettingsDialog::AppearanceSettingsDialog(QWidget* parent,
   inactiveIndicatorColor_ = new ColorButton(this);
   inactiveIndicatorColor_->setGeometry(QRect(700, 210, 80, 40));
 
+  ui->showBorder->setVisible(false);
+
   connect(ui->buttonBox, SIGNAL(clicked(QAbstractButton*)),
       this, SLOT(buttonClicked(QAbstractButton*)));
 
@@ -70,17 +72,22 @@ void AppearanceSettingsDialog::loadData() {
   ui->minSize->setValue(model_->minIconSize());
   ui->maxSize->setValue(model_->maxIconSize());
   ui->spacingFactor->setValue(model_->spacingFactor());
-  QColor backgroundColor = model_->backgroundColor();
+  QColor backgroundColor = model_->is3D() ? model_->backgroundColor()
+                                          : model_->backgroundColor2D();
   backgroundColor_->setColor(QColor(backgroundColor.rgb()));
   ui->backgroundTransparency->setValue(alphaFToTransparencyPercent(backgroundColor.alphaF()));
   ui->showBorder->setChecked(model_->showBorder());
   borderColor_->setColor(model_->borderColor());
-  activeIndicatorColor_->setColor(model_->activeIndicatorColor());
-  inactiveIndicatorColor_->setColor(model_->inactiveIndicatorColor());
+  borderColor_->setVisible(model_->is3D());
+  ui->borderColorLabel->setVisible(model_->is3D());
+  activeIndicatorColor_->setColor(model_->is3D() ? model_->activeIndicatorColor()
+                                                 : model_->activeIndicatorColor2D());
+  inactiveIndicatorColor_->setColor(model_->is3D() ? model_->inactiveIndicatorColor()
+                                                   : model_->inactiveIndicatorColor2D());
   ui->tooltipFontSize->setValue(model_->tooltipFontSize());
   ui->floatingMargin->setValue(model_->floatingMargin());
-  ui->floatingMargin->setEnabled(model_->panelStyle() == PanelStyle::Floating3D ||
-                                 model_->panelStyle() == PanelStyle::Floating2D);
+  ui->floatingMargin->setEnabled(model_->panelStyle() == PanelStyle::Glass3D_Floating ||
+                                 model_->panelStyle() == PanelStyle::Flat2D_Floating);
   ui->autoHideActivationDelay->setValue(model_->autoHideActivationDelay());
 }
 
@@ -88,12 +95,15 @@ void AppearanceSettingsDialog::resetData() {
   ui->minSize->setValue(kDefaultMinSize);
   ui->maxSize->setValue(kDefaultMaxSize);
   ui->spacingFactor->setValue(kDefaultSpacingFactor);
-  backgroundColor_->setColor(QColor(kDefaultBackgroundColor));
+  backgroundColor_->setColor(QColor(model_->is3D() ? kDefaultBackgroundColor
+                                                   : kDefaultBackgroundColor2D));
   ui->backgroundTransparency->setValue(alphaFToTransparencyPercent(kDefaultBackgroundAlpha));
   ui->showBorder->setChecked(kDefaultShowBorder);
   borderColor_->setColor(QColor(kDefaultBorderColor));
-  activeIndicatorColor_->setColor(QColor(kDefaultActiveIndicatorColor));
-  inactiveIndicatorColor_->setColor(QColor(kDefaultInactiveIndicatorColor));
+  activeIndicatorColor_->setColor(QColor(model_->is3D() ? kDefaultActiveIndicatorColor
+                                                        : kDefaultActiveIndicatorColor2D));
+  inactiveIndicatorColor_->setColor(QColor(model_->is3D() ? kDefaultInactiveIndicatorColor
+                                                          : kDefaultInactiveIndicatorColor2D));
   ui->tooltipFontSize->setValue(kDefaultTooltipFontSize);
   ui->floatingMargin->setValue(kDefaultFloatingMargin);
   ui->autoHideActivationDelay->setValue(kDefaultAutoHideActivationDelay);
@@ -105,11 +115,23 @@ void AppearanceSettingsDialog::saveData() {
   model_->setSpacingFactor(ui->spacingFactor->value());
   QColor backgroundColor(backgroundColor_->color());
   backgroundColor.setAlphaF(transparencyPercentToAlphaF(ui->backgroundTransparency->value()));
-  model_->setBackgroundColor(backgroundColor);
+  if (model_->is3D()) {
+    model_->setBackgroundColor(backgroundColor);
+  } else {
+    model_->setBackgroundColor2D(backgroundColor);
+  }
   model_->setShowBorder(ui->showBorder->isChecked());
   model_->setBorderColor(borderColor_->color());
-  model_->setActiveIndicatorColor(activeIndicatorColor_->color());
-  model_->setInactiveIndicatorColor(inactiveIndicatorColor_->color());
+  if (model_->is3D()) {
+    model_->setActiveIndicatorColor(activeIndicatorColor_->color());
+  } else {
+    model_->setActiveIndicatorColor2D(activeIndicatorColor_->color());
+  }
+  if (model_->is3D()) {
+    model_->setInactiveIndicatorColor(inactiveIndicatorColor_->color());
+  } else {
+    model_->setInactiveIndicatorColor2D(inactiveIndicatorColor_->color());
+  }
   model_->setTooltipFontSize(ui->tooltipFontSize->value());
   model_->setFloatingMargin(ui->floatingMargin->value());
   model_->setAutoHideActivationDelay(ui->autoHideActivationDelay->value());

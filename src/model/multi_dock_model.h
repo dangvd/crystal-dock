@@ -41,8 +41,9 @@ enum class PanelPosition { Top, Bottom, Left, Right };
 
 enum class PanelVisibility { AlwaysVisible, AutoHide, AlwaysOnTop };
 
-// 3D styles only apply to bottom dock. For left/right/top docks, they will revert to 2D.
-enum class PanelStyle { Floating3D, NonFloating3D, Floating2D, NonFloating2D };
+// Glass 3D style only makes the bottom dock really 3D. For left/right/top docks, they will look
+// more like "Glass 2D" for aesthetic reasons.
+enum class PanelStyle { Glass3D_Floating, Glass3D_NonFloating, Flat2D_Floating, Flat2D_NonFloating };
 
 constexpr int kDefaultMinSize = 48;
 constexpr int kDefaultMaxSize = 128;
@@ -50,10 +51,13 @@ constexpr float kDefaultSpacingFactor = 0.5;
 constexpr int kDefaultTooltipFontSize = 24;
 constexpr float kDefaultBackgroundAlpha = 0.42;
 constexpr char kDefaultBackgroundColor[] = "#638abd";
+constexpr char kDefaultBackgroundColor2D[] = "#86baff";
 constexpr bool kDefaultShowBorder = true;
 constexpr char kDefaultBorderColor[] = "#b1c4de";
 constexpr char kDefaultActiveIndicatorColor[] = "darkorange";
+constexpr char kDefaultActiveIndicatorColor2D[] = "#ffbf00";
 constexpr char kDefaultInactiveIndicatorColor[] = "darkcyan";
+constexpr char kDefaultInactiveIndicatorColor2D[] = "cyan";
 constexpr int kDefaultFloatingMargin = 6;
 constexpr int kDefaultAutoHideActivationDelay = 750;  // miliseconds
 
@@ -67,7 +71,7 @@ constexpr bool kDefaultShowApplicationMenu = true;
 constexpr bool kDefaultShowPager = false;
 constexpr bool kDefaultShowTaskManager = true;
 constexpr bool kDefaultShowClock = false;
-constexpr PanelStyle kDefaultPanelStyle = PanelStyle::Floating3D;
+constexpr PanelStyle kDefaultPanelStyle = PanelStyle::Glass3D_Floating;
 
 constexpr char kDefaultApplicationMenuName[] = "Applications";
 constexpr int kDefaultApplicationMenuIconSize = 40;
@@ -157,6 +161,17 @@ class MultiDockModel : public QObject {
     setAppearanceProperty(kGeneralCategory, kBackgroundColor, value.name(QColor::HexArgb));
   }
 
+  QColor backgroundColor2D() const {
+    QColor defaultBackgroundColor2D(kDefaultBackgroundColor2D);
+    defaultBackgroundColor2D.setAlphaF(kDefaultBackgroundAlpha);
+    return QColor(appearanceProperty(kGeneralCategory, kBackgroundColor2D,
+                                     defaultBackgroundColor2D.name(QColor::HexArgb)));
+  }
+
+  void setBackgroundColor2D(const QColor& value) {
+    setAppearanceProperty(kGeneralCategory, kBackgroundColor2D, value.name(QColor::HexArgb));
+  }
+
   bool showBorder() const {
     return appearanceProperty(kGeneralCategory, kShowBorder,
                               kDefaultShowBorder);
@@ -184,6 +199,15 @@ class MultiDockModel : public QObject {
     setAppearanceProperty(kGeneralCategory, kActiveIndicatorColor, value.name(QColor::HexRgb));
   }
 
+  QColor activeIndicatorColor2D() const {
+    return QColor(appearanceProperty(kGeneralCategory, kActiveIndicatorColor2D,
+                                     QString(kDefaultActiveIndicatorColor2D)));
+  }
+
+  void setActiveIndicatorColor2D(const QColor& value) {
+    setAppearanceProperty(kGeneralCategory, kActiveIndicatorColor2D, value.name(QColor::HexRgb));
+  }
+
   QColor inactiveIndicatorColor() const {
     return QColor(appearanceProperty(kGeneralCategory, kInactiveIndicatorColor,
                                      QString(kDefaultInactiveIndicatorColor)));
@@ -191,6 +215,15 @@ class MultiDockModel : public QObject {
 
   void setInactiveIndicatorColor(const QColor& value) {
     setAppearanceProperty(kGeneralCategory, kInactiveIndicatorColor, value.name(QColor::HexRgb));
+  }
+
+  QColor inactiveIndicatorColor2D() const {
+    return QColor(appearanceProperty(kGeneralCategory, kInactiveIndicatorColor2D,
+                                     QString(kDefaultInactiveIndicatorColor2D)));
+  }
+
+  void setInactiveIndicatorColor2D(const QColor& value) {
+    setAppearanceProperty(kGeneralCategory, kInactiveIndicatorColor2D, value.name(QColor::HexRgb));
   }
 
   int tooltipFontSize() const {
@@ -210,6 +243,11 @@ class MultiDockModel : public QObject {
 
   void setPanelStyle(PanelStyle value) {
     setAppearanceProperty(kGeneralCategory, kPanelStyle, static_cast<int>(value));
+  }
+
+  bool is3D() {
+    return panelStyle() == PanelStyle::Glass3D_Floating ||
+        panelStyle() == PanelStyle::Glass3D_NonFloating;
   }
 
   int floatingMargin() const {
@@ -531,9 +569,12 @@ class MultiDockModel : public QObject {
 
   // General category.
   static constexpr char kBackgroundColor[] = "backgroundColor";
+  static constexpr char kBackgroundColor2D[] = "backgroundColor2D";
   static constexpr char kBorderColor[] = "borderColor";
   static constexpr char kActiveIndicatorColor[] = "activeIndicatorColor";
+  static constexpr char kActiveIndicatorColor2D[] = "activeIndicatorColor2D";
   static constexpr char kInactiveIndicatorColor[] = "inactiveIndicatorColor";
+  static constexpr char kInactiveIndicatorColor2D[] = "inactiveIndicatorColor2D";
   static constexpr char kMaximumIconSize[] = "maximumIconSize";
   static constexpr char kMinimumIconSize[] = "minimumIconSize";
   static constexpr char kSpacingFactor[] = "spacingFactor";
