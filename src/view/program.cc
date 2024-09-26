@@ -76,9 +76,10 @@ void Program::draw(QPainter *painter) const {
   painter->setRenderHint(QPainter::Antialiasing);
   if (parent_->showTaskManager() && !tasks_.empty()) {  // Show task count indicator.
     auto taskCount = static_cast<int>(tasks_.size());
-    if (taskCount > 3) { taskCount = 3; }
+    static constexpr int kMaxVisibleTaskCount = 4;
+    if (taskCount > kMaxVisibleTaskCount) { taskCount = kMaxVisibleTaskCount; }
     auto activeTask = getActiveTask();
-    if (activeTask > 2) { activeTask = 2; }
+    if (activeTask > kMaxVisibleTaskCount - 1) { activeTask = kMaxVisibleTaskCount - 1; }
 
     // Size (width if horizontal, or height if vertical) of the indicator.
     const int size = parent_->is3D() ? DockPanel::kIndicatorSize3D : DockPanel::kIndicatorSize2D;
