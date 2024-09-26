@@ -503,10 +503,10 @@ void WindowSystem::initScreens() {
       info->appId = fixedAppId;
       return;
     }
-  }
 
-  std::cerr << "Could not find application with id: " << app_id
-            << ". The window icon will have limited functionalities." << std::endl;
+    std::cerr << "Could not find application with id: " << app_id
+              << ". The window icon will have limited functionalities." << std::endl;
+  }
 }
 
 /* static */ void WindowSystem::state_changed(
