@@ -14,15 +14,18 @@ The current version (version 2) supports KDE Plasma 6 on Wayland. Other desktop 
 ## Main features
 
 - Smooth parabolic zooming and translucent effect
+- Two dock styles: Glass 3D and Flat 2D
 - Supported components: Application Menu, Pager, Programs/Task Manager, Clock
 - Multiple docks support
 - Integration with various desktop environments: special menu entries (e.g. Log Out), specific default launchers, setting wallpapers
 - Support for setting different wallpapers for different virtual desktops
 - Separate configs for separate desktop environments
 
-## Recommended icon theme
+## Recommended icon themes
 
-A good icon theme to use with Crystal Dock is the Crystal Remix icon theme: https://github.com/dangvd/crystal-remix-icon-theme
+For Glass 3D style, a good icon theme to use with Crystal Dock is the Crystal Remix icon theme: https://github.com/dangvd/crystal-remix-icon-theme
+
+For Flat 2D style, use something like Mkos-Big-Sur.
 
 ## License
 
