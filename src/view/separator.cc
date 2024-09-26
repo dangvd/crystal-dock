@@ -51,10 +51,14 @@ void Separator::draw(QPainter* painter) const {
     h = 1;
   }
 
-  if (parent_->isBottom() && parent_->is3D()) {
-    // For 3D style, do not draw anything for now.
+  if (parent_->is3D()) {
+    if (parent_->isBottom()) {
+      // For 3D docks, do not draw anything for now.
+    } else {
+      painter->fillRect(x, y, w, h, model_->borderColor());
+    }
   } else {
-    painter->fillRect(x, y, w, h, model_->borderColor());
+    painter->fillRect(x, y, w, h, model_->backgroundColor2D().lighter());
   }
 }
 
