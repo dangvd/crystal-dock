@@ -55,7 +55,7 @@ class DockPanel : public QWidget {
 
  public:
   static constexpr int k3DPanelThickness = 4;
-  static constexpr int kIndicatorSize3D = 12;
+  static constexpr int kIndicatorSize3D = 10;
   static constexpr int kIndicatorSize2D = 6;
   static constexpr int kIndicatorSpacing = 3;
 
