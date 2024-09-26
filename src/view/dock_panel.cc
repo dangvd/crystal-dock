@@ -844,6 +844,12 @@ bool DockPanel::addTask(const WindowInfo* task) {
   const QString appId = QString::fromStdString(task->appId);
   auto app = model_->findApplication(task->appId);
   const QString label = app ? app->name : QString::fromStdString(task->title);
+  if (app && !QIcon::hasThemeIcon(app->icon)) {
+    std::cerr << "Could not find icon with name: " << app->icon
+              << " in the current icon theme and its fallbacks."
+              << " The window icon will have limited functionalities." << std::endl;
+  }
+
   int i = 0;
   for (; i < itemCount() && items_[i]->beforeTask(label); ++i);
   if (app && QIcon::hasThemeIcon(app->icon)) {
