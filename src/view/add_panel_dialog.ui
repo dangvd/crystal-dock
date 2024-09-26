@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>540</width>
-    <height>450</height>
+    <height>490</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,16 +17,16 @@
    <property name="geometry">
     <rect>
      <x>70</x>
-     <y>390</y>
+     <y>430</y>
      <width>400</width>
      <height>32</height>
     </rect>
    </property>
    <property name="orientation">
-    <enum>Qt::Horizontal</enum>
+    <enum>Qt::Orientation::Horizontal</enum>
    </property>
    <property name="standardButtons">
-    <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+    <set>QDialogButtonBox::StandardButton::Cancel|QDialogButtonBox::StandardButton::Ok</set>
    </property>
    <property name="centerButtons">
     <bool>true</bool>
@@ -36,7 +36,7 @@
    <property name="geometry">
     <rect>
      <x>90</x>
-     <y>280</y>
+     <y>320</y>
      <width>210</width>
      <height>23</height>
     </rect>
@@ -48,10 +48,10 @@
   <widget class="QComboBox" name="position">
    <property name="geometry">
     <rect>
-     <x>340</x>
-     <y>270</y>
-     <width>111</width>
-     <height>36</height>
+     <x>320</x>
+     <y>310</y>
+     <width>131</width>
+     <height>40</height>
     </rect>
    </property>
    <property name="currentIndex">
@@ -82,7 +82,7 @@
    <property name="geometry">
     <rect>
      <x>90</x>
-     <y>320</y>
+     <y>360</y>
      <width>210</width>
      <height>23</height>
     </rect>
@@ -94,10 +94,10 @@
   <widget class="QComboBox" name="screen">
    <property name="geometry">
     <rect>
-     <x>340</x>
-     <y>320</y>
-     <width>111</width>
-     <height>36</height>
+     <x>320</x>
+     <y>355</y>
+     <width>131</width>
+     <height>40</height>
     </rect>
    </property>
   </widget>
@@ -190,6 +190,39 @@
    <property name="checked">
     <bool>true</bool>
    </property>
+  </widget>
+  <widget class="QLabel" name="styleLabel">
+   <property name="geometry">
+    <rect>
+     <x>90</x>
+     <y>280</y>
+     <width>210</width>
+     <height>26</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Dock style</string>
+   </property>
+  </widget>
+  <widget class="QComboBox" name="style">
+   <property name="geometry">
+    <rect>
+     <x>320</x>
+     <y>265</y>
+     <width>131</width>
+     <height>40</height>
+    </rect>
+   </property>
+   <item>
+    <property name="text">
+     <string>Glass 3D</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>Flat 2D</string>
+    </property>
+   </item>
   </widget>
  </widget>
  <resources/>

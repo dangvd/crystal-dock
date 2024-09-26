@@ -76,6 +76,8 @@ void AddPanelDialog::setMode(Mode mode) {
   ui->showTaskManager->setVisible(mode != Mode::Clone);
   ui->showClock->setVisible(mode != Mode::Clone);
 
+  ui->styleLabel->setVisible(mode == Mode::Welcome);
+  ui->style->setVisible(mode == Mode::Welcome);
   if (mode == Mode::Welcome) {
     ui->buttonBox->setStandardButtons(QDialogButtonBox::Ok);
     ui->screenLabel->setVisible(false);
@@ -85,12 +87,12 @@ void AddPanelDialog::setMode(Mode mode) {
   }
 
   const int deltaY = (mode == Mode::Clone) ? 220 : 0;
-  ui->positionLabel->move(90, 280 - deltaY);
-  ui->position->move(340, 270 - deltaY);
-  ui->screenLabel->move(90, 320 - deltaY);
-  ui->screen->move(340, 320 - deltaY);
-  ui->buttonBox->move(70, 390 - deltaY);
-  resize(540, 450 - deltaY);
+  ui->positionLabel->move(90, 320 - deltaY);
+  ui->position->move(320, 310 - deltaY);
+  ui->screenLabel->move(90, 360 - deltaY);
+  ui->screen->move(320, 355 - deltaY);
+  ui->buttonBox->move(70, 430 - deltaY);
+  resize(540, 490 - deltaY);
 
   // Adjust the UI for single/multi-screen.
   if (isSingleScreen_) {
@@ -107,6 +109,10 @@ void AddPanelDialog::accept() {
   if (mode_ == Mode::Clone) {
     model_->cloneDock(dockId_, position, screen);
   } else {
+    if (mode_ == Mode::Welcome) {
+      model_->setPanelStyle(ui->style->currentText() == "Glass 3D" ? PanelStyle::Glass3D_Floating
+                                                                   : PanelStyle::Flat2D_Floating);
+    }
     model_->addDock(
         position, screen, ui->showApplicationMenu->isChecked(),
         ui->showPager->isChecked(), ui->showTaskManager->isChecked(),
