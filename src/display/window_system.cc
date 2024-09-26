@@ -504,6 +504,9 @@ void WindowSystem::initScreens() {
       return;
     }
   }
+
+  std::cerr << "Could not find application with id: " << app_id
+            << ". The window icon will have limited functionalities." << std::endl;
 }
 
 /* static */ void WindowSystem::state_changed(
