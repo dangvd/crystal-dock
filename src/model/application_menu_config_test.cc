@@ -168,16 +168,21 @@ void ApplicationMenuConfigTest::tryMatchingApplicationId() {
              {"gimp", "GIMP", "Image Editor",
               "gimp", "GIMP", ""},
              "Graphics");
+  writeEntry(entryDir.path() + "/code-insiders.desktop",
+             {"code-insiders", "Code Insiders", "Code Editor",
+              "code-insiders", "Code Insiders", ""},
+             "Development");
 
   ApplicationMenuConfig config({ entryDir.path() });
 
-  QCOMPARE(config.entries_.size(), 5);
+  QCOMPARE(config.entries_.size(), 6);
 
   QCOMPARE(config.tryMatchingApplicationId("firefox"), "firefox");
   QCOMPARE(config.tryMatchingApplicationId("org.kde.konsole"), "org.kde.konsole");
   QCOMPARE(config.tryMatchingApplicationId("Google-chrome"), "google-chrome");
   QCOMPARE(config.tryMatchingApplicationId("krita"), "org.kde.krita");
   QCOMPARE(config.tryMatchingApplicationId("Gimp-2.10"), "gimp");
+  QCOMPARE(config.tryMatchingApplicationId("Code - Insiders"), "code-insiders");
 }
 
 }  // namespace crystaldock

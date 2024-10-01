@@ -189,7 +189,7 @@ const ApplicationEntry* ApplicationMenuConfig::findApplication(const std::string
 
 std::string ApplicationMenuConfig::tryMatchingApplicationId(const std::string& appId) const {
   // E.g. Google Chrome
-  QString id = QString::fromStdString(appId).toLower();
+  QString id = QString::fromStdString(appId).toLower().simplified().replace(" ", "");
   std::string fixedAppId = id.toStdString();
   if (findApplication(fixedAppId) != nullptr) {
     return fixedAppId;
