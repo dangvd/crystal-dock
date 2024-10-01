@@ -49,12 +49,17 @@ class ApplicationMenuConfig : public QObject {
   const std::vector<Category>& categories() const { return categories_; }
   const std::vector<Category>& systemCategories() const { return systemCategories_; }
 
+  // Finds the application entry given the application ID.
   const ApplicationEntry* findApplication(const std::string& appId) const;
 
   bool isAppMenuEntry(const std::string& appId) const {
     return entries_.count(appId) > 0;
   }
 
+  // Tries to find a matching application ID using different heuristics.
+  std::string tryMatchingApplicationId(const std::string& appId) const;
+
+  // Searches for applications with the name containing the given text.
   const std::vector<ApplicationEntry> searchApplications(const QString& text) const;
 
  signals:

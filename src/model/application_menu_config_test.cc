@@ -39,6 +39,7 @@ class ApplicationMenuConfigTest: public QObject {
 
   void loadEntries_singleDir();
   void loadEntries_multipleDirs();
+  void tryMatchingApplicationId();
 
  private:
 
@@ -71,14 +72,16 @@ class ApplicationMenuConfigTest: public QObject {
 void ApplicationMenuConfigTest::loadEntries_singleDir() {
   QTemporaryDir entryDir;
   QVERIFY(entryDir.isValid());
-  writeEntry(entryDir.path() + "/1.desktop",
+  writeEntry(entryDir.path() + "/chrome.desktop",
              {"chrome", "Chrome", "Web Browser", "chrome", "chrome", ""},
-             "Internet");
+             "Network");
 
-  ApplicationMenuConfig ApplicationMenuConfig({ entryDir.path() });
+  ApplicationMenuConfig config({ entryDir.path() });
 
-  for (const auto& category : ApplicationMenuConfig.categories_) {
-    if (category.name == "Internet") {
+  QCOMPARE(config.entries_.size(), 1);
+
+  for (const auto& category : config.categories_) {
+    if (category.name == "Network") {
       QCOMPARE(static_cast<int>(category.entries.size()), 1);
     } else {
       QCOMPARE(static_cast<int>(category.entries.size()), 0);
@@ -89,13 +92,13 @@ void ApplicationMenuConfigTest::loadEntries_singleDir() {
 void ApplicationMenuConfigTest::loadEntries_multipleDirs() {
   QTemporaryDir entryDir1;
   QVERIFY(entryDir1.isValid());
-  writeEntry(entryDir1.path() + "/1.desktop",
+  writeEntry(entryDir1.path() + "/chrome.desktop",
              {"chrome", "Chrome", "Web Browser", "chrome", "chrome", ""},
-             "Internet");
-  writeEntry(entryDir1.path() + "/2.desktop",
+             "Network");
+  writeEntry(entryDir1.path() + "/mail.desktop",
              {"mail", "Mail", "Email Client", "mail", "mail", ""},
-             "Internet;Office");
-  writeEntry(entryDir1.path() + "/3.desktop",
+             "Network;Office");
+  writeEntry(entryDir1.path() + "/adesktop-settings.desktop",
              {"adesktop-settings", "ADesktop Settings", "", "adesktop-settings",
               "adesktop-settings", ""},
              "Settings",
@@ -107,37 +110,74 @@ void ApplicationMenuConfigTest::loadEntries_multipleDirs() {
 
   QTemporaryDir entryDir3;
   QVERIFY(entryDir3.isValid());
-  writeEntry(entryDir3.path() + "/1.desktop",
+  writeEntry(entryDir3.path() + "/systemsettings.desktop",
              {"systemsettings", "System Settings", "", "systemsettings", "systemsettings", ""},
              "Settings",
              {{"OnlyShowIn", DesktopEnv::getDesktopEnvName().toStdString()}});
-  writeEntry(entryDir3.path() + "/2.desktop",
-             {"adesktop-settings", "ADesktop Settings", "", "adesktop-settings",
-              "adesktop-settings", ""},
+  writeEntry(entryDir3.path() + "/bdesktop-settings.desktop",
+             {"bdesktop-settings", "BDesktop Settings", "", "bdesktop-settings",
+              "bdesktop-settings", ""},
              "Settings",
              {{"NotShowIn", DesktopEnv::getDesktopEnvName().toStdString()}});
-  writeEntry(entryDir3.path() + "/3.desktop",
-             {"chrome", "Chrome - HTML", "Web Browser", "chrome", "chrome", ""},
-             "Internet",
+  writeEntry(entryDir3.path() + "/chrome-html.desktop",
+             {"chrome-html", "Chrome - HTML", "Web Browser", "chrome", "chrome", ""},
+             "Network",
              {{"NoDisplay", "true"}});
-  writeEntry(entryDir3.path() + "/4.desktop",
-             {"chrome", "Chrome - Old", "Web Browser", "chrome", "chrome", ""},
-             "Internet",
+  writeEntry(entryDir3.path() + "/chrome-old.desktop",
+             {"chrome-old", "Chrome - Old", "Web Browser", "chrome", "chrome", ""},
+             "Network",
              {{"Hidden", "true"}});
 
-  ApplicationMenuConfig ApplicationMenuConfig(
+  ApplicationMenuConfig config(
       { entryDir1.path(), entryDir1.path() + "/dir-not-exist", entryDir2.path(),
         entryDir3.path() });
 
-  for (const auto& category : ApplicationMenuConfig.categories_) {
-    if (category.name == "Internet") {
+  QCOMPARE(config.entries_.size(), 3);
+
+  for (const auto& category : config.categories_) {
+    if (category.name == "Network") {
       QCOMPARE(static_cast<int>(category.entries.size()), 2);
-    } else if (category.name == "Settings" || category.name == "Office") {
+    } else if (category.name == "Settings") {
       QCOMPARE(static_cast<int>(category.entries.size()), 1);
     } else {
       QCOMPARE(static_cast<int>(category.entries.size()), 0);
     }
   }
+}
+
+void ApplicationMenuConfigTest::tryMatchingApplicationId() {
+  QTemporaryDir entryDir;
+  QVERIFY(entryDir.isValid());
+  writeEntry(entryDir.path() + "/firefox.desktop",
+             {"firefox", "Firefox", "Web Browser",
+              "firefox", "firefox", ""},
+             "Network");
+  writeEntry(entryDir.path() + "/org.kde.konsole.desktop",
+             {"org.kde.konsole", "Konsole", "Terminal",
+              "konsole", "konsole", ""},
+             "System");
+  writeEntry(entryDir.path() + "/google-chrome.desktop",
+             {"google-chrome", "Chrome", "Web Browser",
+              "google-chrome", "google-chrome", ""},
+             "Network");
+  writeEntry(entryDir.path() + "/org.kde.krita.desktop",
+             {"org.kde.krita", "Krita", "Digital Painting",
+              "krita", "Krita", ""},
+             "Graphics");
+  writeEntry(entryDir.path() + "/gimp.desktop",
+             {"gimp", "GIMP", "Image Editor",
+              "gimp", "GIMP", ""},
+             "Graphics");
+
+  ApplicationMenuConfig config({ entryDir.path() });
+
+  QCOMPARE(config.entries_.size(), 5);
+
+  QCOMPARE(config.tryMatchingApplicationId("firefox"), "firefox");
+  QCOMPARE(config.tryMatchingApplicationId("org.kde.konsole"), "org.kde.konsole");
+  QCOMPARE(config.tryMatchingApplicationId("Google-chrome"), "google-chrome");
+  QCOMPARE(config.tryMatchingApplicationId("krita"), "org.kde.krita");
+  QCOMPARE(config.tryMatchingApplicationId("Gimp-2.10"), "gimp");
 }
 
 }  // namespace crystaldock

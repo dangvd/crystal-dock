@@ -479,31 +479,10 @@ void WindowSystem::initScreens() {
             ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_SKIPTASKBAR);
   }
 
-  if (applicationMenuConfig_.findApplication(app_id) == nullptr) {
-    // Try to fix the app ID.
-
-    // E.g. Google Chrome
-    QString id = app_id;
-    std::string fixedAppId = id.toLower().toStdString();
-    if (applicationMenuConfig_.findApplication(fixedAppId) != nullptr) {
-      info->appId = fixedAppId;
-      return;
-    }
-
-    // E.g. Krita
-    fixedAppId = std::string{"org.kde."} + app_id;
-    if (applicationMenuConfig_.findApplication(fixedAppId) != nullptr) {
-      info->appId = fixedAppId;
-      return;
-    }
-
-    // E.g. GIMP
-    fixedAppId = id.mid(0, id.indexOf("-")).toLower().toStdString();
-    if (applicationMenuConfig_.findApplication(fixedAppId) != nullptr) {
-      info->appId = fixedAppId;
-      return;
-    }
-
+  const auto fixedAppId = applicationMenuConfig_.tryMatchingApplicationId(app_id);
+  if (!fixedAppId.empty()) {
+    info->appId = fixedAppId;
+  } else {
     std::cerr << "Could not find application with id: " << app_id
               << ". The window icon will have limited functionalities." << std::endl;
   }

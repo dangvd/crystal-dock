@@ -146,7 +146,7 @@ bool ApplicationMenuConfig::loadEntry(const QString &file) {
     return false;
   }
 
-  const QString appId = QFileInfo(file).completeBaseName();
+  const QString appId = QFileInfo(file).completeBaseName().toLower();
   for (int i = 0; i < categories.size(); ++i) {
     const std::string category = categories[i].toStdString();
     if (categoryMap_.count(category) > 0 &&
@@ -185,6 +185,29 @@ const ApplicationEntry* ApplicationMenuConfig::findApplication(const std::string
     }
   }
   return entries_.count(appId) > 0 ? entries_.at(appId) : nullptr;
+}
+
+std::string ApplicationMenuConfig::tryMatchingApplicationId(const std::string& appId) const {
+  // E.g. Google Chrome
+  QString id = QString::fromStdString(appId).toLower();
+  std::string fixedAppId = id.toStdString();
+  if (findApplication(fixedAppId) != nullptr) {
+    return fixedAppId;
+  }
+
+  // E.g. Krita
+  fixedAppId = std::string{"org.kde."} + id.toStdString();
+  if (findApplication(fixedAppId) != nullptr) {
+    return fixedAppId;
+  }
+
+  // E.g. GIMP
+  fixedAppId = id.mid(0, id.indexOf("-")).toStdString();
+  if (findApplication(fixedAppId) != nullptr) {
+    return fixedAppId;
+  }
+
+  return "";
 }
 
 const std::vector<ApplicationEntry> ApplicationMenuConfig::searchApplications(const QString& text) const {
