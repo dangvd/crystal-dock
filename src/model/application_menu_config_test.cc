@@ -172,10 +172,14 @@ void ApplicationMenuConfigTest::tryMatchingApplicationId() {
              {"code-insiders", "Code Insiders", "Code Editor",
               "code-insiders", "Code Insiders", ""},
              "Development");
+  writeEntry(entryDir.path() + "/seventhstring-transcribe.desktop",
+             {"seventhstring-transcribe", "Transcribe!", "Lyrics Transcriber",
+              "seventhstring-transcribe", "Transcribe!", ""},
+             "AudioVideo");
 
   ApplicationMenuConfig config({ entryDir.path() });
 
-  QCOMPARE(config.entries_.size(), 6);
+  QCOMPARE(config.entries_.size(), 7);
 
   QCOMPARE(config.tryMatchingApplicationId("firefox"), "firefox");
   QCOMPARE(config.tryMatchingApplicationId("org.kde.konsole"), "org.kde.konsole");
@@ -183,6 +187,7 @@ void ApplicationMenuConfigTest::tryMatchingApplicationId() {
   QCOMPARE(config.tryMatchingApplicationId("krita"), "org.kde.krita");
   QCOMPARE(config.tryMatchingApplicationId("Gimp-2.10"), "gimp");
   QCOMPARE(config.tryMatchingApplicationId("Code - Insiders"), "code-insiders");
+  QCOMPARE(config.tryMatchingApplicationId("Transcribe!"), "seventhstring-transcribe");
 }
 
 }  // namespace crystaldock
