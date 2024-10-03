@@ -215,6 +215,14 @@ std::string ApplicationMenuConfig::tryMatchingApplicationId(const std::string& a
     }
   }
 
+  // Special fix for DBeaver EE
+  if (id == "dbeaverenterprise") {
+    fixedAppId = "dbeaver-ee";
+    if (findApplication(fixedAppId) != nullptr) {
+      return fixedAppId;
+    }
+  }
+
   return "";
 }
 

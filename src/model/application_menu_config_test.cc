@@ -176,10 +176,14 @@ void ApplicationMenuConfigTest::tryMatchingApplicationId() {
              {"seventhstring-transcribe", "Transcribe!", "Lyrics Transcriber",
               "seventhstring-transcribe", "Transcribe!", ""},
              "AudioVideo");
+  writeEntry(entryDir.path() + "/dbeaver-ee.desktop",
+             {"dbeaver-ee", "DBeaver Enterprise", "Database Management",
+              "dbeaver-ee", "DBeaver Enterprise", ""},
+             "Office");
 
   ApplicationMenuConfig config({ entryDir.path() });
 
-  QCOMPARE(config.entries_.size(), 7);
+  QCOMPARE(config.entries_.size(), 8);
 
   QCOMPARE(config.tryMatchingApplicationId("firefox"), "firefox");
   QCOMPARE(config.tryMatchingApplicationId("org.kde.konsole"), "org.kde.konsole");
@@ -188,6 +192,7 @@ void ApplicationMenuConfigTest::tryMatchingApplicationId() {
   QCOMPARE(config.tryMatchingApplicationId("Gimp-2.10"), "gimp");
   QCOMPARE(config.tryMatchingApplicationId("Code - Insiders"), "code-insiders");
   QCOMPARE(config.tryMatchingApplicationId("Transcribe!"), "seventhstring-transcribe");
+  QCOMPARE(config.tryMatchingApplicationId("dbeaverenterprise"), "dbeaver-ee");
 }
 
 }  // namespace crystaldock
