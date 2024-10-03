@@ -172,9 +172,9 @@ void ApplicationMenuConfigTest::tryMatchingApplicationId() {
              {"code-insiders", "Code Insiders", "Code Editor",
               "code-insiders", "Code Insiders", ""},
              "Development");
-  writeEntry(entryDir.path() + "/seventhstring-transcribe.desktop",
-             {"seventhstring-transcribe", "Transcribe!", "Lyrics Transcriber",
-              "seventhstring-transcribe", "Transcribe!", ""},
+  writeEntry(entryDir.path() + "/com.seventhstring.transcribe.desktop",
+             {"com.seventhstring.transcribe", "Transcribe!", "Lyrics Transcriber",
+              "com.seventhstring.transcribe", "Transcribe!", ""},
              "AudioVideo");
   writeEntry(entryDir.path() + "/dbeaver-ee.desktop",
              {"dbeaver-ee", "DBeaver Enterprise", "Database Management",
@@ -191,7 +191,7 @@ void ApplicationMenuConfigTest::tryMatchingApplicationId() {
   QCOMPARE(config.tryMatchingApplicationId("krita"), "org.kde.krita");
   QCOMPARE(config.tryMatchingApplicationId("Gimp-2.10"), "gimp");
   QCOMPARE(config.tryMatchingApplicationId("Code - Insiders"), "code-insiders");
-  QCOMPARE(config.tryMatchingApplicationId("Transcribe!"), "seventhstring-transcribe");
+  QCOMPARE(config.tryMatchingApplicationId("Transcribe!"), "com.seventhstring.transcribe");
   QCOMPARE(config.tryMatchingApplicationId("dbeaverenterprise"), "dbeaver-ee");
 }
 

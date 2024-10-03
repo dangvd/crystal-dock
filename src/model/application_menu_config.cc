@@ -209,7 +209,7 @@ std::string ApplicationMenuConfig::tryMatchingApplicationId(const std::string& a
 
   // Special fix for Transcribe!
   if (id == "transcribe!") {
-    fixedAppId = "seventhstring-transcribe";
+    fixedAppId = "com.seventhstring.transcribe";
     if (findApplication(fixedAppId) != nullptr) {
       return fixedAppId;
     }
