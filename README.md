@@ -14,7 +14,7 @@ The current version (version 2) supports KDE Plasma 6 on Wayland. Other desktop 
 ## Main features
 
 - Smooth parabolic zooming and translucent effect
-- Two dock styles: Glass 3D and Flat 2D
+- Two visual styles: Glass 3D and Flat 2D
 - Supported components: Application Menu, Pager, Programs/Task Manager, Clock
 - Multiple docks support
 - Integration with various desktop environments: special menu entries (e.g. Log Out), specific default launchers, setting wallpapers
