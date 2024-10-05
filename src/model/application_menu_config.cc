@@ -164,6 +164,14 @@ bool ApplicationMenuConfig::loadEntry(const QString &file) {
 
       auto* entry = &(*--next);
       entries_[newEntry.appId.toStdString()] = entry;
+      const auto wmClass = desktopFile.wmClass().toLower().toStdString();
+      if (!wmClass.empty()) {
+        wmClasses_[wmClass] = entry;
+      }
+      const auto name = desktopFile.name().toLower().toStdString();
+      if (!name.empty()) {
+        names_[name] = entry;
+      }
     }
   }
 
@@ -184,43 +192,20 @@ const ApplicationEntry* ApplicationMenuConfig::findApplication(const std::string
       }
     }
   }
-  return entries_.count(appId) > 0 ? entries_.at(appId) : nullptr;
+  return entries_.count(appId) > 0
+      ? entries_.at(appId)
+      : wmClasses_.count(appId) > 0
+          ? wmClasses_.at(appId)
+          : names_.count(appId) > 0
+              ? names_.at(appId)
+              : nullptr;
 }
 
 std::string ApplicationMenuConfig::tryMatchingApplicationId(const std::string& appId) const {
-  // E.g. Google Chrome
-  QString id = QString::fromStdString(appId).toLower().simplified().replace(" ", "");
+  QString id = QString::fromStdString(appId).toLower();
   std::string fixedAppId = id.toStdString();
   if (findApplication(fixedAppId) != nullptr) {
     return fixedAppId;
-  }
-
-  // E.g. Krita
-  fixedAppId = std::string{"org.kde."} + id.toStdString();
-  if (findApplication(fixedAppId) != nullptr) {
-    return fixedAppId;
-  }
-
-  // E.g. GIMP
-  fixedAppId = id.mid(0, id.indexOf("-")).toStdString();
-  if (findApplication(fixedAppId) != nullptr) {
-    return fixedAppId;
-  }
-
-  // Special fix for Transcribe!
-  if (id == "transcribe!") {
-    fixedAppId = "com.seventhstring.transcribe";
-    if (findApplication(fixedAppId) != nullptr) {
-      return fixedAppId;
-    }
-  }
-
-  // Special fix for DBeaver EE
-  if (id == "dbeaverenterprise") {
-    fixedAppId = "dbeaver-ee";
-    if (findApplication(fixedAppId) != nullptr) {
-      return fixedAppId;
-    }
   }
 
   return "";

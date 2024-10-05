@@ -50,6 +50,7 @@ class ApplicationMenuConfig : public QObject {
   const std::vector<Category>& systemCategories() const { return systemCategories_; }
 
   // Finds the application entry given the application ID.
+  // Will match with each of App ID, WM Class and Name in the entry list in that order.
   const ApplicationEntry* findApplication(const std::string& appId) const;
 
   bool isAppMenuEntry(const std::string& appId) const {
@@ -97,6 +98,10 @@ class ApplicationMenuConfig : public QObject {
   std::unordered_map<std::string, int> categoryMap_;
   // Map from app ids to application entries for fast look-up.
   std::unordered_map<std::string, const ApplicationEntry*> entries_;
+  // Map from WM classes to application entries for fast look-up.
+  std::unordered_map<std::string, const ApplicationEntry*> wmClasses_;
+  // Map from names to application entries for fast look-up.
+  std::unordered_map<std::string, const ApplicationEntry*> names_;
 
   QFileSystemWatcher fileWatcher_;
 

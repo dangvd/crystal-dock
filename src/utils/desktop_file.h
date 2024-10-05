@@ -36,6 +36,9 @@ class DesktopFile {
   QString name() const { return values_["Name"]; }
   void setName(const QString& name) { values_["Name"] = name; }
 
+  QString wmClass() const { return values_["StartupWMClass"]; }
+  void setWMClass(const QString& wmClass) { values_["StartupWMClass"] = wmClass; }
+
   QString genericName() const { return values_["GenericName"]; }
   void setGenericName(const QString& genericName) { values_["GenericName"] = genericName; }
 
