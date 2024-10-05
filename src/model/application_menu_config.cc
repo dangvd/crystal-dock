@@ -94,6 +94,8 @@ void ApplicationMenuConfig::clearEntries() {
     category.entries.clear();
   }
   entries_.clear();
+  wmClasses_.clear();
+  names_.clear();
 }
 
 bool ApplicationMenuConfig::loadEntries() {
