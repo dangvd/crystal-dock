@@ -50,6 +50,19 @@ Program::Program(DockPanel* parent, MultiDockModel* model, const QString& appId,
 }
 
 Program::Program(DockPanel* parent, MultiDockModel* model, const QString& appId,
+                 const QString& label, Qt::Orientation orientation, const QString& iconName,
+                 int minSize, int maxSize)
+    : IconBasedDockItem(parent, model, label, orientation, iconName, minSize, maxSize),
+      appId_(appId),
+      command_(""),
+      isAppMenuEntry_(false),
+      pinned_(false),
+      demandsAttention_(false),
+      attentionStrong_(false) {
+  init();
+}
+
+Program::Program(DockPanel* parent, MultiDockModel* model, const QString& appId,
                  const QString& label, Qt::Orientation orientation, const QPixmap& icon,
                  int minSize, int maxSize)
     : IconBasedDockItem(parent, model, label, orientation, icon, minSize, maxSize),

@@ -870,12 +870,16 @@ bool DockPanel::addTask(const WindowInfo* task) {
               << " The window icon will have limited functionalities." << std::endl;
   }
 
+  QString taskIcon = QString::fromStdString(task->icon);
   int i = 0;
   for (; i < itemCount() && items_[i]->beforeTask(label); ++i);
   if (app && QIcon::hasThemeIcon(app->icon)) {
     items_.insert(items_.begin() + i, std::make_unique<Program>(
         this, model_, appId, label, orientation_, app->icon, minSize_,
         maxSize_, app->command, /*isAppMenuEntry=*/true, /*pinned=*/false));
+  } else if (!taskIcon.isEmpty() && QIcon::hasThemeIcon(taskIcon)) {
+      items_.insert(items_.begin() + i, std::make_unique<Program>(
+          this, model_, appId, label, orientation_, taskIcon, minSize_, maxSize_));
   } else {
     items_.insert(items_.begin() + i, std::make_unique<Program>(
         this, model_, appId, label, orientation_, QPixmap(), minSize_, maxSize_));

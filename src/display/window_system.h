@@ -54,6 +54,7 @@ struct WindowInfo {
   std::string uuid;
   std::string appId;
   std::string title;
+  std::string icon;
   std::string desktop;
   std::string activity;
   bool skipTaskbar;

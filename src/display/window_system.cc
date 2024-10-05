@@ -522,7 +522,13 @@ void WindowSystem::initScreens() {
     void *data,
     struct org_kde_plasma_window* window,
     const char *name) {
-
+  if (windows_.count(window) == 0) {
+    return;
+  }
+  WindowInfo* info = windows_[window];
+  if (info) {
+    info->icon = name;
+  }
 }
 
 /* static */ void WindowSystem::unmapped(
@@ -579,9 +585,7 @@ void WindowSystem::initScreens() {
 
 /* static */ void WindowSystem::icon_changed(
     void *data,
-    struct org_kde_plasma_window* window) {
-
-}
+    struct org_kde_plasma_window* window) {}
 
 /* static */ void WindowSystem::pid_changed(
     void *data,

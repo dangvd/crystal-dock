@@ -50,6 +50,10 @@ class Program : public QObject, public IconBasedDockItem {
           int minSize, int maxSize, const QString& command, bool isAppMenuEntry, bool pinned);
 
   Program(DockPanel* parent, MultiDockModel* model, const QString& appId,
+          const QString& label, Qt::Orientation orientation, const QString& iconName,
+          int minSize, int maxSize);
+
+  Program(DockPanel* parent, MultiDockModel* model, const QString& appId,
           const QString& label, Qt::Orientation orientation, const QPixmap& icon,
           int minSize, int maxSize);
 
