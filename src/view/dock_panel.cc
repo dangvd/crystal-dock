@@ -344,31 +344,51 @@ void DockPanel::onWindowGeometryChanged(const WindowInfo* task) {
 
 int DockPanel::taskIndicatorPos() {
   if (isHorizontal()) {
-    int y = isTop()
-        ? isFloating() ? floatingMargin_ : 0
-        : isFloating() ? maxHeight_ - floatingMargin_ - k3DPanelThickness
-                       : maxHeight_ - k3DPanelThickness;
-    if (isBottom() && is3D()) { y -= 2; }
-
-    if (!is3D()) {
+    int y = 0;
+    if (is3D()) {
       if (isTop()) {
-        y += kIndicatorSize2D / 2;
+        y = 0;
+      } else {  // bottom
+        y = maxHeight_ - k3DPanelThickness - 2;
+      }
+    } else {  // 2D
+      if (isTop()) {
+        y = itemSpacing_ / 3;
+      } else {  // bottom
+        y = maxHeight_ - itemSpacing_ / 3 - kIndicatorSize2D;
+      }
+    }
+
+    if (isFloating()) {
+      if (isTop()) {
+        y += floatingMargin_;
       } else {
-        y -= kIndicatorSize2D;
+        y -= floatingMargin_;
       }
     }
 
     return y;
-  } else {
-    int x = isLeft()
-        ? isFloating() ? floatingMargin_ : 0
-                       : isFloating() ? maxWidth_ - k3DPanelThickness - floatingMargin_
-                                      : maxWidth_ - k3DPanelThickness;
-    if (!is3D()) {
+  } else {  // Vertical.
+    int x = 0;
+    if (is3D()) {
       if (isLeft()) {
-        x += kIndicatorSize2D / 2;
+        x = 0;
+      } else {  // right
+        x = maxWidth_ - k3DPanelThickness;
+      }
+    } else {  // 2D
+      if (isLeft()) {
+        x = itemSpacing_ / 3;
+      } else {  // right
+        x = maxWidth_ - itemSpacing_ / 3 - kIndicatorSize2D;
+      }
+    }
+
+    if (isFloating()) {
+      if (isLeft()) {
+        x += floatingMargin_;
       } else {
-        x -= kIndicatorSize2D;
+        x -= floatingMargin_;
       }
     }
 
