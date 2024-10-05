@@ -275,10 +275,10 @@ void Program::createMenu() {
           pinUnpin();
         });
     pinAction_->setCheckable(true);
-    pinAction_->setChecked(pinned_);    
+    pinAction_->setChecked(pinned_);
   }
 
-  if (isAppMenuEntry_ || !pinned_) {
+  if (isAppMenuEntry_) {
     menu_.addAction(QIcon::fromTheme("list-add"), QString("&New Window"), this,
                     [this] { launch(); });
   }
