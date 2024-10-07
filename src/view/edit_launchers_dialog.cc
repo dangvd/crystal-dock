@@ -27,6 +27,8 @@
 #include <Qt>
 #include <QSettings>
 
+#include <utils/desktop_file.h>
+
 namespace crystaldock {
 
 QDataStream &operator<<(QDataStream &out, const LauncherInfo& launcher) {
@@ -39,6 +41,45 @@ QDataStream &operator>>(QDataStream &in, LauncherInfo& launcher) {
   return in;
 }
 
+LauncherList::LauncherList(EditLaunchersDialog* parent)
+    : QListWidget(parent), parent_(parent) {}
+
+void LauncherList::dragEnterEvent(QDragEnterEvent *event) {
+  // Internal drag-and-drop.
+  LauncherList* source = dynamic_cast<LauncherList*>(event->source());
+  if (source != nullptr && source == this) {
+    event->acceptProposedAction();
+    setDragDropMode(QAbstractItemView::InternalMove);
+    return;
+  }
+
+  // External drag-and-drop.
+  if (event->mimeData()->hasFormat("text/uri-list")) {
+    QString fileUrl =
+        QString(event->mimeData()->data("text/uri-list")).trimmed();
+    if (fileUrl.endsWith(".desktop")) {
+      event->acceptProposedAction();
+      setDragDropMode(QAbstractItemView::DragDrop);
+    }
+  }
+}
+
+void LauncherList::dragMoveEvent(QDragMoveEvent* event) {
+  event->acceptProposedAction();
+}
+
+void LauncherList::dropEvent(QDropEvent* event) {
+  // External drag-and-drop.
+  if (event->mimeData()->hasFormat("text/uri-list")) {
+    QString fileUrl =
+        QString(event->mimeData()->data("text/uri-list")).trimmed();
+    DesktopFile desktopFile(QUrl(fileUrl).toLocalFile());
+    parent_->addLauncher(desktopFile.name(), desktopFile.appId(), desktopFile.icon());
+  } else {  // Internal drag-and-drop.
+    QListWidget::dropEvent(event);
+  }
+}
+
 EditLaunchersDialog::EditLaunchersDialog(QWidget* parent, MultiDockModel* model,
                                          int dockId)
     : QDialog(parent),
@@ -46,6 +87,13 @@ EditLaunchersDialog::EditLaunchersDialog(QWidget* parent, MultiDockModel* model,
       model_(model),
       dockId_(dockId) {
   ui->setupUi(this);
+  launchers_ = new LauncherList(this);
+  launchers_->setGeometry(QRect(20, 20, 350, 490));
+  launchers_->setSelectionMode(QAbstractItemView::SingleSelection);
+  launchers_->setDragEnabled(true);
+  launchers_->setAcceptDrops(true);
+  launchers_->setDropIndicatorShown(true);
+  launchers_->setDragDropMode(QAbstractItemView::DragDrop);
   setWindowFlag(Qt::Tool);
 
   qRegisterMetaType<LauncherInfo>();
@@ -73,8 +121,8 @@ void EditLaunchersDialog::addLauncher(const QString& name,
   }
   listItem->setData(Qt::UserRole,
                     QVariant::fromValue(LauncherInfo(iconName, appId)));
-  ui->launchers->addItem(listItem);
-  ui->launchers->setCurrentItem(listItem);
+  launchers_->addItem(listItem);
+  launchers_->setCurrentItem(listItem);
 }
 
 void EditLaunchersDialog::accept() {
@@ -103,14 +151,14 @@ void EditLaunchersDialog::addSeparator() {
 }
 
 void EditLaunchersDialog::removeSelectedLauncher() {
-  QListWidgetItem* item = ui->launchers->takeItem(ui->launchers->currentRow());
+  QListWidgetItem* item = launchers_->takeItem(launchers_->currentRow());
   if (item != nullptr) {
     delete item;
   }
 }
 
 void EditLaunchersDialog::removeAllLaunchers() {
-  ui->launchers->clear();
+  launchers_->clear();
 }
 
 void EditLaunchersDialog::initSystemCommands() {
@@ -124,20 +172,20 @@ void EditLaunchersDialog::initSystemCommands() {
 }
 
 void EditLaunchersDialog::loadData() {
-  ui->launchers->clear();
+  launchers_->clear();
   for (const auto& item : model_->launcherConfigs(dockId_)) {
     addLauncher(item.name, item.appId, item.icon);
   }
-  ui->launchers->setCurrentRow(0);
+  launchers_->setCurrentRow(0);
 
   ui->systemCommands->setCurrentIndex(0);
 }
 
 void EditLaunchersDialog::saveData() {
-  const int launcherCount = ui->launchers->count();
+  const int launcherCount = launchers_->count();
   QStringList launchers;
   for (int i = 0; i < launcherCount; ++i) {
-    auto* listItem = ui->launchers->item(i);
+    auto* listItem = launchers_->item(i);
     auto info = listItem->data(Qt::UserRole).value<LauncherInfo>();
     launchers.append(info.appId);
   }

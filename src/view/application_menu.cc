@@ -145,6 +145,36 @@ void ApplicationMenu::searchApps(const QString& searchText_) {
   }
 }
 
+bool ApplicationMenu::eventFilter(QObject* object, QEvent* event) {
+  if (event->type() == QEvent::MouseButtonPress) {
+    auto* activeItem = (dynamic_cast<QMenu*>(object))->activeAction();
+    QMouseEvent* mouseEvent = dynamic_cast<QMouseEvent*>(event);
+    if (mouseEvent && mouseEvent->button() == Qt::LeftButton && activeItem) {
+      startMousePos_ = mouseEvent->pos();
+      draggedEntry_ = activeItem->data().toString();
+    }
+  } else if (event->type() == QEvent::MouseMove) {
+    QMouseEvent* mouseEvent = dynamic_cast<QMouseEvent*>(event);
+    if (mouseEvent && mouseEvent->buttons() & Qt::LeftButton) {
+      const int distance
+          = (mouseEvent->pos() - startMousePos_).manhattanLength();
+      if (distance >= QApplication::startDragDistance()
+          && !draggedEntry_.isEmpty()) {
+        // Start drag.
+        QMimeData* mimeData = new QMimeData;
+        mimeData->setData("text/uri-list",
+                          QUrl::fromLocalFile(draggedEntry_).toEncoded());
+
+        QDrag* drag = new QDrag(this);
+        drag->setMimeData(mimeData);
+        drag->exec(Qt::CopyAction);
+      }
+    }
+  }
+
+  return QObject::eventFilter(object, event);
+}
+
 QString ApplicationMenu::getStyleSheet() {
   QColor bgColor = model_->backgroundColor();
   bgColor.setAlphaF(model_->applicationMenuBackgroundAlpha());
@@ -207,6 +237,7 @@ void ApplicationMenu::addSearchMenu() {
   searchMenu_->setAttribute(Qt::WA_TranslucentBackground);
   searchMenu_->setStyle(&style_);
   searchMenu_->setFont(font_);
+  searchMenu_->installEventFilter(this);
 
   searchText_ = new QLineEdit(searchMenu_);
   searchText_->setMinimumWidth(250);
@@ -228,6 +259,7 @@ void ApplicationMenu::addToMenu(const std::vector<Category>& categories) {
     menu->setAttribute(Qt::WA_TranslucentBackground);
     menu->setStyle(&style_);
     menu->setFont(font_);
+    menu->installEventFilter(this);
     for (const auto& entry : category.entries) {
       addEntry(entry, menu);
     }
@@ -235,10 +267,11 @@ void ApplicationMenu::addToMenu(const std::vector<Category>& categories) {
 }
 
 void ApplicationMenu::addEntry(const ApplicationEntry &entry, QMenu *menu) {
-  menu->addAction(loadIcon(entry.icon), entry.name, this,
+  QAction* action = menu->addAction(loadIcon(entry.icon), entry.name, this,
                   [entry]() {
                     Program::launch(entry.command);
                   });
+  action->setData(entry.desktopFile);
 }
 
 void ApplicationMenu::resetSearchMenu() {

@@ -33,6 +33,8 @@ class DesktopFile {
   DesktopFile(const QString &file);
   bool write(const QString &file);
 
+  QString appId() const { return appId_; }
+
   QString name() const { return values_["Name"]; }
   void setName(const QString& name) { values_["Name"] = name; }
 
@@ -67,6 +69,7 @@ class DesktopFile {
   void setHidden(bool value) { values_["Hidden"] = value ? "true" : "false"; }
 
  private:
+  QString appId_;
   QMap<QString, QString> values_;
 };
 

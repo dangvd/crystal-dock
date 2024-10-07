@@ -80,6 +80,10 @@ class ApplicationMenu : public QObject, public IconBasedDockItem {
 
   void searchApps(const QString& searchText);
 
+ protected:
+  // To support drag applications from the sub-menu to Edit Launchers dialog.
+  bool eventFilter(QObject* object, QEvent* event) override;
+
  private:
   QString getStyleSheet();
 
@@ -101,6 +105,13 @@ class ApplicationMenu : public QObject, public IconBasedDockItem {
 
   ApplicationMenuStyle style_;
   QFont font_;
+
+  // Drag support.
+
+  // Starting mouse position, used for minimum drag distance check.
+  QPoint startMousePos_;
+  // The desktop file associated with the application entry being dragged.
+  QString draggedEntry_;
 
   QMenu* searchMenu_;
   QLineEdit* searchText_;

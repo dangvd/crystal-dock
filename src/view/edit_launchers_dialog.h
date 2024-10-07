@@ -22,6 +22,9 @@
 #include <QAbstractButton>
 #include <QDataStream>
 #include <QDialog>
+#include <QDragEnterEvent>
+#include <QDragMoveEvent>
+#include <QDropEvent>
 #include <QListWidget>
 #include <QListWidgetItem>
 
@@ -47,6 +50,21 @@ struct LauncherInfo {
 QDataStream &operator<<(QDataStream &out, const LauncherInfo& launcher);
 QDataStream &operator>>(QDataStream &in, LauncherInfo& launcher);
 
+class EditLaunchersDialog;
+
+class LauncherList : public QListWidget {
+ public:
+  explicit LauncherList(EditLaunchersDialog* parent);
+
+ protected:
+  void dragEnterEvent(QDragEnterEvent *event) override;
+  void dragMoveEvent(QDragMoveEvent* event) override;
+  void dropEvent(QDropEvent *event) override;
+
+ private:
+  EditLaunchersDialog* parent_;
+};
+
 class EditLaunchersDialog : public QDialog {
   Q_OBJECT
 
@@ -56,8 +74,7 @@ class EditLaunchersDialog : public QDialog {
 
   void reload() { loadData(); }
 
-  void addLauncher(const QString& program, const QString& command,
-      const QString& iconName);
+  void addLauncher(const QString& name, const QString& appId, const QString& iconName);
 
  public slots:
   void accept() override;
@@ -82,7 +99,8 @@ class EditLaunchersDialog : public QDialog {
 
   void populateSystemCommands();
 
-  Ui::EditLaunchersDialog *ui;
+  Ui::EditLaunchersDialog* ui;
+  LauncherList* launchers_;
 
   MultiDockModel* model_;
   int dockId_;

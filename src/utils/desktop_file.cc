@@ -19,6 +19,7 @@
 #include "desktop_file.h"
 
 #include <QFile>
+#include <QFileInfo>
 #include <QIODevice>
 #include <QTextStream>
 
@@ -27,6 +28,7 @@ namespace crystaldock {
 DesktopFile::DesktopFile(const QString& file) {
   QFile inputFile(file);
   if (inputFile.open(QIODevice::ReadOnly)) {
+    appId_ = QFileInfo(file).completeBaseName().toLower();
     QTextStream input(&inputFile);
     bool parsing = false;
     while (!input.atEnd()) {

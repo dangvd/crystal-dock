@@ -148,7 +148,7 @@ bool ApplicationMenuConfig::loadEntry(const QString &file) {
     return false;
   }
 
-  const QString appId = QFileInfo(file).completeBaseName().toLower();
+  const QString appId = desktopFile.appId();
   for (int i = 0; i < categories.size(); ++i) {
     const std::string category = categories[i].toStdString();
     if (categoryMap_.count(category) > 0 &&

@@ -23,10 +23,10 @@
     </rect>
    </property>
    <property name="orientation">
-    <enum>Qt::Horizontal</enum>
+    <enum>Qt::Orientation::Horizontal</enum>
    </property>
    <property name="standardButtons">
-    <set>QDialogButtonBox::Apply|QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+    <set>QDialogButtonBox::StandardButton::Apply|QDialogButtonBox::StandardButton::Cancel|QDialogButtonBox::StandardButton::Ok</set>
    </property>
    <property name="centerButtons">
     <bool>true</bool>
@@ -45,7 +45,7 @@
     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Tips: &lt;/p&gt;&lt;ul style=&quot;margin-top: 0px; margin-bottom: 0px; margin-left: 0px; margin-right: 0px; -qt-list-indent: 1;&quot;&gt;&lt;li style=&quot; margin-top:12px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Use drag-and-drop in the launcher list to re-order the items. &lt;/li&gt;&lt;li style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;To add a standard program launcher, simply right-click a running program on the dock panel then tick &amp;quot;Pinned&amp;quot;. &lt;/li&gt;&lt;/ul&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
    <property name="textFormat">
-    <enum>Qt::RichText</enum>
+    <enum>Qt::TextFormat::RichText</enum>
    </property>
    <property name="wordWrap">
     <bool>true</bool>
@@ -64,8 +64,7 @@
     <string>Remove Selected</string>
    </property>
    <property name="icon">
-    <iconset theme="list-remove">
-     <normaloff>.</normaloff>.</iconset>
+    <iconset theme="list-remove"/>
    </property>
   </widget>
   <widget class="QPushButton" name="removeAll">
@@ -81,8 +80,7 @@
     <string>Remove All</string>
    </property>
    <property name="icon">
-    <iconset theme="edit-delete">
-     <normaloff>.</normaloff>.</iconset>
+    <iconset theme="edit-delete"/>
    </property>
   </widget>
   <widget class="QPushButton" name="addSeparator">
@@ -98,8 +96,7 @@
     <string>Add Separator</string>
    </property>
    <property name="icon">
-    <iconset theme="list-add">
-     <normaloff>.</normaloff>.</iconset>
+    <iconset theme="list-add"/>
    </property>
   </widget>
   <widget class="QComboBox" name="systemCommands">
@@ -119,19 +116,6 @@
      <string>Add System Command</string>
     </property>
    </item>
-  </widget>
-  <widget class="QListWidget" name="launchers">
-   <property name="geometry">
-    <rect>
-     <x>20</x>
-     <y>20</y>
-     <width>350</width>
-     <height>490</height>
-    </rect>
-   </property>
-   <property name="dragDropMode">
-    <enum>QAbstractItemView::InternalMove</enum>
-   </property>
   </widget>
  </widget>
  <resources/>
