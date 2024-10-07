@@ -210,6 +210,14 @@ std::string ApplicationMenuConfig::tryMatchingApplicationId(const std::string& a
     return fixedAppId;
   }
 
+  // Special fix for Qt6 D-Bus Viewer.
+  if (id == "qdbusviewer") {
+    fixedAppId = "org.qt.qdbusviewer6";
+    if (findApplication(fixedAppId) != nullptr) {
+      return fixedAppId;
+    }
+  }
+
   return "";
 }
 
