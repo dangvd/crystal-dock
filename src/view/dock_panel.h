@@ -269,6 +269,11 @@ class DockPanel : public QWidget {
   // Updates width, height, items's size and position given the mouse position.
   void updateLayout(int x, int y);
 
+  // Checks if the mouse has actually entered the dock panel's visibility area.
+  bool checkMouseEnter(int x, int y);
+
+  void startAutoHideActivationTimer();
+
   // Resizes the task manager part of the panel. This needs to not interfere
   // with the zooming.
   void resizeTaskManager();

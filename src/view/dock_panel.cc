@@ -522,41 +522,28 @@ void DockPanel::drawFlat2D(QPainter& painter) {
 }
 
 void DockPanel::mouseMoveEvent(QMouseEvent* e) {
-  if (autoHide() && QDateTime::currentMSecsSinceEpoch() - enterTime_
-      < model_->autoHideActivationDelay()) {
-    lastMouseX_ = e->position().x();
-    lastMouseY_ = e->position().y();
+  const auto x = e->position().x();
+  const auto y = e->position().y();
+
+  if (autoHide() && isMinimized_) {
+    if (checkMouseEnter(x, y)) {
+      if (!isEntering_) {
+        startAutoHideActivationTimer();
+        isEntering_ = true;
+      } else if (QDateTime::currentMSecsSinceEpoch() - enterTime_
+                 < model_->autoHideActivationDelay()) {
+        lastMouseX_ = x;
+        lastMouseY_ = y;
+      }
+    }
     return;
   }
 
-  const auto x = e->position().x();
-  const auto y = e->position().y();
   if (isEntering_) {
     // Don't do the parabolic zooming if the mouse is outside the minimized area.
     // Also don't do the parabolic zooming if the mouse is near the border.
     // Quite often the user was just scrolling a window etc.
-
-    if ((position_ == PanelPosition::Bottom &&
-         ((!autoHide() && y < itemSpacing_ + maxHeight_ - minHeight_) ||
-          (autoHide() && y < maxHeight_ - 2))) ||
-        (position_ == PanelPosition::Top &&
-         ((!autoHide() && y > minHeight_ - itemSpacing_) ||
-          (autoHide() && y > 2))) ||
-        (position_ == PanelPosition::Left &&
-         ((!autoHide() && x > minWidth_ - itemSpacing_) ||
-          (autoHide() && x > 2))) ||
-        (position_ == PanelPosition::Right &&
-         ((!autoHide() && x < itemSpacing_ + maxWidth_ - minWidth_) ||
-          (autoHide() && x < maxWidth_ - 2)))) {
-      return;
-    }
-
-    if (isHorizontal() &&
-        (x < (maxWidth_ - minWidth_) / 2 || x > (maxWidth_ + minWidth_) / 2)) {
-      return;
-    }
-    if (!isHorizontal() &&
-        (y < (maxHeight_ - minHeight_) / 2 || y > (maxHeight_ + minHeight_) / 2)) {
+    if (!checkMouseEnter(x, y)) {
       return;
     }
   }
@@ -566,6 +553,34 @@ void DockPanel::mouseMoveEvent(QMouseEvent* e) {
   }
 
   updateLayout(x, y);
+}
+
+bool DockPanel::checkMouseEnter(int x, int y) {
+  if ((position_ == PanelPosition::Bottom &&
+      ((!autoHide() && y < itemSpacing_ + maxHeight_ - minHeight_) ||
+        (autoHide() && y < maxHeight_ - 2))) ||
+      (position_ == PanelPosition::Top &&
+       ((!autoHide() && y > minHeight_ - itemSpacing_) ||
+        (autoHide() && y > 2))) ||
+      (position_ == PanelPosition::Left &&
+       ((!autoHide() && x > minWidth_ - itemSpacing_) ||
+        (autoHide() && x > 2))) ||
+      (position_ == PanelPosition::Right &&
+       ((!autoHide() && x < itemSpacing_ + maxWidth_ - minWidth_) ||
+      (autoHide() && x < maxWidth_ - 2)))) {
+    return false;
+  }
+
+  if (isHorizontal() &&
+      (x < (maxWidth_ - minWidth_) / 2 || x > (maxWidth_ + minWidth_) / 2)) {
+    return false;
+  }
+  if (!isHorizontal() &&
+      (y < (maxHeight_ - minHeight_) / 2 || y > (maxHeight_ + minHeight_) / 2)) {
+    return false;
+  }
+
+  return true;
 }
 
 void DockPanel::mousePressEvent(QMouseEvent* e) {
@@ -581,17 +596,23 @@ void DockPanel::mousePressEvent(QMouseEvent* e) {
 
 void DockPanel::enterEvent (QEnterEvent* e) {
   if (autoHide()) {
-    enterTime_ = QDateTime::currentMSecsSinceEpoch();
-    QTimer::singleShot(model_->autoHideActivationDelay(), [this] {
-      if (enterTime_ > 0) {
-        isEntering_ = true;
-        updateLayout(lastMouseX_, lastMouseY_);
-      }
-    });
+    if (checkMouseEnter(e->position().x(), e->position().y())) {
+      startAutoHideActivationTimer();
+    }
     return;
   }
 
   isEntering_ = true;
+}
+
+void DockPanel::startAutoHideActivationTimer() {
+  enterTime_ = QDateTime::currentMSecsSinceEpoch();
+  QTimer::singleShot(model_->autoHideActivationDelay(), [this] {
+    if (enterTime_ > 0) {
+      isEntering_ = true;
+      updateLayout(lastMouseX_, lastMouseY_);
+    }
+  });
 }
 
 void DockPanel::leaveEvent(QEvent* e) {
