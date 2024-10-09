@@ -28,9 +28,7 @@ Separator::Separator(DockPanel* parent, MultiDockModel* model, Qt::Orientation o
                      int minSize, int maxSize)
     : IconlessDockItem(parent, model, "" /* label */, orientation, minSize, maxSize,
                        kWhRatio, /*reverseWhRatio=*/ true) {
-  if (parent_->isBottom() && parent_->is3D()) {
-    whRatio_ = 0.5;
-  }
+  whRatio_ = 0.5;
 }
 
 void Separator::draw(QPainter* painter) const {
@@ -58,7 +56,7 @@ void Separator::draw(QPainter* painter) const {
       painter->fillRect(x, y, w, h, model_->borderColor());
     }
   } else {
-    painter->fillRect(x, y, w, h, model_->backgroundColor2D().lighter());
+    painter->fillRect(x, y, w, h, model_->borderColor());
   }
 }
 
