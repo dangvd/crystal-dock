@@ -204,7 +204,7 @@ const ApplicationEntry* ApplicationMenuConfig::findApplication(const std::string
 }
 
 std::string ApplicationMenuConfig::tryMatchingApplicationId(const std::string& appId) const {
-  QString id = QString::fromStdString(appId).toLower();
+  QString id = QString::fromStdString(appId).toLower().simplified().replace(" ", "");
   std::string fixedAppId = id.toStdString();
   if (findApplication(fixedAppId) != nullptr) {
     return fixedAppId;
@@ -213,6 +213,14 @@ std::string ApplicationMenuConfig::tryMatchingApplicationId(const std::string& a
   // Special fix for Qt6 D-Bus Viewer.
   if (id == "qdbusviewer") {
     fixedAppId = "org.qt.qdbusviewer6";
+    if (findApplication(fixedAppId) != nullptr) {
+      return fixedAppId;
+    }
+  }
+
+  // Special fix for VirtualBox.
+  if (id == "virtualboxvm" || id == "virtualboxmachine" || id == "virtualboxmanager") {
+    fixedAppId = "virtualbox";
     if (findApplication(fixedAppId) != nullptr) {
       return fixedAppId;
     }
