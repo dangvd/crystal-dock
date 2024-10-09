@@ -56,7 +56,7 @@ void Separator::draw(QPainter* painter) const {
       painter->fillRect(x, y, w, h, model_->borderColor());
     }
   } else {
-    painter->fillRect(x, y, w, h, model_->borderColor());
+    painter->fillRect(x, y, w, h, model_->backgroundColor2D().lighter());
   }
 }
 
