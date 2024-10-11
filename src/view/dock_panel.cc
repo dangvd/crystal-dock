@@ -447,11 +447,7 @@ void DockPanel::paintEvent(QPaintEvent* e) {
       int x = item->left_ + item->getWidth() / 2 - tooltipWidth / 2;
       x = std::min(x, maxWidth_ - tooltipWidth);
       x = std::max(x, 0);
-      int y = isTop()
-          ? isFloating() ? maxHeight_ - itemSpacing_ + floatingMargin_
-                         : maxHeight_ - itemSpacing_
-          : isFloating() ? itemSpacing_ + tooltipSize_ / 2 - floatingMargin_
-                         : itemSpacing_ + tooltipSize_ / 2;
+      int y = isTop() ? maxHeight_ - tooltipSize_ / 2 : tooltipSize_ * 3 / 4;
       drawBorderedText(x, y, item->getLabel(), /*borderWidth*/ 2, Qt::black, Qt::white, &painter);
     } else {  // Vertical
       // Do not draw tooltip for Vertical positions for now because the total
@@ -1030,6 +1026,8 @@ void DockPanel::initLayoutVars() {
     minHeight_ = autoHide() ? kAutoHideSize : minSize_ + 2 * itemSpacing_;
     maxWidth_ = minWidth_ + delta;
     maxHeight_ = 2 * itemSpacing_ + maxSize_ + tooltipSize_;
+    if (isFloating()) maxHeight_ += floatingMargin_;
+    if (is3D() && isBottom()) maxHeight_ += k3DPanelThickness;
   } else {  // Vertical
     minHeight_ = itemSpacing_;
     for (const auto& item : items_) {
@@ -1038,6 +1036,7 @@ void DockPanel::initLayoutVars() {
     minWidth_ = autoHide() ? kAutoHideSize : minSize_ + 2 * itemSpacing_;
     maxHeight_ = minHeight_ + delta;
     maxWidth_ = 2 * itemSpacing_ + maxSize_ + tooltipSize_;
+    if (isFloating()) maxWidth_ += floatingMargin_;
   }
 
   resize(maxWidth_, maxHeight_);
@@ -1162,16 +1161,11 @@ void DockPanel::updateLayout(int x, int y) {
     if (isHorizontal()) {
       items_[i]->top_ = isTop()
           ? isFloating() ? itemSpacing_ + floatingMargin_ : itemSpacing_
-          : isFloating() ? itemSpacing_ + tooltipSize_ + maxSize_ - items_[i]->getHeight()
-                           - floatingMargin_
-                         : itemSpacing_ + tooltipSize_ + maxSize_ - items_[i]->getHeight();
-      if (is3D() && isBottom()) { items_[i]->top_ -= k3DPanelThickness; }
+          : itemSpacing_ + tooltipSize_ + maxSize_ - items_[i]->size_;
     } else {
       items_[i]->left_ = isLeft()
           ? isFloating() ? itemSpacing_ + floatingMargin_ : itemSpacing_
-          : isFloating() ? itemSpacing_ + tooltipSize_ + maxSize_ - items_[i]->getWidth()
-                           - floatingMargin_
-                         : itemSpacing_ + tooltipSize_ + maxSize_ - items_[i]->getWidth();
+          : itemSpacing_ + tooltipSize_ + maxSize_ - items_[i]->size_;
     }
     if (i > 0) {
       if (isHorizontal()) {

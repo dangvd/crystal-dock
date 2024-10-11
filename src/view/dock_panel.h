@@ -316,7 +316,7 @@ class DockPanel : public QWidget {
 
   // Non-config variables.
 
-  int tooltipSize_;  // height if horizontal, width if vertical.
+  int tooltipSize_;  // height (tooltip only shown in horizontal positions).
   int itemSpacing_;  // space between items.
   int margin3D_;
   int floatingMargin_;  // margin around the dock in floating mode.
