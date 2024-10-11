@@ -83,6 +83,8 @@ class Program : public QObject, public IconBasedDockItem {
     if (e->button() != Qt::LeftButton) { WindowSystem::resetActiveWindow(); }
   }
 
+  void setDemandsAttention(bool demandsAttention) override;
+
   int taskCount() const { return static_cast<int>(tasks_.size()); }
 
   bool active() const { return getActiveTask() >= 0; }
@@ -108,7 +110,6 @@ class Program : public QObject, public IconBasedDockItem {
  private:
   void createMenu();
 
-  void setDemandsAttention(bool value);
   void updateDemandsAttention();
 
   void updateMenu();

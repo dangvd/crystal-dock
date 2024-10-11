@@ -312,7 +312,9 @@ void Program::setDemandsAttention(bool value) {
     animationTimer_.start();
   } else if (animationTimer_.isActive()) {
     animationTimer_.stop();
+    attentionStrong_ = false;
   }
+  parent_->update();
 }
 
 void Program::updateDemandsAttention() {

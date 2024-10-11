@@ -170,7 +170,7 @@ ApplicationMenuConfig WindowSystem::applicationMenuConfig_;
 
 /* static */ void WindowSystem::resetActiveWindow() {
   activeUuid_ = "";
-  emit WindowSystem::self()->windowStateChanged("");
+  emit WindowSystem::self()->activeWindowChanged(activeUuid_);
 }
 
 /* static */ void WindowSystem::activateWindow(const std::string& uuid) {
@@ -497,6 +497,7 @@ void WindowSystem::initScreens() {
   }
   WindowInfo* info = windows_[window];
   if (info) {
+    const auto prevDemandsAttention = info->demandsAttention;
     info->skipTaskbar = flags & ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_SKIPTASKBAR;
     info->onAllDesktops = flags & ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_ON_ALL_DESKTOPS;
     info->demandsAttention = flags & ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_DEMANDS_ATTENTION;
@@ -504,10 +505,14 @@ void WindowSystem::initScreens() {
 
     if (info->minimized && activeUuid_ == info->uuid) {
       activeUuid_ = "";
+      emit self()->activeWindowChanged(activeUuid_);
     } else if (flags & ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_ACTIVE && activeUuid_ != info->uuid) {
       activeUuid_ = info->uuid;
+      emit self()->activeWindowChanged(activeUuid_);
     }
-    emit self()->windowStateChanged(info->uuid);
+    if (info->demandsAttention != prevDemandsAttention) {
+      emit self()->windowStateChanged(info);
+    }
   }
 }
 

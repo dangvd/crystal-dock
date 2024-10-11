@@ -190,6 +190,7 @@ class DockPanel : public QWidget {
   void onWindowLeftCurrentDesktop(std::string_view uuid);
   void onWindowLeftCurrentActivity(std::string_view uuid);
   void onWindowGeometryChanged(const WindowInfo* task);
+  void onWindowStateChanged(const WindowInfo* info);
 
   void minimize() { leaveEvent(nullptr); }
 

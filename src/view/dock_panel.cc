@@ -97,7 +97,9 @@ DockPanel::DockPanel(MultiDockView* parent, MultiDockModel* model, int dockId)
       this, SLOT(updatePager()));
   connect(WindowSystem::self(), SIGNAL(currentDesktopChanged(std::string_view)),
           this, SLOT(onCurrentDesktopChanged()));
-  connect(WindowSystem::self(), SIGNAL(windowStateChanged(std::string_view)),
+  connect(WindowSystem::self(), SIGNAL(windowStateChanged(const WindowInfo*)),
+          this, SLOT(onWindowStateChanged(const WindowInfo*)));
+  connect(WindowSystem::self(), SIGNAL(activeWindowChanged(std::string_view)),
           this, SLOT(update()));
   connect(WindowSystem::self(), SIGNAL(windowAdded(const WindowInfo*)),
           this, SLOT(onWindowAdded(const WindowInfo*)));
@@ -338,6 +340,20 @@ void DockPanel::onWindowGeometryChanged(const WindowInfo* task) {
       if (addTask(task)) {
         resizeTaskManager();
       }
+    }
+  }
+}
+
+
+void DockPanel::onWindowStateChanged(const WindowInfo *task) {
+  if (!showTaskManager()) {
+    return;
+  }
+
+  for (auto& item : items_) {
+    if (item->hasTask(task->uuid)) {
+      item->setDemandsAttention(task->demandsAttention);
+      return;
     }
   }
 }

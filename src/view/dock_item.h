@@ -90,6 +90,9 @@ class DockItem {
   virtual QString getLabel() const { return label_; }
   void setLabel(const QString& label) { label_ = label; }
 
+  // For a Program dock item.
+  virtual void setDemandsAttention(bool demandsAttention) {}
+
   bool isHorizontal() const { return orientation_ == Qt::Horizontal; }
 
   void setAnimationStartAsCurrent() {
