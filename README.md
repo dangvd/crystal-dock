@@ -71,5 +71,5 @@ $ sudo cmake --build build/ --target uninstall
 
 To execute the automated tests, run:
 ```
-$ cmake --build build/ --target test
+$ ctest --test-dir build/
 ```
