@@ -49,9 +49,11 @@ $ sudo zypper install qt6-base-devel wayland-devel layer-shell-qt6-devel
 ```
 
 To build and install, run:
+
 ```
-$ mkdir -p build && cd build
-$ cmake ../src && make && sudo make install
+$ cmake -S src/ -B build/ -DCMAKE_INSTALL_PREFIX=/usr
+$ cmake --build build/ --parallel
+$ sudo cmake --install build/
 ```
 
 After the installation, Crystal Dock can be launched from the Application list (Utilities category), or from the command line:
@@ -61,9 +63,10 @@ $ crystal-dock
 
 Note that on Wayland, Crystal Dock needs to be installed in order to be able to access necessary Wayland protocols on KDE Plasma 6.
 
-To uninstall, run:
+To uninstall, navigate to the cloned repository and run:
+
 ```
-$ sudo make uninstall
+$ sudo cmake --build build/ --target uninstall
 ```
 
 To execute the automated tests, run:
