@@ -1005,7 +1005,7 @@ void DockPanel::initClock() {
 void DockPanel::initLayoutVars() {
   const auto spacingMultiplier = isMetal2D() ? kSpacingMultiplierMetal2D : kSpacingMultiplier;
   itemSpacing_ = std::round(minSize_* spacingMultiplier * spacingFactor_);
-  margin3D_ = 2 * itemSpacing_;
+  margin3D_ = static_cast<int>(minSize_ * 0.6);
   floatingMargin_ = model_->floatingMargin();
   parabolicMaxX_ = std::round(2.5 * (minSize_ + itemSpacing_));
   numAnimationSteps_ = 20;
