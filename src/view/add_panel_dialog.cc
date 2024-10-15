@@ -110,8 +110,11 @@ void AddPanelDialog::accept() {
     model_->cloneDock(dockId_, position, screen);
   } else {
     if (mode_ == Mode::Welcome) {
-      model_->setPanelStyle(ui->style->currentText() == "Glass 3D" ? PanelStyle::Glass3D_Floating
-                                                                   : PanelStyle::Flat2D_Floating);
+      const auto& style = ui->style->currentText();
+      model_->setPanelStyle(
+          style == "Glass 3D" ? PanelStyle::Glass3D_Floating
+                              : style == "Flat 2D" ? PanelStyle::Flat2D_Floating
+                                                   : PanelStyle::Metal2D_NonFloating);
     }
     model_->addDock(
         position, screen, ui->showApplicationMenu->isChecked(),
