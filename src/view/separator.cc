@@ -55,8 +55,10 @@ void Separator::draw(QPainter* painter) const {
     } else {
       painter->fillRect(x, y, w, h, model_->borderColor());
     }
-  } else {
+  } else if (parent_->isFlat2D()) {
     painter->fillRect(x, y, w, h, model_->backgroundColor2D().lighter());
+  } else {  // Metal 2D.
+    painter->fillRect(x, y, w, h, model_->borderColor());
   }
 }
 

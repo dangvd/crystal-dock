@@ -56,8 +56,11 @@ class DockPanel : public QWidget {
  public:
   static constexpr int k3DPanelThickness = 4;
   static constexpr int kIndicatorSize3D = 10;
-  static constexpr int kIndicatorSize2D = 6;
+  static constexpr int kIndicatorSizeFlat2D = 6;
+  static constexpr int kIndicatorSizeMetal2D = 8;
   static constexpr int kIndicatorSpacing = 3;
+  static constexpr float kSpacingMultiplier = 0.6;  // for Glass 3D and Flat 2D.
+  static constexpr float kSpacingMultiplierMetal2D = 0.33;
 
   // No pointer ownership.
   DockPanel(MultiDockView* parent, MultiDockModel* model, int dockId);
@@ -79,6 +82,14 @@ class DockPanel : public QWidget {
 
   bool is3D() {
     return panelStyle_ == PanelStyle::Glass3D_Floating || panelStyle_ == PanelStyle::Glass3D_NonFloating;
+  }
+
+  bool isFlat2D() {
+    return panelStyle_ == PanelStyle::Flat2D_Floating || panelStyle_ == PanelStyle::Flat2D_NonFloating;
+  }
+
+  bool isMetal2D() {
+    return panelStyle_ == PanelStyle::Metal2D_Floating || panelStyle_ == PanelStyle::Metal2D_NonFloating;
   }
 
   // position of task indicators, y-coordinate if horizontal, x if vertical.
@@ -123,9 +134,8 @@ class DockPanel : public QWidget {
     model_->saveAppearanceConfig();
   }
 
-  void change3DStyle() {
-    panelStyle_ = static_cast<PanelStyle>(static_cast<int>(panelStyle_) ^ 2);
-    model_->setPanelStyle(panelStyle_);
+  void changePanelStyle(PanelStyle style) {
+    model_->setPanelStyle(style);
     model_->saveAppearanceConfig();
   }
 
@@ -211,7 +221,9 @@ class DockPanel : public QWidget {
   bool autoHide() { return visibility_ == PanelVisibility::AutoHide; }
 
   bool isFloating() {
-    return panelStyle_ == PanelStyle::Glass3D_Floating || panelStyle_ == PanelStyle::Flat2D_Floating;
+    return panelStyle_ == PanelStyle::Glass3D_Floating ||
+        panelStyle_ == PanelStyle::Flat2D_Floating ||
+        panelStyle_ == PanelStyle::Metal2D_Floating;
   }
 
   void setPosition(PanelPosition position);
@@ -286,7 +298,7 @@ class DockPanel : public QWidget {
 
   // Drawing logic for each dock style.
   void drawGlass3D(QPainter& painter);
-  void drawFlat2D(QPainter& painter);
+  void draw2D(QPainter& painter);  // for both Flat 2D and Metal 2D.
 
   // Returns the size given the distance to the mouse.
   int parabolic(int x);
@@ -354,6 +366,7 @@ class DockPanel : public QWidget {
   QAction* floatingStyleAction_;
   QAction* glass3DStyleAction_;
   QAction* flat2DStyleAction_;
+  QAction* metal2DStyleAction_;
   // Actions to set the dock on a specific screen.
   std::vector<QAction*> screenActions_;
 

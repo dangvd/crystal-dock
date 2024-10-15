@@ -73,21 +73,27 @@ void AppearanceSettingsDialog::loadData() {
   ui->maxSize->setValue(model_->maxIconSize());
   ui->spacingFactor->setValue(model_->spacingFactor());
   QColor backgroundColor = model_->is3D() ? model_->backgroundColor()
-                                          : model_->backgroundColor2D();
+                                          : model_->isFlat2D() ? model_->backgroundColor2D()
+                                                               : model_->backgroundColorMetal2D();
   backgroundColor_->setColor(QColor(backgroundColor.rgb()));
   ui->backgroundTransparency->setValue(alphaFToTransparencyPercent(backgroundColor.alphaF()));
   ui->showBorder->setChecked(model_->showBorder());
-  borderColor_->setColor(model_->borderColor());
-  borderColor_->setVisible(model_->is3D());
-  ui->borderColorLabel->setVisible(model_->is3D());
-  activeIndicatorColor_->setColor(model_->is3D() ? model_->activeIndicatorColor()
-                                                 : model_->activeIndicatorColor2D());
-  inactiveIndicatorColor_->setColor(model_->is3D() ? model_->inactiveIndicatorColor()
-                                                   : model_->inactiveIndicatorColor2D());
+  borderColor_->setColor(model_->is3D() ? model_->borderColor() : model_->borderColorMetal2D());
+  borderColor_->setVisible(model_->is3D() || model_->isMetal2D());
+  ui->borderColorLabel->setVisible(model_->is3D() || model_->isMetal2D());
+  activeIndicatorColor_->setColor(
+      model_->is3D() ? model_->activeIndicatorColor()
+                     : model_->isFlat2D() ? model_->activeIndicatorColor2D()
+                                          : model_->activeIndicatorColorMetal2D());
+  inactiveIndicatorColor_->setColor(
+      model_->is3D() ? model_->inactiveIndicatorColor()
+                     : model_->isFlat2D() ? model_->inactiveIndicatorColor2D()
+                                          : model_->inactiveIndicatorColorMetal2D());
   ui->tooltipFontSize->setValue(model_->tooltipFontSize());
   ui->floatingMargin->setValue(model_->floatingMargin());
   ui->floatingMargin->setEnabled(model_->panelStyle() == PanelStyle::Glass3D_Floating ||
-                                 model_->panelStyle() == PanelStyle::Flat2D_Floating);
+                                 model_->panelStyle() == PanelStyle::Flat2D_Floating ||
+                                 model_->panelStyle() == PanelStyle::Metal2D_Floating);
   ui->autoHideActivationDelay->setValue(model_->autoHideActivationDelay());
 }
 
@@ -95,15 +101,22 @@ void AppearanceSettingsDialog::resetData() {
   ui->minSize->setValue(kDefaultMinSize);
   ui->maxSize->setValue(kDefaultMaxSize);
   ui->spacingFactor->setValue(kDefaultSpacingFactor);
-  backgroundColor_->setColor(QColor(model_->is3D() ? kDefaultBackgroundColor
-                                                   : kDefaultBackgroundColor2D));
-  ui->backgroundTransparency->setValue(alphaFToTransparencyPercent(kDefaultBackgroundAlpha));
+  backgroundColor_->setColor(QColor(
+      model_->is3D() ? kDefaultBackgroundColor
+                     : model_->isFlat2D() ? kDefaultBackgroundColor2D
+                                          : kDefaultBackgroundColorMetal2D));
+  ui->backgroundTransparency->setValue(alphaFToTransparencyPercent(
+      model_->isMetal2D() ? kDefaultBackgroundAlphaMetal2D : kDefaultBackgroundAlpha));
   ui->showBorder->setChecked(kDefaultShowBorder);
-  borderColor_->setColor(QColor(kDefaultBorderColor));
-  activeIndicatorColor_->setColor(QColor(model_->is3D() ? kDefaultActiveIndicatorColor
-                                                        : kDefaultActiveIndicatorColor2D));
-  inactiveIndicatorColor_->setColor(QColor(model_->is3D() ? kDefaultInactiveIndicatorColor
-                                                          : kDefaultInactiveIndicatorColor2D));
+  borderColor_->setColor(QColor(model_->is3D() ? kDefaultBorderColor : kDefaultBorderColorMetal2D));
+  activeIndicatorColor_->setColor(QColor(
+      model_->is3D() ? kDefaultActiveIndicatorColor
+                     : model_->isFlat2D() ? kDefaultActiveIndicatorColor2D
+                                          : kDefaultActiveIndicatorColorMetal2D));
+  inactiveIndicatorColor_->setColor(QColor(
+      model_->is3D() ? kDefaultInactiveIndicatorColor
+                     : model_->isFlat2D() ? kDefaultInactiveIndicatorColor2D
+                                          : kDefaultInactiveIndicatorColorMetal2D));
   ui->tooltipFontSize->setValue(kDefaultTooltipFontSize);
   ui->floatingMargin->setValue(kDefaultFloatingMargin);
   ui->autoHideActivationDelay->setValue(kDefaultAutoHideActivationDelay);
@@ -117,20 +130,26 @@ void AppearanceSettingsDialog::saveData() {
   backgroundColor.setAlphaF(transparencyPercentToAlphaF(ui->backgroundTransparency->value()));
   if (model_->is3D()) {
     model_->setBackgroundColor(backgroundColor);
-  } else {
+  } else if (model_->isFlat2D()) {
     model_->setBackgroundColor2D(backgroundColor);
+  } else {
+    model_->setBackgroundColorMetal2D(backgroundColor);
   }
   model_->setShowBorder(ui->showBorder->isChecked());
   model_->setBorderColor(borderColor_->color());
   if (model_->is3D()) {
     model_->setActiveIndicatorColor(activeIndicatorColor_->color());
-  } else {
+  } else if (model_->isFlat2D()) {
     model_->setActiveIndicatorColor2D(activeIndicatorColor_->color());
+  } else {
+    model_->setActiveIndicatorColorMetal2D(activeIndicatorColor_->color());
   }
   if (model_->is3D()) {
     model_->setInactiveIndicatorColor(inactiveIndicatorColor_->color());
-  } else {
+  } else if (model_->isFlat2D()) {
     model_->setInactiveIndicatorColor2D(inactiveIndicatorColor_->color());
+  } else {
+    model_->setInactiveIndicatorColorMetal2D(inactiveIndicatorColor_->color());
   }
   model_->setTooltipFontSize(ui->tooltipFontSize->value());
   model_->setFloatingMargin(ui->floatingMargin->value());

@@ -371,7 +371,8 @@ int DockPanel::taskIndicatorPos() {
       if (isTop()) {
         y = itemSpacing_ / 3;
       } else {  // bottom
-        y = maxHeight_ - itemSpacing_ / 3 - kIndicatorSize2D;
+        const auto size = isFlat2D() ? kIndicatorSizeFlat2D : kIndicatorSizeMetal2D / 2;
+        y = maxHeight_ - itemSpacing_ / 3 - size;
       }
     }
 
@@ -396,7 +397,8 @@ int DockPanel::taskIndicatorPos() {
       if (isLeft()) {
         x = itemSpacing_ / 3;
       } else {  // right
-        x = maxWidth_ - itemSpacing_ / 3 - kIndicatorSize2D;
+        const auto size = isFlat2D() ? kIndicatorSizeFlat2D : kIndicatorSizeMetal2D / 2;
+        x = maxWidth_ - itemSpacing_ / 3 - size;
       }
     }
 
@@ -430,7 +432,7 @@ void DockPanel::paintEvent(QPaintEvent* e) {
   if (is3D()) {
     drawGlass3D(painter);
   } else {
-    drawFlat2D(painter);
+    draw2D(painter);
   }
 
   // Draw tooltip.
@@ -508,22 +510,28 @@ void DockPanel::drawGlass3D(QPainter& painter) {
   }
 }
 
-void DockPanel::drawFlat2D(QPainter& painter) {
+void DockPanel::draw2D(QPainter& painter) {
+  const QColor bgColor = isFlat2D() ? model_->backgroundColor2D() : model_->backgroundColorMetal2D();
   if (isHorizontal()) {
-    int y = isTop()
+    const int y = isTop()
         ? isFloating() ? floatingMargin_ : 0
         : isFloating() ? maxHeight_ - backgroundHeight_ - floatingMargin_
                        : maxHeight_ - backgroundHeight_;
+    const int r = isFlat2D() ? backgroundHeight_ / 4 : 0;
+    const auto showBorder = isMetal2D();
     fillRoundedRect(
         (maxWidth_ - backgroundWidth_) / 2, y, backgroundWidth_ - 1, backgroundHeight_ - 1,
-         backgroundHeight_ / 4, /*showBorder=*/false, QColor(), model_->backgroundColor2D(), &painter);
+         r, showBorder, model_->borderColorMetal2D(), bgColor, &painter);
   } else {  // Vertical
     const int x =  isLeft()
         ? isFloating() ? floatingMargin_ : 0
         : isFloating() ? maxWidth_ - backgroundWidth_ - floatingMargin_
                        : maxWidth_ - backgroundWidth_;
-    fillRoundedRect(x, (maxHeight_ - backgroundHeight_) / 2, backgroundWidth_ - 1, backgroundHeight_ - 1,
-                    backgroundWidth_ / 4, /*showBorder=*/false, QColor(), model_->backgroundColor2D(), &painter);
+    const int r = isFlat2D() ? backgroundWidth_ / 4 : 0;
+    const auto showBorder = isMetal2D();
+    fillRoundedRect(
+          x, (maxHeight_ - backgroundHeight_) / 2, backgroundWidth_ - 1, backgroundHeight_ - 1,
+          r, showBorder, model_->borderColorMetal2D(), bgColor, &painter);
   }
 
   // Draw the items from the end to avoid zoomed items getting clipped by
@@ -682,15 +690,24 @@ void DockPanel::createMenu() {
   glass3DStyleAction_ = menu_.addAction(
       QString("Style: Glass 3D"), this,
       [this] {
-        change3DStyle();
+        changePanelStyle(isFloating() ? PanelStyle::Glass3D_Floating
+                                      : PanelStyle::Glass3D_NonFloating);
       });
   glass3DStyleAction_->setCheckable(true);
   flat2DStyleAction_ = menu_.addAction(
       QString("Style: Flat 2D"), this,
       [this] {
-        change3DStyle();
+      changePanelStyle(isFloating() ? PanelStyle::Flat2D_Floating
+                                    : PanelStyle::Flat2D_NonFloating);
       });
   flat2DStyleAction_->setCheckable(true);
+  metal2DStyleAction_ = menu_.addAction(
+      QString("Style: Metal 2D"), this,
+      [this] {
+      changePanelStyle(isFloating() ? PanelStyle::Metal2D_Floating
+                                    : PanelStyle::Metal2D_NonFloating);
+      });
+  metal2DStyleAction_->setCheckable(true);
 
   menu_.addAction(QIcon::fromTheme("help-contents"),
                   QString("Online &Documentation"),
@@ -784,7 +801,8 @@ void DockPanel::setPanelStyle(PanelStyle panelStyle) {
   panelStyle_ = panelStyle;
   floatingStyleAction_->setChecked(isFloating());
   glass3DStyleAction_->setChecked(is3D());
-  flat2DStyleAction_->setChecked(!is3D());
+  flat2DStyleAction_->setChecked(isFlat2D());
+  metal2DStyleAction_->setChecked(isMetal2D());
 }
 
 void DockPanel::loadDockConfig() {
@@ -985,7 +1003,8 @@ void DockPanel::initClock() {
 }
 
 void DockPanel::initLayoutVars() {
-  itemSpacing_ = std::round(minSize_ / 1.7 * spacingFactor_);
+  const auto spacingMultiplier = isMetal2D() ? kSpacingMultiplierMetal2D : kSpacingMultiplier;
+  itemSpacing_ = std::round(minSize_* spacingMultiplier * spacingFactor_);
   margin3D_ = 2 * itemSpacing_;
   floatingMargin_ = model_->floatingMargin();
   parabolicMaxX_ = std::round(2.5 * (minSize_ + itemSpacing_));

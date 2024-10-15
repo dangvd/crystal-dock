@@ -40,11 +40,15 @@ constexpr char MultiDockModel::kPanelStyle[];
 
 constexpr char MultiDockModel::kBackgroundColor[];
 constexpr char MultiDockModel::kBackgroundColor2D[];
+constexpr char MultiDockModel::kBackgroundColorMetal2D[];
 constexpr char MultiDockModel::kBorderColor[];
+constexpr char MultiDockModel::kBorderColorMetal2D[];
 constexpr char MultiDockModel::kActiveIndicatorColor[];
 constexpr char MultiDockModel::kActiveIndicatorColor2D[];
+constexpr char MultiDockModel::kActiveIndicatorColorMetal2D[];
 constexpr char MultiDockModel::kInactiveIndicatorColor[];
 constexpr char MultiDockModel::kInactiveIndicatorColor2D[];
+constexpr char MultiDockModel::kInactiveIndicatorColorMetal2D[];
 constexpr char MultiDockModel::kMaximumIconSize[];
 constexpr char MultiDockModel::kMinimumIconSize[];
 constexpr char MultiDockModel::kSpacingFactor[];

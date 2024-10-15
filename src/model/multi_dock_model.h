@@ -43,21 +43,27 @@ enum class PanelVisibility { AlwaysVisible, AutoHide, AlwaysOnTop };
 
 // Glass 3D style only makes the bottom dock really 3D. For left/right/top docks, they will look
 // more like "Glass 2D" for aesthetic reasons.
-enum class PanelStyle { Glass3D_Floating, Glass3D_NonFloating, Flat2D_Floating, Flat2D_NonFloating };
+enum class PanelStyle { Glass3D_Floating, Glass3D_NonFloating, Flat2D_Floating, Flat2D_NonFloating,
+                        Metal2D_Floating, Metal2D_NonFloating };
 
 constexpr int kDefaultMinSize = 48;
 constexpr int kDefaultMaxSize = 128;
 constexpr float kDefaultSpacingFactor = 0.5;
 constexpr int kDefaultTooltipFontSize = 24;
 constexpr float kDefaultBackgroundAlpha = 0.42;
+constexpr float kDefaultBackgroundAlphaMetal2D = 0.68;
 constexpr char kDefaultBackgroundColor[] = "#638abd";
 constexpr char kDefaultBackgroundColor2D[] = "#86baff";
+constexpr char kDefaultBackgroundColorMetal2D[] = "#7381a6";
 constexpr bool kDefaultShowBorder = true;
 constexpr char kDefaultBorderColor[] = "#b1c4de";
+constexpr char kDefaultBorderColorMetal2D[] = "#99addd";
 constexpr char kDefaultActiveIndicatorColor[] = "darkorange";
 constexpr char kDefaultActiveIndicatorColor2D[] = "#ffbf00";
+constexpr char kDefaultActiveIndicatorColorMetal2D[] = "#ffbf00";
 constexpr char kDefaultInactiveIndicatorColor[] = "darkcyan";
 constexpr char kDefaultInactiveIndicatorColor2D[] = "cyan";
+constexpr char kDefaultInactiveIndicatorColorMetal2D[] = "cyan";
 constexpr int kDefaultFloatingMargin = 6;
 constexpr int kDefaultAutoHideActivationDelay = 750;  // miliseconds
 
@@ -172,6 +178,17 @@ class MultiDockModel : public QObject {
     setAppearanceProperty(kGeneralCategory, kBackgroundColor2D, value.name(QColor::HexArgb));
   }
 
+  QColor backgroundColorMetal2D() const {
+    QColor defaultBackgroundColorMetal2D(kDefaultBackgroundColorMetal2D);
+    defaultBackgroundColorMetal2D.setAlphaF(kDefaultBackgroundAlphaMetal2D);
+    return QColor(appearanceProperty(kGeneralCategory, kBackgroundColorMetal2D,
+                                     defaultBackgroundColorMetal2D.name(QColor::HexArgb)));
+  }
+
+  void setBackgroundColorMetal2D(const QColor& value) {
+    setAppearanceProperty(kGeneralCategory, kBackgroundColorMetal2D, value.name(QColor::HexArgb));
+  }
+
   bool showBorder() const {
     return appearanceProperty(kGeneralCategory, kShowBorder,
                               kDefaultShowBorder);
@@ -188,6 +205,15 @@ class MultiDockModel : public QObject {
 
   void setBorderColor(const QColor& value) {
     setAppearanceProperty(kGeneralCategory, kBorderColor, value.name(QColor::HexRgb));
+  }
+
+  QColor borderColorMetal2D() const {
+    return QColor(appearanceProperty(kGeneralCategory, kBorderColorMetal2D,
+                                     QString(kDefaultBorderColorMetal2D)));
+  }
+
+  void setBorderColorMetal2D(const QColor& value) {
+    setAppearanceProperty(kGeneralCategory, kBorderColorMetal2D, value.name(QColor::HexRgb));
   }
 
   QColor activeIndicatorColor() const {
@@ -208,6 +234,15 @@ class MultiDockModel : public QObject {
     setAppearanceProperty(kGeneralCategory, kActiveIndicatorColor2D, value.name(QColor::HexRgb));
   }
 
+  QColor activeIndicatorColorMetal2D() const {
+    return QColor(appearanceProperty(kGeneralCategory, kActiveIndicatorColorMetal2D,
+                                     QString(kDefaultActiveIndicatorColorMetal2D)));
+  }
+
+  void setActiveIndicatorColorMetal2D(const QColor& value) {
+    setAppearanceProperty(kGeneralCategory, kActiveIndicatorColorMetal2D, value.name(QColor::HexRgb));
+  }
+
   QColor inactiveIndicatorColor() const {
     return QColor(appearanceProperty(kGeneralCategory, kInactiveIndicatorColor,
                                      QString(kDefaultInactiveIndicatorColor)));
@@ -224,6 +259,16 @@ class MultiDockModel : public QObject {
 
   void setInactiveIndicatorColor2D(const QColor& value) {
     setAppearanceProperty(kGeneralCategory, kInactiveIndicatorColor2D, value.name(QColor::HexRgb));
+  }
+
+  QColor inactiveIndicatorColorMetal2D() const {
+    return QColor(appearanceProperty(kGeneralCategory, kInactiveIndicatorColorMetal2D,
+                                     QString(kDefaultInactiveIndicatorColorMetal2D)));
+  }
+
+  void setInactiveIndicatorColorMetal2D(const QColor& value) {
+    setAppearanceProperty(kGeneralCategory, kInactiveIndicatorColorMetal2D,
+                          value.name(QColor::HexRgb));
   }
 
   int tooltipFontSize() const {
@@ -248,6 +293,16 @@ class MultiDockModel : public QObject {
   bool is3D() {
     return panelStyle() == PanelStyle::Glass3D_Floating ||
         panelStyle() == PanelStyle::Glass3D_NonFloating;
+  }
+
+  bool isFlat2D() {
+    return panelStyle() == PanelStyle::Flat2D_Floating ||
+        panelStyle() == PanelStyle::Flat2D_NonFloating;
+  }
+
+  bool isMetal2D() {
+    return panelStyle() == PanelStyle::Metal2D_Floating ||
+        panelStyle() == PanelStyle::Metal2D_NonFloating;
   }
 
   int floatingMargin() const {
@@ -570,11 +625,15 @@ class MultiDockModel : public QObject {
   // General category.
   static constexpr char kBackgroundColor[] = "backgroundColor";
   static constexpr char kBackgroundColor2D[] = "backgroundColor2D";
+  static constexpr char kBackgroundColorMetal2D[] = "backgroundColorMetal2D";
   static constexpr char kBorderColor[] = "borderColor";
+  static constexpr char kBorderColorMetal2D[] = "borderColorMetal2D";
   static constexpr char kActiveIndicatorColor[] = "activeIndicatorColor";
   static constexpr char kActiveIndicatorColor2D[] = "activeIndicatorColor2D";
+  static constexpr char kActiveIndicatorColorMetal2D[] = "activeIndicatorColorMetal2D";
   static constexpr char kInactiveIndicatorColor[] = "inactiveIndicatorColor";
   static constexpr char kInactiveIndicatorColor2D[] = "inactiveIndicatorColor2D";
+  static constexpr char kInactiveIndicatorColorMetal2D[] = "inactiveIndicatorColorMetal2D";
   static constexpr char kMaximumIconSize[] = "maximumIconSize";
   static constexpr char kMinimumIconSize[] = "minimumIconSize";
   static constexpr char kSpacingFactor[] = "spacingFactor";

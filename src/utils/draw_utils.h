@@ -146,6 +146,51 @@ inline void drawIndicator(Qt::Orientation orientation, int hx, int hy, int vx, i
   }
 }
 
+inline void drawIndicatorFlat2D(Qt::Orientation orientation, int hx, int hy, int vx, int vy,
+                                int size, QColor baseColor, QPainter* painter) {
+  if (orientation == Qt::Horizontal) {
+    fillCircle(hx - size / 2, hy, size, size, baseColor, painter);
+  } else {
+    fillCircle(vx, vy - size / 2, size, size, baseColor, painter);
+  }
+}
+
+inline void drawIndicatorMetal2D(PanelPosition panelPosition, int hx, int hy, int vx, int vy,
+                                 int size, QColor baseColor, QPainter* painter) {
+  painter->setPen(baseColor);
+  painter->setBrush(baseColor);
+  if (panelPosition == PanelPosition::Top) {
+    QPoint points[3] = {
+      QPoint(hx, hy + size / 2),
+      QPoint(hx - size / 2, hy),
+      QPoint(hx + size / 2, hy)
+    };
+    painter->drawPolygon(points, 3);
+  } else if (panelPosition == PanelPosition::Bottom) {
+    QPoint points[3] = {
+      QPoint(hx, hy),
+      QPoint(hx - size / 2, hy + size / 2),
+      QPoint(hx + size / 2, hy + size / 2)
+    };
+    painter->drawPolygon(points, 3);
+  } else if (panelPosition == PanelPosition::Left) {
+    QPoint points[3] = {
+      QPoint(vx + size / 2, vy),
+      QPoint(vx, vy - size / 2),
+      QPoint(vx, vy + size / 2)
+    };
+    painter->drawPolygon(points, 3);
+  } else if (panelPosition == PanelPosition::Right) {
+    QPoint points[3] = {
+      QPoint(vx, vy),
+      QPoint(vx + size / 2, vy - size / 2),
+      QPoint(vx + size / 2, vy + size / 2)
+    };
+    painter->drawPolygon(points, 3);
+  }
+  painter->setBrush(Qt::transparent);
+}
+
 inline void drawFallbackIcon(int left, int top, int size,
                              QColor borderColor, QColor fillColor, QPainter* painter) {
   painter->setRenderHint(QPainter::Antialiasing);

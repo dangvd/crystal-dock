@@ -89,14 +89,18 @@ void ApplicationMenu::draw(QPainter* painter) const {
       drawIndicator(orientation_, x, parent_->taskIndicatorPos(),
                     parent_->taskIndicatorPos(), y,
                     size, DockPanel::k3DPanelThickness, baseColor, painter);
-    } else {
+    } else if (parent_->isFlat2D()) {
       const auto baseColor = model_->activeIndicatorColor2D();
-      const auto size = DockPanel::kIndicatorSize2D;
-      if (isHorizontal()) {
-        fillCircle(x - size / 2, parent_->taskIndicatorPos(), size, size, baseColor, painter);
-      } else {
-        fillCircle(parent_->taskIndicatorPos(), y - size / 2, size, size, baseColor, painter);
-      }
+      const auto size = DockPanel::kIndicatorSizeFlat2D;
+      drawIndicatorFlat2D(orientation_, x, parent_->taskIndicatorPos(),
+                          parent_->taskIndicatorPos(), y,
+                          size, baseColor, painter);
+    } else {  // Metal 2D.
+      const auto baseColor = model_->activeIndicatorColorMetal2D();
+      const auto size = DockPanel::kIndicatorSizeMetal2D;
+      drawIndicatorMetal2D(parent_->position(), x, parent_->taskIndicatorPos(),
+                           parent_->taskIndicatorPos(), y,
+                           size, baseColor, painter);
     }
   }
   IconBasedDockItem::draw(painter);
