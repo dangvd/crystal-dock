@@ -63,6 +63,8 @@ class ApplicationMenuConfigTest: public QObject {
         desktopFile.setOnlyShowIn(QString::fromStdString(entry.second));
       } else if (entry.first == "NotShowIn") {
         desktopFile.setNotShowIn(QString::fromStdString(entry.second));
+      } else if (entry.first == "StartupWMClass") {
+        desktopFile.setWMClass(QString::fromStdString(entry.second));
       }
     }
     desktopFile.write(filename);
@@ -167,32 +169,28 @@ void ApplicationMenuConfigTest::tryMatchingApplicationId() {
   writeEntry(entryDir.path() + "/gimp.desktop",
              {"gimp", "GIMP", "Image Editor",
               "gimp", "GIMP", ""},
-             "Graphics");
-  writeEntry(entryDir.path() + "/code-insiders.desktop",
-             {"code-insiders", "Code Insiders", "Code Editor",
-              "code-insiders", "Code Insiders", ""},
+             "Graphics",
+             {{"StartupWMClass", "gimp-2.10"}});
+  writeEntry(entryDir.path() + "/org.qt.qdbusviewer6.desktop",
+             {"org.qt.qdbusviewer6", "Qt 6 D-Bus Viewer", "D-Bus Debugger",
+              "qdbusviewer6", "Qt 6 D-Bus Viewer", ""},
              "Development");
-  writeEntry(entryDir.path() + "/com.seventhstring.transcribe.desktop",
-             {"com.seventhstring.transcribe", "Transcribe!", "Lyrics Transcriber",
-              "com.seventhstring.transcribe", "Transcribe!", ""},
-             "AudioVideo");
-  writeEntry(entryDir.path() + "/dbeaver-ee.desktop",
-             {"dbeaver-ee", "DBeaver Enterprise", "Database Management",
-              "dbeaver-ee", "DBeaver Enterprise", ""},
-             "Office");
+  writeEntry(entryDir.path() + "/virtualbox.desktop",
+             {"virtualbox", "Virtual Box", "Virtualization",
+              "virtualbox", "Virtual Box", ""},
+             "Utility");
 
   ApplicationMenuConfig config({ entryDir.path() });
 
-  QCOMPARE(config.entries_.size(), 8);
+  QCOMPARE(config.entries_.size(), 7);
 
   QCOMPARE(config.tryMatchingApplicationId("firefox"), "firefox");
   QCOMPARE(config.tryMatchingApplicationId("org.kde.konsole"), "org.kde.konsole");
   QCOMPARE(config.tryMatchingApplicationId("Google-chrome"), "google-chrome");
-  QCOMPARE(config.tryMatchingApplicationId("krita"), "org.kde.krita");
-  QCOMPARE(config.tryMatchingApplicationId("Gimp-2.10"), "gimp");
-  QCOMPARE(config.tryMatchingApplicationId("Code - Insiders"), "code-insiders");
-  QCOMPARE(config.tryMatchingApplicationId("Transcribe!"), "com.seventhstring.transcribe");
-  QCOMPARE(config.tryMatchingApplicationId("dbeaverenterprise"), "dbeaver-ee");
+  QCOMPARE(config.tryMatchingApplicationId("krita"), "krita");
+  QCOMPARE(config.tryMatchingApplicationId("Gimp-2.10"), "gimp-2.10");
+  QCOMPARE(config.tryMatchingApplicationId("qdbusviewer"), "org.qt.qdbusviewer6");
+  QCOMPARE(config.tryMatchingApplicationId("virtualboxvm"), "virtualbox");
 }
 
 }  // namespace crystaldock
