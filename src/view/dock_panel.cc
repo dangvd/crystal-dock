@@ -211,10 +211,6 @@ void DockPanel::updateAnimation() {
   repaint();
 }
 
-void DockPanel::resetCursor() {
-  setCursor(QCursor(Qt::ArrowCursor));
-}
-
 void DockPanel::showOnlineDocumentation() {
   Program::launch(
       "xdg-open https://github.com/dangvd/crystal-dock/wiki/Documentation");
@@ -1376,11 +1372,6 @@ void DockPanel::updateActiveItem(int x, int y) {
     ++i;
   }
   activeItem_ = i - 1;
-}
-
-void DockPanel::showWaitCursor() {
-  setCursor(QCursor(Qt::WaitCursor));
-  QTimer::singleShot(1000 /* msecs */, this, SLOT(resetCursor()));
 }
 
 int DockPanel::parabolic(int x) {

@@ -108,6 +108,8 @@ class Program : public QObject, public IconBasedDockItem {
   void closeAllWindows();
 
  private:
+  static constexpr int kLaunchingAcknowledgementDurationMs = 3000;  // 3 seconds.
+
   void createMenu();
 
   void updateDemandsAttention();
@@ -130,6 +132,9 @@ class Program : public QObject, public IconBasedDockItem {
   bool demandsAttention_;
   QTimer animationTimer_;
   bool attentionStrong_;
+
+  // For launching acknowledgement.
+  bool launching_;
 
   friend class DockPanel;
 };

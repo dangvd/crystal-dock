@@ -45,7 +45,8 @@ Program::Program(DockPanel* parent, MultiDockModel* model, const QString& appId,
       isAppMenuEntry_(isAppMenuEntry),
       pinned_(pinned),
       demandsAttention_(false),
-      attentionStrong_(false) {
+      attentionStrong_(false),
+      launching_(false) {
   init();
 }
 
@@ -58,7 +59,8 @@ Program::Program(DockPanel* parent, MultiDockModel* model, const QString& appId,
       isAppMenuEntry_(false),
       pinned_(false),
       demandsAttention_(false),
-      attentionStrong_(false) {
+      attentionStrong_(false),
+      launching_(false) {
   init();
 }
 
@@ -71,7 +73,8 @@ Program::Program(DockPanel* parent, MultiDockModel* model, const QString& appId,
       isAppMenuEntry_(false),
       pinned_(false),
       demandsAttention_(false),
-      attentionStrong_(false) {
+      attentionStrong_(false),
+      launching_(false) {
   init();
 }
 
@@ -87,8 +90,9 @@ void Program::init() {
 
 void Program::draw(QPainter *painter) const {
   painter->setRenderHint(QPainter::Antialiasing);
-  if (parent_->showTaskManager() && !tasks_.empty()) {  // Show task count indicator.
-    auto taskCount = static_cast<int>(tasks_.size());
+  auto taskCount = static_cast<int>(tasks_.size());
+  if (taskCount == 0 && launching_) { taskCount = 1; }
+  if (parent_->showTaskManager() && taskCount > 0) {  // Show task count indicator.
     static constexpr int kMaxVisibleTaskCount = 4;
     if (taskCount > kMaxVisibleTaskCount) { taskCount = kMaxVisibleTaskCount; }
     auto activeTask = getActiveTask();
@@ -103,20 +107,21 @@ void Program::draw(QPainter *painter) const {
     auto x = left_ + (getWidth() - totalSize) / 2 + size / 2;
     auto y = top_ + (getHeight() - totalSize) / 2 + size / 2;
     for (int i = 0; i < taskCount; ++i) {
+      bool useActiveColor = (i == activeTask) || attentionStrong_ || launching_;
       if (parent_->is3D()) {
-        const auto baseColor = (i == activeTask) || attentionStrong_
+        const auto baseColor = useActiveColor
             ? model_->activeIndicatorColor() : model_->inactiveIndicatorColor();
         drawIndicator(orientation_, x, parent_->taskIndicatorPos(),
                       parent_->taskIndicatorPos(), y,
                       size, DockPanel::k3DPanelThickness, baseColor, painter);
       } else if (parent_->isFlat2D()) {
-        const auto baseColor = (i == activeTask) || attentionStrong_
+        const auto baseColor = useActiveColor
             ? model_->activeIndicatorColor2D() : model_->inactiveIndicatorColor2D();
         drawIndicatorFlat2D(orientation_, x, parent_->taskIndicatorPos(),
                             parent_->taskIndicatorPos(), y,
                             size, baseColor, painter);
       } else {  // Metal 2D.
-          const auto baseColor = (i == activeTask) || attentionStrong_
+          const auto baseColor = useActiveColor
               ? model_->activeIndicatorColorMetal2D() : model_->inactiveIndicatorColorMetal2D();
           drawIndicatorMetal2D(parent_->position(), x, parent_->taskIndicatorPos(),
                                parent_->taskIndicatorPos(), y,
@@ -229,8 +234,13 @@ bool Program::beforeTask(const QString& program) {
 }
 
 void Program::launch() {
+  launching_ = true;
+  parent_->update();
   launch(command_);
-  parent_->showWaitCursor();
+  QTimer::singleShot(kLaunchingAcknowledgementDurationMs,
+                     [this] {
+                       launching_ = false; parent_->update();
+                     });
 }
 
 void Program::pinUnpin() {
