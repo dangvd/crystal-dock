@@ -34,7 +34,9 @@ inline void drawBorderedText(int x, int y, const QString& text, int borderWidth,
   painter->setPen(borderColor);
   for (int i = -borderWidth; i <= borderWidth; ++i) {
     for (int j = -borderWidth; j <= borderWidth; ++j) {
-      painter->drawText(x + i, y + j, text);
+      if (i != 0 || j != 0) {
+        painter->drawText(x + i, y + j, text);
+      }
     }
   }
 

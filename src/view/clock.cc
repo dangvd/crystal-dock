@@ -61,7 +61,7 @@ void Clock::draw(QPainter *painter) const {
 
   if (size_ > minSize_) {
     drawBorderedText(left_, top_, getWidth(), getHeight(), Qt::AlignCenter,
-                     time, 2 /* borderWidth */, Qt::black, Qt::white, painter);
+                     time, 1 /* borderWidth */, Qt::black, Qt::white, painter);
   } else {
     painter->setPen(Qt::white);
     painter->drawText(left_, top_, getWidth(), getHeight(), Qt::AlignCenter,
