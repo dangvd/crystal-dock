@@ -30,10 +30,11 @@ namespace crystaldock {
 
 inline void drawBorderedText(int x, int y, const QString& text, int borderWidth,
                              QColor borderColor, QColor textColor,
-                             QPainter* painter) {
+                             QPainter* painter, bool simplified = false) {
   painter->setPen(borderColor);
-  for (int i = -borderWidth; i <= borderWidth; ++i) {
-    for (int j = -borderWidth; j <= borderWidth; ++j) {
+  const int delta = simplified ? 2 * borderWidth : 1;
+  for (int i = -borderWidth; i <= borderWidth; i += delta) {
+    for (int j = -borderWidth; j <= borderWidth; j += delta) {
       if (i != 0 || j != 0) {
         painter->drawText(x + i, y + j, text);
       }
@@ -47,11 +48,14 @@ inline void drawBorderedText(int x, int y, const QString& text, int borderWidth,
 inline void drawBorderedText(int x, int y, int width, int height, int flags,
                              const QString& text, int borderWidth,
                              QColor borderColor, QColor textColor,
-                             QPainter* painter) {
+                             QPainter* painter, bool simplified = false) {
   painter->setPen(borderColor);
-  for (int i = -borderWidth; i <= borderWidth; ++i) {
-    for (int j = -borderWidth; j <= borderWidth; ++j) {
-      painter->drawText(x + i, y + j, width, height, flags, text);
+  const int delta = simplified ? 2 * borderWidth : 1;
+  for (int i = -borderWidth; i <= borderWidth; i += delta) {
+    for (int j = -borderWidth; j <= borderWidth; j += delta) {
+      if (i != 0 || j != 0) {
+        painter->drawText(x + i, y + j, width, height, flags, text);
+      }
     }
   }
 
