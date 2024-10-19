@@ -59,7 +59,7 @@ void Clock::draw(QPainter *painter) const {
                                   model_->clockFontFamily()));
   painter->setRenderHint(QPainter::TextAntialiasing);
 
-  if (size_ > minSize_ || (parent_->is3D() && parent_->isBottom())) {
+  if (size_ > minSize_) {
     drawBorderedText(left_, top_, getWidth(), getHeight(), Qt::AlignCenter,
                      time, 1 /* borderWidth */, Qt::black, Qt::white, painter);
   } else {
