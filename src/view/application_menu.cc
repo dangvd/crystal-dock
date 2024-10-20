@@ -108,14 +108,14 @@ void ApplicationMenu::mousePressEvent(QMouseEvent *e) {
 
     resetSearchMenu();
     parent_->minimize();
-    QTimer::singleShot(500, [this]{
+    QTimer::singleShot(DockPanel::kMenuPopupDelayMs, [this]{
       const int x = parent_->isBottom() && parent_->is3D()
           ? left_ : left_ - parent_->itemSpacing();
       menu_.exec(parent_->mapToGlobal(QPoint(x, top_)));
     });
   } else if (e->button() == Qt::RightButton) {
     parent_->minimize();
-    QTimer::singleShot(500, [this]{
+    QTimer::singleShot(DockPanel::kMenuPopupDelayMs, [this]{
       contextMenu_.exec(parent_->mapToGlobal(QPoint(left_, top_)));
     });
   }

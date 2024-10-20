@@ -54,6 +54,7 @@ class DockPanel : public QWidget {
   Q_OBJECT
 
  public:
+  static constexpr int kMenuPopupDelayMs = 300;
   static constexpr int k3DPanelThickness = 4;
   static constexpr int kIndicatorSize3D = 10;
   static constexpr int kIndicatorSizeFlat2D = 6;
