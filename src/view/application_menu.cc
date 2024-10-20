@@ -63,12 +63,6 @@ ApplicationMenu::ApplicationMenu(
 
   createContextMenu();
 
-  connect(&menu_, &QMenu::aboutToShow, this,
-          [this]() {
-            resetSearchMenu();
-            showingMenu_ = true;
-            parent_->update();
-          });
   connect(&menu_, &QMenu::aboutToHide, this,
           [this]() {
             showingMenu_ = false;
@@ -108,6 +102,11 @@ void ApplicationMenu::draw(QPainter* painter) const {
 
 void ApplicationMenu::mousePressEvent(QMouseEvent *e) {
   if (e->button() == Qt::LeftButton) {
+    // Acknowledge.
+    showingMenu_ = true;
+    parent_->update();
+
+    resetSearchMenu();
     parent_->minimize();
     QTimer::singleShot(500, [this]{
       const int x = parent_->isBottom() && parent_->is3D()
