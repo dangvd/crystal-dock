@@ -573,16 +573,16 @@ void DockPanel::mouseMoveEvent(QMouseEvent* e) {
 
 bool DockPanel::checkMouseEnter(int x, int y) {
   if ((position_ == PanelPosition::Bottom &&
-      ((!autoHide() && y < tooltipSize_ + maxSize_ - minSize_ + itemSpacing_) ||
+      ((!autoHide() && y < tooltipSize_ + maxSize_ - minSize_) ||
         (autoHide() && y < maxHeight_ - 2))) ||
       (position_ == PanelPosition::Top &&
-       ((!autoHide() && y > maxHeight_ - tooltipSize_ - maxSize_ + minSize_ - itemSpacing_) ||
+       ((!autoHide() && y > maxHeight_ - tooltipSize_ - maxSize_ + minSize_) ||
         (autoHide() && y > 2))) ||
       (position_ == PanelPosition::Left &&
-       ((!autoHide() && x > maxWidth_ - tooltipSize_ - maxSize_ + minSize_ - itemSpacing_) ||
+       ((!autoHide() && x > maxWidth_ - tooltipSize_ - maxSize_ + minSize_) ||
         (autoHide() && x > 2))) ||
       (position_ == PanelPosition::Right &&
-       ((!autoHide() && x < tooltipSize_ + maxSize_ - minSize_ + itemSpacing_) ||
+       ((!autoHide() && x < tooltipSize_ + maxSize_ - minSize_) ||
       (autoHide() && x < maxWidth_ - 2)))) {
     return false;
   }
