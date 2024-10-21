@@ -50,11 +50,9 @@
 #include "separator.h"
 #include <display/window_system.h>
 #include <utils/draw_utils.h>
+#include <utils/icon_utils.h>
 
 namespace crystaldock {
-
-const int DockPanel::kTooltipSpacing;
-const int DockPanel::kAutoHideSize;
 
 DockPanel::DockPanel(MultiDockView* parent, MultiDockModel* model, int dockId)
     : QWidget(),
@@ -852,9 +850,10 @@ void DockPanel::initLaunchers() {
     if (launcherConfig.appId == kSeparatorId) {
       items_.push_back(std::make_unique<Separator>(this, model_, orientation_, minSize_, maxSize_));
     } else {
+      QPixmap icon = loadIcon(launcherConfig.icon, kIconLoadSize);
       items_.push_back(std::make_unique<Program>(
           this, model_, launcherConfig.appId, launcherConfig.name, orientation_,
-          launcherConfig.icon, minSize_, maxSize_, launcherConfig.command,
+          icon, minSize_, maxSize_, launcherConfig.command,
           model_->isAppMenuEntry(launcherConfig.appId.toStdString()), /*pinned=*/true));
     }
   }
@@ -911,22 +910,25 @@ bool DockPanel::addTask(const WindowInfo* task) {
   const QString appId = QString::fromStdString(task->appId);
   auto app = model_->findApplication(task->appId);
   const QString label = app ? app->name : QString::fromStdString(task->title);
-  if (app && !QIcon::hasThemeIcon(app->icon)) {
+  QPixmap appIcon = app ? loadIcon(app->icon, kIconLoadSize) : QPixmap();
+  QString taskIconName = QString::fromStdString(task->icon);
+  QPixmap taskIcon = appIcon.isNull() && !taskIconName.isEmpty()
+      ? loadIcon(taskIconName, kIconLoadSize) : QPixmap();
+  if (app && appIcon.isNull()) {
     std::cerr << "Could not find icon with name: " << app->icon.toStdString()
               << " in the current icon theme and its fallbacks."
               << " The window icon will have limited functionalities." << std::endl;
   }
 
-  QString taskIcon = QString::fromStdString(task->icon);
   int i = 0;
   for (; i < itemCount() && items_[i]->beforeTask(label); ++i);
-  if (app && QIcon::hasThemeIcon(app->icon)) {
+  if (!appIcon.isNull()) {
     items_.insert(items_.begin() + i, std::make_unique<Program>(
-        this, model_, appId, label, orientation_, app->icon, minSize_,
+        this, model_, appId, label, orientation_, appIcon, minSize_,
         maxSize_, app->command, /*isAppMenuEntry=*/true, /*pinned=*/false));
-  } else if (!taskIcon.isEmpty() && QIcon::hasThemeIcon(taskIcon)) {
-      items_.insert(items_.begin() + i, std::make_unique<Program>(
-          this, model_, appId, label, orientation_, taskIcon, minSize_, maxSize_));
+  } else if (!taskIcon.isNull()) {
+    items_.insert(items_.begin() + i, std::make_unique<Program>(
+        this, model_, appId, label, orientation_, taskIcon, minSize_, maxSize_));
   } else {
     items_.insert(items_.begin() + i, std::make_unique<Program>(
         this, model_, appId, label, orientation_, QPixmap(), minSize_, maxSize_));

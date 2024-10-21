@@ -21,11 +21,12 @@
 #include <QIcon>
 #include <QImage>
 
+#include "dock_panel.h"
+
 #include <utils/draw_utils.h>
+#include <utils/icon_utils.h>
 
 namespace crystaldock {
-
-const int IconBasedDockItem::kIconLoadSize;
 
 IconBasedDockItem::IconBasedDockItem(DockPanel* parent, MultiDockModel* model, const QString& label,
                                      Qt::Orientation orientation, const QString& iconName,
@@ -59,9 +60,9 @@ void IconBasedDockItem::setIcon(const QPixmap& icon) {
 }
 
 void IconBasedDockItem::setIconName(const QString& iconName) {
-  if (!iconName.isEmpty() && QIcon::hasThemeIcon(iconName)) {
+  QPixmap icon = loadIcon(iconName, DockPanel::kIconLoadSize);
+  if (!icon.isNull()) {
     iconName_ = iconName;
-    QPixmap icon = QIcon::fromTheme(iconName).pixmap(kIconLoadSize);
     setIcon(icon);
   }
 }

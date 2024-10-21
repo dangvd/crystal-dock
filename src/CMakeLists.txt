@@ -80,6 +80,7 @@ set(SRCS
     utils/desktop_file.h
     utils/draw_utils.h
     utils/font_utils.h
+    utils/icon_utils.h
     utils/math_utils.h
     utils/menu_utils.h
     view/add_panel_dialog.ui

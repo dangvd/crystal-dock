@@ -63,8 +63,6 @@ class IconBasedDockItem : public DockItem {
   QString iconName_;
 
  private:
-  static const int kIconLoadSize = 128;
-
   void generateIcons(const QPixmap& icon);
 
   friend class DockPanel;

@@ -36,28 +36,14 @@
 namespace crystaldock {
 
 Program::Program(DockPanel* parent, MultiDockModel* model, const QString& appId,
-                 const QString& label, Qt::Orientation orientation, const QString& iconName,
+                 const QString& label, Qt::Orientation orientation, const QPixmap& icon,
                  int minSize, int maxSize, const QString& command, bool isAppMenuEntry,
                  bool pinned)
-    : IconBasedDockItem(parent, model, label, orientation, iconName, minSize, maxSize),
+    : IconBasedDockItem(parent, model, label, orientation, icon, minSize, maxSize),
       appId_(appId),
       command_(command),
       isAppMenuEntry_(isAppMenuEntry),
       pinned_(pinned),
-      demandsAttention_(false),
-      attentionStrong_(false),
-      launching_(false) {
-  init();
-}
-
-Program::Program(DockPanel* parent, MultiDockModel* model, const QString& appId,
-                 const QString& label, Qt::Orientation orientation, const QString& iconName,
-                 int minSize, int maxSize)
-    : IconBasedDockItem(parent, model, label, orientation, iconName, minSize, maxSize),
-      appId_(appId),
-      command_(""),
-      isAppMenuEntry_(false),
-      pinned_(false),
       demandsAttention_(false),
       attentionStrong_(false),
       launching_(false) {

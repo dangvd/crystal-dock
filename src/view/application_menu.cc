@@ -288,7 +288,7 @@ void ApplicationMenu::resetSearchMenu() {
 }
 
 QIcon ApplicationMenu::loadIcon(const QString &icon) {
-  return QIcon::fromTheme(icon).pixmap(model_->applicationMenuIconSize());
+  return QIcon::fromTheme(icon);
 }
 
 void ApplicationMenu::createContextMenu() {
