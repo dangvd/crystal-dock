@@ -182,7 +182,7 @@ QString Program::getLabel() const {
 
 bool Program::addTask(const WindowInfo* task) {
   auto* app = model_->findApplication(task->appId);
-  if (app && app->appId == appId_) {
+  if ((app && app->appId == appId_) || task->appId == appId_.toStdString()) {
     tasks_.push_back(ProgramTask(task->uuid, QString::fromStdString(task->title),
                                  task->demandsAttention));
     if (task->demandsAttention) {
