@@ -11,6 +11,8 @@
 #include <LayerShellQt/Shell>
 #include <LayerShellQt/Window>
 
+#include <qpa/qplatformwindow_p.h>
+
 namespace crystaldock {
 
 namespace {
@@ -34,6 +36,7 @@ LayerShellQt::Window* getLayerShellWin(QWidget* widget) {
 
 org_kde_plasma_virtual_desktop_management* WindowSystem::virtual_desktop_management_;
 org_kde_plasma_window_management* WindowSystem::window_management_;
+kde_screen_edge_manager_v1* WindowSystem::screen_edge_manager_;
 
 std::vector<VirtualDesktopInfo> WindowSystem::desktops_;
 std::string WindowSystem::currentDesktop_;
@@ -63,7 +66,7 @@ ApplicationMenuConfig WindowSystem::applicationMenuConfig_;
   // wait for the "initial" set of globals to appear
   wl_display_roundtrip(display);
 
-  if (!virtual_desktop_management_ || !window_management_) {
+  if (!virtual_desktop_management_ || !window_management_ || !screen_edge_manager_) {
     std::cerr << "Failed to bind required Wayland interfaces" << std::endl;
     return false;
   }
@@ -264,6 +267,36 @@ void WindowSystem::initScreens() {
   }
 }
 
+/*static*/ void WindowSystem::setAutoHide(
+    QWidget* widget, kde_screen_edge_manager_v1_border border, bool on) {
+  auto* window = getWindow(widget);
+  if (!window) {
+    return;
+  }
+  auto* waylandWindow = window->nativeInterface<QNativeInterface::Private::QWaylandWindow>();
+  if (!waylandWindow) {
+    std::cerr << "Failed to get Wayland window" << std::endl;
+    return;
+  }
+
+  auto* surface = waylandWindow->surface();
+  if (!surface) {
+    std::cerr << "Failed to get Wayland surface" << std::endl;
+    return;
+  }
+  auto* screen_edge = kde_screen_edge_manager_v1_get_auto_hide_screen_edge(
+      screen_edge_manager_, border, surface);
+  if (!screen_edge) {
+    std::cerr << "Failed to get Auto Hide screen edge object" << std::endl;
+    return;
+  }
+  if (on) {
+    kde_auto_hide_screen_edge_v1_activate(screen_edge);
+  } else {
+    kde_auto_hide_screen_edge_v1_deactivate(screen_edge);
+  }
+}
+
 // wl_registry interface.
 
 /* static */ void WindowSystem::registry_global(
@@ -287,6 +320,14 @@ void WindowSystem::initScreens() {
     if (!window_management_) {
       std::cerr << "Failed to bind org_kde_plasma_window_management Wayland interface. "
                 << "Maybe another client has already bound it?" << std::endl;
+    }
+  } else if (std::string(interface) == "kde_screen_edge_manager_v1") {
+    screen_edge_manager_ =
+        reinterpret_cast<kde_screen_edge_manager_v1*>(wl_registry_bind(
+            registry, name, &kde_screen_edge_manager_v1_interface, 1));
+    if (!screen_edge_manager_) {
+      std::cerr << "Failed to bind kde_screen_edge_manager_v1 Wayland interface"
+                << std::endl;
     }
   }
 }

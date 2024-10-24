@@ -1,4 +1,4 @@
-/*
+  /*
  * This file is part of Crystal Dock.
  * Copyright (C) 2023 Viet Dang (dangvd@gmail.com)
  *
@@ -98,7 +98,7 @@ DockPanel::DockPanel(MultiDockView* parent, MultiDockModel* model, int dockId)
   connect(WindowSystem::self(), SIGNAL(windowStateChanged(const WindowInfo*)),
           this, SLOT(onWindowStateChanged(const WindowInfo*)));
   connect(WindowSystem::self(), SIGNAL(activeWindowChanged(std::string_view)),
-          this, SLOT(update()));
+          this, SLOT(onActiveWindowChanged()));
   connect(WindowSystem::self(), SIGNAL(windowAdded(const WindowInfo*)),
           this, SLOT(onWindowAdded(const WindowInfo*)));
   connect(WindowSystem::self(), SIGNAL(windowRemoved(std::string)),
@@ -154,9 +154,6 @@ void DockPanel::setStrut() {
       if (isFloating()) { strut += 2 * floatingMargin_; }
       setStrut(strut);
       break;
-    case PanelVisibility::AutoHide:
-      setStrut(1);
-      break;
     default:
       setStrut(0);
       break;
@@ -204,6 +201,7 @@ void DockPanel::updateAnimation() {
     if (isLeaving_) {
       isLeaving_ = false;
       updateLayout();
+      if (autoHide() && !hasFocus()) { setAutoHide(); }
     }
   }
   repaint();
@@ -352,6 +350,11 @@ void DockPanel::onWindowStateChanged(const WindowInfo *task) {
   }
 }
 
+void DockPanel::onActiveWindowChanged() {
+  update();
+  if (autoHide() && !isActiveWindow()) { setAutoHide(); }
+}
+
 int DockPanel::taskIndicatorPos() {
   if (isHorizontal()) {
     int y = 0;
@@ -410,18 +413,6 @@ int DockPanel::taskIndicatorPos() {
 
 void DockPanel::paintEvent(QPaintEvent* e) {
   QPainter painter(this);
-
-  if (visibility_ == PanelVisibility::AutoHide && isMinimized_) {
-    painter.setPen(borderColor_);
-    if (isHorizontal()) {
-      const int y = isTop() ? 0 : maxHeight_ - 1;
-      painter.drawLine((maxWidth_ - minWidth_) / 2, y, (maxWidth_ + minWidth_) / 2, y);
-    } else {  // Vertical.
-      const int x = isLeft() ? 0 : maxWidth_ - 1;
-      painter.drawLine(x, (maxHeight_ - minHeight_) / 2, x, (maxHeight_ + minHeight_) / 2);
-    }
-    return;
-  }
 
   if (is3D()) {
     drawGlass3D(painter);
@@ -539,20 +530,6 @@ void DockPanel::mouseMoveEvent(QMouseEvent* e) {
   const auto x = e->position().x();
   const auto y = e->position().y();
 
-  if (autoHide() && isMinimized_) {
-    if (checkMouseEnter(x, y)) {
-      if (!isEntering_) {
-        startAutoHideActivationTimer();
-        isEntering_ = true;
-      } else if (QDateTime::currentMSecsSinceEpoch() - enterTime_
-                 < model_->autoHideActivationDelay()) {
-        lastMouseX_ = x;
-        lastMouseY_ = y;
-      }
-    }
-    return;
-  }
-
   if (isEntering_) {
     // Don't do the parabolic zooming if the mouse is outside the minimized area.
     // Also don't do the parabolic zooming if the mouse is near the border.
@@ -571,17 +548,13 @@ void DockPanel::mouseMoveEvent(QMouseEvent* e) {
 
 bool DockPanel::checkMouseEnter(int x, int y) {
   if ((position_ == PanelPosition::Bottom &&
-      ((!autoHide() && y < tooltipSize_ + maxSize_ - minSize_) ||
-        (autoHide() && y < maxHeight_ - 2))) ||
+       y < tooltipSize_ + maxSize_ - minSize_) ||
       (position_ == PanelPosition::Top &&
-       ((!autoHide() && y > maxHeight_ - tooltipSize_ - maxSize_ + minSize_) ||
-        (autoHide() && y > 2))) ||
+       y > maxHeight_ - tooltipSize_ - maxSize_ + minSize_) ||
       (position_ == PanelPosition::Left &&
-       ((!autoHide() && x > maxWidth_ - tooltipSize_ - maxSize_ + minSize_) ||
-        (autoHide() && x > 2))) ||
+       x > maxWidth_ - tooltipSize_ - maxSize_ + minSize_) ||
       (position_ == PanelPosition::Right &&
-       ((!autoHide() && x < tooltipSize_ + maxSize_ - minSize_) ||
-      (autoHide() && x < maxWidth_ - 2)))) {
+       x < tooltipSize_ + maxSize_ - minSize_)) {
     return false;
   }
 
@@ -609,31 +582,10 @@ void DockPanel::mousePressEvent(QMouseEvent* e) {
 }
 
 void DockPanel::enterEvent (QEnterEvent* e) {
-  if (autoHide()) {
-    if (checkMouseEnter(e->position().x(), e->position().y())) {
-      startAutoHideActivationTimer();
-    }
-    return;
-  }
-
   isEntering_ = true;
 }
 
-void DockPanel::startAutoHideActivationTimer() {
-  enterTime_ = QDateTime::currentMSecsSinceEpoch();
-  QTimer::singleShot(model_->autoHideActivationDelay(), [this] {
-    if (enterTime_ > 0) {
-      isEntering_ = true;
-      updateLayout(lastMouseX_, lastMouseY_);
-    }
-  });
-}
-
 void DockPanel::leaveEvent(QEvent* e) {
-  if (autoHide()) {
-    enterTime_ = 0;
-  }
-
   if (isMinimized_) {
     return;
   }
@@ -1040,7 +992,7 @@ void DockPanel::initLayoutVars() {
     for (const auto& item : items_) {
       minWidth_ += (item->getMinWidth() + itemSpacing_);
     }
-    minHeight_ = autoHide() ? kAutoHideSize : minSize_ + 2 * itemSpacing_;
+    minHeight_ = minSize_ + 2 * itemSpacing_;
     maxWidth_ = minWidth_ + delta;
     maxHeight_ = 2 * itemSpacing_ + maxSize_ + tooltipSize_;
     if (isFloating()) maxHeight_ += floatingMargin_;
@@ -1050,7 +1002,7 @@ void DockPanel::initLayoutVars() {
     for (const auto& item : items_) {
       minHeight_ += (item->getMinHeight() + itemSpacing_);
     }
-    minWidth_ = autoHide() ? kAutoHideSize : minSize_ + 2 * itemSpacing_;
+    minWidth_ = minSize_ + 2 * itemSpacing_;
     maxHeight_ = minHeight_ + delta;
     maxWidth_ = 2 * itemSpacing_ + maxSize_ + tooltipSize_;
     if (isFloating()) maxWidth_ += floatingMargin_;
@@ -1114,12 +1066,12 @@ void DockPanel::updateLayout() {
     if (isHorizontal()) {
       endBackgroundWidth_ = minWidth_;
       backgroundWidth_ = startBackgroundWidth_;
-      endBackgroundHeight_ = autoHide() ? kAutoHideSize : minSize_ + 2 * itemSpacing_;
+      endBackgroundHeight_ = minSize_ + 2 * itemSpacing_;
       backgroundHeight_ = startBackgroundHeight_;
     } else {  // Vertical
       endBackgroundHeight_ = minHeight_;
       backgroundHeight_ = startBackgroundHeight_;
-      endBackgroundWidth_ = autoHide() ? kAutoHideSize : minSize_ + 2 * itemSpacing_;
+      endBackgroundWidth_ = minSize_ + 2 * itemSpacing_;
       backgroundWidth_ = startBackgroundWidth_;
     }
     currentAnimationStep_ = 0;
@@ -1127,9 +1079,9 @@ void DockPanel::updateLayout() {
     animationTimer_->start(32 - animationSpeed_);
   } else {
     WindowSystem::setLayer(this,
-                           visibility_ == PanelVisibility::AlwaysOnTop
-                              ? LayerShellQt::Window::LayerTop
-                              : LayerShellQt::Window::LayerBottom);
+                           visibility_ == PanelVisibility::AlwaysVisible
+                               ? LayerShellQt::Window::LayerBottom
+                               : LayerShellQt::Window::LayerTop);
     isMinimized_ = true;
     // Ideally we should call QWidget::setMask here but it caused some visual
     // clippings when we tried.
@@ -1146,10 +1098,10 @@ void DockPanel::updateLayout(int x, int y) {
     }
     if (isHorizontal()) {
       startBackgroundWidth_ = minWidth_;
-      startBackgroundHeight_ = autoHide() ? kAutoHideSize : minSize_ + 2 * itemSpacing_;
+      startBackgroundHeight_ = minSize_ + 2 * itemSpacing_;
     } else {  // Vertical
       startBackgroundHeight_ = minHeight_;
-      startBackgroundWidth_ = autoHide() ? kAutoHideSize : minSize_ + 2 * itemSpacing_;
+      startBackgroundWidth_ = minSize_ + 2 * itemSpacing_;
     }
   }
 
@@ -1364,6 +1316,48 @@ void DockPanel::setStrut(int width) {
   }
 
   WindowSystem::setAnchorAndStrut(this, anchor, width);
+}
+
+void DockPanel::updatePosition(PanelPosition position) {
+  setPosition(position);
+  reload();
+  if (autoHide()) {
+    // we have to deactivate, wait then re-activate Auto Hide
+    // otherwise the Auto Hide screen edge's border length would not be updated
+    // correctly.
+    setAutoHide(false);
+    update();
+    QTimer::singleShot(1000, [this]{ setAutoHide(); });
+  }
+  saveDockConfig();
+}
+
+void DockPanel::updateVisibility(PanelVisibility visibility) {
+  setVisibility(visibility);
+  setStrut();
+  if (visibility == PanelVisibility::AutoHide) {
+    setAutoHide();
+  }
+  saveDockConfig();
+}
+
+void DockPanel::setAutoHide(bool on) {
+  kde_screen_edge_manager_v1_border border;
+  switch (position_) {
+    case PanelPosition::Top:
+      border = KDE_SCREEN_EDGE_MANAGER_V1_BORDER_TOP;
+      break;
+    case PanelPosition::Bottom:
+      border = KDE_SCREEN_EDGE_MANAGER_V1_BORDER_BOTTOM;
+      break;
+    case PanelPosition::Left:
+      border = KDE_SCREEN_EDGE_MANAGER_V1_BORDER_LEFT;
+      break;
+    case PanelPosition::Right:
+      border = KDE_SCREEN_EDGE_MANAGER_V1_BORDER_RIGHT;
+      break;
+    }
+  WindowSystem::setAutoHide(this, border, on);
 }
 
 void DockPanel::updateActiveItem(int x, int y) {

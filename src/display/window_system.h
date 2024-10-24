@@ -34,6 +34,7 @@
 #include <QString>
 #include <QWidget>
 
+#include "kde_screen_edge.h"
 #include "plasma_virtual_desktop.h"
 #include "plasma_window_management.h"
 
@@ -134,6 +135,9 @@ class WindowSystem : public QObject {
   static std::vector<QScreen*> screens();
   // Sets the widget to display on the screen with index `screen` (0-based).
   static void setScreen(QWidget* widget, int screen);
+
+  static void setAutoHide(QWidget* widget, kde_screen_edge_manager_v1_border border,
+                          bool on = true);
 
  private:
 
@@ -309,6 +313,7 @@ class WindowSystem : public QObject {
 
   static org_kde_plasma_virtual_desktop_management* virtual_desktop_management_;
   static org_kde_plasma_window_management* window_management_;
+  static kde_screen_edge_manager_v1* screen_edge_manager_;
 
   static constexpr struct wl_registry_listener registry_listener_ = {
       registry_global,

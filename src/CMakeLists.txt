@@ -22,6 +22,7 @@ set(SRCS
     desktop/desktop_env.cc
     desktop/kde_desktop_env.cc
     display/window_system.cc
+    display/kde_screen_edge.c
     display/plasma_virtual_desktop.c
     display/plasma_window_management.c
     model/application_menu_config.cc
@@ -50,6 +51,7 @@ set(SRCS
     desktop/desktop_env.h
     desktop/kde_desktop_env.h
     display/window_system.h
+    display/kde_screen_edge.h
     display/plasma_virtual_desktop.h
     display/plasma_window_management.h
     model/application_menu_config.h
@@ -91,7 +93,7 @@ set(SRCS
     view/wallpaper_settings_dialog.ui)
 add_library(crystal-dock_lib ${SRCS})
 
-set(LIBS Qt6::DBus Qt6::Gui Qt6::Widgets Wayland::Client LayerShellQt::Interface stdc++fs)
+set(LIBS Qt6::DBus Qt6::GuiPrivate Qt6::Widgets Wayland::Client LayerShellQt::Interface stdc++fs)
 target_link_libraries(crystal-dock_lib ${LIBS})
 
 add_executable(crystal-dock main.cc)

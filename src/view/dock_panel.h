@@ -119,17 +119,11 @@ class DockPanel : public QWidget {
 
   void setStrut();
 
-  void updatePosition(PanelPosition position) {
-    setPosition(position);
-    reload();
-    saveDockConfig();
-  }
+  void updatePosition(PanelPosition position);
 
-  void updateVisibility(PanelVisibility visibility) {
-    setVisibility(visibility);
-    reload();
-    saveDockConfig();
-  }
+  void updateVisibility(PanelVisibility visibility);
+
+  void setAutoHide(bool on = true);
 
   void changeFloatingStyle() {
     panelStyle_ = static_cast<PanelStyle>(static_cast<int>(panelStyle_) ^ 1);
@@ -201,6 +195,7 @@ class DockPanel : public QWidget {
   void onWindowLeftCurrentActivity(std::string_view uuid);
   void onWindowGeometryChanged(const WindowInfo* task);
   void onWindowStateChanged(const WindowInfo* info);
+  void onActiveWindowChanged();
 
   void minimize() { leaveEvent(nullptr); }
 
@@ -214,9 +209,6 @@ class DockPanel : public QWidget {
  private:
   // The space between the tooltip and the dock.
   static constexpr int kTooltipSpacing = 10;
-
-  // Width/height of the panel in Auto Hide mode.
-  static constexpr int kAutoHideSize = 1;
 
   bool autoHide() { return visibility_ == PanelVisibility::AutoHide; }
 
@@ -284,8 +276,6 @@ class DockPanel : public QWidget {
 
   // Checks if the mouse has actually entered the dock panel's visibility area.
   bool checkMouseEnter(int x, int y);
-
-  void startAutoHideActivationTimer();
 
   // Resizes the task manager part of the panel. This needs to not interfere
   // with the zooming.
@@ -395,11 +385,6 @@ class DockPanel : public QWidget {
   // so that we can show the correct tooltip at the end of it.
   int mouseX_;
   int mouseY_;
-
-  // For activation delay.
-  qint64 enterTime_;
-  int lastMouseX_;
-  int lastMouseY_;
 
   friend class Program;  // for leaveEvent.
   friend class DockPanelTest;
