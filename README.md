@@ -46,7 +46,7 @@ Dependencies development packages: to build from the source code, Qt6, LayerShel
 For example, to install them on OpenSUSE, run:
 
 ```
-$ sudo zypper install qt6-base-devel wayland-devel layer-shell-qt6-devel
+$ sudo zypper install qt6-base-private-devel wayland-devel layer-shell-qt6-devel
 ```
 
 Or, to install them on Ubuntu, run:
