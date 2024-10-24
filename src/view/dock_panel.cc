@@ -1006,7 +1006,7 @@ void DockPanel::initLayoutVars() {
   margin3D_ = static_cast<int>(minSize_ * 0.6);
   floatingMargin_ = model_->floatingMargin();
   parabolicMaxX_ = std::round(2.5 * (minSize_ + itemSpacing_));
-  numAnimationSteps_ = 16;
+  numAnimationSteps_ = 14;
   animationSpeed_ = 16;
 
   QFont font;
