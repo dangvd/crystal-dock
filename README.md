@@ -52,7 +52,7 @@ $ sudo zypper install qt6-base-devel wayland-devel layer-shell-qt6-devel
 Or, to install them on Ubuntu, run:
 
 ```
-$ sudo apt install qt6-base-dev libwayland-dev liblayershellqtinterface-dev
+$ sudo apt install qt6-base-private-dev libwayland-dev liblayershellqtinterface-dev
 ```
 
 To build and install, run:
