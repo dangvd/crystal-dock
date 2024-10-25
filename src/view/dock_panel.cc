@@ -63,7 +63,7 @@ DockPanel::DockPanel(MultiDockView* parent, MultiDockModel* model, int dockId)
       showPager_(false),
       showClock_(false),
       aboutDialog_(QMessageBox::Information, "About Crystal Dock",
-                   QString("<h3>Crystal Dock 2.7 RC3</h3>")
+                   QString("<h3>Crystal Dock 2.7 RC4</h3>")
                    + "<p>Copyright (C) 2024 Viet Dang (dangvd@gmail.com)"
                    + "<p><a href=\"https://github.com/dangvd/crystal-dock\">https://github.com/dangvd/crystal-dock</a>"
                    + "<p>License: GPLv3",
