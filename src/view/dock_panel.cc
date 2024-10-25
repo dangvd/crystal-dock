@@ -1299,7 +1299,7 @@ void DockPanel::resizeTaskManager() {
 }
 
 void DockPanel::setStrut(int width) {
-  LayerShellQt::Window::Anchors anchor;
+  LayerShellQt::Window::Anchors anchor = LayerShellQt::Window::AnchorBottom;
   switch (position_) {
     case PanelPosition::Top:
       anchor = LayerShellQt::Window::AnchorTop;
@@ -1340,7 +1340,7 @@ void DockPanel::updateVisibility(PanelVisibility visibility) {
 }
 
 void DockPanel::setAutoHide(bool on) {
-  kde_screen_edge_manager_v1_border border;
+  kde_screen_edge_manager_v1_border border = KDE_SCREEN_EDGE_MANAGER_V1_BORDER_BOTTOM;
   switch (position_) {
     case PanelPosition::Top:
       border = KDE_SCREEN_EDGE_MANAGER_V1_BORDER_TOP;
