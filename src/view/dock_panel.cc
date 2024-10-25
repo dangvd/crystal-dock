@@ -62,7 +62,6 @@ DockPanel::DockPanel(MultiDockView* parent, MultiDockModel* model, int dockId)
       visibility_(PanelVisibility::AlwaysVisible),
       showPager_(false),
       showClock_(false),
-      showBorder_(true),
       aboutDialog_(QMessageBox::Information, "About Crystal Dock",
                    QString("<h3>Crystal Dock 2.7 RC3</h3>")
                    + "<p>Copyright (C) 2024 Viet Dang (dangvd@gmail.com)"
@@ -784,7 +783,6 @@ void DockPanel::loadAppearanceConfig() {
   maxSize_ = model_->maxIconSize();
   spacingFactor_ = model_->spacingFactor();
   backgroundColor_ = model_->backgroundColor();
-  showBorder_ = model_->showBorder();
   borderColor_ = model_->borderColor();
   tooltipFontSize_ = model_->tooltipFontSize();
   setPanelStyle(model_->panelStyle());

@@ -311,7 +311,6 @@ class DockPanel : public QWidget {
   int maxSize_;
   float spacingFactor_;  // item spacing as ratio of minSize, in (0, 1) range.
   QColor backgroundColor_;  // including alpha.
-  bool showBorder_;
   QColor borderColor_;  // no alpha.
   int tooltipFontSize_;
   PanelStyle panelStyle_;
