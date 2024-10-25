@@ -321,6 +321,10 @@ void DockPanel::onWindowGeometryChanged(const WindowInfo* task) {
     return;
   }
 
+  if (!model_->currentScreenTasksOnly()) {
+    return;
+  }
+
   QRect windowGeometry(task->x, task->y, task->width, task->height);
   if (hasTask(task->uuid)) {
     if (!windowGeometry.intersects(screenGeometry_)) {
