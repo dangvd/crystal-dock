@@ -42,8 +42,6 @@ AppearanceSettingsDialog::AppearanceSettingsDialog(QWidget* parent,
   inactiveIndicatorColor_ = new ColorButton(this);
   inactiveIndicatorColor_->setGeometry(QRect(700, 210, 80, 40));
 
-  ui->showBorder->setVisible(false);
-
   connect(ui->buttonBox, SIGNAL(clicked(QAbstractButton*)),
       this, SLOT(buttonClicked(QAbstractButton*)));
 
@@ -77,7 +75,6 @@ void AppearanceSettingsDialog::loadData() {
                                                                : model_->backgroundColorMetal2D();
   backgroundColor_->setColor(QColor(backgroundColor.rgb()));
   ui->backgroundTransparency->setValue(alphaFToTransparencyPercent(backgroundColor.alphaF()));
-  ui->showBorder->setChecked(model_->showBorder());
   borderColor_->setColor(model_->is3D() ? model_->borderColor() : model_->borderColorMetal2D());
   borderColor_->setVisible(model_->is3D() || model_->isMetal2D());
   ui->borderColorLabel->setVisible(model_->is3D() || model_->isMetal2D());
@@ -106,7 +103,6 @@ void AppearanceSettingsDialog::resetData() {
                                           : kDefaultBackgroundColorMetal2D));
   ui->backgroundTransparency->setValue(alphaFToTransparencyPercent(
       model_->isMetal2D() ? kDefaultBackgroundAlphaMetal2D : kDefaultBackgroundAlpha));
-  ui->showBorder->setChecked(kDefaultShowBorder);
   borderColor_->setColor(QColor(model_->is3D() ? kDefaultBorderColor : kDefaultBorderColorMetal2D));
   activeIndicatorColor_->setColor(QColor(
       model_->is3D() ? kDefaultActiveIndicatorColor
@@ -133,7 +129,6 @@ void AppearanceSettingsDialog::saveData() {
   } else {
     model_->setBackgroundColorMetal2D(backgroundColor);
   }
-  model_->setShowBorder(ui->showBorder->isChecked());
   model_->setBorderColor(borderColor_->color());
   if (model_->is3D()) {
     model_->setActiveIndicatorColor(activeIndicatorColor_->color());

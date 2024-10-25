@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>840</width>
-    <height>480</height>
+    <height>420</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,7 +17,7 @@
    <property name="geometry">
     <rect>
      <x>34</x>
-     <y>410</y>
+     <y>350</y>
      <width>730</width>
      <height>36</height>
     </rect>
@@ -120,19 +120,6 @@
    </property>
    <property name="text">
     <string>Background color</string>
-   </property>
-  </widget>
-  <widget class="QCheckBox" name="showBorder">
-   <property name="geometry">
-    <rect>
-     <x>440</x>
-     <y>270</y>
-     <width>301</width>
-     <height>40</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Show panel border (2D style)</string>
    </property>
   </widget>
   <widget class="QLabel" name="borderColorLabel">
@@ -243,8 +230,8 @@
   <widget class="QLabel" name="floatingMarginLabel">
    <property name="geometry">
     <rect>
-     <x>40</x>
-     <y>330</y>
+     <x>440</x>
+     <y>270</y>
      <width>200</width>
      <height>40</height>
     </rect>
@@ -256,8 +243,8 @@
   <widget class="QSpinBox" name="floatingMargin">
    <property name="geometry">
     <rect>
-     <x>260</x>
-     <y>330</y>
+     <x>700</x>
+     <y>270</y>
      <width>81</width>
      <height>40</height>
     </rect>

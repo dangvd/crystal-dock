@@ -55,7 +55,6 @@ constexpr float kDefaultBackgroundAlphaMetal2D = 0.68;
 constexpr char kDefaultBackgroundColor[] = "#638abd";
 constexpr char kDefaultBackgroundColor2D[] = "#86baff";
 constexpr char kDefaultBackgroundColorMetal2D[] = "#7381a6";
-constexpr bool kDefaultShowBorder = true;
 constexpr char kDefaultBorderColor[] = "#b1c4de";
 constexpr char kDefaultBorderColorMetal2D[] = "#99addd";
 constexpr char kDefaultActiveIndicatorColor[] = "darkorange";
@@ -186,15 +185,6 @@ class MultiDockModel : public QObject {
 
   void setBackgroundColorMetal2D(const QColor& value) {
     setAppearanceProperty(kGeneralCategory, kBackgroundColorMetal2D, value.name(QColor::HexArgb));
-  }
-
-  bool showBorder() const {
-    return appearanceProperty(kGeneralCategory, kShowBorder,
-                              kDefaultShowBorder);
-  }
-
-  void setShowBorder(bool value) {
-    setAppearanceProperty(kGeneralCategory, kShowBorder, value);
   }
 
   QColor borderColor() const {
@@ -627,7 +617,6 @@ class MultiDockModel : public QObject {
   static constexpr char kMaximumIconSize[] = "maximumIconSize";
   static constexpr char kMinimumIconSize[] = "minimumIconSize";
   static constexpr char kSpacingFactor[] = "spacingFactor";
-  static constexpr char kShowBorder[] = "showBorder";
   static constexpr char kTooltipFontSize[] = "tooltipFontSize";
   static constexpr char kPanelStyle[] = "panelStyle";
   static constexpr char kFloatingMargin[] = "floatingMargin";

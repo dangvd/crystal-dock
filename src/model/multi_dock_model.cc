@@ -52,7 +52,6 @@ constexpr char MultiDockModel::kInactiveIndicatorColorMetal2D[];
 constexpr char MultiDockModel::kMaximumIconSize[];
 constexpr char MultiDockModel::kMinimumIconSize[];
 constexpr char MultiDockModel::kSpacingFactor[];
-constexpr char MultiDockModel::kShowBorder[];
 constexpr char MultiDockModel::kFloatingMargin[];
 constexpr char MultiDockModel::kFirstRunMultiScreen[];
 constexpr char MultiDockModel::kFirstRunWindowCountIndicator[];
@@ -128,7 +127,6 @@ void MultiDockModel::addDock(PanelPosition position, int screen,
     QColor color(kDefaultBackgroundColor);
     color.setAlphaF(kDefaultBackgroundAlpha);
     setBackgroundColor(color);
-    setShowBorder(kDefaultShowBorder);
     setBorderColor(QColor(kDefaultBorderColor));
     setTooltipFontSize(kDefaultTooltipFontSize);
 
