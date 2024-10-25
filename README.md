@@ -7,7 +7,7 @@
 [Documentation](https://github.com/dangvd/crystal-dock/wiki/Documentation)
 [Author & Contributors](https://github.com/dangvd/crystal-dock/wiki/Author-&-Contributors)
 
-Crystal Dock is a cool dock (desktop panel) for Linux desktop, with the focus on attractive user interface, being simple and easy to use and customize, and cross-desktop support.
+Crystal Dock is a cool dock (desktop panel) for Linux desktop, with the focus on attractive user interface, being simple and easy to customize, and cross-desktop support.
 
 The current version (version 2) supports KDE Plasma 6 on Wayland. Other desktop environments will be considered when they run on Wayland and provide sufficient APIs. The previous version (version 1) supports KDE Plasma 5, GNOME, LXQt, Cinnamon and MATE on X11.
 
