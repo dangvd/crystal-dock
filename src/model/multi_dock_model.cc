@@ -54,7 +54,6 @@ constexpr char MultiDockModel::kMinimumIconSize[];
 constexpr char MultiDockModel::kSpacingFactor[];
 constexpr char MultiDockModel::kShowBorder[];
 constexpr char MultiDockModel::kFloatingMargin[];
-constexpr char MultiDockModel::kAutoHideActivationDelay[];
 constexpr char MultiDockModel::kFirstRunMultiScreen[];
 constexpr char MultiDockModel::kFirstRunWindowCountIndicator[];
 

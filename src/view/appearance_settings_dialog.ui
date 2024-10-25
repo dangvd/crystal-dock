@@ -23,10 +23,10 @@
     </rect>
    </property>
    <property name="orientation">
-    <enum>Qt::Orientation::Horizontal</enum>
+    <enum>Qt::Horizontal</enum>
    </property>
    <property name="standardButtons">
-    <set>QDialogButtonBox::StandardButton::Apply|QDialogButtonBox::StandardButton::Cancel|QDialogButtonBox::StandardButton::Ok|QDialogButtonBox::StandardButton::RestoreDefaults</set>
+    <set>QDialogButtonBox::Apply|QDialogButtonBox::Cancel|QDialogButtonBox::Ok|QDialogButtonBox::RestoreDefaults</set>
    </property>
    <property name="centerButtons">
     <bool>true</bool>
@@ -299,44 +299,6 @@
    </property>
    <property name="text">
     <string>Indicator color (inactive)</string>
-   </property>
-  </widget>
-  <widget class="QLabel" name="autoHideActivationDelayLabel">
-   <property name="geometry">
-    <rect>
-     <x>440</x>
-     <y>330</y>
-     <width>251</width>
-     <height>40</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Auto Hide activation delay</string>
-   </property>
-  </widget>
-  <widget class="QSpinBox" name="autoHideActivationDelay">
-   <property name="geometry">
-    <rect>
-     <x>700</x>
-     <y>330</y>
-     <width>101</width>
-     <height>40</height>
-    </rect>
-   </property>
-   <property name="suffix">
-    <string>ms</string>
-   </property>
-   <property name="minimum">
-    <number>0</number>
-   </property>
-   <property name="maximum">
-    <number>1000</number>
-   </property>
-   <property name="singleStep">
-    <number>50</number>
-   </property>
-   <property name="value">
-    <number>750</number>
    </property>
   </widget>
  </widget>
