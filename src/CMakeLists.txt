@@ -105,6 +105,7 @@ configure_file(crystal-dock.desktop.cmake
 # Install
 
 install(TARGETS crystal-dock RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+install(TARGETS crystal-dock_lib RUNTIME DESTINATION ${CMAKE_INSTALL_LIBDIR})
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/crystal-dock.desktop
     DESTINATION ${CMAKE_INSTALL_PREFIX}/share/applications)
 
