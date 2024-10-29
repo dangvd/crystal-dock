@@ -91,7 +91,7 @@ set(SRCS
     view/edit_launchers_dialog.ui
     view/task_manager_settings_dialog.ui
     view/wallpaper_settings_dialog.ui)
-add_library(crystal-dock_lib ${SRCS})
+add_library(crystal-dock_lib STATIC ${SRCS})
 
 set(LIBS Qt6::DBus Qt6::GuiPrivate Qt6::Widgets Wayland::Client LayerShellQt::Interface stdc++fs)
 target_link_libraries(crystal-dock_lib ${LIBS})
