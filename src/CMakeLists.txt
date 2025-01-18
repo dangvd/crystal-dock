@@ -21,6 +21,7 @@ find_package(LayerShellQt 6.0 REQUIRED)
 set(SRCS
     desktop/desktop_env.cc
     desktop/kde_desktop_env.cc
+    desktop/lxqt_desktop_env.cc
     display/window_system.cc
     display/kde_screen_edge.c
     display/plasma_virtual_desktop.c
@@ -50,6 +51,7 @@ set(SRCS
     utils/desktop_file.cc
     desktop/desktop_env.h
     desktop/kde_desktop_env.h
+    desktop/lxqt_desktop_env.h
     display/window_system.h
     display/kde_screen_edge.h
     display/plasma_virtual_desktop.h

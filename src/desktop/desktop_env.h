@@ -28,7 +28,7 @@
 namespace crystaldock {
 
 // Desktop Environment specific data/logic.
-// Currently supports KDE, GNOME, XFCE, LXQT, Cinnamon, MATE.
+// Currently supports KDE and LXQt (KWin).
 class DesktopEnv {
  protected:
   DesktopEnv() = default;

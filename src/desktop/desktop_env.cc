@@ -24,6 +24,7 @@
 #include <QStringList>
 
 #include "kde_desktop_env.h"
+#include "lxqt_desktop_env.h"
 #include <model/application_menu_config.h>
 #include <model/multi_dock_model.h>
 
@@ -34,6 +35,9 @@ DesktopEnv* DesktopEnv::getDesktopEnv() {
   if (currentDesktopEnv == "KDE") {
     static std::unique_ptr<KdeDesktopEnv> kde(new KdeDesktopEnv);
     return kde.get();
+  } else if (currentDesktopEnv == "LXQt") {
+    static std::unique_ptr<LxqtDesktopEnv> lxqt(new LxqtDesktopEnv);
+    return lxqt.get();
   }
 
   static std::unique_ptr<DesktopEnv> basic(new DesktopEnv);
@@ -42,7 +46,8 @@ DesktopEnv* DesktopEnv::getDesktopEnv() {
 
 QString DesktopEnv::getDesktopEnvName() {
   QStringList desktops = qEnvironmentVariable("XDG_CURRENT_DESKTOP").split(",", Qt::SkipEmptyParts);
-  return desktops.isEmpty() ? "" : desktops.first();
+  // For LXQt it could be 'LXQt:kwin_wayland'
+  return desktops.isEmpty() ? "" : desktops.first().mid(0, desktops.first().indexOf(':'));
 }
 
 }  // namespace crystaldock
