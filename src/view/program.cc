@@ -142,9 +142,15 @@ void Program::mousePressEvent(QMouseEvent* e) {
           const auto activeTask = getActiveTask();
           if (activeTask >= 0) {
             // Cycles through tasks.
-            auto nextTask = (activeTask < static_cast<int>(tasks_.size() - 1)) ?
-                (activeTask + 1) : 0;
-            WindowSystem::activateWindow(tasks_[nextTask].uuid);
+            auto lastTask = static_cast<int>(tasks_.size() - 1);
+            if (mod & Qt::ControlModifier) {
+              // Cycles backwards with CTRL.
+              auto nextTask = activeTask > 0 ? (activeTask - 1) : lastTask;
+              WindowSystem::activateWindow(tasks_[nextTask].uuid);
+            } else {
+              auto nextTask = (activeTask < lastTask) ? (activeTask + 1) : 0;
+              WindowSystem::activateWindow(tasks_[nextTask].uuid);
+            }
           } else {
             for (unsigned i = 0; i < tasks_.size(); ++i) {
               WindowSystem::activateWindow(tasks_[i].uuid);
