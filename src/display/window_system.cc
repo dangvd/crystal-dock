@@ -519,14 +519,6 @@ void WindowSystem::initScreens() {
         ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_ON_ALL_DESKTOPS |
             ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_SKIPTASKBAR);
   }
-
-  const auto fixedAppId = applicationMenuConfig_.tryMatchingApplicationId(app_id);
-  if (!fixedAppId.empty()) {
-    info->appId = fixedAppId;
-  } else {
-    std::cerr << "Could not find application with id: " << app_id
-              << ". The window icon will have limited functionalities." << std::endl;
-  }
 }
 
 /* static */ void WindowSystem::state_changed(
@@ -597,7 +589,15 @@ void WindowSystem::initScreens() {
     return;
   }
   WindowInfo* info = windows_[window];
-  if (info) {
+  if (info && !info->skipTaskbar) {
+    const auto fixedAppId = applicationMenuConfig_.tryMatchingApplicationId(info->appId);
+    if (!fixedAppId.empty()) {
+      info->appId = fixedAppId;
+    } else {
+      std::cerr << "Could not find application with id: " << info->appId
+                << ". The window icon will have limited functionalities." << std::endl;
+    }
+
     emit self()->windowAdded(info);
   }
 }
