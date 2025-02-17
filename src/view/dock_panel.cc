@@ -146,12 +146,9 @@ void DockPanel::onCurrentActivityChanged() {
 }
 
 void DockPanel::setStrut() {
-  int strut = 0;
   switch(visibility_) {
     case PanelVisibility::AlwaysVisible:
-      strut = isHorizontal() ? minHeight_ : minWidth_;
-      if (isFloating()) { strut += 2 * floatingMargin_; }
-      setStrut(strut);
+      setStrut(isHorizontal() ? minHeight_ : minWidth_);
       break;
     default:
       setStrut(0);
@@ -550,15 +547,30 @@ void DockPanel::mouseMoveEvent(QMouseEvent* e) {
 }
 
 bool DockPanel::checkMouseEnter(int x, int y) {
-  if ((position_ == PanelPosition::Bottom &&
-       y < tooltipSize_ + maxSize_ - minSize_) ||
-      (position_ == PanelPosition::Top &&
-       y > maxHeight_ - tooltipSize_ - maxSize_ + minSize_) ||
-      (position_ == PanelPosition::Left &&
-       x > maxWidth_ - tooltipSize_ - maxSize_ + minSize_) ||
-      (position_ == PanelPosition::Right &&
-       x < tooltipSize_ + maxSize_ - minSize_)) {
-    return false;
+  if (position_ == PanelPosition::Bottom) {
+    auto y0 = maxHeight_ - minHeight_;
+    if (isFloating()) { y0 += floatingMargin_; }
+    if (y < y0) {
+      return false;
+    }
+  } else if (position_ == PanelPosition::Top) {
+    auto y0 = minHeight_;
+    if (isFloating()) { y0 -= floatingMargin_; }
+    if (y > y0) {
+      return false;
+    }
+  } else if (position_ == PanelPosition::Left) {
+    auto x0 = minWidth_;
+    if (isFloating()) { x0 -= floatingMargin_; }
+    if (x > x0) {
+      return false;
+    }
+  } else {  // Right
+    auto x0 = maxWidth_ - minWidth_;
+    if (isFloating()) { x0 += floatingMargin_; }
+    if (x < x0) {
+      return false;
+    }
   }
 
   if (isHorizontal() &&
@@ -994,20 +1006,33 @@ void DockPanel::initLayoutVars() {
     for (const auto& item : items_) {
       minWidth_ += (item->getMinWidth() + itemSpacing_);
     }
+    minBackgroundWidth_ = minWidth_;
     minHeight_ = minSize_ + 2 * itemSpacing_;
+    minBackgroundHeight_ = minHeight_;
     maxWidth_ = minWidth_ + delta;
     maxHeight_ = 2 * itemSpacing_ + maxSize_ + tooltipSize_;
-    if (isFloating()) maxHeight_ += floatingMargin_;
-    if (is3D() && isBottom()) maxHeight_ += k3DPanelThickness;
+    if (isFloating()) {
+      maxHeight_ += 2 * floatingMargin_;
+      minHeight_ += 2 * floatingMargin_;
+    }
+    if (is3D() && isBottom()) {
+      maxHeight_ += k3DPanelThickness;
+      minHeight_ += k3DPanelThickness;
+    }
   } else {  // Vertical
     minHeight_ = itemSpacing_;
     for (const auto& item : items_) {
       minHeight_ += (item->getMinHeight() + itemSpacing_);
     }
+    minBackgroundHeight_ = minHeight_;
     minWidth_ = minSize_ + 2 * itemSpacing_;
+    minBackgroundWidth_ = minWidth_;
     maxHeight_ = minHeight_ + delta;
     maxWidth_ = 2 * itemSpacing_ + maxSize_ + tooltipSize_;
-    if (isFloating()) maxWidth_ += floatingMargin_;
+    if (isFloating()) {
+      maxWidth_ += 2 * floatingMargin_;
+      minWidth_ += 2 * floatingMargin_;
+    }
   }
 
   resize(maxWidth_, maxHeight_);
@@ -1034,29 +1059,22 @@ void DockPanel::updateLayout() {
           (i == 0) ? isBottom() && is3D() ? itemSpacing_ + (maxWidth_ - minWidth_) / 2 + margin3D_
                                           : itemSpacing_ + (maxWidth_ - minWidth_) / 2
                    : items_[i - 1]->left_ + items_[i - 1]->getMinWidth() + itemSpacing_;
-      items_[i]->top_ = isTop()
-          ? isFloating() ? itemSpacing_ + floatingMargin_ : itemSpacing_
-          : isFloating() ? itemSpacing_ + maxHeight_ - minHeight_ - floatingMargin_
-                         : itemSpacing_ + maxHeight_ - minHeight_;
-      if (is3D() && isBottom()) { items_[i]->top_ -= k3DPanelThickness; }
+      items_[i]->top_ = isTop() ? itemSpacing_
+                                : itemSpacing_ + maxHeight_ - minHeight_;
+      if (isFloating()) { items_[i]->top_ += floatingMargin_; }
       items_[i]->minCenter_ = items_[i]->left_ + items_[i]->getMinWidth() / 2;
     } else {  // Vertical
-      items_[i]->left_ = isLeft()
-          ? isFloating() ? itemSpacing_ + floatingMargin_ : itemSpacing_
-          : isFloating() ? itemSpacing_ + maxWidth_ - minWidth_ - floatingMargin_
-                         : itemSpacing_ + maxWidth_ - minWidth_;
+      items_[i]->left_ = isLeft() ? itemSpacing_
+                                  : itemSpacing_ + maxWidth_ - minWidth_;
+      if (isFloating()) { items_[i]->left_ += floatingMargin_; }
       items_[i]->top_ = (i == 0) ? itemSpacing_ + (maxHeight_ - minHeight_) / 2
           : items_[i - 1]->top_ + items_[i - 1]->getMinHeight() + itemSpacing_;
       items_[i]->minCenter_ = items_[i]->top_ + items_[i]->getMinHeight() / 2;
     }
   }
-  if (isHorizontal()) {
-    backgroundWidth_ = minWidth_;
-    backgroundHeight_ = minSize_ + 2 * itemSpacing_;
-  } else {  // Vertical
-    backgroundHeight_ = minHeight_;
-    backgroundWidth_ = minSize_ + 2 * itemSpacing_;
-  }
+
+  backgroundWidth_ = minBackgroundWidth_;
+  backgroundHeight_ = minBackgroundHeight_;
 
   if (isLeaving_) {
     for (const auto& item : items_) {
@@ -1065,17 +1083,12 @@ void DockPanel::updateLayout() {
       item->endTop_ = item->top_;
       item->startAnimation(numAnimationSteps_);
     }
-    if (isHorizontal()) {
-      endBackgroundWidth_ = minWidth_;
-      backgroundWidth_ = startBackgroundWidth_;
-      endBackgroundHeight_ = minSize_ + 2 * itemSpacing_;
-      backgroundHeight_ = startBackgroundHeight_;
-    } else {  // Vertical
-      endBackgroundHeight_ = minHeight_;
-      backgroundHeight_ = startBackgroundHeight_;
-      endBackgroundWidth_ = minSize_ + 2 * itemSpacing_;
-      backgroundWidth_ = startBackgroundWidth_;
-    }
+
+    endBackgroundWidth_ = minBackgroundWidth_;
+    backgroundWidth_ = startBackgroundWidth_;
+    endBackgroundHeight_ = minBackgroundHeight_;
+    backgroundHeight_ = startBackgroundHeight_;
+
     currentAnimationStep_ = 0;
     isAnimationActive_ = true;
     animationTimer_->start(32 - animationSpeed_);
@@ -1098,13 +1111,8 @@ void DockPanel::updateLayout(int x, int y) {
       item->startLeft_ = item->left_;
       item->startTop_ = item->top_;
     }
-    if (isHorizontal()) {
-      startBackgroundWidth_ = minWidth_;
-      startBackgroundHeight_ = minSize_ + 2 * itemSpacing_;
-    } else {  // Vertical
-      startBackgroundHeight_ = minHeight_;
-      startBackgroundWidth_ = minSize_ + 2 * itemSpacing_;
-    }
+    startBackgroundWidth_ = minBackgroundWidth_;
+    startBackgroundHeight_ = minBackgroundHeight_;
   }
 
   int first_update_index = -1;
@@ -1130,13 +1138,13 @@ void DockPanel::updateLayout(int x, int y) {
     }
     items_[i]->size_ = parabolic(delta);
     if (isHorizontal()) {
-      items_[i]->top_ = isTop()
-          ? isFloating() ? itemSpacing_ + floatingMargin_ : itemSpacing_
-          : itemSpacing_ + tooltipSize_ + maxSize_ - items_[i]->size_;
-    } else {
-      items_[i]->left_ = isLeft()
-          ? isFloating() ? itemSpacing_ + floatingMargin_ : itemSpacing_
-          : itemSpacing_ + tooltipSize_ + maxSize_ - items_[i]->size_;
+      items_[i]->top_ = isTop() ? itemSpacing_
+                                : itemSpacing_ + tooltipSize_ + maxSize_ - items_[i]->size_;
+      if (isFloating()) { items_[i]->top_ += floatingMargin_; }
+    } else {  // Vertical
+      items_[i]->left_ = isLeft() ? itemSpacing_
+                                  : itemSpacing_ + tooltipSize_ + maxSize_ - items_[i]->size_;
+      if (isFloating()) { items_[i]->left_ += floatingMargin_; }
     }
     if (i > 0) {
       if (isHorizontal()) {
@@ -1268,9 +1276,11 @@ void DockPanel::resizeTaskManager() {
     if (isHorizontal()) {
       items_[i]->top_ = isTop() ? itemSpacing_
                                 : itemSpacing_ + tooltipSize_ + maxSize_ - items_[i]->getHeight();
-    } else {
+      if (isFloating()) { items_[i]->top_ += floatingMargin_; }
+    } else {  // Vertical
       items_[i]->left_ = isLeft() ? itemSpacing_
                                   : itemSpacing_ + tooltipSize_ + maxSize_ - items_[i]->getWidth();
+      if (isFloating()) { items_[i]->left_ += floatingMargin_; }
     }
     if (i > 0) {
       if (isHorizontal()) {

@@ -321,10 +321,17 @@ class DockPanel : public QWidget {
   int itemSpacing_;  // space between items.
   int margin3D_;
   int floatingMargin_;  // margin around the dock in floating mode.
+
+  // Width/height of the dock area when minimized.
   int minWidth_;
-  int maxWidth_;
   int minHeight_;
+  // Width/height of the dock background area (e.g. the background panel in 2D) when minimized.
+  int minBackgroundWidth_;
+  int minBackgroundHeight_;
+  // Width/height of the dock area when maximized (zoomed in).
+  int maxWidth_;
   int maxHeight_;
+
   int parabolicMaxX_;
   QRect screenGeometry_;  // the geometry of the screen that the dock is on.
 
