@@ -1411,9 +1411,7 @@ void DockPanel::updatePosition(PanelPosition position) {
 void DockPanel::updateVisibility(PanelVisibility visibility) {
   setVisibility(visibility);
   setStrut();
-  if (autoHide() || intellihideShouldHide()) {
-    setAutoHide();
-  }
+  setAutoHide(autoHide() || intellihideShouldHide());
   saveDockConfig();
 }
 
