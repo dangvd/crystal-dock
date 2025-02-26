@@ -39,7 +39,7 @@ namespace crystaldock {
 
 enum class PanelPosition { Top, Bottom, Left, Right };
 
-enum class PanelVisibility { AlwaysVisible, AutoHide, AlwaysOnTop };
+enum class PanelVisibility { AlwaysVisible, AutoHide, AlwaysOnTop, IntelligentAutoHide };
 
 // Glass 3D style only makes the bottom dock really 3D. For left/right/top docks, they will look
 // more like "Glass 2D" for aesthetic reasons.

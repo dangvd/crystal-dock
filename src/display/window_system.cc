@@ -530,7 +530,6 @@ void WindowSystem::initScreens() {
   }
   WindowInfo* info = windows_[window];
   if (info) {
-    const auto prevDemandsAttention = info->demandsAttention;
     info->skipTaskbar = flags & ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_SKIPTASKBAR;
     info->onAllDesktops = flags & ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_ON_ALL_DESKTOPS;
     info->demandsAttention = flags & ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_DEMANDS_ATTENTION;
@@ -543,9 +542,8 @@ void WindowSystem::initScreens() {
       activeUuid_ = info->uuid;
       emit self()->activeWindowChanged(activeUuid_);
     }
-    if (info->demandsAttention != prevDemandsAttention) {
-      emit self()->windowStateChanged(info);
-    }
+
+    emit self()->windowStateChanged(info);
   }
 }
 

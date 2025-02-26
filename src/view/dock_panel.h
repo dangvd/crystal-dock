@@ -267,6 +267,8 @@ class DockPanel : public QWidget {
 
   void initLayoutVars();
 
+  QRect getMinimizedDockGeometry();
+
   // Updates width, height, items's size and position when the mouse is outside
   // the dock.
   void updateLayout();
@@ -276,6 +278,12 @@ class DockPanel : public QWidget {
 
   // Checks if the mouse has actually entered the dock panel's visibility area.
   bool checkMouseEnter(int x, int y);
+
+  // Should the dock hide in Intelligent Auto Hide mode?
+  bool intellihideShouldHide();
+
+  // Hides/unhides the dock in Intelligent Auto Hide mode if necessary.
+  void intellihideHideUnhide();
 
   // Resizes the task manager part of the panel. This needs to not interfere
   // with the zooming.
@@ -353,6 +361,7 @@ class DockPanel : public QWidget {
   QAction* positionLeft_;
   QAction* positionRight_;
   QAction* visibilityAlwaysVisibleAction_;
+  QAction* visibilityIntelligentAutoHideAction_;
   QAction* visibilityAutoHideAction_;
   QAction* visibilityAlwaysOnTopAction_;
   QAction* applicationMenuAction_;
@@ -375,6 +384,7 @@ class DockPanel : public QWidget {
   TaskManagerSettingsDialog taskManagerSettingsDialog_;
 
   bool isMinimized_;
+  bool isHidden_;
   bool isEntering_;
   bool isLeaving_;
   bool isAnimationActive_;

@@ -75,6 +75,7 @@ DockPanel::DockPanel(MultiDockView* parent, MultiDockModel* model, int dockId)
       wallpaperSettingsDialog_(this, model),
       taskManagerSettingsDialog_(this, model),
       isMinimized_(true),
+      isHidden_(false),
       isEntering_(false),
       isLeaving_(false),
       isAnimationActive_(false),
@@ -197,7 +198,7 @@ void DockPanel::updateAnimation() {
     if (isLeaving_) {
       isLeaving_ = false;
       updateLayout();
-      if (autoHide() && !hasFocus()) { setAutoHide(); }
+      if (isHidden_ && !hasFocus()) { setAutoHide(); }
     }
   }
   repaint();
@@ -314,6 +315,8 @@ void DockPanel::onWindowLeftCurrentActivity(std::string_view uuid) {
 }
 
 void DockPanel::onWindowGeometryChanged(const WindowInfo* task) {
+  intellihideHideUnhide();
+
   if (!showTaskManager()) {
     return;
   }
@@ -338,6 +341,8 @@ void DockPanel::onWindowGeometryChanged(const WindowInfo* task) {
 
 
 void DockPanel::onWindowStateChanged(const WindowInfo *task) {
+  intellihideHideUnhide();
+
   if (!showTaskManager()) {
     return;
   }
@@ -585,6 +590,40 @@ bool DockPanel::checkMouseEnter(int x, int y) {
   return true;
 }
 
+bool DockPanel::intellihideShouldHide() {
+  if (visibility_ != PanelVisibility::IntelligentAutoHide) {
+    return false;
+  }
+
+  QRect dockGeometry = getMinimizedDockGeometry();
+  for (const auto* task : WindowSystem::windows()) {
+    if (isValidTask(task)) {
+      QRect windowGeometry(task->x, task->y, task->width, task->height);
+      if (!task->minimized && windowGeometry.intersects(dockGeometry)) {
+        return true;
+      }
+    }
+  }
+
+  return false;
+}
+
+void DockPanel::intellihideHideUnhide() {
+  if (visibility_ != PanelVisibility::IntelligentAutoHide) {
+    return;
+  }
+
+  if (intellihideShouldHide()) {
+    if (!isHidden_) {
+      setAutoHide();
+    }
+  } else {
+    if (isHidden_) {
+      setAutoHide(false);
+    }
+  }
+}
+
 void DockPanel::mousePressEvent(QMouseEvent* e) {
   if (isAnimationActive_) {
     return;
@@ -724,6 +763,10 @@ void DockPanel::createMenu() {
       QString("Always &Visible"), this,
       [this]() { updateVisibility(PanelVisibility::AlwaysVisible); });
   visibilityAlwaysVisibleAction_->setCheckable(true);
+  visibilityIntelligentAutoHideAction_ = visibility->addAction(
+      QString("&Intelligent Auto Hide"), this,
+      [this]() { updateVisibility(PanelVisibility::IntelligentAutoHide); });
+  visibilityIntelligentAutoHideAction_->setCheckable(true);
   visibilityAutoHideAction_ = visibility->addAction(
       QString("Auto &Hide"), this,
       [this]() { updateVisibility(PanelVisibility::AutoHide); });
@@ -752,6 +795,8 @@ void DockPanel::setVisibility(PanelVisibility visibility) {
   visibility_ = visibility;
   visibilityAlwaysVisibleAction_->setChecked(
       visibility_ == PanelVisibility::AlwaysVisible);
+  visibilityIntelligentAutoHideAction_->setChecked(
+      visibility_ == PanelVisibility::IntelligentAutoHide);
   visibilityAutoHideAction_->setChecked(
       visibility_ == PanelVisibility::AutoHide);
   visibilityAlwaysOnTopAction_->setChecked(
@@ -1036,6 +1081,25 @@ void DockPanel::initLayoutVars() {
   }
 
   resize(maxWidth_, maxHeight_);
+}
+
+QRect DockPanel::getMinimizedDockGeometry() {
+  QRect dockGeometry;
+  dockGeometry.setX(
+      isHorizontal()
+      ? screenGeometry_.x() + (screenGeometry_.width() - minWidth_) / 2
+      : isLeft()
+          ? screenGeometry_.x()
+          : screenGeometry_.x() + screenGeometry_.width() - minWidth_);
+  dockGeometry.setY(
+      isHorizontal()
+      ? isTop()
+        ? screenGeometry_.y()
+        : screenGeometry_.y() + screenGeometry_.height() - minHeight_
+      : screenGeometry_.y() + (screenGeometry_.height() - minHeight_) / 2);
+  dockGeometry.setWidth(minWidth_);
+  dockGeometry.setHeight(minHeight_);
+  return dockGeometry;
 }
 
 void DockPanel::updateLayout() {
@@ -1347,7 +1411,9 @@ void DockPanel::updatePosition(PanelPosition position) {
 void DockPanel::updateVisibility(PanelVisibility visibility) {
   setVisibility(visibility);
   setStrut();
-  setAutoHide(autoHide());
+  if (autoHide() || intellihideShouldHide()) {
+    setAutoHide();
+  }
   saveDockConfig();
 }
 
@@ -1368,6 +1434,7 @@ void DockPanel::setAutoHide(bool on) {
       break;
     }
   WindowSystem::setAutoHide(this, border, on);
+  isHidden_ = on;
 }
 
 void DockPanel::updateActiveItem(int x, int y) {
