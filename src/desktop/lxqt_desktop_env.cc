@@ -29,7 +29,7 @@ std::vector<Category> LxqtDesktopEnv::getApplicationMenuSystemCategories() const
         "Lock Screen",
         "",
         "system-lock-screen",
-        "xdg-screensaver lock",
+        "lxqt-leave --lockscreen",
         ""},
       {"log-out",
         "Log Out",
