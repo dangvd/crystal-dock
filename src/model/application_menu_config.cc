@@ -229,7 +229,8 @@ std::string ApplicationMenuConfig::tryMatchingApplicationId(const std::string& a
   return "";
 }
 
-const std::vector<ApplicationEntry> ApplicationMenuConfig::searchApplications(const QString& text) const {
+const std::vector<ApplicationEntry> ApplicationMenuConfig::searchApplications(
+    const QString& text, unsigned int maxNumResults) const {
   std::vector<ApplicationEntry> entries;
   for (const auto& category : categories_) {
     for (const auto& entry : category.entries) {
@@ -243,8 +244,12 @@ const std::vector<ApplicationEntry> ApplicationMenuConfig::searchApplications(co
           entries.push_back(entry);
         }
       }
+      if (entries.size() == maxNumResults) {
+        goto end_loop;
+      }
     }
   }
+end_loop:
   std::sort(entries.begin(), entries.end());
   return entries;
 }

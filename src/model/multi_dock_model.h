@@ -571,8 +571,9 @@ class MultiDockModel : public QObject {
     return applicationMenuConfig_.isAppMenuEntry(appId);
   }
 
-  const std::vector<ApplicationEntry> searchApplications(const QString& text) const {
-    return applicationMenuConfig_.searchApplications(text);
+  const std::vector<ApplicationEntry> searchApplications(
+      const QString& text, unsigned int maxNumResults) const {
+    return applicationMenuConfig_.searchApplications(text, maxNumResults);
   }
 
  signals:

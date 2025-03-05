@@ -115,6 +115,7 @@ class ApplicationMenu : public QObject, public IconBasedDockItem {
 
   QMenu* searchMenu_;
   QLineEdit* searchText_;
+  unsigned int maxNumResults_;
 
   // Context (right-click) menu.
   QMenu contextMenu_;

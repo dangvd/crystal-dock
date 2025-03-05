@@ -143,8 +143,13 @@ void ApplicationMenu::searchApps(const QString& searchText_) {
     searchMenu_->removeAction(actions[i]);
   }
 
-  for (const auto& entry : model_->searchApplications(text)) {
+  // We need to limit max number of results to avoid the sub-menu being pushed up too much.
+  for (const auto& entry : model_->searchApplications(text, maxNumResults_)) {
     addEntry(entry, searchMenu_);
+  }
+  if (parent_->isBottom()) {
+    // Work-around for sub-menu alignment issue on Wayland.
+    patchMenu(maxNumResults_ + 1, model_->applicationMenuIconSize(), searchMenu_);
   }
 }
 
@@ -229,10 +234,12 @@ void ApplicationMenu::buildMenu() {
   const auto numSubMenus = menu_.actions().size();
   for (int i = 0; i < numSubMenus; ++i) {
     QMenu* menu = menu_.actions()[i]->menu();
-    if (menu != nullptr) {
-      patchMenu(static_cast<int>((numSubMenus - i) * 1.25), menu);
+    if (menu != nullptr && parent_->isBottom()) {
+      // Work-around for sub-menu alignment issue on Wayland.
+      patchMenu(numSubMenus - i, model_->applicationMenuIconSize(), menu);
     }
   }
+  maxNumResults_ = menu_.actions().size() - 2;
 }
 
 void ApplicationMenu::addSearchMenu() {
@@ -284,7 +291,10 @@ void ApplicationMenu::resetSearchMenu() {
   for (int i = 1; i < actions.size(); ++i) {
     searchMenu_->removeAction(actions[i]);
   }
-  patchMenu(static_cast<int>(menu_.actions().size() * 1.25), searchMenu_);
+  if (parent_->isBottom()) {
+    // Work-around for sub-menu alignment issue on Wayland.
+    patchMenu(maxNumResults_ + 1, model_->applicationMenuIconSize(), searchMenu_);
+  }
 }
 
 QIcon ApplicationMenu::loadIcon(const QString &icon) {

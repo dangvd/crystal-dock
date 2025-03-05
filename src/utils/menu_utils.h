@@ -19,14 +19,22 @@
 #ifndef CRYSTALDOCK_MENU_UTILS_H_
 #define CRYSTALDOCK_MENU_UTILS_H_
 
+#include <QColor>
+#include <QIcon>
 #include <QMenu>
+#include <QPixmap>
 
 namespace crystaldock {
 
-inline void patchMenu(int totalNumItems, QMenu* menu) {
+// A work-around for sub-menu alignment issue on Wayland by adding
+// empty items to the sub-menu.
+inline void patchMenu(unsigned int totalNumItems, int iconSize, QMenu* menu) {
+  QPixmap pix(iconSize, iconSize);
+  pix.fill(QColorConstants::Transparent);
+  const QIcon icon(pix);
   const auto numItemsToAdd = totalNumItems - menu->actions().size();
-  for (int i = 0; i < numItemsToAdd; ++i) {
-    menu->addAction("");
+  for (unsigned int i = 0; i < numItemsToAdd; ++i) {
+    menu->addAction(icon, "");
   }
 }
 
