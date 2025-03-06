@@ -99,7 +99,6 @@ class Program : public QObject, public IconBasedDockItem {
 
   void launch();
   static void launch(const QString& command);
-  static void lockScreen() { launch("xdg-screensaver lock"); }
 
   void closeAllWindows();
 

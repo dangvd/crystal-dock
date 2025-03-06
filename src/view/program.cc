@@ -126,8 +126,8 @@ void Program::mousePressEvent(QMouseEvent* e) {
   if (e->button() == Qt::LeftButton) { // Run the application.
     if (appId_ == kLockScreenId) {
       parent_->leaveEvent(nullptr);
-      QTimer::singleShot(DockPanel::kMenuPopupDelayMs, []() {
-        lockScreen();
+      QTimer::singleShot(DockPanel::kMenuPopupDelayMs, [this]() {
+        launch();
       });
     } else {
       if (tasks_.empty()) {
