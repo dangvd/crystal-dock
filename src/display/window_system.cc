@@ -537,13 +537,13 @@ void WindowSystem::initScreens() {
 
     if (info->minimized && activeUuid_ == info->uuid) {
       activeUuid_ = "";
-      emit self()->activeWindowChanged(activeUuid_);
+      if (info->initialized) { emit self()->activeWindowChanged(activeUuid_); }
     } else if (flags & ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_ACTIVE && activeUuid_ != info->uuid) {
       activeUuid_ = info->uuid;
-      emit self()->activeWindowChanged(activeUuid_);
+      if (info->initialized) { emit self()->activeWindowChanged(activeUuid_); }
     }
 
-    emit self()->windowStateChanged(info);
+    if (info->initialized) { emit self()->windowStateChanged(info); }
   }
 }
 
@@ -587,6 +587,7 @@ void WindowSystem::initScreens() {
     return;
   }
   WindowInfo* info = windows_[window];
+  if (info) { info->initialized = true; }
   if (info && !info->skipTaskbar) {
     const auto fixedAppId = applicationMenuConfig_.tryMatchingApplicationId(info->appId);
     if (!fixedAppId.empty()) {
@@ -623,7 +624,7 @@ void WindowSystem::initScreens() {
     info->y = y;
     info->width = width;
     info->height = height;
-    emit self()->windowGeometryChanged(info);
+    if (info->initialized) { emit self()->windowGeometryChanged(info); }
   }
 }
 
@@ -662,7 +663,7 @@ void WindowSystem::initScreens() {
     return;
   }
   WindowInfo* info = windows_[window];
-  if (info && !info->onAllDesktops) {
+  if (info && info->initialized && !info->onAllDesktops) {
     emit self()->windowLeftCurrentDesktop(info->uuid);
   }
 }
@@ -699,7 +700,7 @@ void WindowSystem::initScreens() {
     return;
   }
   WindowInfo* info = windows_[window];
-  if (info) {
+  if (info && info->initialized) {
     emit self()->windowLeftCurrentActivity(info->uuid);
   }
 }

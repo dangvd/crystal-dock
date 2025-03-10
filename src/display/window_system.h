@@ -58,6 +58,7 @@ struct WindowInfo {
   std::string icon;
   std::string desktop;
   std::string activity;
+  bool initialized;
   bool skipTaskbar;
   bool onAllDesktops;
   bool demandsAttention;
