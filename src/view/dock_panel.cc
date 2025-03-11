@@ -140,10 +140,12 @@ void DockPanel::delayedRefresh() {
 
 void DockPanel::onCurrentDesktopChanged() {
   reloadTasks();
+  intellihideHideUnhide();
 }
 
 void DockPanel::onCurrentActivityChanged() {
   reloadTasks();
+  intellihideHideUnhide();
 }
 
 void DockPanel::setStrut() {
@@ -281,6 +283,8 @@ void DockPanel::removeDock() {
 }
 
 void DockPanel::onWindowAdded(const WindowInfo* info) {
+  intellihideHideUnhide();
+
   if (!showTaskManager()) {
     return;
   }
@@ -295,6 +299,8 @@ void DockPanel::onWindowAdded(const WindowInfo* info) {
 }
 
 void DockPanel::onWindowRemoved(std::string uuid) {
+  intellihideHideUnhide(uuid);
+
   if (!showTaskManager()) {
     return;
   }
@@ -590,14 +596,14 @@ bool DockPanel::checkMouseEnter(int x, int y) {
   return true;
 }
 
-bool DockPanel::intellihideShouldHide() {
+bool DockPanel::intellihideShouldHide(std::string_view excluding_window) {
   if (visibility_ != PanelVisibility::IntelligentAutoHide) {
     return false;
   }
 
   QRect dockGeometry = getMinimizedDockGeometry();
   for (const auto* task : WindowSystem::windows()) {
-    if (isValidTask(task)) {
+    if (isValidTask(task) && (excluding_window.empty() || task->uuid != excluding_window)) {
       QRect windowGeometry(task->x, task->y, task->width, task->height);
       if (!task->minimized && windowGeometry.intersects(dockGeometry)) {
         return true;
@@ -608,12 +614,12 @@ bool DockPanel::intellihideShouldHide() {
   return false;
 }
 
-void DockPanel::intellihideHideUnhide() {
+void DockPanel::intellihideHideUnhide(std::string_view excluding_window) {
   if (visibility_ != PanelVisibility::IntelligentAutoHide) {
     return;
   }
 
-  if (intellihideShouldHide()) {
+  if (intellihideShouldHide(excluding_window)) {
     if (!isHidden_) {
       setAutoHide();
     }

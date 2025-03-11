@@ -280,10 +280,10 @@ class DockPanel : public QWidget {
   bool checkMouseEnter(int x, int y);
 
   // Should the dock hide in Intelligent Auto Hide mode?
-  bool intellihideShouldHide();
+  bool intellihideShouldHide(std::string_view excluding_window = {});
 
   // Hides/unhides the dock in Intelligent Auto Hide mode if necessary.
-  void intellihideHideUnhide();
+  void intellihideHideUnhide(std::string_view excluding_window = {});
 
   // Resizes the task manager part of the panel. This needs to not interfere
   // with the zooming.
