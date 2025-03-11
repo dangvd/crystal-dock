@@ -361,24 +361,27 @@ void Program::updateBounceAnimation() {
     return;
   }
 
-  bounceProgress_ += 1.0f / kBounceSteps;
-  if (bounceProgress_ >= 1.0f) {
-    bounceProgress_ = 0.0f;
-    if (bouncingUp_) {
-      bouncingUp_ = false;
-    } else {
-      bounceTimer_.stop();
+  float bounceStep = 1.0f / kBounceSteps;
+  float nextBounceRatio = bounceProgress_ + bounceStep;
+  if (nextBounceRatio < 1.0f) {
+    bounceProgress_ = nextBounceRatio;
+  } else {
+    if (!bouncingUp_) {
+      // Done and done
+      bounceProgress_ = 1.0f;
       bouncing_ = false;
-      endTop_ = startTop_;
-      endLeft_ = startLeft_;
-      endSize_ = startSize_;
-      startAnimation(1);
-      nextAnimationStep();
+      bounceTimer_.stop();
+
+      return;
     }
+
+    // It was bouncing up
+    bounceProgress_ = 0.0f;
+    bouncingUp_ = false;
   }
 
-  // Update position with easing
-  endTop_ = startTop_ + getBounceOffset();
+  float bounceOffset = getBounceOffset();
+  endTop_ = startTop_ + bounceOffset;
   endLeft_ = startLeft_;
   endSize_ = startSize_;
   startAnimation(1);
