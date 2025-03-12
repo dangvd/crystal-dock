@@ -347,6 +347,10 @@ void Program::updateMenu() {
 }
 
 void Program::startBounceAnimation() {
+  if (!model_->bouncingLauncherIcon()) {
+    return;
+  }
+
   if (!bouncing_) {
     bouncing_ = true;
     bouncingUp_ = true;
