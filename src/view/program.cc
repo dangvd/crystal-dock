@@ -96,7 +96,10 @@ void Program::draw(QPainter *painter) const {
     auto x = left_ + (getWidth() - totalSize) / 2 + size / 2;
     auto y = top_ + (getHeight() - totalSize) / 2 + size / 2;
     for (int i = 0; i < taskCount; ++i) {
-      bool useActiveColor = (i == activeTask) || attentionStrong_ || launching_;
+      // If bouncing launcher icon is not enabled, we use active color
+      // to provide feedback.
+      bool useActiveColor = (i == activeTask) || attentionStrong_
+          || (launching_ && !model_->bouncingLauncherIcon());
       if (parent_->is3D()) {
         const auto baseColor = useActiveColor
             ? model_->activeIndicatorColor() : model_->inactiveIndicatorColor();
