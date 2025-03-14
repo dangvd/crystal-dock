@@ -91,7 +91,6 @@ void AppearanceSettingsDialog::loadData() {
   ui->floatingMargin->setEnabled(model_->panelStyle() == PanelStyle::Glass3D_Floating ||
                                  model_->panelStyle() == PanelStyle::Flat2D_Floating ||
                                  model_->panelStyle() == PanelStyle::Metal2D_Floating);
-  ui->bouncingLauncherIcon->setChecked(model_->bouncingLauncherIcon());
 }
 
 void AppearanceSettingsDialog::resetData() {
@@ -115,7 +114,6 @@ void AppearanceSettingsDialog::resetData() {
                                           : kDefaultInactiveIndicatorColorMetal2D));
   ui->tooltipFontSize->setValue(kDefaultTooltipFontSize);
   ui->floatingMargin->setValue(kDefaultFloatingMargin);
-  ui->bouncingLauncherIcon->setChecked(kDefaultBouncingLauncherIcon);
 }
 
 void AppearanceSettingsDialog::saveData() {
@@ -148,7 +146,6 @@ void AppearanceSettingsDialog::saveData() {
   }
   model_->setTooltipFontSize(ui->tooltipFontSize->value());
   model_->setFloatingMargin(ui->floatingMargin->value());
-  model_->setBouncingLauncherIcon(ui->bouncingLauncherIcon->isChecked());
   model_->saveAppearanceConfig();
 }
 
