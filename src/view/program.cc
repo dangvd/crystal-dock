@@ -78,6 +78,17 @@ void Program::init() {
 }
 
 void Program::draw(QPainter *painter) const {
+  painter->save();
+
+  if (bouncing_) {
+    float bounceOffset = getBounceOffset();
+    if (isHorizontal()) {
+      painter->translate(0, bounceOffset);
+    } else {
+      painter->translate(bounceOffset, 0);
+    }
+  }
+
   painter->setRenderHint(QPainter::Antialiasing);
   auto taskCount = static_cast<int>(tasks_.size());
   if (taskCount == 0 && launching_) { taskCount = 1; }
@@ -126,6 +137,8 @@ void Program::draw(QPainter *painter) const {
   painter->setRenderHint(QPainter::Antialiasing, false);
 
   IconBasedDockItem::draw(painter);
+
+  painter->restore();
 }
 
 void Program::mousePressEvent(QMouseEvent* e) {
@@ -378,7 +391,6 @@ void Program::updateBounceAnimation() {
       bounceProgress_ = 1.0f;
       bouncing_ = false;
       bounceTimer_.stop();
-
       return;
     }
 
@@ -387,12 +399,6 @@ void Program::updateBounceAnimation() {
     bouncingUp_ = false;
   }
 
-  float bounceOffset = getBounceOffset();
-  endTop_ = startTop_ + bounceOffset;
-  endLeft_ = startLeft_;
-  endSize_ = startSize_;
-  startAnimation(1);
-  nextAnimationStep();
   parent_->update();
 }
 
