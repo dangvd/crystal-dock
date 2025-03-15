@@ -64,6 +64,7 @@ constexpr char kDefaultInactiveIndicatorColor[] = "darkcyan";
 constexpr char kDefaultInactiveIndicatorColor2D[] = "cyan";
 constexpr char kDefaultInactiveIndicatorColorMetal2D[] = "cyan";
 constexpr int kDefaultFloatingMargin = 6;
+constexpr bool kDefaultBouncingLauncherIcon = true;
 
 constexpr float kLargeClockFontScaleFactor = 1.0;
 constexpr float kMediumClockFontScaleFactor = 0.8;
@@ -301,6 +302,15 @@ class MultiDockModel : public QObject {
 
   void setFloatingMargin(int value) {
     setAppearanceProperty(kGeneralCategory, kFloatingMargin, value);
+  }
+
+  bool bouncingLauncherIcon() const {
+    return appearanceProperty(kGeneralCategory, kBouncingLauncherIcon,
+                              kDefaultBouncingLauncherIcon);
+  }
+
+  void setBouncingLauncherIcon(bool value) {
+    setAppearanceProperty(kGeneralCategory, kBouncingLauncherIcon, value);
   }
 
   bool firstRunMultiScreen() {
@@ -621,6 +631,7 @@ class MultiDockModel : public QObject {
   static constexpr char kTooltipFontSize[] = "tooltipFontSize";
   static constexpr char kPanelStyle[] = "panelStyle";
   static constexpr char kFloatingMargin[] = "floatingMargin";
+  static constexpr char kBouncingLauncherIcon[] = "bouncingLauncherIcon";
 
   static constexpr char kFirstRunMultiScreen[] = "firstRunMultiScreen";
   static constexpr char kFirstRunWindowCountIndicator[] = "firstRunWindowCountIndicator";

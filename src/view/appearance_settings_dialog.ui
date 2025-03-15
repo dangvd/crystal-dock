@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>820</width>
-    <height>420</height>
+    <height>480</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,7 +17,7 @@
    <property name="geometry">
     <rect>
      <x>34</x>
-     <y>350</y>
+     <y>410</y>
      <width>730</width>
      <height>36</height>
     </rect>
@@ -286,6 +286,19 @@
    </property>
    <property name="text">
     <string>Indicator color (inactive)</string>
+   </property>
+  </widget>
+  <widget class="QCheckBox" name="bouncingLauncherIcon">
+   <property name="geometry">
+    <rect>
+     <x>40</x>
+     <y>330</y>
+     <width>300</width>
+     <height>40</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Bouncing launcher icon</string>
    </property>
   </widget>
  </widget>
