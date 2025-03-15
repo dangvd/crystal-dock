@@ -72,9 +72,23 @@ void Program::init() {
     attentionStrong_ = !attentionStrong_;
     parent_->update();
   });
+
+  bounceTimer_.setInterval(kBounceIntervalMs);
+  connect(&bounceTimer_, &QTimer::timeout, this, &Program::updateBounceAnimation);
 }
 
 void Program::draw(QPainter *painter) const {
+  painter->save();
+
+  if (bouncing_) {
+    float bounceOffset = getBounceOffset();
+    if (isHorizontal()) {
+      painter->translate(0, bounceOffset);
+    } else {
+      painter->translate(bounceOffset, 0);
+    }
+  }
+
   painter->setRenderHint(QPainter::Antialiasing);
   auto taskCount = static_cast<int>(tasks_.size());
   if (taskCount == 0 && launching_) { taskCount = 1; }
@@ -95,7 +109,8 @@ void Program::draw(QPainter *painter) const {
     for (int i = 0; i < taskCount; ++i) {
       // If bouncing launcher icon is not enabled, we use active color
       // to provide feedback.
-      bool useActiveColor = (i == activeTask) || attentionStrong_ || launching_;
+      bool useActiveColor = (i == activeTask) || attentionStrong_
+          || (launching_ && !model_->bouncingLauncherIcon());
       if (parent_->is3D()) {
         const auto baseColor = useActiveColor
             ? model_->activeIndicatorColor() : model_->inactiveIndicatorColor();
@@ -122,6 +137,8 @@ void Program::draw(QPainter *painter) const {
   painter->setRenderHint(QPainter::Antialiasing, false);
 
   IconBasedDockItem::draw(painter);
+
+  painter->restore();
 }
 
 void Program::mousePressEvent(QMouseEvent* e) {
@@ -134,10 +151,12 @@ void Program::mousePressEvent(QMouseEvent* e) {
     } else {
       if (tasks_.empty()) {
         launch();
+        startBounceAnimation();
       } else {
         const auto mod = QGuiApplication::keyboardModifiers();
         if (mod & Qt::ShiftModifier) {
           launch();
+          startBounceAnimation();
         } else if (tasks_.size() == 1) {
           WindowSystem::activateOrMinimizeWindow(tasks_[0].uuid);
         } else {
@@ -341,6 +360,59 @@ void Program::updateDemandsAttention() {
 void Program::updateMenu() {
   closeAction_->setVisible(!tasks_.empty());
   closeAction_->setText(tasks_.size() > 1 ? "&Close All Windows" : "&Close Window");
+}
+
+void Program::startBounceAnimation() {
+  if (!model_->bouncingLauncherIcon()) {
+    return;
+  }
+
+  if (!bouncing_) {
+    bouncing_ = true;
+    bouncingUp_ = true;
+    bounceProgress_ = 0.0f;
+    setAnimationStartAsCurrent();
+    bounceTimer_.start();
+  }
+}
+
+void Program::updateBounceAnimation() {
+  if (!bouncing_) {
+    return;
+  }
+
+  float bounceStep = 1.0f / kBounceSteps;
+  float nextBounceRatio = bounceProgress_ + bounceStep;
+  if (nextBounceRatio < 1.0f) {
+    bounceProgress_ = nextBounceRatio;
+  } else {
+    if (!bouncingUp_) {
+      // Done and done
+      bounceProgress_ = 1.0f;
+      bouncing_ = false;
+      bounceTimer_.stop();
+      return;
+    }
+
+    // It was bouncing up
+    bounceProgress_ = 0.0f;
+    bouncingUp_ = false;
+  }
+
+  parent_->update();
+}
+
+float Program::getBounceOffset() const {
+  float bounceOffset;
+  if (bouncingUp_) {
+    float ratio = 1.0f - std::pow(1.0f - bounceProgress_, kBounceEaseOut);
+    bounceOffset = -kBounceHeight * ratio;
+  } else {
+    float ratio = std::pow(bounceProgress_, kBounceEaseIn);
+    bounceOffset = -kBounceHeight * (1.0f - ratio);
+  }
+
+  return bounceOffset;
 }
 
 }  // namespace crystaldock

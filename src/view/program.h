@@ -105,6 +105,13 @@ class Program : public QObject, public IconBasedDockItem {
  private:
   static constexpr int kLaunchingAcknowledgementDurationMs = 3000;  // 3 seconds.
 
+  // For bounce animation.
+  static constexpr int kBounceHeight = 32;
+  static constexpr int kBounceSteps = 12;
+  static constexpr int kBounceIntervalMs = 25;
+  static constexpr float kBounceEaseIn = 2.0f;
+  static constexpr float kBounceEaseOut = 2.0f;
+
   void createMenu();
 
   void updateDemandsAttention();
@@ -130,6 +137,15 @@ class Program : public QObject, public IconBasedDockItem {
 
   // For launching acknowledgement.
   bool launching_;
+
+  QTimer bounceTimer_;
+  bool bouncing_ = false;
+  float bounceProgress_ = 0.0f;
+  bool bouncingUp_ = true;
+
+  void startBounceAnimation();
+  void updateBounceAnimation();
+  float getBounceOffset() const;
 
   friend class DockPanel;
 };
