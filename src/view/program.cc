@@ -79,16 +79,6 @@ void Program::init() {
 
 void Program::draw(QPainter *painter) const {
   painter->save();
-
-  if (bouncing_) {
-    float bounceOffset = getBounceOffset();
-    if (isHorizontal()) {
-      painter->translate(0, bounceOffset);
-    } else {
-      painter->translate(bounceOffset, 0);
-    }
-  }
-
   painter->setRenderHint(QPainter::Antialiasing);
   auto taskCount = static_cast<int>(tasks_.size());
   if (taskCount == 0 && launching_) { taskCount = 1; }
@@ -135,9 +125,19 @@ void Program::draw(QPainter *painter) const {
     }
   }
   painter->setRenderHint(QPainter::Antialiasing, false);
+  painter->restore();
+
+  painter->save();
+  if (bouncing_) {
+    float bounceOffset = getBounceOffset();
+    if (isHorizontal()) {
+      painter->translate(0, bounceOffset);
+    } else {
+      painter->translate(bounceOffset, 0);
+    }
+  }
 
   IconBasedDockItem::draw(painter);
-
   painter->restore();
 }
 
