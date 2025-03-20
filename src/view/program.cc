@@ -81,7 +81,8 @@ void Program::draw(QPainter *painter) const {
   painter->save();
   painter->setRenderHint(QPainter::Antialiasing);
   auto taskCount = static_cast<int>(tasks_.size());
-  if (taskCount == 0 && launching_) { taskCount = 1; }
+  // For launching feedback if bouncing launcher icon is not enabled.
+  if (taskCount == 0 && launching_&& !model_->bouncingLauncherIcon()) { taskCount = 1; }
   if (parent_->showTaskManager() && taskCount > 0) {  // Show task count indicator.
     static constexpr int kMaxVisibleTaskCount = 4;
     if (taskCount > kMaxVisibleTaskCount) { taskCount = kMaxVisibleTaskCount; }
