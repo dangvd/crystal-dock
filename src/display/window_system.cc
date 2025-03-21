@@ -592,7 +592,7 @@ void WindowSystem::initScreens() {
     const auto fixedAppId = applicationMenuConfig_.tryMatchingApplicationId(info->appId);
     if (!fixedAppId.empty()) {
       info->appId = fixedAppId;
-    } else {
+    } else if (info->appId != "lxqt-leave") {
       std::cerr << "Could not find application with id: " << info->appId
                 << ". The window icon will have limited functionalities." << std::endl;
     }
