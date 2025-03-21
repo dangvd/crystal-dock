@@ -129,6 +129,10 @@ void ApplicationMenuConfigTest::loadEntries_multipleDirs() {
              {"chrome-old", "Chrome - Old", "Web Browser", "chrome", "chrome", ""},
              "Network",
              {{"Hidden", "true"}});
+  writeEntry(entryDir3.path() + "/lxqt-shutdown.desktop",
+             {"lxqt-shutdown", "Shutdown", "Shutdown", "system-shutdown", "lxqt-leave --shutdown",
+              ""},
+             "System");
 
   ApplicationMenuConfig config(
       { entryDir1.path(), entryDir1.path() + "/dir-not-exist", entryDir2.path(),

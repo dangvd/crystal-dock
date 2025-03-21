@@ -143,6 +143,12 @@ bool ApplicationMenuConfig::loadEntry(const QString &file) {
     return false;
   }
 
+  // Do not show LXQt special entries (Log Out / Reboot etc.) in the standard categories,
+  // as they are already available in special sections (Session / Power).
+  if (desktopFile.exec().startsWith("lxqt-leave")) {
+    return false;
+  }
+
   auto categories = desktopFile.categories();
   if (categories.isEmpty()) {
     return false;
