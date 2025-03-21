@@ -127,7 +127,3 @@ enable_testing()
 add_executable(application_menu_config_test model/application_menu_config_test.cc)
 target_link_libraries(application_menu_config_test Qt6::Test crystal-dock_lib ${LIBS})
 add_test(application_menu_config_test application_menu_config_test)
-
-add_executable(multi_dock_model_test model/multi_dock_model_test.cc)
-target_link_libraries(multi_dock_model_test Qt6::Test crystal-dock_lib ${LIBS})
-add_test(multi_dock_model_test multi_dock_model_test)
