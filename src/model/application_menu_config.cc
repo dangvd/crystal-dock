@@ -237,6 +237,14 @@ std::string ApplicationMenuConfig::tryMatchingApplicationId(const std::string& a
     }
   }
 
+  // Special fix for Google Chrome Flatpak.
+  if (id == "google-chrome") {
+    fixedAppId = "com.google.chrome";
+    if (auto* app = findApplication(fixedAppId)) {
+      return app->appId.toStdString();
+    }
+  }
+
   return "";
 }
 
