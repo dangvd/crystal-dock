@@ -183,18 +183,24 @@ void ApplicationMenuConfigTest::tryMatchingApplicationId() {
              {"virtualbox", "Virtual Box", "Virtualization",
               "virtualbox", "Virtual Box", ""},
              "Utility");
+  writeEntry(entryDir.path() + "/io.sourceforge.ChessX.desktop",
+             {"io.sourceforge.ChessX", "ChessX", "Chess Game",
+              "io.sourceforge.ChessX", "chessx", ""},
+             "Game");
 
   ApplicationMenuConfig config({ entryDir.path() });
 
-  QCOMPARE(config.entries_.size(), 7);
+  QCOMPARE(config.entries_.size(), 8);
 
   QCOMPARE(config.tryMatchingApplicationId("firefox"), "firefox");
   QCOMPARE(config.tryMatchingApplicationId("org.kde.konsole"), "org.kde.konsole");
   QCOMPARE(config.tryMatchingApplicationId("Google-chrome"), "google-chrome");
-  QCOMPARE(config.tryMatchingApplicationId("krita"), "krita");
-  QCOMPARE(config.tryMatchingApplicationId("Gimp-2.10"), "gimp-2.10");
+  QCOMPARE(config.tryMatchingApplicationId("krita"), "org.kde.krita");
+  QCOMPARE(config.tryMatchingApplicationId("Gimp-2.10"), "gimp");
   QCOMPARE(config.tryMatchingApplicationId("qdbusviewer"), "org.qt.qdbusviewer6");
   QCOMPARE(config.tryMatchingApplicationId("virtualboxvm"), "virtualbox");
+  QCOMPARE(config.tryMatchingApplicationId("net.sourceforge.chessx.chessx"),
+           "io.sourceforge.chessx");
 }
 
 }  // namespace crystaldock

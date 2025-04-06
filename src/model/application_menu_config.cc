@@ -212,23 +212,28 @@ const ApplicationEntry* ApplicationMenuConfig::findApplication(const std::string
 std::string ApplicationMenuConfig::tryMatchingApplicationId(const std::string& appId) const {
   QString id = QString::fromStdString(appId).toLower().simplified().replace(" ", "");
   std::string fixedAppId = id.toStdString();
-  if (findApplication(fixedAppId) != nullptr) {
-    return fixedAppId;
+  if (auto* app = findApplication(fixedAppId)) {
+    return app->appId.toStdString();
+  }
+
+  fixedAppId = id.mid(id.lastIndexOf('.') + 1).toStdString();
+  if (auto* app = findApplication(fixedAppId)) {
+    return app->appId.toStdString();
   }
 
   // Special fix for Qt6 D-Bus Viewer.
   if (id == "qdbusviewer") {
     fixedAppId = "org.qt.qdbusviewer6";
-    if (findApplication(fixedAppId) != nullptr) {
-      return fixedAppId;
+    if (auto* app = findApplication(fixedAppId)) {
+      return app->appId.toStdString();
     }
   }
 
   // Special fix for VirtualBox.
   if (id == "virtualboxvm" || id == "virtualboxmachine" || id == "virtualboxmanager") {
     fixedAppId = "virtualbox";
-    if (findApplication(fixedAppId) != nullptr) {
-      return fixedAppId;
+    if (auto* app = findApplication(fixedAppId)) {
+      return app->appId.toStdString();
     }
   }
 
