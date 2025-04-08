@@ -58,7 +58,7 @@ class ApplicationMenuConfig : public QObject {
   }
 
   // Tries to find a matching application ID using different heuristics.
-  std::string tryMatchingApplicationId(const std::string& appId) const;
+  const ApplicationEntry* tryMatchingApplicationId(const std::string& appId) const;
 
   // Searches for applications with the name containing the given text.
   const std::vector<ApplicationEntry> searchApplications(

@@ -209,23 +209,23 @@ const ApplicationEntry* ApplicationMenuConfig::findApplication(const std::string
               : nullptr;
 }
 
-std::string ApplicationMenuConfig::tryMatchingApplicationId(const std::string& appId) const {
+const ApplicationEntry* ApplicationMenuConfig::tryMatchingApplicationId(const std::string& appId) const {
   QString id = QString::fromStdString(appId).toLower().simplified().replace(" ", "");
   std::string fixedAppId = id.toStdString();
   if (auto* app = findApplication(fixedAppId)) {
-    return app->appId.toStdString();
+    return app;
   }
 
   fixedAppId = id.mid(id.lastIndexOf('.') + 1).toStdString();
   if (auto* app = findApplication(fixedAppId)) {
-    return app->appId.toStdString();
+    return app;
   }
 
   // Special fix for Qt6 D-Bus Viewer.
   if (id == "qdbusviewer") {
     fixedAppId = "org.qt.qdbusviewer6";
     if (auto* app = findApplication(fixedAppId)) {
-      return app->appId.toStdString();
+      return app;
     }
   }
 
@@ -233,7 +233,7 @@ std::string ApplicationMenuConfig::tryMatchingApplicationId(const std::string& a
   if (id == "virtualboxvm" || id == "virtualboxmachine" || id == "virtualboxmanager") {
     fixedAppId = "virtualbox";
     if (auto* app = findApplication(fixedAppId)) {
-      return app->appId.toStdString();
+      return app;
     }
   }
 
@@ -241,11 +241,11 @@ std::string ApplicationMenuConfig::tryMatchingApplicationId(const std::string& a
   if (id == "google-chrome") {
     fixedAppId = "com.google.chrome";
     if (auto* app = findApplication(fixedAppId)) {
-      return app->appId.toStdString();
+      return app;
     }
   }
 
-  return "";
+  return nullptr;
 }
 
 const std::vector<ApplicationEntry> ApplicationMenuConfig::searchApplications(

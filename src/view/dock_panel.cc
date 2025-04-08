@@ -926,6 +926,10 @@ bool DockPanel::addTask(const WindowInfo* task) {
   // Adds a new program.
   const QString appId = QString::fromStdString(task->appId);
   auto app = model_->findApplication(task->appId);
+  if (!app && task->appId != "lxqt-leave") {
+    std::cerr << "Could not find application with id: " << task->appId
+              << ". The window icon will have limited functionalities." << std::endl;
+  }
   const QString label = app ? app->name : QString::fromStdString(task->title);
   QPixmap appIcon = app ? loadIcon(app->icon, kIconLoadSize) : QPixmap();
   QString taskIconName = QString::fromStdString(task->icon);

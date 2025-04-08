@@ -574,7 +574,7 @@ class MultiDockModel : public QObject {
   }
 
   const ApplicationEntry* findApplication(const std::string& appId) const {
-    return applicationMenuConfig_.findApplication(appId);
+    return applicationMenuConfig_.tryMatchingApplicationId(appId);
   }
 
   bool isAppMenuEntry(const std::string& appId) const {

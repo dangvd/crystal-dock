@@ -49,8 +49,6 @@ std::unordered_map<std::string, struct org_kde_plasma_window*> WindowSystem::uui
 std::vector<std::string> WindowSystem::stackingOrder_;
 std::string WindowSystem::activeUuid_;
 
-ApplicationMenuConfig WindowSystem::applicationMenuConfig_;
-
 /* static */ WindowSystem* WindowSystem::self() {
   static WindowSystem* self = nullptr;
   if (!self) {
@@ -589,14 +587,6 @@ void WindowSystem::initScreens() {
   WindowInfo* info = windows_[window];
   if (info) { info->initialized = true; }
   if (info && !info->skipTaskbar) {
-    const auto fixedAppId = applicationMenuConfig_.tryMatchingApplicationId(info->appId);
-    if (!fixedAppId.empty()) {
-      info->appId = fixedAppId;
-    } else if (info->appId != "lxqt-leave") {
-      std::cerr << "Could not find application with id: " << info->appId
-                << ". The window icon will have limited functionalities." << std::endl;
-    }
-
     emit self()->windowAdded(info);
   }
 }

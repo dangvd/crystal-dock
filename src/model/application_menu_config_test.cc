@@ -192,14 +192,14 @@ void ApplicationMenuConfigTest::tryMatchingApplicationId() {
 
   QCOMPARE(config.entries_.size(), 8);
 
-  QCOMPARE(config.tryMatchingApplicationId("firefox"), "firefox");
-  QCOMPARE(config.tryMatchingApplicationId("org.kde.konsole"), "org.kde.konsole");
-  QCOMPARE(config.tryMatchingApplicationId("Google-chrome"), "google-chrome");
-  QCOMPARE(config.tryMatchingApplicationId("krita"), "org.kde.krita");
-  QCOMPARE(config.tryMatchingApplicationId("Gimp-2.10"), "gimp");
-  QCOMPARE(config.tryMatchingApplicationId("qdbusviewer"), "org.qt.qdbusviewer6");
-  QCOMPARE(config.tryMatchingApplicationId("virtualboxvm"), "virtualbox");
-  QCOMPARE(config.tryMatchingApplicationId("net.sourceforge.chessx.chessx"),
+  QCOMPARE(config.tryMatchingApplicationId("firefox")->appId, "firefox");
+  QCOMPARE(config.tryMatchingApplicationId("org.kde.konsole")->appId, "org.kde.konsole");
+  QCOMPARE(config.tryMatchingApplicationId("Google-chrome")->appId, "google-chrome");
+  QCOMPARE(config.tryMatchingApplicationId("krita")->appId, "org.kde.krita");
+  QCOMPARE(config.tryMatchingApplicationId("Gimp-2.10")->appId, "gimp");
+  QCOMPARE(config.tryMatchingApplicationId("qdbusviewer")->appId, "org.qt.qdbusviewer6");
+  QCOMPARE(config.tryMatchingApplicationId("virtualboxvm")->appId, "virtualbox");
+  QCOMPARE(config.tryMatchingApplicationId("net.sourceforge.chessx.chessx")->appId,
            "io.sourceforge.chessx");
 }
 
