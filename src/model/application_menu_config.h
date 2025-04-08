@@ -99,6 +99,9 @@ class ApplicationMenuConfig : public QObject {
   std::unordered_map<std::string, int> categoryMap_;
   // Map from app ids to application entries for fast look-up.
   std::unordered_map<std::string, const ApplicationEntry*> entries_;
+  // Map from short commands to application entries for fast look-up.
+  // Short command means for example, "command" instead of "/usr/bin/command -a -b"
+  std::unordered_map<std::string, const ApplicationEntry*> commands_;
   // Map from WM classes to application entries for fast look-up.
   std::unordered_map<std::string, const ApplicationEntry*> wmClasses_;
   // Map from names to application entries for fast look-up.

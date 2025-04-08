@@ -27,6 +27,8 @@
 
 namespace crystaldock {
 
+// TODO: write unit tests for this file.
+
 inline QString filterFieldCodes(const QString& command) {
   QString filtered = command.contains('%')
       ? command.left(command.indexOf('%') - 1)
@@ -38,6 +40,14 @@ inline QString filterFieldCodes(const QString& command) {
   }
 
   return filtered;
+}
+
+// Given "/usr/bin/command -a -b", returns "command"
+inline QString getShortCommand(const QString& command) {
+  QString shortCommand = command.contains(' ')
+      ? command.left(command.indexOf(' '))
+      : command;
+  return shortCommand.mid(shortCommand.lastIndexOf('/') + 1);
 }
 
 // Returns a command in the list that exists in the system.

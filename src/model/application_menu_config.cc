@@ -172,6 +172,10 @@ bool ApplicationMenuConfig::loadEntry(const QString &file) {
 
       auto* entry = &(*--next);
       entries_[newEntry.appId.toStdString()] = entry;
+      const auto shortCommand = getShortCommand(command).toStdString();
+      if (!shortCommand.empty()) {
+        commands_[shortCommand] = entry;
+      }
       const auto wmClass = desktopFile.wmClass().toLower().toStdString();
       if (!wmClass.empty()) {
         wmClasses_[wmClass] = entry;
@@ -202,11 +206,13 @@ const ApplicationEntry* ApplicationMenuConfig::findApplication(const std::string
   }
   return entries_.count(appId) > 0
       ? entries_.at(appId)
-      : wmClasses_.count(appId) > 0
-          ? wmClasses_.at(appId)
-          : names_.count(appId) > 0
-              ? names_.at(appId)
-              : nullptr;
+      : commands_.count(appId) > 0
+          ? commands_.at(appId)
+          : wmClasses_.count(appId) > 0
+              ? wmClasses_.at(appId)
+              : names_.count(appId) > 0
+                  ? names_.at(appId)
+                  : nullptr;
 }
 
 const ApplicationEntry* ApplicationMenuConfig::tryMatchingApplicationId(const std::string& appId) const {
