@@ -29,17 +29,21 @@ class Separator : public QObject, public IconlessDockItem {
 
  public:
   Separator(DockPanel* parent, MultiDockModel* model, Qt::Orientation orientation,
-        int minSize, int maxSize);
+        int minSize, int maxSize, bool isLauncherSeparator);
   virtual ~Separator() = default;
 
   void draw(QPainter* painter) const override;
 
   void mousePressEvent(QMouseEvent* e) override { /* no-op */ }
 
-  bool beforeTask(const QString& program) override { return false; }
+  bool beforeTask(const QString& program) override { return isLauncherSeparator_; }
 
  private:
   static constexpr float kWhRatio = 0.1;
+
+  // A Launcher Separator will push task icons, that do not belong to pinned
+  // applications, behind it.
+  bool isLauncherSeparator_ = false;
 };
 
 }  // namespace crystaldock

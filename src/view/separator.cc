@@ -25,9 +25,10 @@ namespace crystaldock {
 constexpr float Separator::kWhRatio;
 
 Separator::Separator(DockPanel* parent, MultiDockModel* model, Qt::Orientation orientation,
-                     int minSize, int maxSize)
+                     int minSize, int maxSize, bool isLauncherSeparator)
     : IconlessDockItem(parent, model, "" /* label */, orientation, minSize, maxSize,
-                       kWhRatio, /*reverseWhRatio=*/ true) {
+                       kWhRatio, /*reverseWhRatio=*/ true),
+    isLauncherSeparator_(isLauncherSeparator) {
   whRatio_ = 0.5;
 }
 

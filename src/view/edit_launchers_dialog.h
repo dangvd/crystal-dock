@@ -82,6 +82,7 @@ class EditLaunchersDialog : public QDialog {
 
   void addSystemCommand(int index);
   void addSeparator();
+  void addLauncherSeparator();
   void removeSelectedLauncher();
   void removeAllLaunchers();
 

@@ -864,8 +864,10 @@ void DockPanel::initApplicationMenu() {
 
 void DockPanel::initLaunchers() {
   for (const auto& launcherConfig : model_->launcherConfigs(dockId_)) {
-    if (launcherConfig.appId == kSeparatorId) {
-      items_.push_back(std::make_unique<Separator>(this, model_, orientation_, minSize_, maxSize_));
+    if (launcherConfig.appId == kSeparatorId || launcherConfig.appId == kLauncherSeparatorId) {
+      items_.push_back(std::make_unique<Separator>(
+          this, model_, orientation_, minSize_, maxSize_,
+          launcherConfig.appId == kLauncherSeparatorId));
     } else {
       QPixmap icon = loadIcon(launcherConfig.icon, kIconLoadSize);
       items_.push_back(std::make_unique<Program>(

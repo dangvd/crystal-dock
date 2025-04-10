@@ -100,6 +100,7 @@ EditLaunchersDialog::EditLaunchersDialog(QWidget* parent, MultiDockModel* model,
 
   connect(ui->systemCommands, SIGNAL(currentIndexChanged(int)), this, SLOT(addSystemCommand(int)));
   connect(ui->addSeparator, SIGNAL(clicked()), this, SLOT(addSeparator()));
+  connect(ui->addLauncherSeparator, SIGNAL(clicked()), this, SLOT(addLauncherSeparator()));
   connect(ui->remove, SIGNAL(clicked()), this, SLOT(removeSelectedLauncher()));
   connect(ui->removeAll, SIGNAL(clicked()), this, SLOT(removeAllLaunchers()));
 
@@ -115,6 +116,8 @@ void EditLaunchersDialog::addLauncher(const QString& name,
   QListWidgetItem* listItem;
   if (appId == kSeparatorId) {
     listItem = new QListWidgetItem("--- Separator ---");
+  } else if (appId == kLauncherSeparatorId) {
+    listItem = new QListWidgetItem("--- Launcher Separator ---");
   } else {
     listItem = new QListWidgetItem(
         QIcon::fromTheme(iconName).pixmap(kListIconSize), name);
@@ -148,6 +151,10 @@ void EditLaunchersDialog::addSystemCommand(int index) {
 
 void EditLaunchersDialog::addSeparator() {
   addLauncher("Separator", kSeparatorId, /*iconName=*/"");
+}
+
+void EditLaunchersDialog::addLauncherSeparator() {
+    addLauncher("Launcher Separator", kLauncherSeparatorId, /*iconName=*/"");
 }
 
 void EditLaunchersDialog::removeSelectedLauncher() {

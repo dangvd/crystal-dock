@@ -89,6 +89,7 @@ constexpr bool kDefaultUse24HourClock = true;
 constexpr float kDefaultClockFontScaleFactor = kLargeClockFontScaleFactor;
 
 constexpr char kSeparatorId[] = "separator";
+constexpr char kLauncherSeparatorId[] = "launcher-separator";
 constexpr char kLockScreenId[] = "lock-screen";
 
 // The model.

@@ -55,7 +55,7 @@
    <property name="geometry">
     <rect>
      <x>420</x>
-     <y>260</y>
+     <y>325</y>
      <width>361</width>
      <height>40</height>
     </rect>
@@ -71,7 +71,7 @@
    <property name="geometry">
     <rect>
      <x>420</x>
-     <y>340</y>
+     <y>405</y>
      <width>361</width>
      <height>40</height>
     </rect>
@@ -87,10 +87,13 @@
    <property name="geometry">
     <rect>
      <x>420</x>
-     <y>180</y>
+     <y>165</y>
      <width>361</width>
      <height>40</height>
     </rect>
+   </property>
+   <property name="toolTip">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;A regular separator. Task icons for unpinned applications will be placed before this separator.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
    <property name="text">
     <string>Add Separator</string>
@@ -103,7 +106,7 @@
    <property name="geometry">
     <rect>
      <x>420</x>
-     <y>100</y>
+     <y>85</y>
      <width>361</width>
      <height>44</height>
     </rect>
@@ -116,6 +119,25 @@
      <string>Add System Command</string>
     </property>
    </item>
+  </widget>
+  <widget class="QPushButton" name="addLauncherSeparator">
+   <property name="geometry">
+    <rect>
+     <x>420</x>
+     <y>245</y>
+     <width>361</width>
+     <height>40</height>
+    </rect>
+   </property>
+   <property name="toolTip">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;A launcher separator. Task icons for unpinned applications will be placed after this separator.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
+   <property name="text">
+    <string>Add Launcher Separator</string>
+   </property>
+   <property name="icon">
+    <iconset theme="list-add"/>
+   </property>
   </widget>
  </widget>
  <resources/>
