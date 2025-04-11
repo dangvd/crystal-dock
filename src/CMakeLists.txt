@@ -5,10 +5,10 @@ project(crystal-dock)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# During development, uncomment this.
-add_compile_options(-Wall -Werror)
-# During development, comment this.
-# add_definitions(-DQT_NO_DEPRECATED_WARNINGS)
+# When doing code clean-up, uncomment this.
+# add_compile_options(-Wall -Werror)
+# When doing code clean-up, comment this.
+add_definitions(-DQT_NO_DEPRECATED_WARNINGS)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)
