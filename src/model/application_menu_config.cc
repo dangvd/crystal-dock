@@ -171,8 +171,8 @@ bool ApplicationMenuConfig::loadEntry(const QString &file) {
       entries.insert(next, newEntry);
 
       auto* entry = &(*--next);
-      entries_[newEntry.appId.toStdString()] = entry;
-      const auto shortCommand = getShortCommand(command).toStdString();
+      entries_[newEntry.appId.toLower().toStdString()] = entry;
+      const auto shortCommand = getShortCommand(command).toLower().toStdString();
       if (!shortCommand.empty()) {
         commands_[shortCommand] = entry;
       }
@@ -215,38 +215,40 @@ const ApplicationEntry* ApplicationMenuConfig::findApplication(const std::string
                   : nullptr;
 }
 
-const ApplicationEntry* ApplicationMenuConfig::tryMatchingApplicationId(const std::string& appId) const {
-  QString id = QString::fromStdString(appId).toLower().simplified().replace(" ", "");
-  std::string fixedAppId = id.toStdString();
-  if (auto* app = findApplication(fixedAppId)) {
+const ApplicationEntry* ApplicationMenuConfig::tryMatchingApplicationId(
+    const std::string& appId) const {
+  QString id = QString::fromStdString(appId).toLower();
+  if (auto* app = findApplication(id.toStdString())) {
     return app;
   }
 
-  fixedAppId = id.mid(id.lastIndexOf('.') + 1).toStdString();
-  if (auto* app = findApplication(fixedAppId)) {
+  id = id.simplified().replace(" ", "");
+  if (auto* app = findApplication(id.toStdString())) {
+    return app;
+  }
+
+  id = id.mid(id.lastIndexOf('.') + 1);
+  if (auto* app = findApplication(id.toStdString())) {
     return app;
   }
 
   // Special fix for Qt6 D-Bus Viewer.
   if (id == "qdbusviewer") {
-    fixedAppId = "org.qt.qdbusviewer6";
-    if (auto* app = findApplication(fixedAppId)) {
+    if (auto* app = findApplication("org.qt.qdbusviewer6")) {
       return app;
     }
   }
 
   // Special fix for VirtualBox.
   if (id == "virtualboxvm" || id == "virtualboxmachine" || id == "virtualboxmanager") {
-    fixedAppId = "virtualbox";
-    if (auto* app = findApplication(fixedAppId)) {
+    if (auto* app = findApplication("virtualbox")) {
       return app;
     }
   }
 
   // Special fix for Google Chrome Flatpak.
   if (id == "google-chrome") {
-    fixedAppId = "com.google.chrome";
-    if (auto* app = findApplication(fixedAppId)) {
+    if (auto* app = findApplication("com.google.chrome")) {
       return app;
     }
   }

@@ -50,7 +50,8 @@ class ApplicationMenuConfig : public QObject {
   const std::vector<Category>& systemCategories() const { return systemCategories_; }
 
   // Finds the application entry given the application ID.
-  // Will match with each of App ID, WM Class and Name in the entry list in that order.
+  // Will match with each of App ID, short command, WM Class and Name in the
+  // entry list in that order.
   const ApplicationEntry* findApplication(const std::string& appId) const;
 
   bool isAppMenuEntry(const std::string& appId) const {
