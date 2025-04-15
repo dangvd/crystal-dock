@@ -567,7 +567,11 @@ void DockPanel::draw2D(QPainter& painter) {
         ? isFloating() ? floatingMargin_ : 0
         : isFloating() ? maxWidth_ - backgroundWidth_ - floatingMargin_
                        : maxWidth_ - backgroundWidth_;
-    const int r = isFlat2D() ? backgroundWidth_ / 4 : 0;
+    const int r = isGlass2D()
+        ? backgroundWidth_ / 16
+        : isFlat2D()
+            ? backgroundWidth_ / 4
+            : 0;
     fillRoundedRect(
           x, (maxHeight_ - backgroundHeight_) / 2, backgroundWidth_ - 1, backgroundHeight_ - 1,
           r, showBorder, borderColor, bgColor, &painter);
