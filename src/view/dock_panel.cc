@@ -385,19 +385,15 @@ void DockPanel::onActiveWindowChanged() {
 }
 
 int DockPanel::taskIndicatorPos() {
-  const auto margin = isGlass2D()
+  const auto margin = isGlass2D() || (is3D() && !isBottom())
       ? kIndicatorMarginGlass2D
       : isFlat2D()
           ? kIndicatorSizeFlat2D
           : kIndicatorSizeMetal2D / 2;
   if (isHorizontal()) {
     int y = 0;
-    if (is3D()) {
-      if (isTop()) {
-        y = 0;
-      } else {  // bottom
-        y = maxHeight_ - k3DPanelThickness - 2;
-      }
+    if (is3D() && isBottom()) {
+      y = maxHeight_ - k3DPanelThickness - 2;
     } else {  // 2D
       if (isTop()) {
         y = itemSpacing_ / 3;
@@ -417,18 +413,10 @@ int DockPanel::taskIndicatorPos() {
     return y;
   } else {  // Vertical.
     int x = 0;
-    if (is3D()) {
-      if (isLeft()) {
-        x = 0;
-      } else {  // right
-        x = maxWidth_ - k3DPanelThickness;
-      }
-    } else {  // 2D
-      if (isLeft()) {
-        x = itemSpacing_ / 3;
-      } else {  // right
-        x = maxWidth_ - itemSpacing_ / 3 - margin;
-      }
+    if (isLeft()) {
+      x = itemSpacing_ / 3;
+    } else {  // right
+      x = maxWidth_ - itemSpacing_ / 3 - margin;
     }
 
     if (isFloating()) {
