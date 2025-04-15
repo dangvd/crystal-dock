@@ -290,6 +290,13 @@ class MultiDockModel : public QObject {
         panelStyle() == PanelStyle::Glass3D_NonFloating;
   }
 
+  bool isGlass2D() {
+    return panelStyle() == PanelStyle::Glass2D_Floating ||
+        panelStyle() == PanelStyle::Glass2D_NonFloating;
+  }
+
+  bool isGlass() { return is3D() || isGlass2D(); }
+
   bool isFlat2D() {
     return panelStyle() == PanelStyle::Flat2D_Floating ||
         panelStyle() == PanelStyle::Flat2D_NonFloating;
@@ -298,6 +305,13 @@ class MultiDockModel : public QObject {
   bool isMetal2D() {
     return panelStyle() == PanelStyle::Metal2D_Floating ||
         panelStyle() == PanelStyle::Metal2D_NonFloating;
+  }
+
+  bool isFloating() {
+    return panelStyle() == PanelStyle::Glass3D_Floating ||
+        panelStyle() == PanelStyle::Glass2D_Floating ||
+        panelStyle() == PanelStyle::Flat2D_Floating ||
+        panelStyle() == PanelStyle::Metal2D_Floating;
   }
 
   int floatingMargin() const {

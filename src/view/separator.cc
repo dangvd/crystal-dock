@@ -50,7 +50,7 @@ void Separator::draw(QPainter* painter) const {
     h = 1;
   }
 
-  if (parent_->is3D() || parent_->isGlass2D()) {
+  if (parent_->isGlass()) {
     // For Glass 2D/3D styles, do not draw anything.
   } else if (parent_->isFlat2D()) {
     painter->fillRect(x, y, w, h, model_->backgroundColor2D().lighter());

@@ -92,6 +92,8 @@ class DockPanel : public QWidget {
     return panelStyle_ == PanelStyle::Glass2D_Floating || panelStyle_ == PanelStyle::Glass2D_NonFloating;
   }
 
+  bool isGlass() { return is3D() || isGlass2D(); }
+
   bool isFlat2D() {
     return panelStyle_ == PanelStyle::Flat2D_Floating || panelStyle_ == PanelStyle::Flat2D_NonFloating;
   }

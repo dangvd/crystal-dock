@@ -90,9 +90,11 @@ void Program::draw(QPainter *painter) const {
     if (activeTask > kMaxVisibleTaskCount - 1) { activeTask = kMaxVisibleTaskCount - 1; }
 
     // Size (width if horizontal, or height if vertical) of the indicator.
-    const int size = parent_->is3D() || parent_->isGlass2D() ? DockPanel::kIndicatorSize3D
-                                     : parent_->isFlat2D() ? DockPanel::kIndicatorSizeFlat2D
-                                                           : DockPanel::kIndicatorSizeMetal2D;
+    const int size = parent_->isGlass()
+        ? DockPanel::kIndicatorSize3D
+        : parent_->isFlat2D()
+            ? DockPanel::kIndicatorSizeFlat2D
+            : DockPanel::kIndicatorSizeMetal2D;
     const auto spacing = DockPanel::kIndicatorSpacing;
     const auto totalSize = taskCount * size + (taskCount - 1) * spacing;
     auto x = left_ + (getWidth() - totalSize) / 2 + size / 2;
@@ -102,7 +104,7 @@ void Program::draw(QPainter *painter) const {
       // to provide feedback.
       bool useActiveColor = (i == activeTask) || attentionStrong_
           || (launching_ && !model_->bouncingLauncherIcon());
-      if (parent_->is3D() || parent_->isGlass2D()) {
+      if (parent_->isGlass()) {
         const auto baseColor = useActiveColor
             ? model_->activeIndicatorColor() : model_->inactiveIndicatorColor();
         drawIndicator(orientation_, x, parent_->taskIndicatorPos(),
