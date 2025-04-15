@@ -84,6 +84,7 @@ class WindowSystem : public QObject {
   void windowLeftCurrentDesktop(std::string_view);
   void windowGeometryChanged(const WindowInfo*);
   void windowStateChanged(const WindowInfo*);
+  void windowTitleChanged(const WindowInfo*);
   void activeWindowChanged(std::string_view);
 
   void desktopNameChanged(std::string_view desktopId, std::string_view desktopName);

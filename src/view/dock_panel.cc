@@ -52,6 +52,8 @@
 #include <utils/draw_utils.h>
 #include <utils/icon_utils.h>
 
+namespace ranges = std::ranges;
+
 namespace crystaldock {
 
 DockPanel::DockPanel(MultiDockView* parent, MultiDockModel* model, int dockId)
@@ -97,6 +99,8 @@ DockPanel::DockPanel(MultiDockView* parent, MultiDockModel* model, int dockId)
           this, SLOT(onCurrentDesktopChanged()));
   connect(WindowSystem::self(), SIGNAL(windowStateChanged(const WindowInfo*)),
           this, SLOT(onWindowStateChanged(const WindowInfo*)));
+  connect(WindowSystem::self(), SIGNAL(windowTitleChanged(const WindowInfo*)),
+          this, SLOT(onWindowTitleChanged(const WindowInfo*)));
   connect(WindowSystem::self(), SIGNAL(activeWindowChanged(std::string_view)),
           this, SLOT(onActiveWindowChanged()));
   connect(WindowSystem::self(), SIGNAL(windowAdded(const WindowInfo*)),
@@ -361,6 +365,20 @@ void DockPanel::onWindowStateChanged(const WindowInfo *task) {
   }
 }
 
+void DockPanel::onWindowTitleChanged(const WindowInfo *task) {
+  if (model_->groupTasksByApplication()) {
+    return;
+  }
+
+  for (auto& item : items_) {
+    if (item->hasTask(task->uuid)) {
+      item->setLabel(QString::fromStdString(task->title));
+      update();
+      return;
+    }
+  }
+}
+
 void DockPanel::onActiveWindowChanged() {
   update();
   if (autoHide() && !isActiveWindow()) { setAutoHide(); }
@@ -420,6 +438,32 @@ int DockPanel::taskIndicatorPos() {
 
     return x;
   }
+}
+
+int DockPanel::itemCount(const QString& appId) {
+  const auto first = ranges::find_if(
+      items_,
+      [&appId](auto& item) { return appId == item->getAppId(); });
+  if (first == items_.end()) {
+    return 0;
+  }
+  const auto last = ranges::find_if(
+      first, items_.end(),
+      [&appId](auto& item) { return appId != item->getAppId(); });
+  return last - first;
+}
+
+void DockPanel::updatePinnedStatus(const QString& appId, bool pinned) {
+  const auto first = ranges::find_if(
+      items_,
+      [&appId](auto& item) { return appId == item->getAppId(); });
+  if (first == items_.end()) {
+    return;
+  }
+  const auto last = ranges::find_if(
+      first, items_.end(),
+      [&appId](auto& item) { return appId != item->getAppId(); });
+  ranges::for_each(first, last, [pinned](auto& item) { item->updatePinnedStatus(pinned); });
 }
 
 void DockPanel::paintEvent(QPaintEvent* e) {
@@ -926,13 +970,13 @@ bool DockPanel::addTask(const WindowInfo* task) {
   }
 
   // Adds a new program.
-  const QString appId = QString::fromStdString(task->appId);
   auto app = model_->findApplication(task->appId);
   if (!app && task->appId != "lxqt-leave") {
     std::cerr << "Could not find application with id: " << task->appId
               << ". The window icon will have limited functionalities." << std::endl;
   }
   const QString label = app ? app->name : QString::fromStdString(task->title);
+  const QString appId = app ? app->appId : QString::fromStdString(task->appId);
   QPixmap appIcon = app ? loadIcon(app->icon, kIconLoadSize) : QPixmap();
   QString taskIconName = QString::fromStdString(task->icon);
   QPixmap taskIcon = appIcon.isNull() && !taskIconName.isEmpty()
@@ -945,10 +989,15 @@ bool DockPanel::addTask(const WindowInfo* task) {
 
   int i = 0;
   for (; i < itemCount() && items_[i]->beforeTask(label); ++i);
+  if (!model_->groupTasksByApplication()) {
+    for (; i < itemCount() && items_[i]->getAppLabel() == label; ++i);
+  }
   if (!appIcon.isNull()) {
+    const auto pinned = !model_->groupTasksByApplication() &&
+                        model_->launchers(dockId_).contains(app->appId);
     items_.insert(items_.begin() + i, std::make_unique<Program>(
         this, model_, appId, label, orientation_, appIcon, minSize_,
-        maxSize_, app->command, /*isAppMenuEntry=*/true, /*pinned=*/false));
+        maxSize_, app->command, /*isAppMenuEntry=*/true, pinned));
   } else if (!taskIcon.isNull()) {
     items_.insert(items_.begin() + i, std::make_unique<Program>(
         this, model_, appId, label, orientation_, taskIcon, minSize_, maxSize_));

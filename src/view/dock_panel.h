@@ -98,6 +98,12 @@ class DockPanel : public QWidget {
   // position of task indicators, y-coordinate if horizontal, x if vertical.
   int taskIndicatorPos();
 
+  // Gets number of items for an application. Useful when Group Tasks By Application is Off.
+  int itemCount(const QString& appId);
+
+  // Update pinned status of an application. Useful when Group Tasks By Application is Off.
+  void updatePinnedStatus(const QString& appId, bool pinned);
+
  public slots:
   // Reloads the items and updates the dock.
   void reload();
@@ -195,6 +201,7 @@ class DockPanel : public QWidget {
   void onWindowLeftCurrentActivity(std::string_view uuid);
   void onWindowGeometryChanged(const WindowInfo* task);
   void onWindowStateChanged(const WindowInfo* info);
+  void onWindowTitleChanged(const WindowInfo* info);
   void onActiveWindowChanged();
 
   void minimize() { leaveEvent(nullptr); }

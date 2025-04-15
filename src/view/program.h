@@ -63,6 +63,15 @@ class Program : public QObject, public IconBasedDockItem {
 
   QString getLabel() const override;
 
+  QString getAppId() const override { return appId_; }
+
+  QString getAppLabel() const override { return appLabel_; }
+
+  void updatePinnedStatus(bool pinned) override {
+    pinned_ = pinned;
+    pinAction_->setChecked(pinned_);
+  }
+
   bool addTask(const WindowInfo* task) override;
 
   bool updateTask(const WindowInfo* task) override;
@@ -73,7 +82,7 @@ class Program : public QObject, public IconBasedDockItem {
 
   bool beforeTask(const QString& program) override;
 
-  bool shouldBeRemoved() override { return taskCount() == 0 && !pinned_; }
+  bool shouldBeRemoved() override;
 
   virtual void maybeResetActiveWindow(QMouseEvent* e) override {
     if (e->button() != Qt::LeftButton) { WindowSystem::resetActiveWindow(); }
@@ -119,6 +128,7 @@ class Program : public QObject, public IconBasedDockItem {
   void updateMenu();
 
   QString appId_;
+  QString appLabel_;
   QString command_;
   // Is an entry on the App Menu, exluding system commands such as Lock Screen / Shut Down.
   bool isAppMenuEntry_;

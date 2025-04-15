@@ -41,6 +41,7 @@ Program::Program(DockPanel* parent, MultiDockModel* model, const QString& appId,
                  bool pinned)
     : IconBasedDockItem(parent, model, label, orientation, icon, minSize, maxSize),
       appId_(appId),
+      appLabel_(label),
       command_(command),
       isAppMenuEntry_(isAppMenuEntry),
       pinned_(pinned),
@@ -55,6 +56,7 @@ Program::Program(DockPanel* parent, MultiDockModel* model, const QString& appId,
                  int minSize, int maxSize)
     : IconBasedDockItem(parent, model, label, orientation, icon, minSize, maxSize),
       appId_(appId),
+      appLabel_(label),
       command_(""),
       isAppMenuEntry_(false),
       pinned_(false),
@@ -66,13 +68,11 @@ Program::Program(DockPanel* parent, MultiDockModel* model, const QString& appId,
 
 void Program::init() {
   createMenu();
-
   animationTimer_.setInterval(500);
   connect(&animationTimer_, &QTimer::timeout, this, [this]() {
     attentionStrong_ = !attentionStrong_;
     parent_->update();
   });
-
   bounceTimer_.setInterval(kBounceIntervalMs);
   connect(&bounceTimer_, &QTimer::timeout, this, &Program::updateBounceAnimation);
 }
@@ -139,6 +139,22 @@ void Program::draw(QPainter *painter) const {
   }
 
   IconBasedDockItem::draw(painter);
+  if (!model_->groupTasksByApplication() && !tasks_.empty() &&
+      parent_->itemCount(appId_) > 1) {
+    QString letter;
+    for (auto i = 0; i < label_.size(); ++i) {
+      if (label_.at(i).isLetter()) {
+        letter = label_.at(i).toUpper();
+        break;
+      }
+    }
+    QFont font;
+    font.setPixelSize(getHeight() / 2);
+    painter->setFont(font);
+    drawBorderedText(left_ + getWidth() * 5 / 8, top_ + getHeight()  * 3 / 8,
+                     getWidth() / 2, getHeight() * 5 / 8,
+                     0, letter, 2, Qt::black, Qt::white, painter);
+  }
   painter->restore();
 }
 
@@ -195,6 +211,10 @@ QString Program::getLabel() const {
 }
 
 bool Program::addTask(const WindowInfo* task) {
+  if (!model_->groupTasksByApplication() && !tasks_.empty()) {
+    return false;
+  }
+
   auto* app = model_->findApplication(task->appId);
   if ((app && app->appId == appId_) || task->appId == appId_.toStdString()) {
     tasks_.push_back(ProgramTask(task->uuid, QString::fromStdString(task->title),
@@ -203,6 +223,9 @@ bool Program::addTask(const WindowInfo* task) {
       setDemandsAttention(true);
     }
     updateMenu();
+    if (!model_->groupTasksByApplication()) {
+      setLabel(QString::fromStdString(task->title));
+    }
     return true;
   }
   return false;
@@ -245,7 +268,18 @@ bool Program::hasTask(std::string_view uuid) {
 }
 
 bool Program::beforeTask(const QString& program) {
-  return pinned_ || label_ < program;
+  return (pinned_ && appLabel_ != program) || appLabel_ < program;
+}
+
+bool Program::shouldBeRemoved() {
+  if (!tasks_.empty()) {
+    return false;
+  }
+  if (model_->groupTasksByApplication()) {
+    return !pinned_;
+  } else {
+    return !pinned_ || parent_->itemCount(appId_) > 1;
+  }
 }
 
 void Program::launch() {
@@ -268,6 +302,7 @@ void Program::pinUnpin() {
       parent_->delayedRefresh();
     }
   }
+  parent_->updatePinnedStatus(appId_, pinned_);
 }
 
 void Program::launch(const QString& command) {

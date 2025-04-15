@@ -85,6 +85,7 @@ constexpr float kDefaultApplicationMenuBackgroundAlpha = 0.8;
 constexpr bool kDefaultShowDesktopNumber = true;
 constexpr bool kDefaultCurrentDesktopTasksOnly = true;
 constexpr bool kDefaultCurrentScreenTasksOnly = false;
+constexpr bool kDefaultGroupTasksByApplication = true;
 constexpr bool kDefaultUse24HourClock = true;
 constexpr float kDefaultClockFontScaleFactor = kLargeClockFontScaleFactor;
 
@@ -412,6 +413,15 @@ class MultiDockModel : public QObject {
     setAppearanceProperty(kTaskManagerCategory, kCurrentScreenTasksOnly, value);
   }
 
+  bool groupTasksByApplication() const {
+    return appearanceProperty(kTaskManagerCategory, kGroupTasksByApplication,
+                              kDefaultGroupTasksByApplication);
+  }
+
+  void setGroupTasksByApplication(bool value) {
+    setAppearanceProperty(kTaskManagerCategory, kGroupTasksByApplication, value);
+  }
+
   bool use24HourClock() const {
     return appearanceProperty(kClockCategory, kUse24HourClock,
                               kDefaultUse24HourClock);
@@ -650,6 +660,7 @@ class MultiDockModel : public QObject {
   static constexpr char kTaskManagerCategory[] = "TaskManager";
   static constexpr char kCurrentDesktopTasksOnly[] = "currentDesktopTasksOnly";
   static constexpr char kCurrentScreenTasksOnly[] = "currentScreenTasksOnly";
+  static constexpr char kGroupTasksByApplication[] = "groupTasksByApplication";
 
   static constexpr char kClockCategory[] = "Clock";
   static constexpr char kUse24HourClock[] = "use24HourClock";

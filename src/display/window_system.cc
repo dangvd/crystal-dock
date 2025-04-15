@@ -494,6 +494,7 @@ void WindowSystem::initScreens() {
   WindowInfo* info = windows_[window];
   if (info) {
     info->title = title;
+    if (info->initialized) { emit self()->windowTitleChanged(info); }
   }
 }
 

@@ -36,8 +36,9 @@ TaskManagerSettingsDialog::TaskManagerSettingsDialog(QWidget* parent, MultiDockM
   isSingleScreen_ = (WindowSystem::screens().size() == 1);
   ui->showCurrentScreenOnly->setVisible(!isSingleScreen_);
   if (isSingleScreen_) {
-    ui->buttonBox->move(40, 150);
-    resize(600, 220);
+    ui->groupTasksByApplication->move(40, 130);
+    ui->buttonBox->move(40, 200);
+    resize(600, 270);
   }
   connect(ui->buttonBox, SIGNAL(clicked(QAbstractButton*)),
       this, SLOT(buttonClicked(QAbstractButton*)));
@@ -66,6 +67,7 @@ void TaskManagerSettingsDialog::loadData() {
   if (!isSingleScreen_) {
     ui->showCurrentScreenOnly->setChecked(model_->currentScreenTasksOnly());
   }
+  ui->groupTasksByApplication->setChecked(model_->groupTasksByApplication());
 }
 
 void TaskManagerSettingsDialog::saveData() {
@@ -73,6 +75,7 @@ void TaskManagerSettingsDialog::saveData() {
   if (!isSingleScreen_) {
     model_->setCurrentScreenTasksOnly(ui->showCurrentScreenOnly->isChecked());
   }
+  model_->setGroupTasksByApplication(ui->groupTasksByApplication->isChecked());
   model_->saveAppearanceConfig();
 }
 

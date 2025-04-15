@@ -91,6 +91,15 @@ class DockItem {
   void setLabel(const QString& label) { label_ = label; }
 
   // For a Program dock item.
+  virtual QString getAppId() const { return ""; }
+
+  // For a Program dock item.
+  virtual QString getAppLabel() const { return ""; }
+
+  // For a Program dock item.
+  virtual void updatePinnedStatus(bool pinned) {}
+
+  // For a Program dock item.
   virtual void setDemandsAttention(bool demandsAttention) {}
 
   bool isHorizontal() const { return orientation_ == Qt::Horizontal; }
