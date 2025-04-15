@@ -547,6 +547,8 @@ void DockPanel::draw2D(QPainter& painter) {
       : isFlat2D()
           ? model_->backgroundColor2D()
           : model_->backgroundColorMetal2D();
+  const auto showBorder = isGlass2D() || isMetal2D();
+  const QColor borderColor = isGlass2D() ? model_->borderColor() : model_->borderColorMetal2D();
   if (isHorizontal()) {
     const int y = isTop()
         ? isFloating() ? floatingMargin_ : 0
@@ -557,8 +559,6 @@ void DockPanel::draw2D(QPainter& painter) {
         : isFlat2D()
             ? backgroundHeight_ / 4
             : 0;
-    const auto showBorder = isGlass2D() || isMetal2D();
-    const QColor borderColor = isGlass2D() ? model_->borderColor() : model_->borderColorMetal2D();
     fillRoundedRect(
         (maxWidth_ - backgroundWidth_) / 2, y, backgroundWidth_ - 1, backgroundHeight_ - 1,
          r, showBorder, borderColor, bgColor, &painter);
@@ -568,10 +568,9 @@ void DockPanel::draw2D(QPainter& painter) {
         : isFloating() ? maxWidth_ - backgroundWidth_ - floatingMargin_
                        : maxWidth_ - backgroundWidth_;
     const int r = isFlat2D() ? backgroundWidth_ / 4 : 0;
-    const auto showBorder = isMetal2D();
     fillRoundedRect(
           x, (maxHeight_ - backgroundHeight_) / 2, backgroundWidth_ - 1, backgroundHeight_ - 1,
-          r, showBorder, model_->borderColorMetal2D(), bgColor, &painter);
+          r, showBorder, borderColor, bgColor, &painter);
   }
 
   // Draw the items from the end to avoid zoomed items getting clipped by
