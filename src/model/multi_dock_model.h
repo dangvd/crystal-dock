@@ -43,8 +43,11 @@ enum class PanelVisibility { AlwaysVisible, AutoHide, AlwaysOnTop, IntelligentAu
 
 // Glass 3D style only makes the bottom dock really 3D. For left/right/top docks, they will look
 // more like "Glass 2D" for aesthetic reasons.
-enum class PanelStyle { Glass3D_Floating, Glass3D_NonFloating, Flat2D_Floating, Flat2D_NonFloating,
-                        Metal2D_Floating, Metal2D_NonFloating };
+enum class PanelStyle {
+    Glass3D_Floating, Glass3D_NonFloating,
+    Flat2D_Floating, Flat2D_NonFloating,
+    Metal2D_Floating, Metal2D_NonFloating,
+    Glass2D_Floating, Glass2D_NonFloating };
 
 constexpr int kDefaultMinSize = 48;
 constexpr int kDefaultMaxSize = 128;

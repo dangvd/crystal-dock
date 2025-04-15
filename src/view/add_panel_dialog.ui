@@ -220,6 +220,11 @@
    </item>
    <item>
     <property name="text">
+     <string>Glass 2D</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
      <string>Flat 2D</string>
     </property>
    </item>

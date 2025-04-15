@@ -111,10 +111,13 @@ void AddPanelDialog::accept() {
   } else {
     if (mode_ == Mode::Welcome) {
       const auto& style = ui->style->currentText();
-      model_->setPanelStyle(
-          style == "Glass 3D" ? PanelStyle::Glass3D_Floating
-                              : style == "Flat 2D" ? PanelStyle::Flat2D_Floating
-                                                   : PanelStyle::Metal2D_NonFloating);
+      model_->setPanelStyle(style == "Glass 3D"
+          ? PanelStyle::Glass3D_Floating
+          : style == "Glass 2D"
+              ? PanelStyle::Glass2D_Floating
+              : style == "Flat 2D"
+                  ? PanelStyle::Flat2D_Floating
+                  : PanelStyle::Metal2D_NonFloating);
     }
     model_->addDock(
         position, screen, ui->showApplicationMenu->isChecked(),

@@ -385,6 +385,11 @@ void DockPanel::onActiveWindowChanged() {
 }
 
 int DockPanel::taskIndicatorPos() {
+  const auto margin = isGlass2D()
+      ? kIndicatorMarginGlass2D
+      : isFlat2D()
+          ? kIndicatorSizeFlat2D
+          : kIndicatorSizeMetal2D / 2;
   if (isHorizontal()) {
     int y = 0;
     if (is3D()) {
@@ -397,8 +402,7 @@ int DockPanel::taskIndicatorPos() {
       if (isTop()) {
         y = itemSpacing_ / 3;
       } else {  // bottom
-        const auto size = isFlat2D() ? kIndicatorSizeFlat2D : kIndicatorSizeMetal2D / 2;
-        y = maxHeight_ - itemSpacing_ / 3 - size;
+        y = maxHeight_ - itemSpacing_ / 3 - margin;
       }
     }
 
@@ -423,8 +427,7 @@ int DockPanel::taskIndicatorPos() {
       if (isLeft()) {
         x = itemSpacing_ / 3;
       } else {  // right
-        const auto size = isFlat2D() ? kIndicatorSizeFlat2D : kIndicatorSizeMetal2D / 2;
-        x = maxWidth_ - itemSpacing_ / 3 - size;
+        x = maxWidth_ - itemSpacing_ / 3 - margin;
       }
     }
 
@@ -551,17 +554,26 @@ void DockPanel::drawGlass3D(QPainter& painter) {
 }
 
 void DockPanel::draw2D(QPainter& painter) {
-  const QColor bgColor = isFlat2D() ? model_->backgroundColor2D() : model_->backgroundColorMetal2D();
+  const QColor bgColor = isGlass2D()
+      ? model_->backgroundColor()
+      : isFlat2D()
+          ? model_->backgroundColor2D()
+          : model_->backgroundColorMetal2D();
   if (isHorizontal()) {
     const int y = isTop()
         ? isFloating() ? floatingMargin_ : 0
         : isFloating() ? maxHeight_ - backgroundHeight_ - floatingMargin_
                        : maxHeight_ - backgroundHeight_;
-    const int r = isFlat2D() ? backgroundHeight_ / 4 : 0;
-    const auto showBorder = isMetal2D();
+    const int r = isGlass2D()
+        ? backgroundHeight_ / 16
+        : isFlat2D()
+            ? backgroundHeight_ / 4
+            : 0;
+    const auto showBorder = isGlass2D() || isMetal2D();
+    const QColor borderColor = isGlass2D() ? model_->borderColor() : model_->borderColorMetal2D();
     fillRoundedRect(
         (maxWidth_ - backgroundWidth_) / 2, y, backgroundWidth_ - 1, backgroundHeight_ - 1,
-         r, showBorder, model_->borderColorMetal2D(), bgColor, &painter);
+         r, showBorder, borderColor, bgColor, &painter);
   } else {  // Vertical
     const int x =  isLeft()
         ? isFloating() ? floatingMargin_ : 0
@@ -744,6 +756,13 @@ void DockPanel::createMenu() {
                                       : PanelStyle::Glass3D_NonFloating);
       });
   glass3DStyleAction_->setCheckable(true);
+  glass2DStyleAction_ = menu_.addAction(
+      QString("Style: Glass 2D"), this,
+      [this] {
+        changePanelStyle(isFloating() ? PanelStyle::Glass2D_Floating
+                                      : PanelStyle::Glass2D_NonFloating);
+      });
+  glass2DStyleAction_->setCheckable(true);
   flat2DStyleAction_ = menu_.addAction(
       QString("Style: Flat 2D"), this,
       [this] {
@@ -857,6 +876,7 @@ void DockPanel::setPanelStyle(PanelStyle panelStyle) {
   panelStyle_ = panelStyle;
   floatingStyleAction_->setChecked(isFloating());
   glass3DStyleAction_->setChecked(is3D());
+  glass2DStyleAction_->setChecked(isGlass2D());
   flat2DStyleAction_->setChecked(isFlat2D());
   metal2DStyleAction_->setChecked(isMetal2D());
 }

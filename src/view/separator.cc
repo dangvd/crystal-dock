@@ -50,12 +50,8 @@ void Separator::draw(QPainter* painter) const {
     h = 1;
   }
 
-  if (parent_->is3D()) {
-    if (parent_->isBottom()) {
-      // For 3D docks, do not draw anything for now.
-    } else {
-      painter->fillRect(x, y, w, h, model_->borderColor());
-    }
+  if (parent_->is3D() || parent_->isGlass2D()) {
+    // For Glass 2D/3D styles, do not draw anything.
   } else if (parent_->isFlat2D()) {
     painter->fillRect(x, y, w, h, model_->backgroundColor2D().lighter());
   } else {  // Metal 2D.

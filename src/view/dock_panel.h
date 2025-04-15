@@ -62,6 +62,7 @@ class DockPanel : public QWidget {
   static constexpr int kIndicatorSizeFlat2D = 6;
   static constexpr int kIndicatorSizeMetal2D = 8;
   static constexpr int kIndicatorSpacing = 3;
+  static constexpr int kIndicatorMarginGlass2D = 4;
   static constexpr float kSpacingMultiplier = 0.5;  // for Glass 3D and Flat 2D.
   static constexpr float kSpacingMultiplierMetal2D = 0.33;
 
@@ -85,6 +86,10 @@ class DockPanel : public QWidget {
 
   bool is3D() {
     return panelStyle_ == PanelStyle::Glass3D_Floating || panelStyle_ == PanelStyle::Glass3D_NonFloating;
+  }
+
+  bool isGlass2D() {
+    return panelStyle_ == PanelStyle::Glass2D_Floating || panelStyle_ == PanelStyle::Glass2D_NonFloating;
   }
 
   bool isFlat2D() {
@@ -221,6 +226,7 @@ class DockPanel : public QWidget {
 
   bool isFloating() {
     return panelStyle_ == PanelStyle::Glass3D_Floating ||
+        panelStyle_ == PanelStyle::Glass2D_Floating ||
         panelStyle_ == PanelStyle::Flat2D_Floating ||
         panelStyle_ == PanelStyle::Metal2D_Floating;
   }
@@ -377,6 +383,7 @@ class DockPanel : public QWidget {
   QAction* clockAction_;
   QAction* floatingStyleAction_;
   QAction* glass3DStyleAction_;
+  QAction* glass2DStyleAction_;
   QAction* flat2DStyleAction_;
   QAction* metal2DStyleAction_;
   // Actions to set the dock on a specific screen.
