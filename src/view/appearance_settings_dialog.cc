@@ -88,6 +88,7 @@ void AppearanceSettingsDialog::loadData() {
       model_->isGlass() ? model_->inactiveIndicatorColor()
                         : model_->isFlat2D() ? model_->inactiveIndicatorColor2D()
                                              : model_->inactiveIndicatorColorMetal2D());
+  ui->showTooltip->setChecked(model_->showTooltip());
   ui->tooltipFontSize->setValue(model_->tooltipFontSize());
   ui->floatingMargin->setValue(model_->floatingMargin());
   ui->floatingMargin->setEnabled(model_->isFloating());
@@ -114,6 +115,7 @@ void AppearanceSettingsDialog::resetData() {
       model_->isGlass() ? kDefaultInactiveIndicatorColor
                         : model_->isFlat2D() ? kDefaultInactiveIndicatorColor2D
                                             : kDefaultInactiveIndicatorColorMetal2D));
+  ui->showTooltip->setChecked(kDefaultShowTooltip);
   ui->tooltipFontSize->setValue(kDefaultTooltipFontSize);
   ui->floatingMargin->setValue(kDefaultFloatingMargin);
   ui->bouncingLauncherIcon->setChecked(kDefaultBouncingLauncherIcon);
@@ -147,6 +149,7 @@ void AppearanceSettingsDialog::saveData() {
   } else {
     model_->setInactiveIndicatorColorMetal2D(inactiveIndicatorColor_->color());
   }
+  model_->setShowTooltip(ui->showTooltip->isChecked());
   model_->setTooltipFontSize(ui->tooltipFontSize->value());
   model_->setFloatingMargin(ui->floatingMargin->value());
   model_->setBouncingLauncherIcon(ui->bouncingLauncherIcon->isChecked());

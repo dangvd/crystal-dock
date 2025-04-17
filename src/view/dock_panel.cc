@@ -466,27 +466,7 @@ void DockPanel::paintEvent(QPaintEvent* e) {
     draw2D(painter);
   }
 
-  // Draw tooltip.
-  if (!isAnimationActive_ && activeItem_ >= 0 &&
-      activeItem_ < static_cast<int>(items_.size())) {
-    if (isHorizontal()) {
-      const auto& item = items_[activeItem_];
-      QFont font;
-      font.setPointSize(model_->tooltipFontSize());
-      font.setBold(true);
-      QFontMetrics metrics(font);
-      const auto tooltipWidth = metrics.boundingRect(item->getLabel()).width();
-      painter.setFont(font);
-      int x = item->left_ + item->getWidth() / 2 - tooltipWidth / 2;
-      x = std::min(x, maxWidth_ - tooltipWidth);
-      x = std::max(x, 0);
-      int y = isTop() ? maxHeight_ - tooltipSize_ / 2 : tooltipSize_ * 3 / 4;
-      drawBorderedText(x, y, item->getLabel(), /*borderWidth*/ 2, Qt::black, Qt::white, &painter);
-    } else {  // Vertical
-      // Do not draw tooltip for Vertical positions for now because the total
-      // area of the dock would take too much desktop space.
-    }
-  }
+  drawTooltip(painter);
 }
 
 void DockPanel::drawGlass3D(QPainter& painter) {
@@ -581,6 +561,29 @@ void DockPanel::draw2D(QPainter& painter) {
   // non-zoomed items.
   for (int i = itemCount() - 1; i >= 0; --i) {
     items_[i]->draw(&painter);
+  }
+}
+
+void DockPanel::drawTooltip(QPainter& painter) {
+  if (model_->showTooltip() && !isAnimationActive_ && activeItem_ >= 0 &&
+      activeItem_ < static_cast<int>(items_.size())) {
+    if (isHorizontal()) {
+      const auto& item = items_[activeItem_];
+      QFont font;
+      font.setPointSize(model_->tooltipFontSize());
+      font.setBold(true);
+      QFontMetrics metrics(font);
+      const auto tooltipWidth = metrics.boundingRect(item->getLabel()).width();
+      painter.setFont(font);
+      int x = item->left_ + item->getWidth() / 2 - tooltipWidth / 2;
+      x = std::min(x, maxWidth_ - tooltipWidth);
+      x = std::max(x, 0);
+      int y = isTop() ? maxHeight_ - tooltipSize_ / 2 : tooltipSize_ * 3 / 4;
+      drawBorderedText(x, y, item->getLabel(), /*borderWidth*/ 2, Qt::black, Qt::white, &painter);
+    } else {  // Vertical
+      // Do not draw tooltip for Vertical positions for now because the total
+      // area of the dock would take too much desktop space.
+    }
   }
 }
 

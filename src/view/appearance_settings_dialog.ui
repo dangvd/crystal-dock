@@ -138,7 +138,7 @@
   <widget class="QLabel" name="tooltipFontSizeLabel">
    <property name="geometry">
     <rect>
-     <x>40</x>
+     <x>440</x>
      <y>270</y>
      <width>220</width>
      <height>40</height>
@@ -151,7 +151,7 @@
   <widget class="QSpinBox" name="tooltipFontSize">
    <property name="geometry">
     <rect>
-     <x>260</x>
+     <x>700</x>
      <y>270</y>
      <width>81</width>
      <height>40</height>
@@ -231,7 +231,7 @@
    <property name="geometry">
     <rect>
      <x>440</x>
-     <y>270</y>
+     <y>330</y>
      <width>200</width>
      <height>40</height>
     </rect>
@@ -244,7 +244,7 @@
    <property name="geometry">
     <rect>
      <x>700</x>
-     <y>270</y>
+     <y>330</y>
      <width>81</width>
      <height>40</height>
     </rect>
@@ -299,6 +299,19 @@
    </property>
    <property name="text">
     <string>Bouncing launcher icon</string>
+   </property>
+  </widget>
+  <widget class="QCheckBox" name="showTooltip">
+   <property name="geometry">
+    <rect>
+     <x>40</x>
+     <y>270</y>
+     <width>300</width>
+     <height>40</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Show tooltip</string>
    </property>
   </widget>
  </widget>

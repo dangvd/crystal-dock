@@ -311,7 +311,9 @@ class DockPanel : public QWidget {
 
   // Drawing logic for each dock style.
   void drawGlass3D(QPainter& painter);
-  void draw2D(QPainter& painter);  // for both Flat 2D and Metal 2D.
+  void draw2D(QPainter& painter);  // for 2D styles.
+
+  void drawTooltip(QPainter& painter);
 
   // Returns the size given the distance to the mouse.
   int parabolic(int x);

@@ -52,6 +52,7 @@ enum class PanelStyle {
 constexpr int kDefaultMinSize = 48;
 constexpr int kDefaultMaxSize = 128;
 constexpr float kDefaultSpacingFactor = 0.5;
+constexpr bool kDefaultShowTooltip = true;
 constexpr int kDefaultTooltipFontSize = 24;
 constexpr float kDefaultBackgroundAlpha = 0.42;
 constexpr float kDefaultBackgroundAlphaMetal2D = 0.68;
@@ -264,6 +265,14 @@ class MultiDockModel : public QObject {
   void setInactiveIndicatorColorMetal2D(const QColor& value) {
     setAppearanceProperty(kGeneralCategory, kInactiveIndicatorColorMetal2D,
                           value.name(QColor::HexRgb));
+  }
+
+  bool showTooltip() const {
+    return appearanceProperty(kGeneralCategory, kShowTooltip, kDefaultShowTooltip);
+  }
+
+  void setShowTooltip(bool value) {
+    setAppearanceProperty(kGeneralCategory, kShowTooltip, value);
   }
 
   int tooltipFontSize() const {
@@ -656,6 +665,7 @@ class MultiDockModel : public QObject {
   static constexpr char kMaximumIconSize[] = "maximumIconSize";
   static constexpr char kMinimumIconSize[] = "minimumIconSize";
   static constexpr char kSpacingFactor[] = "spacingFactor";
+  static constexpr char kShowTooltip[] = "showTooltip";
   static constexpr char kTooltipFontSize[] = "tooltipFontSize";
   static constexpr char kPanelStyle[] = "panelStyle";
   static constexpr char kFloatingMargin[] = "floatingMargin";
