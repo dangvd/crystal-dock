@@ -288,6 +288,7 @@ void DockPanel::removeDock() {
 
 void DockPanel::onWindowAdded(const WindowInfo* info) {
   intellihideHideUnhide();
+  if (autoHide() && !isHidden_) { setAutoHide(); }
 
   if (!showTaskManager()) {
     return;
@@ -381,7 +382,6 @@ void DockPanel::onWindowTitleChanged(const WindowInfo *task) {
 
 void DockPanel::onActiveWindowChanged() {
   update();
-  if (autoHide() && !isActiveWindow()) { setAutoHide(); }
 }
 
 int DockPanel::taskIndicatorPos() {
