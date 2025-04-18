@@ -76,10 +76,10 @@ void ApplicationMenu::draw(QPainter* painter) const {
   if (showingMenu_) {
     const auto x = left_ + getWidth() / 2;
     const auto y = top_ + getHeight() / 2;
-    if (parent_->is3D()) {
+    if (parent_->isGlass()) {
       const QColor baseColor = model_->activeIndicatorColor();
       // Size (width if horizontal, or height if vertical) of the indicator.
-      const auto size = DockPanel::kIndicatorSize3D;
+      const auto size = DockPanel::kIndicatorSizeGlass;
       drawIndicator(orientation_, x, parent_->taskIndicatorPos(),
                     parent_->taskIndicatorPos(), y,
                     size, DockPanel::k3DPanelThickness, baseColor, painter);

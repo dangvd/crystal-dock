@@ -58,12 +58,12 @@ class DockPanel : public QWidget {
   static constexpr int kMenuPopupDelayMs = 300;
 
   static constexpr int k3DPanelThickness = 4;
-  static constexpr int kIndicatorSize3D = 10;
+  static constexpr int kIndicatorSizeGlass = 10;  // for Glass 2D/3D.
   static constexpr int kIndicatorSizeFlat2D = 6;
   static constexpr int kIndicatorSizeMetal2D = 8;
   static constexpr int kIndicatorSpacing = 3;
   static constexpr int kIndicatorMarginGlass2D = 4;
-  static constexpr float kSpacingMultiplier = 0.5;  // for Glass 3D and Flat 2D.
+  static constexpr float kSpacingMultiplier = 0.5;  // for Glass 2D/3D and Flat 2D.
   static constexpr float kSpacingMultiplierMetal2D = 0.33;
 
   // No pointer ownership.

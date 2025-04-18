@@ -91,7 +91,7 @@ void Program::draw(QPainter *painter) const {
 
     // Size (width if horizontal, or height if vertical) of the indicator.
     const int size = parent_->isGlass()
-        ? DockPanel::kIndicatorSize3D
+        ? DockPanel::kIndicatorSizeGlass
         : parent_->isFlat2D()
             ? DockPanel::kIndicatorSizeFlat2D
             : DockPanel::kIndicatorSizeMetal2D;
