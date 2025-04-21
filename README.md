@@ -14,7 +14,7 @@ The current version (version 2) supports KDE Plasma 6 and LXQt (KWin) on Wayland
 ## Main features
 
 - Smooth parabolic zooming and translucent effect
-- Three visual styles: Glass 3D, Flat 2D and Metal 2D
+- Four visual styles: Glass 3D, Glass 2D, Flat 2D and Metal 2D with various appearance settings
 - Supported components: Application Menu, Pager, Launcher/Task Manager, Clock
 - Multiple docks support
 - Integration with various desktop environments: special menu entries (e.g. Log Out), specific default launchers, setting wallpapers
@@ -23,7 +23,7 @@ The current version (version 2) supports KDE Plasma 6 and LXQt (KWin) on Wayland
 
 ## Recommended icon themes
 
-For Glass 3D / Metal 2D style, a good icon theme to use with Crystal Dock is the Crystal Remix icon theme: https://github.com/dangvd/crystal-remix-icon-theme
+For Glass 3D / Glass 2D / Metal 2D style, a good icon theme to use with Crystal Dock is the Crystal Remix icon theme: https://github.com/dangvd/crystal-remix-icon-theme
 
 For Flat 2D style, use something like Mkos-Big-Sur.
 
