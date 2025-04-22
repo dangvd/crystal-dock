@@ -1472,7 +1472,7 @@ void DockPanel::setStrut(int width) {
 void DockPanel::updatePosition(PanelPosition position) {
   setPosition(position);
   reload();
-  if (autoHide()) {
+  if (isHidden_) {
     // we have to deactivate, wait then re-activate Auto Hide
     // otherwise the Auto Hide screen edge's border length would not be updated
     // correctly.
