@@ -23,6 +23,9 @@ set(SRCS
     desktop/kde_desktop_env.cc
     desktop/lxqt_desktop_env.cc
     display/window_system.cc
+    display/kde_auto_hide_manager.cc
+    display/kde_virtual_desktop_manager.cc
+    display/kde_window_manager.cc
     display/kde_screen_edge.c
     display/plasma_virtual_desktop.c
     display/plasma_window_management.c
@@ -53,6 +56,9 @@ set(SRCS
     desktop/kde_desktop_env.h
     desktop/lxqt_desktop_env.h
     display/window_system.h
+    display/kde_auto_hide_manager.h
+    display/kde_virtual_desktop_manager.h
+    display/kde_window_manager.h
     display/kde_screen_edge.h
     display/plasma_virtual_desktop.h
     display/plasma_window_management.h

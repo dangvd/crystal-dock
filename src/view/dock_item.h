@@ -75,10 +75,10 @@ class DockItem {
   virtual bool updateTask(const WindowInfo* task) { return false; }
 
   // Handles removing the task, e.g. for a Program dock item.
-  virtual bool removeTask(std::string_view uuid) { return false; }
+  virtual bool removeTask(void* window) { return false; }
 
   // Does this (Program) dock item already have this task?
-  virtual bool hasTask(std::string_view uuid) { return false; }
+  virtual bool hasTask(void* window) { return false; }
 
   // Will this item be ordered before the Program item for this task?
   virtual bool beforeTask(const QString& program) { return true; }

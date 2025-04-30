@@ -177,7 +177,7 @@ void Program::mousePressEvent(QMouseEvent* e) {
           launch();
           startBounceAnimation();
         } else if (tasks_.size() == 1) {
-          WindowSystem::activateOrMinimizeWindow(tasks_[0].uuid);
+          WindowSystem::activateOrMinimizeWindow(tasks_[0].window);
         } else {
           const auto activeTask = getActiveTask();
           if (activeTask >= 0) {
@@ -186,14 +186,14 @@ void Program::mousePressEvent(QMouseEvent* e) {
             if (mod & Qt::ControlModifier) {
               // Cycles backwards with CTRL.
               auto nextTask = activeTask > 0 ? (activeTask - 1) : lastTask;
-              WindowSystem::activateWindow(tasks_[nextTask].uuid);
+              WindowSystem::activateWindow(tasks_[nextTask].window);
             } else {
               auto nextTask = (activeTask < lastTask) ? (activeTask + 1) : 0;
-              WindowSystem::activateWindow(tasks_[nextTask].uuid);
+              WindowSystem::activateWindow(tasks_[nextTask].window);
             }
           } else {
             for (unsigned i = 0; i < tasks_.size(); ++i) {
-              WindowSystem::activateWindow(tasks_[i].uuid);
+              WindowSystem::activateWindow(tasks_[i].window);
             }
           }
         }
@@ -219,7 +219,7 @@ bool Program::addTask(const WindowInfo* task) {
 
   auto* app = model_->findApplication(task->appId);
   if ((app && app->appId == appId_) || task->appId == appId_.toStdString()) {
-    tasks_.push_back(ProgramTask(task->uuid, QString::fromStdString(task->title),
+    tasks_.push_back(ProgramTask(task->window, QString::fromStdString(task->title),
                                  task->demandsAttention));
     if (task->demandsAttention) {
       setDemandsAttention(true);
@@ -239,7 +239,7 @@ bool Program::updateTask(const WindowInfo* task) {
   }
 
   for (auto& existingTask : tasks_) {
-    if (existingTask.uuid == task->uuid) {
+    if (existingTask.window == task->window) {
       existingTask.demandsAttention = task->demandsAttention;
       updateDemandsAttention();
       return true;
@@ -249,9 +249,9 @@ bool Program::updateTask(const WindowInfo* task) {
   return false;
 }
 
-bool Program::removeTask(std::string_view uuid) {
+bool Program::removeTask(void* window) {
   for (int i = 0; i < static_cast<int>(tasks_.size()); ++i) {
-    if (tasks_[i].uuid == uuid) {
+    if (tasks_[i].window == window) {
       tasks_.erase(tasks_.begin() + i);
       updateMenu();
       return true;
@@ -260,9 +260,9 @@ bool Program::removeTask(std::string_view uuid) {
   return false;
 }
 
-bool Program::hasTask(std::string_view uuid) {
+bool Program::hasTask(void* window) {
   for (const auto& task : tasks_) {
-    if (task.uuid == uuid) {
+    if (task.window == window) {
       return true;
     }
   }
@@ -329,7 +329,7 @@ void Program::launch(const QString& command) {
 
 void Program::closeAllWindows() {
   for (const auto& task : tasks_) {
-    WindowSystem::closeWindow(task.uuid);
+    WindowSystem::closeWindow(task.window);
   }
 }
 

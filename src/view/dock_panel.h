@@ -203,9 +203,9 @@ class DockPanel : public QWidget {
   void removeDock();
 
   void onWindowAdded(const WindowInfo* info);
-  void onWindowRemoved(std::string uuid);
-  void onWindowLeftCurrentDesktop(std::string_view uuid);
-  void onWindowLeftCurrentActivity(std::string_view uuid);
+  void onWindowRemoved(void* window);
+  void onWindowLeftCurrentDesktop(void* window);
+  void onWindowLeftCurrentActivity(void* window);
   void onWindowGeometryChanged(const WindowInfo* task);
   void onWindowStateChanged(const WindowInfo* info);
   void onWindowTitleChanged(const WindowInfo* info);
@@ -273,10 +273,10 @@ class DockPanel : public QWidget {
 
   // Returns true if it changes the dock layout (i.e. adding a new program icon).
   bool addTask(const WindowInfo* task);
-  void removeTask(std::string_view uuid);
+  void removeTask(void* window);
   void updateTask(const WindowInfo* task);
   bool isValidTask(const WindowInfo* task);
-  bool hasTask(std::string_view uuid);
+  bool hasTask(void* window);
 
   void initClock();
 
@@ -295,10 +295,10 @@ class DockPanel : public QWidget {
   bool checkMouseEnter(int x, int y);
 
   // Should the dock hide in Intelligent Auto Hide mode?
-  bool intellihideShouldHide(std::string_view excluding_window = {});
+  bool intellihideShouldHide(void* excluding_window = nullptr);
 
   // Hides/unhides the dock in Intelligent Auto Hide mode if necessary.
-  void intellihideHideUnhide(std::string_view excluding_window = {});
+  void intellihideHideUnhide(void* excluding_window = nullptr);
 
   // Resizes the task manager part of the panel. This needs to not interfere
   // with the zooming.

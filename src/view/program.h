@@ -33,12 +33,12 @@
 namespace crystaldock {
 
 struct ProgramTask {
-  std::string uuid;
+  void* window;
   QString name;  // e.g. home -- Dolphin
   bool demandsAttention;
 
-  ProgramTask(std::string_view uuid2, QString name2, bool demandsAttention2)
-    : uuid(uuid2), name(name2), demandsAttention(demandsAttention2) {}
+  ProgramTask(void* window2, QString name2, bool demandsAttention2)
+    : window(window2), name(name2), demandsAttention(demandsAttention2) {}
 };
 
 class Program : public QObject, public IconBasedDockItem {
@@ -76,9 +76,9 @@ class Program : public QObject, public IconBasedDockItem {
 
   bool updateTask(const WindowInfo* task) override;
 
-  bool removeTask(std::string_view uuid) override;
+  bool removeTask(void* window) override;
 
-  bool hasTask(std::string_view uuid) override;
+  bool hasTask(void* window) override;
 
   bool beforeTask(const QString& program) override;
 
@@ -96,7 +96,7 @@ class Program : public QObject, public IconBasedDockItem {
 
   int getActiveTask() const {
     for (int i = 0; i < static_cast<int>(tasks_.size()); ++i) {
-      if (WindowSystem::activeWindow() == tasks_[i].uuid) {
+      if (WindowSystem::activeWindow() == tasks_[i].window) {
         return i;
       }
     }

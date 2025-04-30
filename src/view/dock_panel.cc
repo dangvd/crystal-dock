@@ -65,7 +65,7 @@ DockPanel::DockPanel(MultiDockView* parent, MultiDockModel* model, int dockId)
       showPager_(false),
       showClock_(false),
       aboutDialog_(QMessageBox::Information, "About Crystal Dock",
-                   QString("<h3>Crystal Dock 2.12</h3>")
+                   QString("<h3>Crystal Dock 2.14 alpha</h3>")
                    + "<p>Copyright (C) 2025 Viet Dang (dangvd@gmail.com)"
                    + "<p><a href=\"https://github.com/dangvd/crystal-dock\">https://github.com/dangvd/crystal-dock</a>"
                    + "<p>License: GPLv3",
@@ -101,16 +101,16 @@ DockPanel::DockPanel(MultiDockView* parent, MultiDockModel* model, int dockId)
           this, SLOT(onWindowStateChanged(const WindowInfo*)));
   connect(WindowSystem::self(), SIGNAL(windowTitleChanged(const WindowInfo*)),
           this, SLOT(onWindowTitleChanged(const WindowInfo*)));
-  connect(WindowSystem::self(), SIGNAL(activeWindowChanged(std::string_view)),
+  connect(WindowSystem::self(), SIGNAL(activeWindowChanged(void*)),
           this, SLOT(onActiveWindowChanged()));
   connect(WindowSystem::self(), SIGNAL(windowAdded(const WindowInfo*)),
           this, SLOT(onWindowAdded(const WindowInfo*)));
-  connect(WindowSystem::self(), SIGNAL(windowRemoved(std::string)),
-          this, SLOT(onWindowRemoved(std::string)));
-  connect(WindowSystem::self(), SIGNAL(windowLeftCurrentDesktop(std::string_view)),
-          this, SLOT(onWindowLeftCurrentDesktop(std::string_view)));
-  connect(WindowSystem::self(), SIGNAL(windowLeftCurrentActivity(std::string_view)),
-          this, SLOT(onWindowLeftCurrentActivity(std::string_view)));
+  connect(WindowSystem::self(), SIGNAL(windowRemoved(void*)),
+          this, SLOT(onWindowRemoved(void*)));
+  connect(WindowSystem::self(), SIGNAL(windowLeftCurrentDesktop(void*)),
+          this, SLOT(onWindowLeftCurrentDesktop(void*)));
+  connect(WindowSystem::self(), SIGNAL(windowLeftCurrentActivity(void*)),
+          this, SLOT(onWindowLeftCurrentActivity(void*)));
   connect(WindowSystem::self(), SIGNAL(windowGeometryChanged(const WindowInfo*)),
           this, SLOT(onWindowGeometryChanged(const WindowInfo*)));
   connect(WindowSystem::self(), SIGNAL(currentActivityChanged(std::string_view)),
@@ -303,25 +303,25 @@ void DockPanel::onWindowAdded(const WindowInfo* info) {
   }
 }
 
-void DockPanel::onWindowRemoved(std::string uuid) {
-  intellihideHideUnhide(uuid);
+void DockPanel::onWindowRemoved(void* window) {
+  intellihideHideUnhide(window);
 
   if (!showTaskManager()) {
     return;
   }
 
-  removeTask(uuid);
+  removeTask(window);
 }
 
-void DockPanel::onWindowLeftCurrentDesktop(std::string_view uuid) {
+void DockPanel::onWindowLeftCurrentDesktop(void* window) {
   if (showTaskManager() && model_->currentDesktopTasksOnly()) {
-    removeTask(uuid);
+    removeTask(window);
   }
 }
 
-void DockPanel::onWindowLeftCurrentActivity(std::string_view uuid) {
+void DockPanel::onWindowLeftCurrentActivity(void* window) {
   if (showTaskManager()) {
-    removeTask(uuid);
+    removeTask(window);
   }
 }
 
@@ -337,9 +337,9 @@ void DockPanel::onWindowGeometryChanged(const WindowInfo* task) {
   }
 
   QRect windowGeometry(task->x, task->y, task->width, task->height);
-  if (hasTask(task->uuid)) {
+  if (hasTask(task->window)) {
     if (!windowGeometry.intersects(screenGeometry_)) {
-      removeTask(task->uuid);
+      removeTask(task->window);
     }
   } else {
     if (windowGeometry.intersects(screenGeometry_) && isValidTask(task)) {
@@ -359,7 +359,7 @@ void DockPanel::onWindowStateChanged(const WindowInfo *task) {
   }
 
   for (auto& item : items_) {
-    if (item->hasTask(task->uuid)) {
+    if (item->hasTask(task->window)) {
       item->setDemandsAttention(task->demandsAttention);
       return;
     }
@@ -372,7 +372,7 @@ void DockPanel::onWindowTitleChanged(const WindowInfo *task) {
   }
 
   for (auto& item : items_) {
-    if (item->hasTask(task->uuid)) {
+    if (item->hasTask(task->window)) {
       item->setLabel(QString::fromStdString(task->title));
       update();
       return;
@@ -646,14 +646,14 @@ bool DockPanel::checkMouseEnter(int x, int y) {
   return true;
 }
 
-bool DockPanel::intellihideShouldHide(std::string_view excluding_window) {
+bool DockPanel::intellihideShouldHide(void* excluding_window) {
   if (visibility_ != PanelVisibility::IntelligentAutoHide) {
     return false;
   }
 
   QRect dockGeometry = getMinimizedDockGeometry();
   for (const auto* task : WindowSystem::windows()) {
-    if (isValidTask(task) && (excluding_window.empty() || task->uuid != excluding_window)) {
+    if (isValidTask(task) && (!excluding_window || task->window != excluding_window)) {
       QRect windowGeometry(task->x, task->y, task->width, task->height);
       if (!task->minimized && windowGeometry.intersects(dockGeometry)) {
         return true;
@@ -664,7 +664,7 @@ bool DockPanel::intellihideShouldHide(std::string_view excluding_window) {
   return false;
 }
 
-void DockPanel::intellihideHideUnhide(std::string_view excluding_window) {
+void DockPanel::intellihideHideUnhide(void* excluding_window) {
   if (visibility_ != PanelVisibility::IntelligentAutoHide) {
     return;
   }
@@ -883,7 +883,8 @@ void DockPanel::loadDockConfig() {
   showApplicationMenu_ = model_->showApplicationMenu(dockId_);
   applicationMenuAction_->setChecked(showApplicationMenu_);
 
-  showPager_ = model_->showPager(dockId_);
+  showPager_ = model_->showPager(dockId_) && WindowSystem::hasVirtualDesktopManager();
+  pagerAction_->setVisible(WindowSystem::hasVirtualDesktopManager());
   pagerAction_->setChecked(showPager_);
 
   taskManagerAction_->setChecked(model_->showTaskManager(dockId_));
@@ -972,7 +973,7 @@ void DockPanel::reloadTasks() {
 
 bool DockPanel::addTask(const WindowInfo* task) {
   // Checks is the task already exists.
-  if (hasTask(task->uuid)) {
+  if (hasTask(task->window)) {
     return false;
   }
 
@@ -1024,9 +1025,9 @@ bool DockPanel::addTask(const WindowInfo* task) {
   return true;
 }
 
-void DockPanel::removeTask(std::string_view uuid) {
+void DockPanel::removeTask(void* window) {
   for (int i = 0; i < itemCount(); ++i) {
-    if (items_[i]->removeTask(uuid)) {
+    if (items_[i]->removeTask(window)) {
       if (items_[i]->shouldBeRemoved()) {
         items_.erase(items_.begin() + i);
         resizeTaskManager();
@@ -1053,8 +1054,8 @@ bool DockPanel::isValidTask(const WindowInfo* task) {
     return false;
   }
 
-  if (!task->onAllDesktops && model_->currentDesktopTasksOnly()
-      && task->desktop != WindowSystem::currentDesktop()) {
+  if (WindowSystem::hasVirtualDesktopManager() && model_->currentDesktopTasksOnly()
+      && !task->onAllDesktops && task->desktop != WindowSystem::currentDesktop()) {
     return false;
   }
 
@@ -1070,9 +1071,9 @@ bool DockPanel::isValidTask(const WindowInfo* task) {
   return true;
 }
 
-bool DockPanel::hasTask(std::string_view uuid) {
+bool DockPanel::hasTask(void* window) {
   for (auto& item : items_) {
-    if (item->hasTask(uuid)) {
+    if (item->hasTask(window)) {
       return true;
     }
   }
@@ -1491,22 +1492,22 @@ void DockPanel::updateVisibility(PanelVisibility visibility) {
 }
 
 void DockPanel::setAutoHide(bool on) {
-  kde_screen_edge_manager_v1_border border = KDE_SCREEN_EDGE_MANAGER_V1_BORDER_BOTTOM;
+  Qt::Edge edge = Qt::BottomEdge;
   switch (position_) {
     case PanelPosition::Top:
-      border = KDE_SCREEN_EDGE_MANAGER_V1_BORDER_TOP;
+      edge = Qt::TopEdge;
       break;
     case PanelPosition::Bottom:
-      border = KDE_SCREEN_EDGE_MANAGER_V1_BORDER_BOTTOM;
+      edge = Qt::BottomEdge;
       break;
     case PanelPosition::Left:
-      border = KDE_SCREEN_EDGE_MANAGER_V1_BORDER_LEFT;
+      edge = Qt::LeftEdge;
       break;
     case PanelPosition::Right:
-      border = KDE_SCREEN_EDGE_MANAGER_V1_BORDER_RIGHT;
+      edge = Qt::RightEdge;
       break;
     }
-  WindowSystem::setAutoHide(this, border, on);
+  WindowSystem::setAutoHide(this, edge, on);
   isHidden_ = on;
 }
 
