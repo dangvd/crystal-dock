@@ -21,18 +21,16 @@
 namespace crystaldock {
 
 org_kde_plasma_window_management* KdeWindowManager::window_management_;
-std::unordered_map<struct org_kde_plasma_window*, WindowInfo*> KdeWindowManager::windows_;
+std::unordered_map<struct org_kde_plasma_window*, std::unique_ptr<WindowInfo>>
+    KdeWindowManager::windows_;
 std::unordered_map<std::string, struct org_kde_plasma_window*> KdeWindowManager::uuids_;
 std::vector<std::string> KdeWindowManager::stackingOrder_;
 struct org_kde_plasma_window* KdeWindowManager::activeWindow_;
 bool KdeWindowManager::showingDesktop_;
 
 /* static */ KdeWindowManager* KdeWindowManager::self() {
-  static KdeWindowManager* self = nullptr;
-  if (!self) {
-    self = new KdeWindowManager();
-  }
-  return self;
+  static KdeWindowManager self;
+  return &self;
 }
 
 /* static */ void KdeWindowManager::init(
@@ -73,8 +71,8 @@ bool KdeWindowManager::showingDesktop_;
 /* static */ std::vector<const WindowInfo*> KdeWindowManager::windows() {
   std::vector<const WindowInfo*> windows;
   for (const auto& element : windows_) {
-    if (element.second != nullptr) {
-      windows.push_back(element.second);
+    if (element.second) {
+      windows.push_back(element.second.get());
     }
   }
   std::sort(windows.begin(), windows.end(),
@@ -110,19 +108,16 @@ bool KdeWindowManager::showingDesktop_;
       return;
     }
 
-    auto* info = windows_[window];
-    if (info) {
-      if (info->minimized || window != activeWindow_) {
-          org_kde_plasma_window_set_state(
-              window,
-              ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_ACTIVE,
-              ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_ACTIVE);
-      } else {
+    if (windows_[window]->minimized || window != activeWindow_) {
         org_kde_plasma_window_set_state(
             window,
-            ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_MINIMIZED,
-            ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_MINIMIZED);
-      }
+            ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_ACTIVE,
+            ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_ACTIVE);
+    } else {
+      org_kde_plasma_window_set_state(
+          window,
+          ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_MINIMIZED,
+          ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_MINIMIZED);
     }
   }
 }
@@ -150,14 +145,13 @@ bool KdeWindowManager::showingDesktop_;
   // So we make our own implementation.
   for (const auto& uuid : stackingOrder_) {
     auto* window = uuids_[uuid];
-    auto* windowInfo = windows_[window];
-    if (windowInfo->desktop != WindowSystem::currentDesktop()) {
+    if (windows_[window]->desktop != WindowSystem::currentDesktop()) {
       continue;
     }
 
     if (show) {
-      windowInfo->restoreAfterShowDesktop = !windowInfo->minimized;
-      if (!windowInfo->minimized) {
+      windows_[window]->restoreAfterShowDesktop = !windows_[window]->minimized;
+      if (!windows_[window]->minimized) {
         org_kde_plasma_window_set_state(
             window,
             ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_MINIMIZED,
@@ -165,7 +159,7 @@ bool KdeWindowManager::showingDesktop_;
       }
       showingDesktop_ = true;
     } else {
-      if (windowInfo->restoreAfterShowDesktop) {
+      if (windows_[window]->restoreAfterShowDesktop) {
         org_kde_plasma_window_set_state(
             window,
             ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_ACTIVE,
@@ -218,11 +212,10 @@ bool KdeWindowManager::showingDesktop_;
     const char *uuid) {
   struct org_kde_plasma_window* window =
       org_kde_plasma_window_management_get_window_by_uuid(window_management_, uuid);
-  WindowInfo* info = new WindowInfo();
-  info->window = window;
+  windows_[window] = std::make_unique<WindowInfo>();
+  windows_[window]->window = window;
   static uint32_t mapping_order = 0;
-  info->mapping_order = mapping_order++;
-  windows_[window] = info;
+  windows_[window]->mapping_order = mapping_order++;
   uuids_[std::string{uuid}] = window;
 
   org_kde_plasma_window_add_listener(window, &window_listener_, NULL);
@@ -237,10 +230,10 @@ bool KdeWindowManager::showingDesktop_;
   if (windows_.count(window) == 0) {
     return;
   }
-  WindowInfo* info = windows_[window];
-  if (info) {
-    info->title = title;
-    if (info->initialized) { emit self()->windowTitleChanged(info); }
+
+  windows_[window]->title = title;
+  if (windows_[window]->initialized) {
+    emit self()->windowTitleChanged(windows_[window].get());
   }
 }
 
@@ -251,10 +244,8 @@ bool KdeWindowManager::showingDesktop_;
   if (windows_.count(window) == 0) {
     return;
   }
-  WindowInfo* info = windows_[window];
-  if (info) {
-    info->appId = app_id;
-  }
+
+  windows_[window]->appId = app_id;
 
   if (std::string(app_id) == "crystal-dock") {
     org_kde_plasma_window_set_state(
@@ -273,22 +264,22 @@ bool KdeWindowManager::showingDesktop_;
   if (windows_.count(window) == 0) {
     return;
   }
-  WindowInfo* info = windows_[window];
-  if (info) {
-    info->skipTaskbar = flags & ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_SKIPTASKBAR;
-    info->onAllDesktops = flags & ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_ON_ALL_DESKTOPS;
-    info->demandsAttention = flags & ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_DEMANDS_ATTENTION;
-    info->minimized = flags & ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_MINIMIZED;
 
-    if (info->minimized && activeWindow_ == window) {
+  windows_[window]->skipTaskbar = flags & ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_SKIPTASKBAR;
+  windows_[window]->onAllDesktops = flags & ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_ON_ALL_DESKTOPS;
+  windows_[window]->demandsAttention = flags & ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_DEMANDS_ATTENTION;
+  windows_[window]->minimized = flags & ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_MINIMIZED;
+
+  if (windows_[window]->minimized && activeWindow_ == window) {
       activeWindow_ = nullptr;
-      if (info->initialized) { emit self()->activeWindowChanged(activeWindow_); }
-    } else if (flags & ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_ACTIVE && activeWindow_ != window) {
+      if (windows_[window]->initialized) { emit self()->activeWindowChanged(activeWindow_); }
+  } else if (flags & ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_ACTIVE && activeWindow_ != window) {
       activeWindow_ = window;
-      if (info->initialized) { emit self()->activeWindowChanged(activeWindow_); }
-    }
+      if (windows_[window]->initialized) { emit self()->activeWindowChanged(activeWindow_); }
+  }
 
-    if (info->initialized) { emit self()->windowStateChanged(info); }
+  if (windows_[window]->initialized) {
+    emit self()->windowStateChanged(windows_[window].get());
   }
 }
 
@@ -306,10 +297,8 @@ bool KdeWindowManager::showingDesktop_;
   if (windows_.count(window) == 0) {
     return;
   }
-  WindowInfo* info = windows_[window];
-  if (info) {
-    info->icon = name;
-  }
+
+  windows_[window]->icon = name;
 }
 
 /* static */ void KdeWindowManager::unmapped(
@@ -318,12 +307,9 @@ bool KdeWindowManager::showingDesktop_;
   if (windows_.count(window) == 0) {
     return;
   }
-  WindowInfo* info = windows_[window];
-  if (info) {
-    emit self()->windowRemoved(info->window);
-    delete info;
-    info = nullptr;
-  }
+
+  emit self()->windowRemoved(windows_[window]->window);
+  windows_.erase(window);
 }
 
 /* static */ void KdeWindowManager::initial_state(
@@ -331,10 +317,10 @@ bool KdeWindowManager::showingDesktop_;
   if (windows_.count(window) == 0) {
     return;
   }
-  WindowInfo* info = windows_[window];
-  if (info) { info->initialized = true; }
-  if (info && !info->skipTaskbar) {
-    emit self()->windowAdded(info);
+
+  windows_[window]->initialized = true;
+  if (!windows_[window]->skipTaskbar) {
+    emit self()->windowAdded(windows_[window].get());
   }
 }
 
@@ -355,13 +341,13 @@ bool KdeWindowManager::showingDesktop_;
   if (windows_.count(window) == 0) {
     return;
   }
-  WindowInfo* info = windows_[window];
-  if (info) {
-    info->x = x;
-    info->y = y;
-    info->width = width;
-    info->height = height;
-    if (info->initialized) { emit self()->windowGeometryChanged(info); }
+
+  windows_[window]->x = x;
+  windows_[window]->y = y;
+  windows_[window]->width = width;
+  windows_[window]->height = height;
+  if (windows_[window]->initialized) {
+    emit self()->windowGeometryChanged(windows_[window].get());
   }
 }
 
@@ -372,9 +358,7 @@ bool KdeWindowManager::showingDesktop_;
 /* static */ void KdeWindowManager::pid_changed(
     void *data,
     struct org_kde_plasma_window* window,
-    uint32_t pid) {
-
-}
+    uint32_t pid) {}
 
 /* static */ void KdeWindowManager::virtual_desktop_entered(
     void *data,
@@ -383,10 +367,7 @@ bool KdeWindowManager::showingDesktop_;
   if (windows_.count(window) == 0) {
     return;
   }
-  WindowInfo* info = windows_[window];
-  if (info) {
-    info->desktop = id;
-  }
+  windows_[window]->desktop = id;
 }
 
 /* static */ void KdeWindowManager::virtual_desktop_left(
@@ -399,9 +380,8 @@ bool KdeWindowManager::showingDesktop_;
   if (windows_.count(window) == 0) {
     return;
   }
-  WindowInfo* info = windows_[window];
-  if (info && info->initialized && !info->onAllDesktops) {
-    emit self()->windowLeftCurrentDesktop(info->window);
+  if (windows_[window]->initialized && !windows_[window]->onAllDesktops) {
+    emit self()->windowLeftCurrentDesktop(windows_[window]->window);
   }
 }
 
@@ -418,10 +398,8 @@ bool KdeWindowManager::showingDesktop_;
   if (windows_.count(window) == 0) {
     return;
   }
-  WindowInfo* info = windows_[window];
-  if (info) {
-    info->activity = id;
-  }
+
+  windows_[window]->activity = id;
 }
 
 /* static */ void KdeWindowManager::activity_left(
@@ -434,9 +412,8 @@ bool KdeWindowManager::showingDesktop_;
   if (windows_.count(window) == 0) {
     return;
   }
-  WindowInfo* info = windows_[window];
-  if (info && info->initialized) {
-    emit self()->windowLeftCurrentActivity(info->window);
+  if (windows_[window]->initialized) {
+    emit self()->windowLeftCurrentActivity(windows_[window]->window);
   }
 }
 

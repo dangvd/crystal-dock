@@ -1064,7 +1064,8 @@ bool DockPanel::isValidTask(const WindowInfo* task) {
     return false;
   }
 
-  if (task->activity != WindowSystem::currentActivity()) {
+  if (WindowSystem::hasActivityManager() && !WindowSystem::currentActivity().empty()
+      && !task->activity.empty() && task->activity != WindowSystem::currentActivity()) {
     return false;
   }
 

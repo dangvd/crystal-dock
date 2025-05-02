@@ -76,6 +76,11 @@ void AddPanelDialog::setMode(Mode mode) {
   ui->showTaskManager->setVisible(mode != Mode::Clone);
   ui->showClock->setVisible(mode != Mode::Clone);
 
+  if (!WindowSystem::hasVirtualDesktopManager()) {
+    ui->showPager->setChecked(false);
+    ui->showPager->setEnabled(false);
+  }
+
   ui->styleLabel->setVisible(mode == Mode::Welcome);
   ui->style->setVisible(mode == Mode::Welcome);
   if (mode == Mode::Welcome) {

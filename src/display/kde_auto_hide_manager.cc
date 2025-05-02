@@ -27,11 +27,8 @@ namespace crystaldock {
 kde_screen_edge_manager_v1* KdeAutoHideManager::screen_edge_manager_;
 
 /* static */ KdeAutoHideManager* KdeAutoHideManager::self() {
-  static KdeAutoHideManager* self = nullptr;
-  if (!self) {
-    self = new KdeAutoHideManager();
-  }
-  return self;
+  static KdeAutoHideManager self;
+  return &self;
 }
 
 /* static */ void KdeAutoHideManager::init(

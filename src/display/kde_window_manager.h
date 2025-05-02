@@ -19,6 +19,7 @@
 #ifndef KDE_WINDOW_MANAGER_H_
 #define KDE_WINDOW_MANAGER_H_
 
+#include <memory>
 #include <string>
 
 #include "plasma_window_management.h"
@@ -208,7 +209,7 @@ class KdeWindowManager : public QObject {
 
   static org_kde_plasma_window_management* window_management_;
 
-  static std::unordered_map<struct org_kde_plasma_window*, WindowInfo*> windows_;
+  static std::unordered_map<struct org_kde_plasma_window*, std::unique_ptr<WindowInfo>> windows_;
   static std::unordered_map<std::string, struct org_kde_plasma_window*> uuids_;
   static std::vector<std::string> stackingOrder_;
   static struct org_kde_plasma_window* activeWindow_;

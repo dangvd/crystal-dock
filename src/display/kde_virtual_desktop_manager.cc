@@ -25,11 +25,8 @@ std::vector<VirtualDesktopInfo> KdeVirtualDesktopManager::desktops_;
 std::string KdeVirtualDesktopManager::currentDesktop_;
 
 /* static */ KdeVirtualDesktopManager* KdeVirtualDesktopManager::self() {
-  static KdeVirtualDesktopManager* self = nullptr;
-  if (!self) {
-    self = new KdeVirtualDesktopManager();
-  }
-  return self;
+  static KdeVirtualDesktopManager self;
+  return &self;
 }
 
 /* static */ void KdeVirtualDesktopManager::init(

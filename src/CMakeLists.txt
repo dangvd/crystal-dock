@@ -29,6 +29,8 @@ set(SRCS
     display/kde_screen_edge.c
     display/plasma_virtual_desktop.c
     display/plasma_window_management.c
+    display/wlr_foreign_toplevel_management.c
+    display/wlr_window_manager.cc
     model/application_menu_config.cc
     model/config_helper.cc
     model/launcher_config.cc
@@ -62,6 +64,8 @@ set(SRCS
     display/kde_screen_edge.h
     display/plasma_virtual_desktop.h
     display/plasma_window_management.h
+    display/wlr_foreign_toplevel_management.h
+    display/wlr_window_manager.h
     model/application_menu_config.h
     model/application_menu_entry.h
     model/config_helper.h
