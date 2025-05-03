@@ -226,7 +226,44 @@ bool WlrWindowManager::showingDesktop_;
 /* static */ void WlrWindowManager::state(
     void *data,
     struct zwlr_foreign_toplevel_handle_v1 *window,
-    struct wl_array *state) {}
+    struct wl_array *state) {
+  if (windows_.count(window) == 0) {
+    return;
+  }
+
+  windows_[window]->minimized = false;
+  void *state_entry;
+  wl_array_for_each(state_entry, state) {
+    auto* entry = static_cast<uint32_t*>(state_entry);
+    if (*entry == ZWLR_FOREIGN_TOPLEVEL_HANDLE_V1_STATE_MAXIMIZED) {
+      // TODO: handle this.
+    }
+    if (*entry == ZWLR_FOREIGN_TOPLEVEL_HANDLE_V1_STATE_MINIMIZED) {
+      windows_[window]->minimized = true;
+      if (activeWindow_ == window) {
+        activeWindow_ = nullptr;
+        if (windows_[window]->initialized) {
+          emit self()->activeWindowChanged(activeWindow_);
+        }
+      }
+    }
+    if (*entry == ZWLR_FOREIGN_TOPLEVEL_HANDLE_V1_STATE_ACTIVATED) {
+      if (activeWindow_ != window) {
+        activeWindow_ = window;
+        if (windows_[window]->initialized) {
+          emit self()->activeWindowChanged(activeWindow_);
+        }
+      }
+    }
+    if (*entry == ZWLR_FOREIGN_TOPLEVEL_HANDLE_V1_STATE_FULLSCREEN) {
+      // TODO: handle this.
+    }
+  }
+
+  if (windows_[window]->initialized) {
+    emit self()->windowStateChanged(windows_[window].get());
+  }
+}
 
 /* static */ void WlrWindowManager::done(
     void *data,
