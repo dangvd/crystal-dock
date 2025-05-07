@@ -96,6 +96,9 @@ constexpr float kDefaultClockFontScaleFactor = kLargeClockFontScaleFactor;
 constexpr char kSeparatorId[] = "separator";
 constexpr char kLauncherSeparatorId[] = "launcher-separator";
 constexpr char kLockScreenId[] = "lock-screen";
+constexpr char kShowDesktopId[] = "show-desktop";
+constexpr char kShowDesktopName[] = "Show Desktop";
+constexpr char kShowDesktopIcon[] = "user-desktop";
 
 // The model.
 class MultiDockModel : public QObject {

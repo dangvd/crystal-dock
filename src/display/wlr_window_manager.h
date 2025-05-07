@@ -135,6 +135,8 @@ class WlrWindowManager : public QObject {
   static std::unordered_map<struct zwlr_foreign_toplevel_handle_v1*, std::unique_ptr<WindowInfo>>
       windows_;
   static struct zwlr_foreign_toplevel_handle_v1* activeWindow_;
+  // So when we show desktop on/off we can restore the active window.
+  static struct zwlr_foreign_toplevel_handle_v1* activeWindowBeforeShowDesktop_;
   static bool showingDesktop_;
 };
 

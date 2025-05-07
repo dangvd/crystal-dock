@@ -29,6 +29,7 @@ zwlr_foreign_toplevel_manager_v1* WlrWindowManager::window_manager_;
 std::unordered_map<struct zwlr_foreign_toplevel_handle_v1*, std::unique_ptr<WindowInfo>>
     WlrWindowManager::windows_;
 struct zwlr_foreign_toplevel_handle_v1* WlrWindowManager::activeWindow_;
+struct zwlr_foreign_toplevel_handle_v1* WlrWindowManager::activeWindowBeforeShowDesktop_;
 bool WlrWindowManager::showingDesktop_;
 
 /* static */ WlrWindowManager* WlrWindowManager::self() {
@@ -139,29 +140,22 @@ bool WlrWindowManager::showingDesktop_;
 }
 
 /* static */ void WlrWindowManager::setShowingDesktop(bool show) {
-  // This does not work because it would hide Crystal Dock.
-  /*
-  zwlr_foreign_toplevel_manager_v1_show_desktop(
-      window_manager_,
-      show ? zwlr_foreign_toplevel_manager_v1_SHOW_DESKTOP_ENABLED
-           : zwlr_foreign_toplevel_manager_v1_SHOW_DESKTOP_DISABLED);
-  */
-
-  // So we make our own implementation.
   for (const auto& [window, windowInfo] : windows_) {
-    if (windowInfo->desktop != WindowSystem::currentDesktop()) {
-      continue;
-    }
-
     if (show) {
       windowInfo->restoreAfterShowDesktop = !windowInfo->minimized;
       if (!windowInfo->minimized) {
-        //minimizeWindow(window);
+        zwlr_foreign_toplevel_handle_v1_set_minimized(window);
+      }
+      if (activeWindow_) {
+        activeWindowBeforeShowDesktop_ = activeWindow_;
       }
       showingDesktop_ = true;
     } else {
       if (windowInfo->restoreAfterShowDesktop) {
         activateWindow(window);
+      }
+      if (activeWindowBeforeShowDesktop_) {
+        activateWindow(activeWindowBeforeShowDesktop_);
       }
       showingDesktop_ = false;
     }

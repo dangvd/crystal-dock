@@ -209,6 +209,11 @@ const std::vector<LauncherConfig> MultiDockModel::launcherConfigs(int dockId) co
       continue;
     }
 
+    if (appId == kShowDesktopId) {
+      entries.push_back(LauncherConfig(kShowDesktopId, kShowDesktopName, kShowDesktopIcon, ""));
+      continue;
+    }
+
     const auto* entry = applicationMenuConfig_.findApplication(appId.toStdString());
     if (entry != nullptr) {
       entries.push_back(LauncherConfig(entry->appId, entry->name, entry->icon,
@@ -220,6 +225,8 @@ const std::vector<LauncherConfig> MultiDockModel::launcherConfigs(int dockId) co
 
 QStringList MultiDockModel::defaultLaunchers() {
   QStringList launchers;
+
+  launchers.append(kShowDesktopId);
 
   auto* defaultWebBrowser = defaultBrowser();
   if (defaultWebBrowser) {

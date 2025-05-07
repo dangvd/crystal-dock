@@ -118,6 +118,9 @@ void EditLaunchersDialog::addLauncher(const QString& name,
     listItem = new QListWidgetItem("--- Separator ---");
   } else if (appId == kLauncherSeparatorId) {
     listItem = new QListWidgetItem("--- Launcher Separator ---");
+  } else if (appId == kShowDesktopId) {
+    listItem = new QListWidgetItem(
+        QIcon::fromTheme(kShowDesktopIcon).pixmap(kListIconSize), kShowDesktopName);
   } else {
     listItem = new QListWidgetItem(
         QIcon::fromTheme(iconName).pixmap(kListIconSize), name);
@@ -169,6 +172,8 @@ void EditLaunchersDialog::removeAllLaunchers() {
 }
 
 void EditLaunchersDialog::initSystemCommands() {
+  ui->systemCommands->addItem(getListItemIcon(kShowDesktopIcon), kShowDesktopName,
+      QVariant::fromValue(LauncherInfo(kShowDesktopIcon, kShowDesktopId)));
   for (const auto& category : model_->applicationMenuSystemCategories()) {
     for (const auto& entry : category.entries) {
       ui->systemCommands->addItem(

@@ -167,6 +167,8 @@ void Program::mousePressEvent(QMouseEvent* e) {
       QTimer::singleShot(DockPanel::kMenuPopupDelayMs, [this]() {
         launch();
       });
+    } else if (appId_ == kShowDesktopId) {
+      WindowSystem::setShowingDesktop(!WindowSystem::showingDesktop());
     } else {
       if (tasks_.empty()) {
         launch();
