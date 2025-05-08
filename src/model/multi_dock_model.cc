@@ -239,16 +239,10 @@ QStringList MultiDockModel::defaultLaunchers() {
   }
 
   auto desktopEnvItems = desktopEnv_->getDefaultLaunchers();
-  launchers.reserve(desktopEnvItems.size() + 3);
+  launchers.reserve(launchers.size() + desktopEnvItems.size());
   for (const auto& appId : desktopEnvItems) {
-    const auto* entry = applicationMenuConfig_.findApplication(appId.toStdString());
-    if (entry != nullptr) {
-      launchers.append(appId);
-    }
+    launchers.append(appId);
   }
-
-  launchers.append("separator");
-  launchers.append("lock-screen");
 
   return launchers;
 }

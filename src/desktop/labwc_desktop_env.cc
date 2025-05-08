@@ -1,6 +1,6 @@
 /*
  * This file is part of Crystal Dock.
- * Copyright (C) 2022 Viet Dang (dangvd@gmail.com)
+ * Copyright (C) 2025 Viet Dang (dangvd@gmail.com)
  *
  * Crystal Dock is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,25 +16,32 @@
  * along with Crystal Dock.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef CRYSTALDOCK_LXQT_DESKTOP_ENV_H_
-#define CRYSTALDOCK_LXQT_DESKTOP_ENV_H_
+#include "labwc_desktop_env.h"
 
-#include "desktop_env.h"
+#include <model/multi_dock_model.h>
 
 namespace crystaldock {
 
-class LxqtDesktopEnv : public DesktopEnv {
- public:
-  std::vector<Category> getApplicationMenuSystemCategories() const override;
+std::vector<Category> LabwcDesktopEnv::getApplicationMenuSystemCategories() const {
+  static const std::vector<Category> kSystemCategories = {
+    {"Session", "Session", "system-log-out",
+      {
+        {"log-out",
+          "Log Out",
+          "",
+          "system-log-out",
+          "labwc --exit",
+          ""
+        },
+      },
+    },
+  };
 
-  std::vector<QString> getDefaultLaunchers() const override;
+  return kSystemCategories;
+}
 
-  bool canSetWallpaper() const override { return true; }
-
-  bool setWallpaper(int screen, const QString& wallpaper) override;
-};
+std::vector<QString> LabwcDesktopEnv::getDefaultLaunchers() const {
+  return {kSeparatorId, "log-out"};
+}
 
 }  // namespace crystaldock
-
-#endif // CRYSTALDOCK_LXQT_DESKTOP_ENV_H_
-

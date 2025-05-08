@@ -27,8 +27,8 @@
 
 namespace crystaldock {
 
-// Desktop Environment specific data/logic.
-// Currently supports KDE and LXQt (KWin).
+// Desktop Environment (including lightweight options) specific data/logic.
+// Currently supports KDE, LXQt and Labwc.
 class DesktopEnv {
  protected:
   DesktopEnv() = default;
@@ -50,7 +50,7 @@ class DesktopEnv {
   virtual std::vector<QString> getDefaultLaunchers() const { return {}; };
 
   // Does the DE support setting wallpaper programmatically?
-  virtual bool canSetWallpaper() const { return true; }
+  virtual bool canSetWallpaper() const { return false; }
 
   // Supports separate wallpapers for separate screens.
   virtual bool supportSeparateSreenWallpapers() const { return false; }

@@ -24,6 +24,7 @@
 #include <QStringList>
 
 #include "kde_desktop_env.h"
+#include "labwc_desktop_env.h"
 #include "lxqt_desktop_env.h"
 #include <model/application_menu_config.h>
 #include <model/multi_dock_model.h>
@@ -35,6 +36,9 @@ DesktopEnv* DesktopEnv::getDesktopEnv() {
   if (currentDesktopEnv == "KDE") {
     static std::unique_ptr<KdeDesktopEnv> kde(new KdeDesktopEnv);
     return kde.get();
+  } else if (currentDesktopEnv == "labwc") {
+    static std::unique_ptr<LabwcDesktopEnv> labwc(new LabwcDesktopEnv);
+    return labwc.get();
   } else if (currentDesktopEnv == "LXQt") {
     static std::unique_ptr<LxqtDesktopEnv> lxqt(new LxqtDesktopEnv);
     return lxqt.get();
