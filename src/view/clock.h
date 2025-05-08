@@ -55,7 +55,7 @@ class Clock : public QObject, public IconlessDockItem {
   void setSmallFont();
 
  private:
-  static constexpr float kWhRatio = 2.8;
+  static constexpr float kWhRatio = 3.0;
   static constexpr float kDelta = 0.01;
 
   float fontScaleFactor() {

@@ -54,19 +54,22 @@ void Clock::draw(QPainter *painter) const {
   // The reference time used to calculate the font size.
   const QString referenceTime = QTime(8, 8).toString(timeFormat);
 
-  painter->setFont(adjustFontSize(getWidth(), getHeight(), referenceTime,
+  const int margin = parent_->isHorizontal() ? getHeight() * 0.2 : 0;
+  const auto x = left_ + margin;
+  const auto y = top_;
+  const auto w = getWidth() - margin;
+  const auto h = getHeight();
+  painter->setFont(adjustFontSize(w, h, referenceTime,
                                   model_->clockFontScaleFactor(),
                                   model_->clockFontFamily()));
   painter->setRenderHint(QPainter::TextAntialiasing);
-
   if (size_ > minSize_) {
-    drawBorderedText(left_, top_, getWidth(), getHeight(), Qt::AlignCenter,
-                     time, 2 /* borderWidth */, Qt::black, Qt::white, painter,
+    drawBorderedText(x, y , w, h, Qt::AlignCenter, time,
+                     2 /* borderWidth */, Qt::black, Qt::white, painter,
                      /*simplified=*/ true);
   } else {
     painter->setPen(Qt::white);
-    painter->drawText(left_, top_, getWidth(), getHeight(), Qt::AlignCenter,
-                      time);
+    painter->drawText(x, y, w, h, Qt::AlignCenter, time);
   }
 }
 
