@@ -25,6 +25,18 @@
 
 namespace crystaldock {
 
+namespace {
+
+void moveY(QWidget* widget, int deltaY) {
+  widget->move(widget->x(), widget->y() + deltaY);
+}
+
+void resizeHeight(QWidget* widget, int deltaHeight) {
+  widget->resize(widget->width(), widget->height() + deltaHeight);
+}
+
+}  // namespace
+
 AddPanelDialog::AddPanelDialog(QWidget* parent, MultiDockModel* model,
                                int dockId)
     : QDialog(parent),
@@ -56,6 +68,17 @@ AddPanelDialog::~AddPanelDialog() {
 
 void AddPanelDialog::setMode(Mode mode) {
   mode_ = mode;
+  // reset positions of fields and size.
+  ui->showTaskManager->move(120, 180);
+  ui->showClock->move(120, 220);
+  ui->styleLabel->move(90, 280);
+  ui->style->move(320, 265);
+  ui->positionLabel->move(90, 320);
+  ui->position->move(320, 310);
+  ui->screenLabel->move(90, 360);
+  ui->screen->move(320, 355);
+  ui->buttonBox->move(70, 430);
+  resize(540, 490);
 
   setWindowTitle((mode_ == Mode::Add)
                  ? QString("Add Panel") : (mode_ == Mode::Clone)
@@ -76,9 +99,20 @@ void AddPanelDialog::setMode(Mode mode) {
   ui->showTaskManager->setVisible(mode != Mode::Clone);
   ui->showClock->setVisible(mode != Mode::Clone);
 
-  if (!WindowSystem::hasVirtualDesktopManager()) {
+  if (mode != Mode::Clone && !WindowSystem::hasVirtualDesktopManager()) {
     ui->showPager->setChecked(false);
-    ui->showPager->setEnabled(false);
+    ui->showPager->setVisible(false);
+    constexpr int kDeltaY = -40;
+    moveY(ui->showTaskManager, kDeltaY);
+    moveY(ui->showClock, kDeltaY);
+    moveY(ui->styleLabel, kDeltaY);
+    moveY(ui->style, kDeltaY);
+    moveY(ui->positionLabel, kDeltaY);
+    moveY(ui->position, kDeltaY);
+    moveY(ui->screenLabel, kDeltaY);
+    moveY(ui->screen, kDeltaY);
+    moveY(ui->buttonBox, kDeltaY);
+    resizeHeight(this, kDeltaY);
   }
 
   ui->styleLabel->setVisible(mode == Mode::Welcome);
@@ -91,19 +125,30 @@ void AddPanelDialog::setMode(Mode mode) {
     ui->buttonBox->setStandardButtons(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
   }
 
-  const int deltaY = (mode == Mode::Clone) ? 220 : 0;
-  ui->positionLabel->move(90, 320 - deltaY);
-  ui->position->move(320, 310 - deltaY);
-  ui->screenLabel->move(90, 360 - deltaY);
-  ui->screen->move(320, 355 - deltaY);
-  ui->buttonBox->move(70, 430 - deltaY);
-  resize(540, 490 - deltaY);
+  if (mode == Mode::Clone) {
+    constexpr int kDeltaY = -220;
+    moveY(ui->positionLabel, kDeltaY);
+    moveY(ui->position, kDeltaY);
+    moveY(ui->screenLabel, kDeltaY);
+    moveY(ui->screen, kDeltaY);
+    moveY(ui->buttonBox, kDeltaY);
+    resizeHeight(this, kDeltaY);
+  } else if (mode != Mode::Welcome) {
+    ui->styleLabel->setVisible(false);
+    ui->style->setVisible(false);
+    constexpr int kDeltaY = -40;
+    moveY(ui->positionLabel, kDeltaY);
+    moveY(ui->position, kDeltaY);
+    moveY(ui->screenLabel, kDeltaY);
+    moveY(ui->screen, kDeltaY);
+    moveY(ui->buttonBox, kDeltaY);
+    resizeHeight(this, kDeltaY);
+  }
 
-  // Adjust the UI for single/multi-screen.
-  if (isSingleScreen_) {
-    constexpr int kScreenDeltaY = 45;
-    ui->buttonBox->move(ui->buttonBox->x(), ui->buttonBox->y() - kScreenDeltaY);
-    resize(width(), height() - kScreenDeltaY);
+  if (!ui->screen->isVisible()) {
+    constexpr int kScreenDeltaY = -45;
+    moveY(ui->buttonBox, kScreenDeltaY);
+    resizeHeight(this, kScreenDeltaY);
   }
 }
 
