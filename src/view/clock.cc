@@ -54,7 +54,7 @@ void Clock::draw(QPainter *painter) const {
   // The reference time used to calculate the font size.
   const QString referenceTime = QTime(8, 8).toString(timeFormat);
 
-  const int margin = parent_->isHorizontal() ? getHeight() * 0.2 : 0;
+  const int margin = parent_->isHorizontal() ? getHeight() * 0.1 : 0;
   const auto x = left_ + margin;
   const auto y = top_;
   const auto w = getWidth() - margin;
