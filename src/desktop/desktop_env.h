@@ -47,6 +47,7 @@ class DesktopEnv {
   // Default desktop environment-specific launchers
   // e.g. File Manager, Console, System Settings.
   // Returns a list of desktop files.
+  // This will get added to a list of default launchers for a generic environment.
   virtual std::vector<QString> getDefaultLaunchers() const { return {}; };
 
   // Does the DE support setting wallpaper programmatically?

@@ -44,14 +44,16 @@ DesktopEnv* DesktopEnv::getDesktopEnv() {
     return lxqt.get();
   }
 
-  static std::unique_ptr<DesktopEnv> basic(new DesktopEnv);
-  return basic.get();
+  static std::unique_ptr<DesktopEnv> generic(new DesktopEnv);
+  return generic.get();
 }
 
 QString DesktopEnv::getDesktopEnvName() {
   QStringList desktops = qEnvironmentVariable("XDG_CURRENT_DESKTOP").split(",", Qt::SkipEmptyParts);
-  // For LXQt it could be 'LXQt:kwin_wayland'
-  return desktops.isEmpty() ? "" : desktops.first().mid(0, desktops.first().indexOf(':'));
+  // The format is usually something like 'KDE' or 'labwc:wlroots'.
+  constexpr char kGenericDesktop[] = "generic";
+  return desktops.isEmpty() ? kGenericDesktop
+                            : desktops.first().mid(0, desktops.first().indexOf(':'));
 }
 
 }  // namespace crystaldock
