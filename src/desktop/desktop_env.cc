@@ -24,6 +24,7 @@
 #include <QProcess>
 #include <QStringList>
 
+#include "hyprland_desktop_env.h"
 #include "kde_desktop_env.h"
 #include "labwc_desktop_env.h"
 #include "lxqt_desktop_env.h"
@@ -34,7 +35,10 @@ namespace crystaldock {
 
 DesktopEnv* DesktopEnv::getDesktopEnv() {
   QString currentDesktopEnv = getDesktopEnvName();
-  if (currentDesktopEnv == "KDE") {
+  if (currentDesktopEnv == "Hyprland") {
+    static std::unique_ptr<HyprlandDesktopEnv> hyprland(new HyprlandDesktopEnv);
+    return hyprland.get();
+  } else if (currentDesktopEnv == "KDE") {
     static std::unique_ptr<KdeDesktopEnv> kde(new KdeDesktopEnv);
     return kde.get();
   } else if (currentDesktopEnv == "labwc") {
