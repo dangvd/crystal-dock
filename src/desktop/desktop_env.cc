@@ -21,6 +21,7 @@
 #include <memory>
 
 #include <QtGlobal>
+#include <QProcess>
 #include <QStringList>
 
 #include "kde_desktop_env.h"
@@ -54,6 +55,19 @@ QString DesktopEnv::getDesktopEnvName() {
   constexpr char kGenericDesktop[] = "generic";
   return desktops.isEmpty() ? kGenericDesktop
                             : desktops.first().mid(0, desktops.first().indexOf(':'));
+}
+
+std::vector<QString> DesktopEnv::getDefaultLaunchers() const {
+  return { defaultWebBrowser() };
+}
+
+QString DesktopEnv::defaultWebBrowser() const {
+  QProcess process;
+  process.start("xdg-settings", {"get", "default-web-browser"});
+  process.waitForFinished(1000 /*msecs*/);
+  QString desktopFile = process.readAllStandardOutput().trimmed();
+  auto appId = desktopFile.first(desktopFile.lastIndexOf('.'));
+  return !appId.isEmpty() ? appId : "firefox";
 }
 
 }  // namespace crystaldock

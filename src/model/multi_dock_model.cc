@@ -225,35 +225,13 @@ const std::vector<LauncherConfig> MultiDockModel::launcherConfigs(int dockId) co
 
 QStringList MultiDockModel::defaultLaunchers() {
   QStringList launchers;
-
-  launchers.append(kShowDesktopId);
-
-  auto* defaultWebBrowser = defaultBrowser();
-  if (defaultWebBrowser) {
-    launchers.append(defaultWebBrowser->appId);
-  } else {
-    const auto* entry = applicationMenuConfig_.findApplication("firefox");
-    if (entry != nullptr) {
-      launchers.append("firefox");
-    }
-  }
-
-  auto desktopEnvItems = desktopEnv_->getDefaultLaunchers();
-  launchers.reserve(launchers.size() + desktopEnvItems.size());
+  const auto desktopEnvItems = desktopEnv_->getDefaultLaunchers();
+  launchers.reserve(desktopEnvItems.size());
   for (const auto& appId : desktopEnvItems) {
     launchers.append(appId);
   }
 
   return launchers;
-}
-
-const ApplicationEntry* MultiDockModel::defaultBrowser() {
-  QProcess process;
-  process.start("xdg-settings", {"get", "default-web-browser"});
-  process.waitForFinished(1000 /*msecs*/);
-  QString desktopFile = process.readAllStandardOutput().trimmed();
-  auto appId = desktopFile.first(desktopFile.lastIndexOf('.'));
-  return applicationMenuConfig_.findApplication(appId.toStdString());
 }
 
 }  // namespace crystaldock

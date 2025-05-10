@@ -20,6 +20,8 @@
 
 #include <QProcess>
 
+#include <model/multi_dock_model.h>
+
 namespace crystaldock {
 
 std::vector<Category> LxqtDesktopEnv::getApplicationMenuSystemCategories() const {
@@ -60,7 +62,9 @@ std::vector<Category> LxqtDesktopEnv::getApplicationMenuSystemCategories() const
 }
 
 std::vector<QString> LxqtDesktopEnv::getDefaultLaunchers() const {
-  return {"qterminal", "pcmanfm-qt", "lxqt-config"};
+  return { kShowDesktopId, defaultWebBrowser(),
+           "qterminal", "pcmanfm-qt", kSeparatorId,
+           "lxqt-config", "shutdown" };
 }
 
 bool LxqtDesktopEnv::setWallpaper(int screen, const QString& wallpaper) {

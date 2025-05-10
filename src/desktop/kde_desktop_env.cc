@@ -23,6 +23,7 @@
 
 #include <QDBusMessage>
 
+#include <model/multi_dock_model.h>
 #include <utils/command_utils.h>
 
 namespace crystaldock {
@@ -75,7 +76,9 @@ std::vector<Category> KdeDesktopEnv::getApplicationMenuSystemCategories() const 
 }
 
 std::vector<QString> KdeDesktopEnv::getDefaultLaunchers() const {
-  return {"org.kde.konsole", "org.kde.dolphin", "systemsettings"};
+  return { kShowDesktopId, defaultWebBrowser(),
+           "org.kde.konsole", "org.kde.dolphin", kSeparatorId,
+           "systemsettings", "shutdown" };
 }
 
 bool KdeDesktopEnv::setWallpaper(int screen, const QString& wallpaper) {

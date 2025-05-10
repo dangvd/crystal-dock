@@ -44,11 +44,10 @@ class DesktopEnv {
   // System categories (e.g. Session/Power) on the Application Menu.
   virtual std::vector<Category> getApplicationMenuSystemCategories() const { return {}; }
 
-  // Default desktop environment-specific launchers
+  // Default launchers.
   // e.g. File Manager, Console, System Settings.
-  // Returns a list of desktop files.
-  // This will get added to a list of default launchers for a generic environment.
-  virtual std::vector<QString> getDefaultLaunchers() const { return {}; };
+  // Returns a list of app IDs.
+  virtual std::vector<QString> getDefaultLaunchers() const;
 
   // Does the DE support setting wallpaper programmatically?
   virtual bool canSetWallpaper() const { return false; }
@@ -64,6 +63,10 @@ class DesktopEnv {
   //   screen: screen to set wallpaper for.
   //   wallpaper: path to the wallpaper file.
   virtual bool setWallpaper(int screen, const QString& wallpaper) { return false; }
+
+  // Returns the app ID of the default web browser.
+  // Uses Firefox as fallback if default web browser not set.
+  QString defaultWebBrowser() const;
 };
 
 }  // namespace crystaldock

@@ -749,7 +749,6 @@ class MultiDockModel : public QObject {
   }
 
   QStringList defaultLaunchers();
-  const ApplicationEntry* defaultBrowser();
 
   void loadDocks();
 
