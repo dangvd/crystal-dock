@@ -24,6 +24,7 @@ set(SRCS
     desktop/kde_desktop_env.cc
     desktop/labwc_desktop_env.cc
     desktop/lxqt_desktop_env.cc
+    desktop/wayfire_desktop_env.cc
     display/window_system.cc
     display/kde_auto_hide_manager.cc
     display/kde_virtual_desktop_manager.cc
@@ -61,6 +62,7 @@ set(SRCS
     desktop/kde_desktop_env.h
     desktop/labwc_desktop_env.h
     desktop/lxqt_desktop_env.h
+    desktop/wayfire_desktop_env.h
     display/window_system.h
     display/kde_auto_hide_manager.h
     display/kde_virtual_desktop_manager.h

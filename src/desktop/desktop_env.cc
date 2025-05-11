@@ -28,6 +28,7 @@
 #include "kde_desktop_env.h"
 #include "labwc_desktop_env.h"
 #include "lxqt_desktop_env.h"
+#include "wayfire_desktop_env.h"
 #include <model/application_menu_config.h>
 #include <model/multi_dock_model.h>
 
@@ -47,6 +48,9 @@ DesktopEnv* DesktopEnv::getDesktopEnv() {
   } else if (currentDesktopEnv == "LXQt") {
     static std::unique_ptr<LxqtDesktopEnv> lxqt(new LxqtDesktopEnv);
     return lxqt.get();
+  } else if (currentDesktopEnv == "Wayfire") {
+    static std::unique_ptr<WayfireDesktopEnv> wayfire(new WayfireDesktopEnv);
+    return wayfire.get();
   }
 
   static std::unique_ptr<DesktopEnv> generic(new DesktopEnv);
