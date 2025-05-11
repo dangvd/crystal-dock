@@ -89,7 +89,7 @@ void AddPanelDialog::setMode(Mode mode) {
                            : QString("Please set up your new panel."));
 
   ui->showApplicationMenu->setChecked(mode == Mode::Welcome);
-  ui->showPager->setChecked(mode == Mode::Welcome);
+  ui->showPager->setChecked(false);
   ui->showTaskManager->setChecked(mode == Mode::Welcome);
   ui->showClock->setChecked(mode == Mode::Welcome);
 

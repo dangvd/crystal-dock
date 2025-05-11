@@ -79,7 +79,7 @@ constexpr bool kDefaultAutoHide = false;
 constexpr bool kDefaultShowApplicationMenu = true;
 constexpr bool kDefaultShowPager = false;
 constexpr bool kDefaultShowTaskManager = true;
-constexpr bool kDefaultShowClock = false;
+constexpr bool kDefaultShowClock = true;
 constexpr PanelStyle kDefaultPanelStyle = PanelStyle::Glass3D_Floating;
 
 constexpr char kDefaultApplicationMenuName[] = "Applications";
@@ -87,7 +87,7 @@ constexpr int kDefaultApplicationMenuIconSize = 40;
 constexpr int kDefaultApplicationMenuFontSize = 14;
 constexpr float kDefaultApplicationMenuBackgroundAlpha = 0.8;
 constexpr bool kDefaultShowDesktopNumber = true;
-constexpr bool kDefaultCurrentDesktopTasksOnly = true;
+constexpr bool kDefaultCurrentDesktopTasksOnly = false;
 constexpr bool kDefaultCurrentScreenTasksOnly = false;
 constexpr bool kDefaultGroupTasksByApplication = true;
 constexpr bool kDefaultUse24HourClock = true;
