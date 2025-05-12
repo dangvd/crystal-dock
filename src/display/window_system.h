@@ -143,11 +143,32 @@ class WindowSystem : public QObject {
   static bool hasAutoHideManager();
   static bool hasActivityManager();
 
-  static int numberOfDesktops() { return virtualDesktopManager_.numberOfDesktops(); }
-  static std::vector<VirtualDesktopInfo> desktops() { return virtualDesktopManager_.desktops(); }
-  static std::string_view currentDesktop() { return virtualDesktopManager_.currentDesktop(); }
+  static int numberOfDesktops() {
+    if (hasVirtualDesktopManager()) {
+      return virtualDesktopManager_.numberOfDesktops();
+    }
+    return 1;
+  }
+
+  static std::vector<VirtualDesktopInfo> desktops() {
+    if (hasVirtualDesktopManager()) {
+      return virtualDesktopManager_.desktops();
+    }
+    return {};
+  }
+
+  static std::string_view currentDesktop() {
+    if (hasVirtualDesktopManager()) {
+      return virtualDesktopManager_.currentDesktop();
+    }
+    static constexpr char kDesktop[] = "";
+    return kDesktop;
+  }
+
   static void setCurrentDesktop(std::string_view desktop) {
-    virtualDesktopManager_.setCurrentDesktop(desktop);
+    if (hasVirtualDesktopManager()) {
+      virtualDesktopManager_.setCurrentDesktop(desktop);
+    }
   }
 
   static std::vector<const WindowInfo*> windows() { return windowManager_.windows(); }
@@ -166,7 +187,9 @@ class WindowSystem : public QObject {
   static void setShowingDesktop(bool show) { windowManager_.setShowingDesktop(show); }
 
   static void setAutoHide(QWidget* widget, Qt::Edge edge, bool on = true) {
-    autoHideManager_.setAutoHide(widget, edge, on);
+    if (hasAutoHideManager()) {
+      autoHideManager_.setAutoHide(widget, edge, on);
+    }
   }
 
   static void setAnchorAndStrut(QWidget* widget, LayerShellQt::Window::Anchors anchors,

@@ -157,6 +157,12 @@ void DockPanel::setStrut() {
     case PanelVisibility::AlwaysVisible:
       setStrut(isHorizontal() ? minHeight_ : minWidth_);
       break;
+    case PanelVisibility::AutoHide:
+    case PanelVisibility::IntelligentAutoHide:
+      if (!WindowSystem::hasAutoHideManager()) {
+        setStrut(1);
+      }
+      break;
     default:
       setStrut(0);
       break;
@@ -458,6 +464,10 @@ void DockPanel::updatePinnedStatus(const QString& appId, bool pinned) {
 }
 
 void DockPanel::paintEvent(QPaintEvent* e) {
+  if (!WindowSystem::hasAutoHideManager() && isHidden_) {
+    return;
+  }
+
   QPainter painter(this);
 
   if (is3D()) {
@@ -598,6 +608,10 @@ void DockPanel::mouseMoveEvent(QMouseEvent* e) {
     if (!checkMouseEnter(x, y)) {
       return;
     }
+
+    if (isHidden_) {
+      isHidden_ = false;
+    }
   }
 
   if (isAnimationActive_) {
@@ -608,27 +622,44 @@ void DockPanel::mouseMoveEvent(QMouseEvent* e) {
 }
 
 bool DockPanel::checkMouseEnter(int x, int y) {
+  int x0, y0;
   if (position_ == PanelPosition::Bottom) {
-    auto y0 = maxHeight_ - minHeight_;
-    if (isFloating()) { y0 += floatingMargin_; }
+    if (visibility_ == PanelVisibility::AutoHide) {
+      y0 = maxHeight_ - 1;
+    } else {
+      y0 = maxHeight_ - minHeight_;
+      if (isFloating()) { y0 += floatingMargin_; }
+    }
     if (y < y0) {
       return false;
     }
   } else if (position_ == PanelPosition::Top) {
-    auto y0 = minHeight_;
-    if (isFloating()) { y0 -= floatingMargin_; }
+    if (visibility_ == PanelVisibility::AutoHide) {
+      y0 = 1;
+    } else {
+      y0 = minHeight_;
+      if (isFloating()) { y0 -= floatingMargin_; }
+    }
     if (y > y0) {
       return false;
     }
   } else if (position_ == PanelPosition::Left) {
-    auto x0 = minWidth_;
-    if (isFloating()) { x0 -= floatingMargin_; }
+    if (visibility_ == PanelVisibility::AutoHide) {
+      x0 = 1;
+    } else {
+      auto x0 = minWidth_;
+      if (isFloating()) { x0 -= floatingMargin_; }
+    }
     if (x > x0) {
       return false;
     }
   } else {  // Right
-    auto x0 = maxWidth_ - minWidth_;
-    if (isFloating()) { x0 += floatingMargin_; }
+    if (visibility_ == PanelVisibility::AutoHide) {
+      x0 = maxWidth_ - 1;
+    } else {
+      auto x0 = maxWidth_ - minWidth_;
+      if (isFloating()) { x0 += floatingMargin_; }
+    }
     if (x < x0) {
       return false;
     }
@@ -1238,7 +1269,12 @@ void DockPanel::updateLayout() {
                            visibility_ == PanelVisibility::AlwaysVisible
                                ? LayerShellQt::Window::LayerBottom
                                : LayerShellQt::Window::LayerTop);
-    isMinimized_ = true;
+    if (visibility_ == PanelVisibility::AutoHide ||
+        visibility_ == PanelVisibility::IntelligentAutoHide) {
+      isHidden_ = true;
+    } else {
+      isMinimized_ = true;
+    }
     // Ideally we should call QWidget::setMask here but it caused some visual
     // clippings when we tried.
     update();
@@ -1493,6 +1529,12 @@ void DockPanel::updateVisibility(PanelVisibility visibility) {
 }
 
 void DockPanel::setAutoHide(bool on) {
+  isHidden_ = on;
+  if (!WindowSystem::hasAutoHideManager()) {
+    update();
+    return;
+  }
+
   Qt::Edge edge = Qt::BottomEdge;
   switch (position_) {
     case PanelPosition::Top:
@@ -1509,7 +1551,6 @@ void DockPanel::setAutoHide(bool on) {
       break;
     }
   WindowSystem::setAutoHide(this, edge, on);
-  isHidden_ = on;
 }
 
 void DockPanel::updateActiveItem(int x, int y) {
