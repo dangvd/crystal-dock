@@ -857,10 +857,12 @@ void DockPanel::createMenu() {
       QString("Always &Visible"), this,
       [this]() { updateVisibility(PanelVisibility::AlwaysVisible); });
   visibilityAlwaysVisibleAction_->setCheckable(true);
-  visibilityIntelligentAutoHideAction_ = visibility->addAction(
-      QString("&Intelligent Auto Hide"), this,
-      [this]() { updateVisibility(PanelVisibility::IntelligentAutoHide); });
-  visibilityIntelligentAutoHideAction_->setCheckable(true);
+  if (WindowSystem::supportIntelligentAutoHide()) {
+    visibilityIntelligentAutoHideAction_ = visibility->addAction(
+        QString("&Intelligent Auto Hide"), this,
+        [this]() { updateVisibility(PanelVisibility::IntelligentAutoHide); });
+    visibilityIntelligentAutoHideAction_->setCheckable(true);
+  }
   visibilityAutoHideAction_ = visibility->addAction(
       QString("Auto &Hide"), this,
       [this]() { updateVisibility(PanelVisibility::AutoHide); });
@@ -889,8 +891,10 @@ void DockPanel::setVisibility(PanelVisibility visibility) {
   visibility_ = visibility;
   visibilityAlwaysVisibleAction_->setChecked(
       visibility_ == PanelVisibility::AlwaysVisible);
-  visibilityIntelligentAutoHideAction_->setChecked(
-      visibility_ == PanelVisibility::IntelligentAutoHide);
+  if (WindowSystem::supportIntelligentAutoHide()) {
+    visibilityIntelligentAutoHideAction_->setChecked(
+        visibility_ == PanelVisibility::IntelligentAutoHide);
+  }
   visibilityAutoHideAction_->setChecked(
       visibility_ == PanelVisibility::AutoHide);
   visibilityAlwaysOnTopAction_->setChecked(

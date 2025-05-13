@@ -142,6 +142,7 @@ class WindowSystem : public QObject {
   static bool hasVirtualDesktopManager();
   static bool hasAutoHideManager();
   static bool hasActivityManager();
+  static bool supportIntelligentAutoHide();
 
   static int numberOfDesktops() {
     if (hasVirtualDesktopManager()) {
