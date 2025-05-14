@@ -38,6 +38,10 @@ class Separator : public QObject, public IconlessDockItem {
 
   bool beforeTask(const QString& program) override { return isLauncherSeparator_; }
 
+  QString getAppId() const override {
+    return isLauncherSeparator_ ? kLauncherSeparatorId : kSeparatorId;
+  }
+
  private:
   static constexpr float kWhRatio = 0.1;
 

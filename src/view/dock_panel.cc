@@ -315,6 +315,10 @@ void DockPanel::onWindowRemoved(void* window) {
   }
 
   removeTask(window);
+
+  if (isEmpty()) {
+    intellihideHideUnhide();
+  }
 }
 
 void DockPanel::onWindowLeftCurrentDesktop(void* window) {
@@ -680,6 +684,10 @@ bool DockPanel::intellihideShouldHide(void* excluding_window) {
     return false;
   }
 
+  if (isEmpty()) {
+    return true;
+  }
+
   QRect dockGeometry = getMinimizedDockGeometry();
   for (const auto* task : WindowSystem::windows()) {
     if (isValidTask(task) && (!excluding_window || task->window != excluding_window)) {
@@ -707,6 +715,15 @@ void DockPanel::intellihideHideUnhide(void* excluding_window) {
       setAutoHide(false);
     }
   }
+}
+
+bool DockPanel::isEmpty() {
+  for (const auto& item : items_) {
+    if (item->getAppId() != kSeparatorId && item->getAppId() != kLauncherSeparatorId) {
+      return false;
+    }
+  }
+  return true;
 }
 
 void DockPanel::mousePressEvent(QMouseEvent* e) {

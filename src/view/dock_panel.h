@@ -300,6 +300,10 @@ class DockPanel : public QWidget {
   // Hides/unhides the dock in Intelligent Auto Hide mode if necessary.
   void intellihideHideUnhide(void* excluding_window = nullptr);
 
+  // Is the dock empty?
+  // The dock is empty if it has no dock items (separators excluded).
+  bool isEmpty();
+
   // Resizes the task manager part of the panel. This needs to not interfere
   // with the zooming.
   void resizeTaskManager();
