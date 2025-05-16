@@ -27,8 +27,8 @@
 
 namespace crystaldock {
 
-// Desktop Environment (including lightweight options) specific data/logic.
-// Currently supports KDE, LXQt and Labwc.
+// Desktop Environment (including lightweight compositor-only environments) specific data/logic.
+// Currently supports Hyprland, KDE, Labwc, LXQt, Niri and Wayfire.
 class DesktopEnv {
  protected:
   DesktopEnv() = default;
