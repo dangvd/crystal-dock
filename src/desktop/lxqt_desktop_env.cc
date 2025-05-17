@@ -27,13 +27,13 @@ namespace crystaldock {
 std::vector<Category> LxqtDesktopEnv::getApplicationMenuSystemCategories() const {
   static const std::vector<Category> kSystemCategories = {
     {"Session", "Session", "system-log-out", {
-      {"lock-screen",
+      {kLockScreenId,
         "Lock Screen",
         "",
         "system-lock-screen",
         "lxqt-leave --lockscreen",
         ""},
-      {"log-out",
+      {kLogOutId,
         "Log Out",
         "",
         "system-log-out",
@@ -62,9 +62,8 @@ std::vector<Category> LxqtDesktopEnv::getApplicationMenuSystemCategories() const
 }
 
 std::vector<QString> LxqtDesktopEnv::getDefaultLaunchers() const {
-  return { kShowDesktopId, defaultWebBrowser(),
-           "qterminal", "pcmanfm-qt", kSeparatorId,
-           "lxqt-config", "shutdown" };
+  return { kShowDesktopId, defaultWebBrowser(), "qterminal", "pcmanfm-qt",
+           kSeparatorId, "lxqt-config", kLockScreenId, kLogOutId };
 }
 
 bool LxqtDesktopEnv::setWallpaper(int screen, const QString& wallpaper) {

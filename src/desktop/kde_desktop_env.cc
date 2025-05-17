@@ -41,13 +41,13 @@ KdeDesktopEnv::KdeDesktopEnv()
 std::vector<Category> KdeDesktopEnv::getApplicationMenuSystemCategories() const {
   static const std::vector<Category> kSystemCategories = {
     {"Session", "Session", "system-log-out", {
-      {"lock-screen",
+      {kLockScreenId,
         "Lock Screen",
         "",
         "system-lock-screen",
         "xdg-screensaver lock",
         ""},
-      {"log-out",
+      {kLogOutId,
         "Log Out",
         "",
         "system-log-out",
@@ -76,9 +76,8 @@ std::vector<Category> KdeDesktopEnv::getApplicationMenuSystemCategories() const 
 }
 
 std::vector<QString> KdeDesktopEnv::getDefaultLaunchers() const {
-  return { kShowDesktopId, defaultWebBrowser(),
-           "org.kde.konsole", "org.kde.dolphin", kSeparatorId,
-           "systemsettings", "shutdown" };
+  return { kShowDesktopId, defaultWebBrowser(), "org.kde.konsole", "org.kde.dolphin",
+           kSeparatorId, "systemsettings", kLockScreenId, kLogOutId };
 }
 
 bool KdeDesktopEnv::setWallpaper(int screen, const QString& wallpaper) {

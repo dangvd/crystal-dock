@@ -26,7 +26,14 @@ std::vector<Category> NiriDesktopEnv::getApplicationMenuSystemCategories() const
   static const std::vector<Category> kSystemCategories = {
     {"Session", "Session", "system-log-out",
       {
-        {"log-out",
+        {kLockScreenId,
+          "Lock Screen",
+          "",
+          "system-lock-screen",
+          "swaylock",
+          ""
+        },
+        {kLogOutId,
           "Log Out",
           "",
           "system-log-out",
@@ -41,7 +48,8 @@ std::vector<Category> NiriDesktopEnv::getApplicationMenuSystemCategories() const
 }
 
 std::vector<QString> NiriDesktopEnv::getDefaultLaunchers() const {
-  return { defaultWebBrowser(), "alacritty", kSeparatorId, "log-out"};
+  return { defaultWebBrowser(), "alacritty",
+           kSeparatorId, kLockScreenId, kLogOutId };
 }
 
 }  // namespace crystaldock

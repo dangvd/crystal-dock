@@ -26,7 +26,14 @@ std::vector<Category> HyprlandDesktopEnv::getApplicationMenuSystemCategories() c
   static const std::vector<Category> kSystemCategories = {
     {"Session", "Session", "system-log-out",
       {
-        {"log-out",
+        {kLockScreenId,
+          "Lock Screen",
+          "",
+          "system-lock-screen",
+          "hyprlock",
+          ""
+        },
+        {kLogOutId,
           "Log Out",
           "",
           "system-log-out",
@@ -41,7 +48,8 @@ std::vector<Category> HyprlandDesktopEnv::getApplicationMenuSystemCategories() c
 }
 
 std::vector<QString> HyprlandDesktopEnv::getDefaultLaunchers() const {
-  return { defaultWebBrowser(), "kitty", kSeparatorId, "log-out"};
+  return { defaultWebBrowser(), "kitty",
+           kSeparatorId, kLockScreenId, kLogOutId };
 }
 
 }  // namespace crystaldock

@@ -99,6 +99,7 @@ constexpr char kLockScreenId[] = "lock-screen";
 constexpr char kShowDesktopId[] = "show-desktop";
 constexpr char kShowDesktopName[] = "Show Desktop";
 constexpr char kShowDesktopIcon[] = "user-desktop";
+constexpr char kLogOutId[] = "log-out";
 
 // The model.
 class MultiDockModel : public QObject {
