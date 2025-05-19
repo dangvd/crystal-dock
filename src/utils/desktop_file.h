@@ -68,6 +68,9 @@ class DesktopFile {
   bool hidden() const { return values_["Hidden"].toLower() == "true"; }
   void setHidden(bool value) { values_["Hidden"] = value ? "true" : "false"; }
 
+  // Should we show this entry on this desktop?
+  bool showOnDesktop(const QString& desktop);
+
  private:
   QString appId_;
   QMap<QString, QString> values_;

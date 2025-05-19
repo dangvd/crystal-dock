@@ -63,4 +63,16 @@ bool DesktopFile::write(const QString &file) {
   return false;
 }
 
+bool DesktopFile::showOnDesktop(const QString& desktop) {
+  if (!onlyShowIn().empty() && !onlyShowIn().contains(desktop)) {
+    return false;
+  }
+
+  if (!notShowIn().empty() && notShowIn().contains(desktop)) {
+    return false;
+  }
+
+  return true;
+}
+
 }  // namespace crystaldock
