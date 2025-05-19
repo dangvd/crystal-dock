@@ -145,7 +145,8 @@ bool ApplicationMenuConfig::loadEntry(const QString &file) {
 
   // Do not show LXQt special entries (Log Out / Reboot etc.) in the standard categories,
   // as they are already available in special sections (Session / Power).
-  if (desktopFile.exec().startsWith("lxqt-leave")) {
+  // We only keep the main entry for app ID matching.
+  if (desktopFile.exec().startsWith("lxqt-leave") && desktopFile.appId() != "lxqt-leave") {
     return false;
   }
 
