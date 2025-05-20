@@ -261,7 +261,7 @@ void ApplicationMenu::addSearchMenu() {
 
 void ApplicationMenu::addToMenu(const std::vector<Category>& categories) {
   for (const auto& category : categories) {
-    if (category.entries.empty()) {
+    if (category.name == ApplicationMenuConfig::kUncategorized || category.entries.empty()) {
       continue;
     }
 
@@ -277,6 +277,10 @@ void ApplicationMenu::addToMenu(const std::vector<Category>& categories) {
 }
 
 void ApplicationMenu::addEntry(const ApplicationEntry &entry, QMenu *menu) {
+  if (entry.hidden) {
+    return;
+  }
+
   QAction* action = menu->addAction(loadIcon(entry.icon), entry.name, this,
                   [entry]() {
                     Program::launch(entry.command);

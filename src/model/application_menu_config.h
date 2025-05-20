@@ -40,6 +40,8 @@ class ApplicationMenuConfig : public QObject {
   Q_OBJECT
 
  public:
+  static constexpr char kUncategorized[] = "Uncategorized";
+
   ApplicationMenuConfig(const QStringList& entryDirs = getEntryDirs());
 
   ~ApplicationMenuConfig() = default;

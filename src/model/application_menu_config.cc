@@ -32,6 +32,35 @@
 
 namespace crystaldock {
 
+namespace {
+
+bool isHidden(const DesktopFile& desktopFile) {
+  if (desktopFile.noDisplay() || desktopFile.hidden()) {
+    return true;
+  }
+
+  QString desktopEnvName = DesktopEnv::getDesktopEnvName();
+  // Some desktop files still use the legacy "X-Desktop" name.
+  if (!desktopFile.showOnDesktop(desktopEnvName) &&
+      !desktopFile.showOnDesktop("X-" + desktopEnvName)) {
+    return true;
+  }
+
+  // Do not show LXQt special entries (Log Out / Reboot etc.) in the standard categories,
+  // as they are already available in special sections (Session / Power).
+  if (desktopFile.exec().startsWith("lxqt-leave")) {
+    return true;
+  }
+
+  if (desktopFile.categories().isEmpty()) {
+    return true;
+  }
+
+  return false;
+}
+
+}  // namespace
+
 ApplicationMenuConfig::ApplicationMenuConfig(const QStringList& entryDirs)
     : entryDirs_(entryDirs),
       fileWatcher_(entryDirs),
@@ -61,7 +90,8 @@ QStringList ApplicationMenuConfig::getEntryDirs() {
 void ApplicationMenuConfig::initCategories() {
   // We use the main categories as defined in:
   // https://specifications.freedesktop.org/menu-spec/latest/apa.html
-  static constexpr int kNumCategories = 11;
+  // plus a special Uncategorized category.
+  static constexpr int kNumCategories = 12;
   static const char* const kCategories[kNumCategories][3] = {
     // Name, display name, icon.
     // Sorted by display name.
@@ -76,6 +106,8 @@ void ApplicationMenuConfig::initCategories() {
     {"Settings", "Settings", "preferences-system"},
     {"System", "System", "applications-system"},
     {"Utility", "Utilities", "applications-utilities"},
+    // Uncategorized is not visible anyway.
+    {kUncategorized, kUncategorized, "applications-other"},
   };
   categories_.reserve(kNumCategories);
   for (int i = 0; i < kNumCategories; ++i) {
@@ -122,31 +154,13 @@ bool ApplicationMenuConfig::loadEntries() {
 bool ApplicationMenuConfig::loadEntry(const QString &file) {
   DesktopFile desktopFile(file);
 
-  if (desktopFile.noDisplay() || desktopFile.hidden()) {
-    return false;
-  }
-
   if (desktopFile.type() != "Application") {
-    return false;
-  }
-
-  QString desktopEnvName = DesktopEnv::getDesktopEnvName();
-  // Some desktop files still use the legacy "X-Desktop" name.
-  if (!desktopFile.showOnDesktop(desktopEnvName) &&
-      !desktopFile.showOnDesktop("X-" + desktopEnvName)) {
-    return false;
-  }
-
-  // Do not show LXQt special entries (Log Out / Reboot etc.) in the standard categories,
-  // as they are already available in special sections (Session / Power).
-  // We only keep the main entry for app ID matching.
-  if (desktopFile.exec().startsWith("lxqt-leave") && desktopFile.appId() != "lxqt-leave") {
     return false;
   }
 
   auto categories = desktopFile.categories();
   if (categories.isEmpty()) {
-    return false;
+    categories = {kUncategorized};
   }
 
   const QString appId = desktopFile.appId();
@@ -160,7 +174,8 @@ bool ApplicationMenuConfig::loadEntry(const QString &file) {
                                 desktopFile.genericName(),
                                 desktopFile.icon(),
                                 command,
-                                file);
+                                file,
+                                isHidden(desktopFile));
       auto& entries = categories_[categoryMap_[category]].entries;
       auto next = std::lower_bound(entries.begin(), entries.end(), newEntry);
       entries.insert(next, newEntry);

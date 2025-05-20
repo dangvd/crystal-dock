@@ -45,11 +45,14 @@ struct ApplicationEntry {
   // The path to the desktop file e.g. '/usr/share/applications/google-chrome.desktop'
   QString desktopFile;
 
+  // If it's hidden, it won't show on the Application Menu.
+  bool hidden;
+
   ApplicationEntry(const QString& appId2, const QString& name2, const QString& genericName2,
                    const QString& icon2, const QString& command2,
-                   const QString& desktopFile2)
+                   const QString& desktopFile2, bool hidden2 = false)
       : appId(appId2), name(name2), genericName(genericName2), icon(icon2),
-        command(command2), desktopFile(desktopFile2) {}
+        command(command2), desktopFile(desktopFile2), hidden(hidden2) {}
 };
 
 inline bool operator<(const ApplicationEntry &e1, const ApplicationEntry &e2) {

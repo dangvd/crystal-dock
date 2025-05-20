@@ -63,7 +63,7 @@ bool DesktopFile::write(const QString &file) {
   return false;
 }
 
-bool DesktopFile::showOnDesktop(const QString& desktop) {
+bool DesktopFile::showOnDesktop(const QString& desktop) const {
   if (!onlyShowIn().empty() && !onlyShowIn().contains(desktop)) {
     return false;
   }
