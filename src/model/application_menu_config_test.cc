@@ -138,12 +138,19 @@ void ApplicationMenuConfigTest::loadEntries_multipleDirs() {
       { entryDir1.path(), entryDir1.path() + "/dir-not-exist", entryDir2.path(),
         entryDir3.path() });
 
-  QCOMPARE(config.entries_.size(), 3);
+  QCOMPARE(config.entries_.size(), 8);
+  int numHidden = 0;
+  for (const auto& pair : config.entries_) {
+    if (pair.second->hidden) { numHidden++; }
+  }
+  QCOMPARE(numHidden, 4);
 
   for (const auto& category : config.categories_) {
     if (category.name == "Network") {
-      QCOMPARE(static_cast<int>(category.entries.size()), 2);
+      QCOMPARE(static_cast<int>(category.entries.size()), 4);
     } else if (category.name == "Settings") {
+      QCOMPARE(static_cast<int>(category.entries.size()), 3);
+    } else if (category.name == "System") {
       QCOMPARE(static_cast<int>(category.entries.size()), 1);
     } else {
       QCOMPARE(static_cast<int>(category.entries.size()), 0);
