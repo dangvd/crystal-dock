@@ -406,6 +406,8 @@ class DockPanel : public QWidget {
   TaskManagerSettingsDialog taskManagerSettingsDialog_;
 
   bool isMinimized_;
+  // This is needed for Intelligent Auto Hide mode because it could be either be visible
+  // or hidden when minimized. Whereas for Auto Hide mode, it is always hidden when minimized.
   bool isHidden_;
   bool isEntering_;
   bool isLeaving_;

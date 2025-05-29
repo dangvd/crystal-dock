@@ -466,7 +466,7 @@ void DockPanel::updatePinnedStatus(const QString& appId, bool pinned) {
 }
 
 void DockPanel::paintEvent(QPaintEvent* e) {
-  if (!WindowSystem::hasAutoHideManager() && isHidden_) {
+  if (!WindowSystem::hasAutoHideManager() && autoHide() && isMinimized_) {
     return;
   }
 
@@ -609,10 +609,6 @@ void DockPanel::mouseMoveEvent(QMouseEvent* e) {
     // Quite often the user was just scrolling a window etc.
     if (!checkMouseEnter(x, y)) {
       return;
-    }
-
-    if (!WindowSystem::hasAutoHideManager() && isHidden_) {
-      isHidden_ = false;
     }
   }
 
@@ -1288,11 +1284,6 @@ void DockPanel::updateLayout() {
                            visibility_ == PanelVisibility::AlwaysVisible
                                ? LayerShellQt::Window::LayerBottom
                                : LayerShellQt::Window::LayerTop);
-    if (!WindowSystem::hasAutoHideManager() &&
-        (visibility_ == PanelVisibility::AutoHide ||
-         visibility_ == PanelVisibility::IntelligentAutoHide)) {
-      isHidden_ = true;
-    }
     isMinimized_ = true;
     // Ideally we should call QWidget::setMask here but it caused some visual
     // clippings when we tried.
@@ -1548,7 +1539,6 @@ void DockPanel::updateVisibility(PanelVisibility visibility) {
 }
 
 void DockPanel::setAutoHide(bool on) {
-  isHidden_ = on;
   if (!WindowSystem::hasAutoHideManager()) {
     update();
     return;
@@ -1568,7 +1558,8 @@ void DockPanel::setAutoHide(bool on) {
     case PanelPosition::Right:
       edge = Qt::RightEdge;
       break;
-    }
+  }
+  isHidden_ = on;
   WindowSystem::setAutoHide(this, edge, on);
 }
 
