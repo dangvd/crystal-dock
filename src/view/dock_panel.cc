@@ -1558,6 +1558,7 @@ void DockPanel::updateVisibility(PanelVisibility visibility) {
 }
 
 void DockPanel::setAutoHide(bool on) {
+  isHidden_ = on;
   if (!WindowSystem::hasAutoHideManager()) {
     update();
     return;
@@ -1578,7 +1579,6 @@ void DockPanel::setAutoHide(bool on) {
       edge = Qt::RightEdge;
       break;
   }
-  isHidden_ = on;
   WindowSystem::setAutoHide(this, edge, on);
 }
 
