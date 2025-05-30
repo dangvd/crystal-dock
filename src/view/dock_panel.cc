@@ -1285,9 +1285,9 @@ void DockPanel::updateLayout() {
                                ? LayerShellQt::Window::LayerBottom
                                : LayerShellQt::Window::LayerTop);
     isMinimized_ = true;
-    // Ideally we should call QWidget::setMask here but it caused some visual
-    // clippings when we tried.
     update();
+    // Here we have to wait a bit before setMask() to avoid visual artifacts.
+    QTimer::singleShot(500, [this]{ setMask(); });
   }
 }
 
@@ -1405,6 +1405,7 @@ void DockPanel::updateLayout(int x, int y) {
   //resize(maxWidth_, maxHeight_);
   WindowSystem::setLayer(this, LayerShellQt::Window::LayerTop);
   isMinimized_ = false;
+  setMask();
   updateActiveItem(x, y);
   update();
 }
@@ -1515,6 +1516,24 @@ void DockPanel::setStrut(int width) {
   }
 
   WindowSystem::setAnchorAndStrut(this, anchor, width);
+}
+
+void DockPanel::setMask() {
+  if (isMinimized_) {
+    if (isHorizontal()) {
+      const int x = (maxWidth_ - minWidth_) / 2;
+      const int y = isTop() ? 0 : maxHeight_ - minHeight_;
+      const int h = !WindowSystem::hasAutoHideManager() && isHidden_ ? 1 : minHeight_;
+      QWidget::setMask(QRegion(x, y, minWidth_, h));
+    } else {  // Vertical.
+      const int x = isLeft() ? 0 : maxWidth_ - minWidth_;
+      const int y = (maxHeight_ - minHeight_) / 2;
+      const int w = !WindowSystem::hasAutoHideManager() && isHidden_ ? 1 : minWidth_;
+      QWidget::setMask(QRegion(x, y, w, minHeight_));
+    }
+  } else {
+    QWidget::setMask(QRegion(0, 0, maxWidth_, maxHeight_));
+  }
 }
 
 void DockPanel::updatePosition(PanelPosition position) {
