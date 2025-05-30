@@ -466,7 +466,7 @@ void DockPanel::updatePinnedStatus(const QString& appId, bool pinned) {
 }
 
 void DockPanel::paintEvent(QPaintEvent* e) {
-  if (!WindowSystem::hasAutoHideManager() && isHidden_) {
+  if (!WindowSystem::hasAutoHideManager() && autoHide() && isHidden_) {
     return;
   }
 
@@ -1558,7 +1558,6 @@ void DockPanel::updateVisibility(PanelVisibility visibility) {
 }
 
 void DockPanel::setAutoHide(bool on) {
-  isHidden_ = on;
   if (!WindowSystem::hasAutoHideManager()) {
     update();
     return;
