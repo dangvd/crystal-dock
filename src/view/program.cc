@@ -164,7 +164,7 @@ void Program::mousePressEvent(QMouseEvent* e) {
   if (e->button() == Qt::LeftButton) { // Run the application.
     if (appId_ == kLockScreenId) {
       parent_->leaveEvent(nullptr);
-      QTimer::singleShot(DockPanel::kMenuPopupDelayMs, [this]() {
+      QTimer::singleShot(DockPanel::kExecutionDelayMs, [this]() {
         launch();
       });
     } else if (appId_ == kShowDesktopId) {
@@ -202,8 +202,7 @@ void Program::mousePressEvent(QMouseEvent* e) {
       }
     }
   } else if (e->button() == Qt::RightButton) {
-      parent_->minimize();
-      QTimer::singleShot(DockPanel::kMenuPopupDelayMs, [this]{ menu_.exec(parent_->mapToGlobal(QPoint(left_, top_))); });
+    menu_.exec(parent_->mapToGlobal(QPoint(left_, top_)));
   }
 }
 

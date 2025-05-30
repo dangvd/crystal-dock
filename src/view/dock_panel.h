@@ -55,7 +55,9 @@ class DockPanel : public QWidget {
 
  public:
   static constexpr int kIconLoadSize = 128;
-  static constexpr int kMenuPopupDelayMs = 300;
+  // For certain actions like Lock Screen, we need to delay execution for a bit
+  // to avoid graphical issues.
+  static constexpr int kExecutionDelayMs = 300;
 
   static constexpr int k3DPanelThickness = 4;
   static constexpr int kIndicatorSizeGlass = 10;  // for Glass 2D/3D.

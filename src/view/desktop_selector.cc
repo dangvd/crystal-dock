@@ -90,8 +90,7 @@ void DesktopSelector::mousePressEvent(QMouseEvent* e) {
   } else if (e->button() == Qt::RightButton) {
     // In case other DesktopSelectors have changed the config.
     showDesktopNumberAction_->setChecked(model_->showDesktopNumber());
-    parent_->minimize();
-    QTimer::singleShot(DockPanel::kMenuPopupDelayMs, [this]{ menu_.exec(parent_->mapToGlobal(QPoint(left_, top_))); });
+    menu_.exec(parent_->mapToGlobal(QPoint(left_, top_)));
   }
 }
 

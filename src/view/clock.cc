@@ -79,8 +79,7 @@ void Clock::mousePressEvent(QMouseEvent *e) {
   } else if (e->button() == Qt::RightButton) {
     // In case other docks have changed the config.
     loadConfig();
-    parent_->minimize();
-    QTimer::singleShot(DockPanel::kMenuPopupDelayMs, [this]{ menu_.exec(parent_->mapToGlobal(QPoint(left_, top_))); });
+    menu_.exec(parent_->mapToGlobal(QPoint(left_, top_)));
   }
 }
 
