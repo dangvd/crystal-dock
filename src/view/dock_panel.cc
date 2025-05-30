@@ -466,7 +466,7 @@ void DockPanel::updatePinnedStatus(const QString& appId, bool pinned) {
 }
 
 void DockPanel::paintEvent(QPaintEvent* e) {
-  if (!WindowSystem::hasAutoHideManager() && autoHide() && isMinimized_) {
+  if (!WindowSystem::hasAutoHideManager() && isHidden_) {
     return;
   }
 
@@ -1285,6 +1285,7 @@ void DockPanel::updateLayout() {
                                ? LayerShellQt::Window::LayerBottom
                                : LayerShellQt::Window::LayerTop);
     isMinimized_ = true;
+    if (autoHide()) { isHidden_ = true; }
     update();
     // Here we have to wait a bit before setMask() to avoid visual artifacts.
     QTimer::singleShot(500, [this]{ setMask(); });
@@ -1405,6 +1406,7 @@ void DockPanel::updateLayout(int x, int y) {
   //resize(maxWidth_, maxHeight_);
   WindowSystem::setLayer(this, LayerShellQt::Window::LayerTop);
   isMinimized_ = false;
+  if (autoHide()) { isHidden_ = false; }
   setMask();
   updateActiveItem(x, y);
   update();
