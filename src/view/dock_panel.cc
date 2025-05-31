@@ -1527,12 +1527,14 @@ void DockPanel::setMask() {
   if (isMinimized_) {
     if (isHorizontal()) {
       const int x = (maxWidth_ - minWidth_) / 2;
-      const int y = isTop() ? 0 : maxHeight_ - minHeight_;
-      QWidget::setMask(QRegion(x, y, minWidth_, minHeight_));
+      const int h = !WindowSystem::hasAutoHideManager() && isHidden_ ? 1 : minHeight_;
+      const int y = isTop() ? 0 : maxHeight_ - h;
+      QWidget::setMask(QRegion(x, y, minWidth_, h));
     } else {  // Vertical.
-      const int x = isLeft() ? 0 : maxWidth_ - minWidth_;
       const int y = (maxHeight_ - minHeight_) / 2;
-      QWidget::setMask(QRegion(x, y, minWidth_, minHeight_));
+      const int w = !WindowSystem::hasAutoHideManager() && isHidden_ ? 1 : minWidth_;
+      const int x = isLeft() ? 0 : maxWidth_ - w;
+      QWidget::setMask(QRegion(x, y, w, minHeight_));
     }
   } else {
     QWidget::setMask(QRegion(0, 0, maxWidth_, maxHeight_));
