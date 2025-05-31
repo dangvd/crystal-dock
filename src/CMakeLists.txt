@@ -47,6 +47,7 @@ set(SRCS
     view/clock.cc
     view/color_button.cc
     view/desktop_selector.cc
+    view/dock_item.cc
     view/dock_panel.cc
     view/edit_launchers_dialog.cc
     view/icon_based_dock_item.cc

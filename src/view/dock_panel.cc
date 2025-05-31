@@ -465,6 +465,15 @@ void DockPanel::updatePinnedStatus(const QString& appId, bool pinned) {
   ranges::for_each(first, last, [pinned](auto& item) { item->updatePinnedStatus(pinned); });
 }
 
+void DockPanel::setShowingPopup(bool showingPopup) {
+  isShowingPopup_ = showingPopup;
+  if (!isShowingPopup_) {
+    if (!rect().contains(mapFromGlobal(QCursor::pos()))) {
+      leaveEvent(nullptr);
+    }
+  }
+}
+
 void DockPanel::paintEvent(QPaintEvent* e) {
   if (!WindowSystem::hasAutoHideManager() && isHidden_ && (autoHide() || intellihide())) {
     return;
@@ -739,11 +748,13 @@ void DockPanel::mousePressEvent(QMouseEvent* e) {
 }
 
 void DockPanel::enterEvent (QEnterEvent* e) {
-  isEntering_ = true;
+  if (isMinimized_) {
+    isEntering_ = true;
+  }
 }
 
 void DockPanel::leaveEvent(QEvent* e) {
-  if (isMinimized_) {
+  if (isMinimized_ || isShowingPopup_) {
     return;
   }
 

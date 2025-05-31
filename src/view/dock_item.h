@@ -1,24 +1,25 @@
-/*
- * This file is part of KSmoothDock.
- * Copyright (C) 2022 Viet Dang (dangvd@gmail.com)
+  /*
+ * This file is part of Crystal Dock.
+ * Copyright (C) 2023 Viet Dang (dangvd@gmail.com)
  *
- * KSmoothDock is free software: you can redistribute it and/or modify
+ * Crystal Dock is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * KSmoothDock is distributed in the hope that it will be useful,
+ * Crystal Dock is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with KSmoothDock.  If not, see <http://www.gnu.org/licenses/>.
+ * along with Crystal Dock.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 #ifndef CRYSTALDOCK_DOCK_ITEM_H_
 #define CRYSTALDOCK_DOCK_ITEM_H_
 
+#include <QMenu>
 #include <QMouseEvent>
 #include <QPainter>
 #include <QString>
@@ -162,6 +163,8 @@ class DockItem {
   }
 
  protected:
+  void showPopupMenu(QMenu* menu);
+
   DockPanel* parent_;
   MultiDockModel* model_;
   QString label_; // Label of the dock item.

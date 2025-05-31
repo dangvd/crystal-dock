@@ -75,6 +75,10 @@ void Program::init() {
   });
   bounceTimer_.setInterval(kBounceIntervalMs);
   connect(&bounceTimer_, &QTimer::timeout, this, &Program::updateBounceAnimation);
+  connect(&menu_, &QMenu::aboutToHide, this,
+          [this]() {
+            parent_->setShowingPopup(false);
+          });
 }
 
 void Program::draw(QPainter *painter) const {
@@ -202,7 +206,7 @@ void Program::mousePressEvent(QMouseEvent* e) {
       }
     }
   } else if (e->button() == Qt::RightButton) {
-    menu_.exec(parent_->mapToGlobal(QPoint(left_, top_)));
+    showPopupMenu(&menu_);
   }
 }
 

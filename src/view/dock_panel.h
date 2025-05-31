@@ -113,6 +113,9 @@ class DockPanel : public QWidget {
   // Update pinned status of an application. Useful when Group Tasks By Application is Off.
   void updatePinnedStatus(const QString& appId, bool pinned);
 
+  // Sets whether the dock is showing some popup menu.
+  void setShowingPopup(bool showingPopup);
+
  public slots:
   // Reloads the items and updates the dock.
   void reload();
@@ -418,6 +421,7 @@ class DockPanel : public QWidget {
   bool isEntering_;
   bool isLeaving_;
   bool isAnimationActive_;
+  bool isShowingPopup_;
   std::unique_ptr<QTimer> animationTimer_;
   int currentAnimationStep_;
   int backgroundWidth_;

@@ -51,6 +51,10 @@ DesktopSelector::DesktopSelector(DockPanel* parent, MultiDockModel* model,
   loadConfig();
   connect(WindowSystem::self(), SIGNAL(desktopNameChanged(std::string_view, std::string_view)),
           this, SLOT(onDesktopNameChanged(std::string_view, std::string_view)));
+  connect(&menu_, &QMenu::aboutToHide, this,
+          [this]() {
+            parent_->setShowingPopup(false);
+          });
 }
 
 void DesktopSelector::draw(QPainter* painter) const {
@@ -90,7 +94,7 @@ void DesktopSelector::mousePressEvent(QMouseEvent* e) {
   } else if (e->button() == Qt::RightButton) {
     // In case other DesktopSelectors have changed the config.
     showDesktopNumberAction_->setChecked(model_->showDesktopNumber());
-    menu_.exec(parent_->mapToGlobal(QPoint(left_, top_)));
+    showPopupMenu(&menu_);
   }
 }
 

@@ -66,7 +66,12 @@ ApplicationMenu::ApplicationMenu(
   connect(&menu_, &QMenu::aboutToHide, this,
           [this]() {
             showingMenu_ = false;
+            parent_->setShowingPopup(false);
             parent_->update();
+          });
+  connect(&contextMenu_, &QMenu::aboutToHide, this,
+          [this]() {
+            parent_->setShowingPopup(false);
           });
   connect(model_, SIGNAL(applicationMenuConfigChanged()),
           this, SLOT(reloadMenu()));
@@ -102,6 +107,7 @@ void ApplicationMenu::draw(QPainter* painter) const {
 
 void ApplicationMenu::mousePressEvent(QMouseEvent *e) {
   if (e->button() == Qt::LeftButton) {
+    parent_->setShowingPopup(true);
     // Acknowledge.
     showingMenu_ = true;
     parent_->update();
@@ -111,7 +117,7 @@ void ApplicationMenu::mousePressEvent(QMouseEvent *e) {
         ? left_ : left_ - parent_->itemSpacing();
     menu_.exec(parent_->mapToGlobal(QPoint(x, top_)));
   } else if (e->button() == Qt::RightButton) {
-    contextMenu_.exec(parent_->mapToGlobal(QPoint(left_, top_)));
+    showPopupMenu(&contextMenu_);
   }
 }
 

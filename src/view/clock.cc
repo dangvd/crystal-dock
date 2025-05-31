@@ -46,6 +46,11 @@ Clock::Clock(DockPanel* parent, MultiDockModel* model,
   QTimer* timer = new QTimer(this);
   connect(timer, SIGNAL(timeout()), this, SLOT(updateTime()));
   timer->start(1000);  // update the time every second.
+
+  connect(&menu_, &QMenu::aboutToHide, this,
+          [this]() {
+            parent_->setShowingPopup(false);
+          });
 }
 
 void Clock::draw(QPainter *painter) const {
@@ -79,7 +84,7 @@ void Clock::mousePressEvent(QMouseEvent *e) {
   } else if (e->button() == Qt::RightButton) {
     // In case other docks have changed the config.
     loadConfig();
-    menu_.exec(parent_->mapToGlobal(QPoint(left_, top_)));
+    showPopupMenu(&menu_);
   }
 }
 
