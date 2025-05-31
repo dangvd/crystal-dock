@@ -210,12 +210,24 @@ bool WlrWindowManager::showingDesktop_;
 /* static */ void WlrWindowManager::output_enter(
     void *data,
     struct zwlr_foreign_toplevel_handle_v1 *window,
-    struct wl_output *output) {}
+    struct wl_output *output) {
+  if (windows_.count(window) == 0) {
+    return;
+  }
+
+  windows_[window]->outputs.insert(output);
+}
 
 /* static */ void WlrWindowManager::output_leave(
     void *data,
     struct zwlr_foreign_toplevel_handle_v1 *window,
-    struct wl_output *output) {}
+    struct wl_output *output) {
+  if (windows_.count(window) == 0) {
+    return;
+  }
+
+  windows_[window]->outputs.erase(output);
+}
 
 /* static */ void WlrWindowManager::state(
     void *data,
@@ -226,14 +238,20 @@ bool WlrWindowManager::showingDesktop_;
   }
 
   windows_[window]->minimized = false;
+  windows_[window]->maximized = false;
+  windows_[window]->fullscreen = false;
   void *state_entry;
   wl_array_for_each(state_entry, state) {
     auto* entry = static_cast<uint32_t*>(state_entry);
     if (*entry == ZWLR_FOREIGN_TOPLEVEL_HANDLE_V1_STATE_MAXIMIZED) {
-      // TODO: handle this.
+      if (!windows_[window]->minimized) {
+        windows_[window]->maximized = true;
+      }
     }
     if (*entry == ZWLR_FOREIGN_TOPLEVEL_HANDLE_V1_STATE_MINIMIZED) {
       windows_[window]->minimized = true;
+      windows_[window]->maximized = false;
+      windows_[window]->fullscreen = false;
       if (activeWindow_ == window) {
         activeWindow_ = nullptr;
         if (windows_[window]->initialized) {
@@ -250,7 +268,9 @@ bool WlrWindowManager::showingDesktop_;
       }
     }
     if (*entry == ZWLR_FOREIGN_TOPLEVEL_HANDLE_V1_STATE_FULLSCREEN) {
-      // TODO: handle this.
+      if (!windows_[window]->minimized) {
+        windows_[window]->fullscreen = true;
+      }
     }
   }
 

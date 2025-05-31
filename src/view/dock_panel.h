@@ -226,9 +226,10 @@ class DockPanel : public QWidget {
   // The space between the tooltip and the dock.
   static constexpr int kTooltipSpacing = 10;
 
-  bool autoHide() { return visibility_ == PanelVisibility::AutoHide; }
+  bool autoHide() const { return visibility_ == PanelVisibility::AutoHide; }
+  bool intellihide() const { return visibility_ == PanelVisibility::IntelligentAutoHide; }
 
-  bool isFloating() {
+  bool isFloating() const {
     return panelStyle_ == PanelStyle::Glass3D_Floating ||
         panelStyle_ == PanelStyle::Glass2D_Floating ||
         panelStyle_ == PanelStyle::Flat2D_Floating ||

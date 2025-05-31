@@ -110,12 +110,6 @@ std::unique_ptr<QDBusInterface> WindowSystem::activityManager_;
   return activityManager_->isValid();
 }
 
-/* static */ bool WindowSystem::supportIntelligentAutoHide() {
-  // Currently we only support Intelligent Auto Hide mode on KWin
-  // due to its good support of window geometry change event.
-  return kde_window_management_ != nullptr;
-}
-
 /* static */ void WindowSystem::setAnchorAndStrut(
     QWidget* widget, LayerShellQt::Window::Anchors anchors, uint32_t strutSize) {
   auto* layerShellWin = getLayerShellWin(widget);

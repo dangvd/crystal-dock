@@ -466,7 +466,7 @@ void DockPanel::updatePinnedStatus(const QString& appId, bool pinned) {
 }
 
 void DockPanel::paintEvent(QPaintEvent* e) {
-  if (!WindowSystem::hasAutoHideManager() && autoHide() && isHidden_) {
+  if (!WindowSystem::hasAutoHideManager() && isHidden_ && (autoHide() || intellihide())) {
     return;
   }
 
@@ -687,8 +687,13 @@ bool DockPanel::intellihideShouldHide(void* excluding_window) {
   QRect dockGeometry = getMinimizedDockGeometry();
   for (const auto* task : WindowSystem::windows()) {
     if (isValidTask(task) && (!excluding_window || task->window != excluding_window)) {
+      // TODO: check wl_output / QScreen.
+      if (task->maximized || task->fullscreen) {
+        return true;
+      }
+
       QRect windowGeometry(task->x, task->y, task->width, task->height);
-      if (!task->minimized && windowGeometry.intersects(dockGeometry)) {
+      if (windowGeometry.isValid() && !task->minimized && windowGeometry.intersects(dockGeometry)) {
         return true;
       }
     }
@@ -703,7 +708,7 @@ void DockPanel::intellihideHideUnhide(void* excluding_window) {
   }
 
   if (intellihideShouldHide(excluding_window)) {
-    if (!isHidden_) {
+    if (!isHidden_ && !isMinimized_) {
       setAutoHide();
     }
   } else {
@@ -868,12 +873,10 @@ void DockPanel::createMenu() {
       QString("Always &Visible"), this,
       [this]() { updateVisibility(PanelVisibility::AlwaysVisible); });
   visibilityAlwaysVisibleAction_->setCheckable(true);
-  if (WindowSystem::supportIntelligentAutoHide()) {
-    visibilityIntelligentAutoHideAction_ = visibility->addAction(
-        QString("&Intelligent Auto Hide"), this,
-        [this]() { updateVisibility(PanelVisibility::IntelligentAutoHide); });
-    visibilityIntelligentAutoHideAction_->setCheckable(true);
-  }
+  visibilityIntelligentAutoHideAction_ = visibility->addAction(
+      QString("&Intelligent Auto Hide"), this,
+      [this]() { updateVisibility(PanelVisibility::IntelligentAutoHide); });
+  visibilityIntelligentAutoHideAction_->setCheckable(true);
   visibilityAutoHideAction_ = visibility->addAction(
       QString("Auto &Hide"), this,
       [this]() { updateVisibility(PanelVisibility::AutoHide); });
@@ -902,10 +905,8 @@ void DockPanel::setVisibility(PanelVisibility visibility) {
   visibility_ = visibility;
   visibilityAlwaysVisibleAction_->setChecked(
       visibility_ == PanelVisibility::AlwaysVisible);
-  if (WindowSystem::supportIntelligentAutoHide()) {
-    visibilityIntelligentAutoHideAction_->setChecked(
-        visibility_ == PanelVisibility::IntelligentAutoHide);
-  }
+  visibilityIntelligentAutoHideAction_->setChecked(
+      visibility_ == PanelVisibility::IntelligentAutoHide);
   visibilityAutoHideAction_->setChecked(
       visibility_ == PanelVisibility::AutoHide);
   visibilityAlwaysOnTopAction_->setChecked(
@@ -1105,8 +1106,9 @@ bool DockPanel::isValidTask(const WindowInfo* task) {
     return false;
   }
 
-  if (model_->currentScreenTasksOnly() &&
-      !screenGeometry_.intersects(QRect(task->x, task->y, task->width, task->height))) {
+  QRect taskGeometry(task->x, task->y, task->width, task->height);
+  if (model_->currentScreenTasksOnly() && taskGeometry.isValid()
+      && !screenGeometry_.intersects(taskGeometry)) {
     return false;
   }
 
@@ -1286,6 +1288,7 @@ void DockPanel::updateLayout() {
                                : LayerShellQt::Window::LayerTop);
     isMinimized_ = true;
     if (autoHide()) { isHidden_ = true; }
+    if (intellihide()) { isHidden_ = intellihideShouldHide(); }
     update();
     // Here we have to wait a bit before setMask() to avoid visual artifacts.
     QTimer::singleShot(500, [this]{ setMask(); });
@@ -1406,7 +1409,7 @@ void DockPanel::updateLayout(int x, int y) {
   //resize(maxWidth_, maxHeight_);
   WindowSystem::setLayer(this, LayerShellQt::Window::LayerTop);
   isMinimized_ = false;
-  if (autoHide()) { isHidden_ = false; }
+  if (autoHide() || intellihide()) { isHidden_ = false; }
   setMask();
   updateActiveItem(x, y);
   update();
@@ -1559,6 +1562,7 @@ void DockPanel::updateVisibility(PanelVisibility visibility) {
 
 void DockPanel::setAutoHide(bool on) {
   if (!WindowSystem::hasAutoHideManager()) {
+    if (intellihide()) { isHidden_ = isMinimized_ && on; }
     update();
     return;
   }

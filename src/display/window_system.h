@@ -23,6 +23,7 @@
 #include <string>
 #include <vector>
 #include <unordered_map>
+#include <unordered_set>
 
 #include <wayland-client.h>
 
@@ -65,12 +66,15 @@ struct WindowInfo {
   bool onAllDesktops;
   bool demandsAttention;
   bool minimized;
+  bool maximized;
+  bool fullscreen;
   bool restoreAfterShowDesktop;
   int32_t x;
   int32_t y;
   uint32_t width;
   uint32_t height;
   uint32_t mapping_order;
+  std::unordered_set<wl_output*> outputs;
 };
 
 struct VirtualDesktopManager {
@@ -142,7 +146,6 @@ class WindowSystem : public QObject {
   static bool hasVirtualDesktopManager();
   static bool hasAutoHideManager();
   static bool hasActivityManager();
-  static bool supportIntelligentAutoHide();
 
   static int numberOfDesktops() {
     if (hasVirtualDesktopManager()) {
