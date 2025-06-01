@@ -717,7 +717,7 @@ void DockPanel::intellihideHideUnhide(void* excluding_window) {
   }
 
   if (intellihideShouldHide(excluding_window)) {
-    if (!isHidden_ && !isMinimized_) {
+    if (!isHidden_ && isMinimized_) {
       setAutoHide();
     }
   } else {
@@ -1575,8 +1575,11 @@ void DockPanel::updateVisibility(PanelVisibility visibility) {
 
 void DockPanel::setAutoHide(bool on) {
   if (!WindowSystem::hasAutoHideManager()) {
-    if (intellihide()) { isHidden_ = isMinimized_ && on; }
-    update();
+    if (intellihide() && isHidden_ != on) {
+      isHidden_ = on;
+      repaint();
+      setMask();
+    }
     return;
   }
 
