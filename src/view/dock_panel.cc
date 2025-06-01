@@ -179,6 +179,7 @@ void DockPanel::setScreen(int screen) {
     screenActions_[i]->setChecked(i == screen);
   }
   screenGeometry_ = WindowSystem::screens()[screen]->geometry();
+  screenOutput_ = WindowSystem::getWlOutputForScreen(screen);
   WindowSystem::setScreen(this, screen);
 }
 
@@ -696,8 +697,8 @@ bool DockPanel::intellihideShouldHide(void* excluding_window) {
   QRect dockGeometry = getMinimizedDockGeometry();
   for (const auto* task : WindowSystem::windows()) {
     if (isValidTask(task) && (!excluding_window || task->window != excluding_window)) {
-      // TODO: check wl_output / QScreen.
-      if (task->maximized || task->fullscreen) {
+      if ((task->maximized || task->fullscreen)
+          && task->outputs.contains(screenOutput_)) {
         return true;
       }
 

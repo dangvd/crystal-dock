@@ -142,10 +142,27 @@ void WindowSystem::initScreens() {
 }
 
 /*static*/ void WindowSystem::setScreen(QWidget* widget, int screen) {
+  if (screen < 0 || screen >= screens_.size()) {
+    return;
+  }
+
   QWindow* win = getWindow(widget);
   if (win) {
-    win->setScreen(WindowSystem::screens()[screen]);
+    win->setScreen(screens_[screen]);
   }
+}
+
+/*static*/ wl_output* WindowSystem::getWlOutputForScreen(int screen) {
+  if (screen < 0 || screen >= screens_.size()) {
+    return nullptr;
+  }
+
+  auto* waylandScreen = screens_[screen]->nativeInterface<QNativeInterface::QWaylandScreen>();
+  if (waylandScreen) {
+    return waylandScreen->output();
+  }
+
+  return nullptr;
 }
 
 // wl_registry interface.

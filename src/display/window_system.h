@@ -203,6 +203,8 @@ class WindowSystem : public QObject {
   static std::vector<QScreen*> screens();
   // Sets the widget to display on the screen with index `screen` (0-based).
   static void setScreen(QWidget* widget, int screen);
+  // Return wl_output object for the screen with index `screen` (0-based).
+  static wl_output* getWlOutputForScreen(int screen);
 
   static QWindow* getWindow(QWidget* widget) {
     widget->winId();  // we need this for widget->windowHandle() to not return nullptr.

@@ -372,6 +372,7 @@ class DockPanel : public QWidget {
 
   int parabolicMaxX_;
   QRect screenGeometry_;  // the geometry of the screen that the dock is on.
+  wl_output* screenOutput_;
 
   // Number of animation steps when zooming in and out.
   int numAnimationSteps_;
