@@ -126,6 +126,7 @@ void ApplicationMenuConfig::clearEntries() {
     category.entries.clear();
   }
   entries_.clear();
+  shortAppIds_.clear();
   wmClasses_.clear();
   names_.clear();
 }
@@ -181,7 +182,11 @@ bool ApplicationMenuConfig::loadEntry(const QString &file) {
       entries.insert(next, newEntry);
 
       auto* entry = &(*--next);
-      entries_[newEntry.appId.toLower().toStdString()] = entry;
+      const auto appId = newEntry.appId.toLower();
+      entries_[appId.toStdString()] = entry;
+      auto shortAppId = appId.simplified().replace(" ", "");
+      shortAppId = shortAppId.mid(shortAppId.lastIndexOf('.') + 1);
+      shortAppIds_[shortAppId.toStdString()] = entry;
       const auto shortCommand = getShortCommand(command).toLower().toStdString();
       if (!shortCommand.empty()) {
         commands_[shortCommand] = entry;
@@ -216,13 +221,15 @@ const ApplicationEntry* ApplicationMenuConfig::findApplication(const std::string
   }
   return entries_.count(appId) > 0
       ? entries_.at(appId)
-      : commands_.count(appId) > 0
-          ? commands_.at(appId)
-          : wmClasses_.count(appId) > 0
-              ? wmClasses_.at(appId)
-              : names_.count(appId) > 0
-                  ? names_.at(appId)
-                  : nullptr;
+      : shortAppIds_.count(appId) > 0
+          ? shortAppIds_.at(appId)
+          : commands_.count(appId) > 0
+              ? commands_.at(appId)
+              : wmClasses_.count(appId) > 0
+                  ? wmClasses_.at(appId)
+                  : names_.count(appId) > 0
+                      ? names_.at(appId)
+                      : nullptr;
 }
 
 const ApplicationEntry* ApplicationMenuConfig::tryMatchingApplicationId(

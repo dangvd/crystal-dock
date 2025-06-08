@@ -194,20 +194,37 @@ void ApplicationMenuConfigTest::tryMatchingApplicationId() {
              {"io.sourceforge.ChessX", "ChessX", "Chess Game",
               "io.sourceforge.ChessX", "chessx", ""},
              "Game");
+  writeEntry(entryDir.path() + "/Libre Menu Editor.desktop",
+             {"Libre Menu Editor", "Libre Menu Editor", "Menu Editor",
+              "Libre Menu Editor", "Libre Menu Editor", ""},
+             "Utility");
 
   ApplicationMenuConfig config({ entryDir.path() });
 
-  QCOMPARE(config.entries_.size(), 8);
+  QCOMPARE(config.entries_.size(), 9);
 
+  QVERIFY(config.tryMatchingApplicationId("firefox"));
   QCOMPARE(config.tryMatchingApplicationId("firefox")->appId, "firefox");
+  QVERIFY(config.tryMatchingApplicationId("org.kde.konsole"));
   QCOMPARE(config.tryMatchingApplicationId("org.kde.konsole")->appId, "org.kde.konsole");
+  QVERIFY(config.tryMatchingApplicationId("Google-chrome"));
   QCOMPARE(config.tryMatchingApplicationId("Google-chrome")->appId, "google-chrome");
+  QVERIFY(config.tryMatchingApplicationId("krita"));
   QCOMPARE(config.tryMatchingApplicationId("krita")->appId, "org.kde.krita");
+  QVERIFY(config.tryMatchingApplicationId("Gimp-2.10"));
   QCOMPARE(config.tryMatchingApplicationId("Gimp-2.10")->appId, "gimp");
+  QVERIFY(config.tryMatchingApplicationId("qdbusviewer"));
   QCOMPARE(config.tryMatchingApplicationId("qdbusviewer")->appId, "org.qt.qdbusviewer6");
+  QVERIFY(config.tryMatchingApplicationId("virtualboxvm"));
   QCOMPARE(config.tryMatchingApplicationId("virtualboxvm")->appId, "virtualbox");
+  QVERIFY(config.tryMatchingApplicationId("net.sourceforge.chessx.chessx"));
   QCOMPARE(config.tryMatchingApplicationId("net.sourceforge.chessx.chessx")->appId,
            "io.sourceforge.chessx");
+  QVERIFY(config.tryMatchingApplicationId(
+               "page.codeberg.libre_menu_editor.LibreMenuEditor"));
+  QCOMPARE(config.tryMatchingApplicationId(
+               "page.codeberg.libre_menu_editor.LibreMenuEditor")->appId,
+           "libre menu editor");
 }
 
 }  // namespace crystaldock
