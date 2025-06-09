@@ -42,12 +42,19 @@ inline QString filterFieldCodes(const QString& command) {
   return filtered;
 }
 
-// Given "/usr/bin/command -a -b", returns "command"
+// Given "/usr/bin/command-1.0.AppImage -a -b", returns "command"
 inline QString getShortCommand(const QString& command) {
   QString shortCommand = command.contains(' ')
       ? command.left(command.indexOf(' '))
       : command;
-  return shortCommand.mid(shortCommand.lastIndexOf('/') + 1);
+  shortCommand = shortCommand.mid(shortCommand.lastIndexOf('/') + 1);
+  if (shortCommand.contains('-')) {
+    shortCommand = shortCommand.left(shortCommand.indexOf('-'));
+  }
+  if (shortCommand.contains('.')) {
+    shortCommand = shortCommand.left(shortCommand.indexOf('.'));
+  }
+  return shortCommand;
 }
 
 // Returns a command in the list that exists in the system.

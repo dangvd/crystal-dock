@@ -169,7 +169,7 @@ bool ApplicationMenuConfig::loadEntry(const QString &file) {
     const std::string category = categories[i].toStdString();
     if (categoryMap_.count(category) > 0 &&
         entries_.count(appId.toStdString()) == 0) {
-      const QString command = filterFieldCodes(desktopFile.exec());
+      const QString command = filterFieldCodes(desktopFile.exec().simplified());
       ApplicationEntry newEntry(appId,
                                 desktopFile.name(),
                                 desktopFile.genericName(),
@@ -191,11 +191,12 @@ bool ApplicationMenuConfig::loadEntry(const QString &file) {
       if (!shortCommand.empty()) {
         commands_[shortCommand] = entry;
       }
-      const auto wmClass = desktopFile.wmClass().toLower().toStdString();
+      const auto wmClass =
+          desktopFile.wmClass().toLower().simplified().replace(" ", "").toStdString();
       if (!wmClass.empty()) {
         wmClasses_[wmClass] = entry;
       }
-      const auto name = desktopFile.name().toLower().toStdString();
+      const auto name = desktopFile.name().toLower().simplified().replace(" ", "").toStdString();
       if (!name.empty()) {
         names_[name] = entry;
       }

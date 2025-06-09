@@ -198,10 +198,14 @@ void ApplicationMenuConfigTest::tryMatchingApplicationId() {
              {"Libre Menu Editor", "Libre Menu Editor", "Menu Editor",
               "Libre Menu Editor", "Libre Menu Editor", ""},
              "Utility");
+  writeEntry(entryDir.path() + "/Sonic Unleashed Shortcut.desktop",
+             {"Sonic Unleashed", "Sonic Unleashed", "Sonic Game",
+              "Sonic Unleashed", "/applications/UnleashedRecomp/UnleashedRecomp-1.0.AppImage", ""},
+             "Game");
 
   ApplicationMenuConfig config({ entryDir.path() });
 
-  QCOMPARE(config.entries_.size(), 9);
+  QCOMPARE(config.entries_.size(), 10);
 
   QVERIFY(config.tryMatchingApplicationId("firefox"));
   QCOMPARE(config.tryMatchingApplicationId("firefox")->appId, "firefox");
@@ -225,6 +229,9 @@ void ApplicationMenuConfigTest::tryMatchingApplicationId() {
   QCOMPARE(config.tryMatchingApplicationId(
                "page.codeberg.libre_menu_editor.LibreMenuEditor")->appId,
            "libre menu editor");
+  QVERIFY(config.tryMatchingApplicationId("UnleashedRecomp"));
+  QCOMPARE(config.tryMatchingApplicationId("UnleashedRecomp")->appId,
+           "sonic unleashed shortcut");
 }
 
 }  // namespace crystaldock
