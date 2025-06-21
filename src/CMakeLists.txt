@@ -56,6 +56,7 @@ set(SRCS
     view/multi_dock_view.cc
     view/program.cc
     view/separator.cc
+    view/trash.cc
     view/task_manager_settings_dialog.cc
     view/wallpaper_settings_dialog.cc
     utils/desktop_file.cc
@@ -97,6 +98,7 @@ set(SRCS
     view/multi_dock_view.h
     view/program.h
     view/separator.h
+    view/trash.h
     view/task_manager_settings_dialog.h
     view/wallpaper_settings_dialog.h
     utils/command_utils.h

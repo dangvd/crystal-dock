@@ -26,12 +26,16 @@
 
 #include <QColor>
 #include <QCursor>
+#include <QDragEnterEvent>
+#include <QDragMoveEvent>
+#include <QDropEvent>
 #include <QFont>
 #include <QFontMetrics>
 #include <QGuiApplication>
 #include <QIcon>
 #include <QListWidgetItem>
 #include <QMessageBox>
+#include <QMimeData>
 #include <QPainter>
 #include <QProcess>
 #include <QScreen>
@@ -48,6 +52,7 @@
 #include "multi_dock_view.h"
 #include "program.h"
 #include "separator.h"
+#include "trash.h"
 #include <display/window_system.h>
 #include <utils/draw_utils.h>
 #include <utils/icon_utils.h>
@@ -64,6 +69,7 @@ DockPanel::DockPanel(MultiDockView* parent, MultiDockModel* model, int dockId)
       visibility_(PanelVisibility::AlwaysVisible),
       showPager_(false),
       showClock_(false),
+      showTrash_(false),
       aboutDialog_(QMessageBox::Information, "About Crystal Dock",
                    QString("<h3>Crystal Dock 2.15 alpha</h3>")
                    + "<p>Copyright (C) 2025 Viet Dang (dangvd@gmail.com)"
@@ -85,6 +91,7 @@ DockPanel::DockPanel(MultiDockView* parent, MultiDockModel* model, int dockId)
   setAttribute(Qt::WA_TranslucentBackground);
   setWindowFlag(Qt::FramelessWindowHint);
   setMouseTracking(true);
+  setAcceptDrops(true);
 
   createMenu();
   loadDockConfig();
@@ -764,12 +771,43 @@ void DockPanel::leaveEvent(QEvent* e) {
   activeItem_ = -1;
 }
 
+void DockPanel::dragEnterEvent(QDragEnterEvent* e) {
+  if (e->mimeData()->hasUrls()) {
+    e->acceptProposedAction();
+    
+    for (const auto& item : items_) {
+      Trash* trash = dynamic_cast<Trash*>(item.get());
+      if (trash) {
+        trash->setAcceptDrops(true);
+      }
+    }
+  }
+}
+
+void DockPanel::dragMoveEvent(QDragMoveEvent* e) {
+  if (e->mimeData()->hasUrls()) {
+    e->acceptProposedAction();
+  }
+}
+
+void DockPanel::dropEvent(QDropEvent* e) {
+  for (const auto& item : items_) {
+    Trash* trash = dynamic_cast<Trash*>(item.get());
+    if (trash) {
+      trash->setAcceptDrops(false);
+      trash->dropEvent(e);
+      return;
+    }
+  }
+}
+
 void DockPanel::initUi() {
   initApplicationMenu();
   initPager();
   initLaunchers();
   initTasks();
   initClock();
+  initTrash();
   initLayoutVars();
   updateLayout();
   setStrut();
@@ -851,6 +889,10 @@ void DockPanel::createMenu() {
   clockAction_ = extraComponents->addAction(QString("Clock"), this,
       SLOT(toggleClock()));
   clockAction_->setCheckable(true);
+
+  trashAction_ = extraComponents->addAction(QString("Trash"), this,
+      SLOT(toggleTrash()));
+  trashAction_->setCheckable(true);
 
   QMenu* position = menu_.addMenu(QString("&Position"));
   positionTop_ = position->addAction(QString("&Top"), this,
@@ -950,6 +992,9 @@ void DockPanel::loadDockConfig() {
 
   showClock_ = model_->showClock(dockId_);
   clockAction_->setChecked(showClock_);
+
+  showTrash_ = model_->showTrash(dockId_);
+  trashAction_->setChecked(showTrash_);
 }
 
 void DockPanel::saveDockConfig() {
@@ -960,6 +1005,7 @@ void DockPanel::saveDockConfig() {
   model_->setShowPager(dockId_, showPager_);
   model_->setShowTaskManager(dockId_, taskManagerAction_->isChecked());
   model_->setShowClock(dockId_, showClock_);
+  model_->setShowTrash(dockId_, showTrash_);
   model_->saveDockConfig(dockId_);
 }
 
@@ -1027,6 +1073,7 @@ void DockPanel::reloadTasks() {
   initLaunchers();
   initTasks();
   initClock();
+  initTrash();
   resizeTaskManager();
 }
 
@@ -1144,6 +1191,13 @@ bool DockPanel::hasTask(void* window) {
 void DockPanel::initClock() {
   if (showClock_) {
     items_.push_back(std::make_unique<Clock>(
+        this, model_, orientation_, minSize_, maxSize_));
+  }
+}
+
+void DockPanel::initTrash() {
+  if (showTrash_) {
+    items_.push_back(std::make_unique<Trash>(
         this, model_, orientation_, minSize_, maxSize_));
   }
 }
