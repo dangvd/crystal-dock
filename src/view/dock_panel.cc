@@ -476,7 +476,23 @@ void DockPanel::updatePinnedStatus(const QString& appId, bool pinned) {
 void DockPanel::setShowingPopup(bool showingPopup) {
   isShowingPopup_ = showingPopup;
   if (!isShowingPopup_) {
-    if (!rect().contains(mapFromGlobal(QCursor::pos()))) {
+    auto mousePosition = mapFromGlobal(QCursor::pos());
+    switch (position_) {
+    case PanelPosition::Top:
+      mousePosition += QPoint(0, tooltipSize_);
+      break;
+    case PanelPosition::Bottom:
+      mousePosition -= QPoint(0, tooltipSize_);
+      break;
+    case PanelPosition::Left:
+      mousePosition += QPoint(tooltipSize_, 0);
+      break;
+    case PanelPosition::Right:
+      mousePosition -= QPoint(tooltipSize_, 0);
+      break;
+    }
+
+    if (!rect().contains(mousePosition)) {
       leaveEvent(nullptr);
     }
   }
