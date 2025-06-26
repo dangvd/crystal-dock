@@ -51,6 +51,10 @@ Trash::Trash(DockPanel* parent, MultiDockModel* model, Qt::Orientation orientati
   createMenu();
   setupTrashWatcher();
   updateTrashState();
+  connect(&menu_, &QMenu::aboutToHide, this,
+          [this]() {
+            parent_->setShowingPopup(false);
+          });
 }
 
 void Trash::draw(QPainter* painter) const {
@@ -170,12 +174,12 @@ void Trash::dropEvent(QDropEvent* event) {
 void Trash::createMenu() {
   emptyTrashAction_ = menu_.addAction("Empty Trash");
   connect(emptyTrashAction_, &QAction::triggered, this, &Trash::emptyTrash);
-  
+
   openTrashAction_ = menu_.addAction("Open Trash");
   connect(openTrashAction_, &QAction::triggered, this, &Trash::openTrash);
-  
+
   menu_.addSeparator();
-  
+
   restoreAction_ = menu_.addAction("Restore Recently Deleted");
   connect(restoreAction_, &QAction::triggered, this, &Trash::restoreRecentlyDeleted);
 }
