@@ -871,8 +871,8 @@ void DockPanel::initUi() {
   initPager();
   initLaunchers();
   initTasks();
-  initClock();
   initTrash();
+  initClock();
   initLayoutVars();
   updateLayout();
   setStrut();
@@ -1137,8 +1137,8 @@ void DockPanel::reloadTasks() {
   items_.resize(itemsToKeep);
   initLaunchers();
   initTasks();
-  initClock();
   initTrash();
+  initClock();
   resizeTaskManager();
 }
 
