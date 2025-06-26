@@ -20,7 +20,6 @@
 
 #include <QApplication>
 #include <QDateTime>
-#include <QDesktopServices>
 #include <QDir>
 #include <QFileInfo>
 #include <QMouseEvent>
@@ -32,7 +31,9 @@
 
 #include <utils/draw_utils.h>
 #include <utils/font_utils.h>
-#include <view/dock_panel.h>
+
+#include "dock_panel.h"
+#include "program.h"
 
 namespace crystaldock {
 
@@ -110,29 +111,7 @@ void Trash::emptyTrash() {
 }
 
 void Trash::openTrash() {
-  // Try to open trash:/ protocol first (shows trash with restore functionality)
-  QProcess process;
-  QProcessEnvironment cleanEnv = QProcessEnvironment::systemEnvironment();
-  
-  // Remove environment variables that can cause fullscreen/borderless window issues
-  cleanEnv.remove("QT_WAYLAND_SHELL_INTEGRATION");
-  cleanEnv.remove("QT_SCALE_FACTOR");
-  cleanEnv.remove("QT_AUTO_SCREEN_SCALE_FACTOR");
-  
-  process.setProcessEnvironment(cleanEnv);
-  process.setProgram("dolphin");
-  process.setArguments({"--new-window", "trash:/"});
-  
-  if (process.startDetached()) {
-    return;
-  }
-  
-  // Fallback: Let desktop environment handle opening the trash directory
-  QDesktopServices::openUrl(QUrl::fromLocalFile(trashPath_));
-}
-
-void Trash::restoreRecentlyDeleted() {
-  QDesktopServices::openUrl(QUrl::fromLocalFile(trashPath_));
+  Program::launch("xdg-open trash:/");
 }
 
 void Trash::setAcceptDrops(bool accept) {
@@ -174,14 +153,6 @@ void Trash::dropEvent(QDropEvent* event) {
 void Trash::createMenu() {
   emptyTrashAction_ = menu_.addAction(QIcon::fromTheme("trash-empty"), "Empty Trash");
   connect(emptyTrashAction_, &QAction::triggered, this, &Trash::emptyTrash);
-
-  openTrashAction_ = menu_.addAction("Open Trash");
-  connect(openTrashAction_, &QAction::triggered, this, &Trash::openTrash);
-
-  menu_.addSeparator();
-
-  restoreAction_ = menu_.addAction("Restore Recently Deleted");
-  connect(restoreAction_, &QAction::triggered, this, &Trash::restoreRecentlyDeleted);
 
   menu_.addSeparator();
   parent_->addPanelSettings(&menu_);

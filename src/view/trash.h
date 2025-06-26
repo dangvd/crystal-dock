@@ -56,7 +56,6 @@ class Trash : public QObject, public IconBasedDockItem {
   void updateTrashState();
   void emptyTrash();
   void openTrash();
-  void restoreRecentlyDeleted();
 
   void dragEnterEvent(QDragEnterEvent* event);
   void dropEvent(QDropEvent* event);
