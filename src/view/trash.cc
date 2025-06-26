@@ -172,7 +172,7 @@ void Trash::dropEvent(QDropEvent* event) {
 }
 
 void Trash::createMenu() {
-  emptyTrashAction_ = menu_.addAction("Empty Trash");
+  emptyTrashAction_ = menu_.addAction(QIcon::fromTheme("trash-empty"), "Empty Trash");
   connect(emptyTrashAction_, &QAction::triggered, this, &Trash::emptyTrash);
 
   openTrashAction_ = menu_.addAction("Open Trash");
@@ -182,6 +182,9 @@ void Trash::createMenu() {
 
   restoreAction_ = menu_.addAction("Restore Recently Deleted");
   connect(restoreAction_, &QAction::triggered, this, &Trash::restoreRecentlyDeleted);
+
+  menu_.addSeparator();
+  parent_->addPanelSettings(&menu_);
 }
 
 void Trash::moveToTrash(const QStringList& filePaths) {
