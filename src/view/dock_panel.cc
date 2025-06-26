@@ -132,6 +132,7 @@ void DockPanel::reload() {
   loadAppearanceConfig();
   items_.clear();
   initUi();
+  setMask();
   update();
 }
 
@@ -1631,6 +1632,7 @@ void DockPanel::resizeTaskManager() {
     }
   }
 
+  setMask();
   update();
 }
 
