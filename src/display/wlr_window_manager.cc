@@ -62,6 +62,7 @@ bool WlrWindowManager::showingDesktop_;
     WindowManager* windowManager) {
   windowManager->activateOrMinimizeWindow = WlrWindowManager::activateOrMinimizeWindow;
   windowManager->activateWindow = WlrWindowManager::activateWindow;
+  windowManager->minimizeWindow = WlrWindowManager::minimizeWindow;
   windowManager->activeWindow = WlrWindowManager::activeWindow;
   windowManager->closeWindow = WlrWindowManager::closeWindow;
   windowManager->resetActiveWindow = WlrWindowManager::resetActiveWindow;
@@ -125,6 +126,17 @@ bool WlrWindowManager::showingDesktop_;
     } else {
       zwlr_foreign_toplevel_handle_v1_set_minimized(window);
     }
+  }
+}
+
+/* static */ void WlrWindowManager::minimizeWindow(void* window_handle) {
+  auto* window = static_cast<struct zwlr_foreign_toplevel_handle_v1*>(window_handle);
+  if (window) {
+    if (windows_.count(window) == 0) {
+      return;
+    }
+
+    zwlr_foreign_toplevel_handle_v1_set_minimized(window);
   }
 }
 

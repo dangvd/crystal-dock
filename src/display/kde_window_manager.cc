@@ -60,6 +60,7 @@ bool KdeWindowManager::showingDesktop_;
     WindowManager* windowManager) {
   windowManager->activateOrMinimizeWindow = KdeWindowManager::activateOrMinimizeWindow;
   windowManager->activateWindow = KdeWindowManager::activateWindow;
+  windowManager->minimizeWindow = KdeWindowManager::minimizeWindow;
   windowManager->activeWindow = KdeWindowManager::activeWindow;
   windowManager->closeWindow = KdeWindowManager::closeWindow;
   windowManager->resetActiveWindow = KdeWindowManager::resetActiveWindow;
@@ -119,6 +120,16 @@ bool KdeWindowManager::showingDesktop_;
           ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_MINIMIZED,
           ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_MINIMIZED);
     }
+  }
+}
+
+/* static */ void KdeWindowManager::minimizeWindow(void* window_handle) {
+  auto* window = static_cast<struct org_kde_plasma_window*>(window_handle);
+  if (window) {
+    org_kde_plasma_window_set_state(
+        window,
+        ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_MINIMIZED,
+        ORG_KDE_PLASMA_WINDOW_MANAGEMENT_STATE_MINIMIZED);
   }
 }
 

@@ -94,6 +94,7 @@ struct WindowManager {
   void (*resetActiveWindow)();
   void (*activateWindow)(void* window);
   void (*activateOrMinimizeWindow)(void* window);
+  void (*minimizeWindow)(void* window);
   void (*closeWindow)(void* window);
   bool (*showingDesktop)();
   void (*setShowingDesktop)(bool show);
@@ -186,6 +187,7 @@ class WindowSystem : public QObject {
   static void activateOrMinimizeWindow(void* window) {
     windowManager_.activateOrMinimizeWindow(window);
   }
+  static void minimizeWindow(void* window) { windowManager_.minimizeWindow(window); }
   static void closeWindow(void* window) { windowManager_.closeWindow(window); }
   static bool showingDesktop() { return windowManager_.showingDesktop(); }
   static void setShowingDesktop(bool show) { windowManager_.setShowingDesktop(show); }

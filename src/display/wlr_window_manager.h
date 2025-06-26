@@ -57,6 +57,7 @@ class WlrWindowManager : public QObject {
   static void resetActiveWindow();
   static void activateWindow(void* window);
   static void activateOrMinimizeWindow(void* window);
+  static void minimizeWindow(void* window);
   static void closeWindow(void* window);
   static bool showingDesktop();
   static void setShowingDesktop(bool show);
