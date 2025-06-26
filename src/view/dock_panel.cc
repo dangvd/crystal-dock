@@ -476,23 +476,72 @@ void DockPanel::updatePinnedStatus(const QString& appId, bool pinned) {
 void DockPanel::setShowingPopup(bool showingPopup) {
   isShowingPopup_ = showingPopup;
   if (!isShowingPopup_) {
+    // We have to do these complicated workarounds because QCursor::pos() does not
+    // exactly return the current mouse position but it depends on related mouse events.
     auto mousePosition = mapFromGlobal(QCursor::pos());
+    int x = 0;
+    int y = 0;
+    int w = 0;
+    int h = 0;
+    int x2 = 0;
+    int y2 = 0;
+    int w2 = 0;
+    int h2 = 0;
     switch (position_) {
     case PanelPosition::Top:
-      mousePosition += QPoint(0, tooltipSize_);
+      x = itemSpacing_;
+      w = maxWidth_ - 2 * x;
+      y = itemSpacing_ + (isFloating() ? floatingMargin_ : 0);
+      h = minSize_;
+      if (activeItem_ >= 0 && activeItem_ < items_.size()) {
+        x2 = items_[activeItem_]->left_;
+        w2 = items_[activeItem_]->getMaxWidth();
+        y2 = y;
+        h2 = maxSize_;
+      }
       break;
     case PanelPosition::Bottom:
-      mousePosition -= QPoint(0, tooltipSize_);
+      x = itemSpacing_ + (is3D() && isBottom() ? margin3D_ : 0);
+      w = maxWidth_ - 2 * x;
+      y = maxHeight_ - itemSpacing_ - (isFloating() ? floatingMargin_ : 0)
+          - (is3D() && isBottom() ? k3DPanelThickness : 0) - minSize_;
+      h = minSize_;
+      if (activeItem_ >= 0 && activeItem_ < items_.size()) {
+        x2 = items_[activeItem_]->left_;
+        w2 = items_[activeItem_]->getMaxWidth();
+        y2 = y + minSize_ - maxSize_;
+        h2 = maxSize_;
+      }
       break;
     case PanelPosition::Left:
-      mousePosition += QPoint(tooltipSize_, 0);
+      y = itemSpacing_;
+      h = maxHeight_ - 2 * y;
+      x = itemSpacing_ + (isFloating() ? floatingMargin_ : 0);
+      w = minSize_;
+      if (activeItem_ >= 0 && activeItem_ < items_.size()) {
+        y2 = items_[activeItem_]->top_;
+        h2 = items_[activeItem_]->getMaxHeight();
+        x2 = y;
+        w2 = maxSize_;
+      }
       break;
     case PanelPosition::Right:
-      mousePosition -= QPoint(tooltipSize_, 0);
+      y = itemSpacing_;
+      h = maxHeight_ - 2 * y;
+      x = maxWidth_ - itemSpacing_ - (isFloating() ? floatingMargin_ : 0) - minSize_;
+      w = minSize_;
+      if (activeItem_ >= 0 && activeItem_ < items_.size()) {
+        y2 = items_[activeItem_]->top_;
+        h2 = items_[activeItem_]->getMaxHeight();
+        x2 = x + minSize_ - maxSize_;
+        w2 = maxSize_;
+      }
       break;
     }
 
-    if (!rect().contains(mousePosition)) {
+    QRect rect(x, y, w, h);
+    QRect rect2(x2, y2, w2, h2);
+    if (!rect.contains(mousePosition) && !rect2.contains(mousePosition)) {
       leaveEvent(nullptr);
     }
   }
