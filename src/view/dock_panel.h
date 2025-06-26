@@ -35,6 +35,7 @@
 #include <QSize>
 #include <QString>
 #include <QTimer>
+#include <QWheelEvent>
 #include <QWidget>
 
 #include <display/window_system.h>
@@ -52,6 +53,7 @@
 namespace crystaldock {
 
 class MultiDockView;
+class VolumeControl;
 
 // A dock panel. The user can have multiple dock panels at the same time.
 class DockPanel : public QWidget {
@@ -190,6 +192,12 @@ class DockPanel : public QWidget {
     saveDockConfig();
   }
 
+  void toggleVolumeControl() {
+    showVolumeControl_ = !showVolumeControl_;
+    reload();
+    saveDockConfig();
+  }
+
   // Sets the dock on a specific screen given screen index.
   // Thus 0 is screen 1 and so on.
   // This doesn't refresh the dock.
@@ -232,6 +240,7 @@ class DockPanel : public QWidget {
   virtual void paintEvent(QPaintEvent* e) override;
   virtual void mouseMoveEvent(QMouseEvent* e) override;
   virtual void mousePressEvent(QMouseEvent* e) override;
+  virtual void wheelEvent(QWheelEvent* e) override;
   virtual void enterEvent(QEnterEvent* e) override;
   virtual void leaveEvent(QEvent* e) override;
   virtual void dragEnterEvent(QDragEnterEvent* e) override;
@@ -278,6 +287,10 @@ class DockPanel : public QWidget {
     return showTrash_ ? 1 : 0;
   }
 
+  int volumeControlItemCount() const {
+    return showVolumeControl_ ? 1 : 0;
+  }
+
   bool showTaskManager() { return model_->showTaskManager(dockId_); }
 
   void initUi();
@@ -304,6 +317,8 @@ class DockPanel : public QWidget {
   void initClock();
 
   void initTrash();
+
+  void initVolumeControl();
 
   void initLayoutVars();
 
@@ -365,6 +380,7 @@ class DockPanel : public QWidget {
   bool showPager_;
   bool showClock_;
   bool showTrash_;
+  bool showVolumeControl_;
   int minSize_;
   int maxSize_;
   float spacingFactor_;  // item spacing as ratio of minSize, in (0, 1) range.
@@ -420,6 +436,7 @@ class DockPanel : public QWidget {
   QAction* taskManagerAction_;
   QAction* clockAction_;
   QAction* trashAction_;
+  QAction* volumeControlAction_;
   QAction* floatingStyleAction_;
   QAction* glass3DStyleAction_;
   QAction* glass2DStyleAction_;
