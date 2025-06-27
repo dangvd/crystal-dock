@@ -78,9 +78,11 @@ class VolumeControl : public QObject, public IconlessDockItem {
   // PulseAudio process for monitoring volume.
   QProcess* volumeProcess_;
 
-  // Context menu.
+  // Left-click volume menu.
   QMenu menu_;
   QSlider* volumeSlider_;
+  // Right-click context menu.
+  QMenu contextMenu_;
   QAction* muteAction_;
   QAction* audioSettingsAction_;
 

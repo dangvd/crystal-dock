@@ -54,6 +54,10 @@ VolumeControl::VolumeControl(DockPanel* parent, MultiDockModel* model,
           [this]() {
             parent_->setShowingPopup(false);
           });
+  connect(&contextMenu_, &QMenu::aboutToHide, this,
+          [this]() {
+            parent_->setShowingPopup(false);
+          });
 }
 
 VolumeControl::~VolumeControl() {
@@ -142,7 +146,7 @@ void VolumeControl::mousePressEvent(QMouseEvent* e) {
   } else if (e->button() == Qt::MiddleButton) {
     toggleMute();
   } else if (e->button() == Qt::RightButton) {
-    openAudioSettings();
+    showPopupMenu(&contextMenu_);
   }
 }
 
@@ -207,9 +211,10 @@ void VolumeControl::refreshVolumeInfo() {
                     [this, muteProcess](int exitCode, QProcess::ExitStatus exitStatus) {
                       if (exitCode == 0) {
                         const QString output = muteProcess->readAllStandardOutput().trimmed();
-                        const bool newMuted = (output == "yes");
+                        const bool newMuted = (output.toLower().contains("yes"));
                         if (newMuted != isMuted_) {
                           isMuted_ = newMuted;
+                          muteAction_->setChecked(isMuted_);
                           parent_->update();
                         }
                       }
@@ -246,11 +251,13 @@ void VolumeControl::toggleMute() {
 }
 
 void VolumeControl::createMenu() {
+  // Volume menu
+
   // Volume slider
   volumeSlider_ = new QSlider(Qt::Horizontal);
   volumeSlider_->setRange(0, 100);
   volumeSlider_->setValue(currentVolume_);
-  volumeSlider_->setMinimumWidth(200);
+  volumeSlider_->setMinimumWidth(getMaxWidth());
   connect(volumeSlider_, &QSlider::valueChanged, this, &VolumeControl::onVolumeSliderChanged);
 
   QWidgetAction* sliderAction = new QWidgetAction(&menu_);
@@ -261,10 +268,10 @@ void VolumeControl::createMenu() {
   muteAction_ = menu_.addAction("Mute", this, &VolumeControl::toggleMute);
   muteAction_->setCheckable(true);
 
-  menu_.addSeparator();
+  // Context menu
 
   // Scroll step submenu
-  scrollStepMenu_ = menu_.addMenu("Scroll Step");
+  scrollStepMenu_ = contextMenu_.addMenu("Scroll Step");
   scrollStepGroup_ = new QActionGroup(this);
 
   scrollStep1Action_ = scrollStepMenu_->addAction("1% (Fine)", this, &VolumeControl::setVolumeScrollStep1);
@@ -284,13 +291,12 @@ void VolumeControl::createMenu() {
   scrollStep10Action_->setCheckable(true);
   scrollStep10Action_->setActionGroup(scrollStepGroup_);
 
-  menu_.addSeparator();
-
   // Audio settings
-  audioSettingsAction_ = menu_.addAction("Audio Settings...", this, &VolumeControl::openAudioSettings);
+  audioSettingsAction_ = contextMenu_.addAction(QIcon::fromTheme("configure"), "Audio Settings",
+                                                this, &VolumeControl::openAudioSettings);
 
-  menu_.addSeparator();
-  parent_->addPanelSettings(&menu_);
+  contextMenu_.addSeparator();
+  parent_->addPanelSettings(&contextMenu_);
 }
 
 void VolumeControl::setVolumeScrollStep1() {
