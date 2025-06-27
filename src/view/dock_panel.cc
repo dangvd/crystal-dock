@@ -89,6 +89,7 @@ DockPanel::DockPanel(MultiDockView* parent, MultiDockModel* model, int dockId)
       isEntering_(false),
       isLeaving_(false),
       isAnimationActive_(false),
+      isShowingPopup_(false),
       animationTimer_(std::make_unique<QTimer>(this)) {  
   setAttribute(Qt::WA_TranslucentBackground);
   setWindowFlag(Qt::FramelessWindowHint);
