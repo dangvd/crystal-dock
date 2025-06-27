@@ -1,6 +1,6 @@
 /*
  * This file is part of Crystal Dock.
- * Copyright (C) 2022 Viet Dang (dangvd@gmail.com)
+ * Copyright (C) 2025 Viet Dang (dangvd@gmail.com)
  *
  * Crystal Dock is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
