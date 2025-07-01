@@ -73,6 +73,7 @@ class DockPanel : public QWidget {
   static constexpr int kIndicatorMarginGlass2D = 4;
   static constexpr float kSpacingMultiplier = 0.5;  // for Glass 2D/3D and Flat 2D.
   static constexpr float kSpacingMultiplierMetal2D = 0.33;
+  static const char kVersion[];
 
   // No pointer ownership.
   DockPanel(MultiDockView* parent, MultiDockModel* model, int dockId);
@@ -192,6 +193,12 @@ class DockPanel : public QWidget {
     saveDockConfig();
   }
 
+  void toggleVersionChecker() {
+    showVersionChecker_ = !showVersionChecker_;
+    reload();
+    saveDockConfig();
+  }
+
   void toggleVolumeControl() {
     showVolumeControl_ = !showVolumeControl_;
     reload();
@@ -287,6 +294,10 @@ class DockPanel : public QWidget {
     return showTrash_ ? 1 : 0;
   }
 
+  int versionCheckerItemCount() const {
+    return showVersionChecker_ ? 1 : 0;
+  }
+
   int volumeControlItemCount() const {
     return showVolumeControl_ ? 1 : 0;
   }
@@ -319,6 +330,8 @@ class DockPanel : public QWidget {
   void initTrash();
 
   void initVolumeControl();
+
+  void initVersionChecker();
 
   void initLayoutVars();
 
@@ -380,6 +393,7 @@ class DockPanel : public QWidget {
   bool showPager_;
   bool showClock_;
   bool showTrash_;
+  bool showVersionChecker_;
   bool showVolumeControl_;
   int minSize_;
   int maxSize_;
@@ -436,6 +450,7 @@ class DockPanel : public QWidget {
   QAction* taskManagerAction_;
   QAction* clockAction_;
   QAction* trashAction_;
+  QAction* versionCheckerAction_;
   QAction* volumeControlAction_;
   QAction* floatingStyleAction_;
   QAction* glass3DStyleAction_;

@@ -54,6 +54,7 @@
 #include "program.h"
 #include "separator.h"
 #include "trash.h"
+#include "version_checker.h"
 #include "volume_control.h"
 #include <display/window_system.h>
 #include <utils/draw_utils.h>
@@ -62,6 +63,8 @@
 namespace ranges = std::ranges;
 
 namespace crystaldock {
+
+/*static*/ constexpr char DockPanel::kVersion[] = "2.15 alpha";
 
 DockPanel::DockPanel(MultiDockView* parent, MultiDockModel* model, int dockId)
     : QWidget(),
@@ -73,7 +76,7 @@ DockPanel::DockPanel(MultiDockView* parent, MultiDockModel* model, int dockId)
       showClock_(false),
       showTrash_(false),
       aboutDialog_(QMessageBox::Information, "About Crystal Dock",
-                   QString("<h3>Crystal Dock 2.15 alpha</h3>")
+                   QString("<h3>Crystal Dock ") + kVersion + "</h3>"
                    + "<p>Copyright (C) 2025 Viet Dang (dangvd@gmail.com)"
                    + "<p><a href=\"https://github.com/dangvd/crystal-dock\">https://github.com/dangvd/crystal-dock</a>"
                    + "<p>License: GPLv3",
@@ -891,6 +894,7 @@ void DockPanel::initUi() {
   initTasks();
   initTrash();
   initVolumeControl();
+  initVersionChecker();
   initClock();
   initLayoutVars();
   updateLayout();
@@ -970,17 +974,18 @@ void DockPanel::createMenu() {
   taskManagerAction_ = extraComponents->addAction(QString("Task Manager"), this,
       SLOT(toggleTaskManager()));
   taskManagerAction_->setCheckable(true);
-  clockAction_ = extraComponents->addAction(QString("Clock"), this,
-      SLOT(toggleClock()));
-  clockAction_->setCheckable(true);
-
   trashAction_ = extraComponents->addAction(QString("Trash"), this,
       SLOT(toggleTrash()));
   trashAction_->setCheckable(true);
-
   volumeControlAction_ = extraComponents->addAction(QString("Volume Control"), this,
-      SLOT(toggleVolumeControl()));
+                                                    SLOT(toggleVolumeControl()));
   volumeControlAction_->setCheckable(true);
+  versionCheckerAction_ = extraComponents->addAction(QString("Version Checker"), this,
+                                                     SLOT(toggleVersionChecker()));
+  versionCheckerAction_->setCheckable(true);
+  clockAction_ = extraComponents->addAction(QString("Clock"), this,
+                                            SLOT(toggleClock()));
+  clockAction_->setCheckable(true);
 
   QMenu* position = menu_.addMenu(QString("&Position"));
   positionTop_ = position->addAction(QString("&Top"), this,
@@ -1084,6 +1089,9 @@ void DockPanel::loadDockConfig() {
   showTrash_ = model_->showTrash(dockId_);
   trashAction_->setChecked(showTrash_);
 
+  showVersionChecker_ = model_->showVersionChecker(dockId_);
+  versionCheckerAction_->setChecked(showVersionChecker_);
+
   showVolumeControl_ = model_->showVolumeControl(dockId_);
   volumeControlAction_->setChecked(showVolumeControl_);
 }
@@ -1097,6 +1105,7 @@ void DockPanel::saveDockConfig() {
   model_->setShowTaskManager(dockId_, taskManagerAction_->isChecked());
   model_->setShowClock(dockId_, showClock_);
   model_->setShowTrash(dockId_, showTrash_);
+  model_->setShowVersionChecker(dockId_, showVersionChecker_);
   model_->setShowVolumeControl(dockId_, showVolumeControl_);
   model_->saveDockConfig(dockId_);
 }
@@ -1166,6 +1175,7 @@ void DockPanel::reloadTasks() {
   initTasks();
   initTrash();
   initVolumeControl();
+  initVersionChecker();
   initClock();
   resizeTaskManager();
 }
@@ -1291,6 +1301,13 @@ void DockPanel::initClock() {
 void DockPanel::initTrash() {
   if (showTrash_) {
     items_.push_back(std::make_unique<Trash>(
+        this, model_, orientation_, minSize_, maxSize_));
+  }
+}
+
+void DockPanel::initVersionChecker() {
+  if (showVersionChecker_) {
+    items_.push_back(std::make_unique<VersionChecker>(
         this, model_, orientation_, minSize_, maxSize_));
   }
 }

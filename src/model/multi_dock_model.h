@@ -81,6 +81,7 @@ constexpr bool kDefaultShowPager = false;
 constexpr bool kDefaultShowTaskManager = true;
 constexpr bool kDefaultShowClock = true;
 constexpr bool kDefaultShowTrash = true;
+constexpr bool kDefaultShowVersionChecker = true;
 constexpr bool kDefaultShowVolumeControl = true;
 constexpr int kDefaultVolumeScrollStep = 2;
 constexpr PanelStyle kDefaultPanelStyle = PanelStyle::Glass3D_Floating;
@@ -578,6 +579,15 @@ class MultiDockModel : public QObject {
     setDockProperty(dockId, kGeneralCategory, kShowTrash, value);
   }
 
+  bool showVersionChecker(int dockId) const {
+    return dockProperty(dockId, kGeneralCategory, kShowVersionChecker,
+                        kDefaultShowVersionChecker);
+  }
+
+  void setShowVersionChecker(int dockId, bool value) {
+    setDockProperty(dockId, kGeneralCategory, kShowVersionChecker, value);
+  }
+
   bool showVolumeControl(int dockId) const {
     return dockProperty(dockId, kGeneralCategory, kShowVolumeControl,
                         kDefaultShowVolumeControl);
@@ -681,6 +691,7 @@ class MultiDockModel : public QObject {
   static constexpr char kShowPager[] = "showPager";
   static constexpr char kShowTaskManager[] = "showTaskManager";
   static constexpr char kShowTrash[] = "showTrash";
+  static constexpr char kShowVersionChecker[] = "showVersionChecker";
   static constexpr char kShowVolumeControl[] = "showVolumeControl";
   static constexpr char kLaunchers[] = "launchers";
 
