@@ -48,7 +48,7 @@ VolumeControl::VolumeControl(DockPanel* parent, MultiDockModel* model,
   updateTimer_->start(kUpdateInterval);
 
   // Initial volume info refresh
-  refreshVolumeInfo();
+  QTimer::singleShot(1000, this, &VolumeControl::refreshVolumeInfo);
 
   connect(&menu_, &QMenu::aboutToHide, this,
           [this]() {
@@ -184,7 +184,7 @@ void VolumeControl::refreshVolumeInfo() {
   }
 
   // Get volume level
-  volumeProcess_ = new QProcess(this);
+  volumeProcess_ = new QProcess(parent_);
   connect(volumeProcess_, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),
           [this](int exitCode, QProcess::ExitStatus exitStatus) {
             if (exitCode == 0) {
@@ -206,7 +206,7 @@ void VolumeControl::refreshVolumeInfo() {
             volumeProcess_ = nullptr;
 
             // Check mute status
-            QProcess* muteProcess = new QProcess(this);
+            QProcess* muteProcess = new QProcess(parent_);
             connect(muteProcess, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),
                     [this, muteProcess](int exitCode, QProcess::ExitStatus exitStatus) {
                       if (exitCode == 0) {
@@ -227,7 +227,7 @@ void VolumeControl::refreshVolumeInfo() {
 }
 
 void VolumeControl::setVolume(int volume) {
-  QProcess* process = new QProcess(this);
+  QProcess* process = new QProcess(parent_);
   connect(process, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),
           [process](int exitCode, QProcess::ExitStatus exitStatus) {
             process->deleteLater();
@@ -242,7 +242,7 @@ void VolumeControl::onVolumeSliderChanged(int value) {
 }
 
 void VolumeControl::toggleMute() {
-  QProcess* process = new QProcess(this);
+  QProcess* process = new QProcess(parent_);
   connect(process, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),
           [process](int exitCode, QProcess::ExitStatus exitStatus) {
             process->deleteLater();
