@@ -56,7 +56,6 @@ class VolumeControl : public QObject, public IconlessDockItem {
   void setVolumeScrollStep2();
   void setVolumeScrollStep5();
   void setVolumeScrollStep10();
-  void openAudioSettings();
 
  private:
   static constexpr float kWhRatio = 1.2;

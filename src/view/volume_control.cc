@@ -291,10 +291,6 @@ void VolumeControl::createMenu() {
   scrollStep10Action_->setCheckable(true);
   scrollStep10Action_->setActionGroup(scrollStepGroup_);
 
-  // Audio settings
-  audioSettingsAction_ = contextMenu_.addAction(QIcon::fromTheme("configure"), "Audio Settings",
-                                                this, &VolumeControl::openAudioSettings);
-
   contextMenu_.addSeparator();
   parent_->addPanelSettings(&contextMenu_);
 }
@@ -317,10 +313,6 @@ void VolumeControl::setVolumeScrollStep5() {
 void VolumeControl::setVolumeScrollStep10() {
   model_->setVolumeScrollStep(10);
   model_->saveAppearanceConfig(true);
-}
-
-void VolumeControl::openAudioSettings() {
-  QProcess::startDetached("pavucontrol");
 }
 
 }  // namespace crystaldock
