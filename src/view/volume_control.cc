@@ -32,13 +32,12 @@
 
 namespace crystaldock {
 
-constexpr float VolumeControl::kWhRatio;
 constexpr int VolumeControl::kUpdateInterval;
 
 VolumeControl::VolumeControl(DockPanel* parent, MultiDockModel* model,
                             Qt::Orientation orientation, int minSize, int maxSize)
-    : IconlessDockItem(parent, model, "Volume Control", orientation, minSize, maxSize,
-                       kWhRatio),
+    : IconBasedDockItem(parent, model, "Volume Control", orientation, "audio-volume",
+                        minSize, maxSize),
       updateTimer_(new QTimer(this)),
       volumeProcess_(nullptr) {
   createMenu();
@@ -68,75 +67,60 @@ VolumeControl::~VolumeControl() {
 }
 
 void VolumeControl::draw(QPainter* painter) const {
+  if (!getIcon(size_).isNull()) {
+    IconBasedDockItem::draw(painter);
+    return;
+  }
+
+  // Fallback: draw custom speaker icon.
   const auto x = left_;
   const auto y = top_;
   const auto w = getWidth();
   const auto h = getHeight();
 
-  // Try to use system icons first
-  QString iconName;
-  if (isMuted_ || currentVolume_ == 0) {
-    iconName = "audio-volume-muted";
-  } else if (currentVolume_ < 30) {
-    iconName = "audio-volume-low";
-  } else if (currentVolume_ <= 70) {
-    iconName = "audio-volume-medium";
-  } else {
-    iconName = "audio-volume-high";
+  painter->setRenderHint(QPainter::Antialiasing);
+  painter->setPen(QPen(Qt::white, 2));
+  painter->setBrush(Qt::white);
+
+  const int centerX = x + w / 2;
+  const int centerY = y + h / 2;
+  const int speakerSize = qMin(w, h) * 0.4;
+
+  // Draw speaker cone
+  QRect speakerRect(centerX - speakerSize / 2, centerY - speakerSize / 3,
+                    speakerSize / 2, speakerSize * 2 / 3);
+  painter->fillRect(speakerRect, Qt::white);
+
+  // Draw speaker driver
+  QPolygon driver;
+  driver << QPoint(centerX, centerY - speakerSize / 3)
+         << QPoint(centerX + speakerSize / 2, centerY - speakerSize / 6)
+         << QPoint(centerX + speakerSize / 2, centerY + speakerSize / 6)
+         << QPoint(centerX, centerY + speakerSize / 3);
+  painter->drawPolygon(driver);
+
+  // Draw volume level arcs if not muted
+  if (!isMuted_ && currentVolume_ > 0) {
+    painter->setBrush(Qt::NoBrush);
+    const int arcStartX = centerX + speakerSize / 2 + 4;
+    const int numArcs = currentVolume_ > 70 ? 3 : currentVolume_ > 30 ? 2 : 1;
+
+    for (int i = 0; i < numArcs; ++i) {
+      const int arcRadius = speakerSize / 4 + i * speakerSize / 8;
+      const QRect arcRect(arcStartX - arcRadius, centerY - arcRadius,
+                         arcRadius * 2, arcRadius * 2);
+      painter->drawArc(arcRect, -30 * 16, 60 * 16);
+    }
   }
 
-  QIcon icon = QIcon::fromTheme(iconName);
-  if (!icon.isNull()) {
-    const int iconSize = qMin(w, h) * 0.8;
-    const int iconX = x + (w - iconSize) / 2;
-    const int iconY = y + (h - iconSize) / 2;
-    icon.paint(painter, iconX, iconY, iconSize, iconSize);
-  } else {
-    // Fallback: draw custom speaker icon
-    painter->setRenderHint(QPainter::Antialiasing);
-    painter->setPen(QPen(Qt::white, 2));
-    painter->setBrush(Qt::white);
-
-    const int centerX = x + w / 2;
-    const int centerY = y + h / 2;
-    const int speakerSize = qMin(w, h) * 0.4;
-
-    // Draw speaker cone
-    QRect speakerRect(centerX - speakerSize / 2, centerY - speakerSize / 3,
-                      speakerSize / 2, speakerSize * 2 / 3);
-    painter->fillRect(speakerRect, Qt::white);
-
-    // Draw speaker driver
-    QPolygon driver;
-    driver << QPoint(centerX, centerY - speakerSize / 3)
-           << QPoint(centerX + speakerSize / 2, centerY - speakerSize / 6)
-           << QPoint(centerX + speakerSize / 2, centerY + speakerSize / 6)
-           << QPoint(centerX, centerY + speakerSize / 3);
-    painter->drawPolygon(driver);
-
-    // Draw volume level arcs if not muted
-    if (!isMuted_ && currentVolume_ > 0) {
-      painter->setBrush(Qt::NoBrush);
-      const int arcStartX = centerX + speakerSize / 2 + 4;
-      const int numArcs = currentVolume_ > 70 ? 3 : currentVolume_ > 30 ? 2 : 1;
-
-      for (int i = 0; i < numArcs; ++i) {
-        const int arcRadius = speakerSize / 4 + i * speakerSize / 8;
-        const QRect arcRect(arcStartX - arcRadius, centerY - arcRadius,
-                           arcRadius * 2, arcRadius * 2);
-        painter->drawArc(arcRect, -30 * 16, 60 * 16);
-      }
-    }
-
-    // Draw mute X if muted
-    if (isMuted_) {
-      painter->setPen(QPen(Qt::red, 3));
-      const int crossSize = speakerSize / 2;
-      painter->drawLine(centerX - crossSize / 2, centerY - crossSize / 2,
-                       centerX + crossSize / 2, centerY + crossSize / 2);
-      painter->drawLine(centerX + crossSize / 2, centerY - crossSize / 2,
-                       centerX - crossSize / 2, centerY + crossSize / 2);
-    }
+  // Draw mute X if muted
+  if (isMuted_) {
+    painter->setPen(QPen(Qt::red, 3));
+    const int crossSize = speakerSize / 2;
+    painter->drawLine(centerX - crossSize / 2, centerY - crossSize / 2,
+                     centerX + crossSize / 2, centerY + crossSize / 2);
+    painter->drawLine(centerX + crossSize / 2, centerY - crossSize / 2,
+                     centerX - crossSize / 2, centerY + crossSize / 2);
   }
 }
 
@@ -195,6 +179,7 @@ void VolumeControl::refreshVolumeInfo() {
                 const int newVolume = match.captured(1).toInt();
                 if (newVolume != currentVolume_) {
                   currentVolume_ = newVolume;
+                  updateIcon();
                   volumeSlider_->blockSignals(true);
                   volumeSlider_->setValue(currentVolume_);
                   volumeSlider_->blockSignals(false);
@@ -214,6 +199,7 @@ void VolumeControl::refreshVolumeInfo() {
                         const bool newMuted = (output.toLower().contains("yes"));
                         if (newMuted != isMuted_) {
                           isMuted_ = newMuted;
+                          updateIcon();
                           muteAction_->setChecked(isMuted_);
                           parent_->update();
                         }
@@ -313,6 +299,18 @@ void VolumeControl::setVolumeScrollStep5() {
 void VolumeControl::setVolumeScrollStep10() {
   model_->setVolumeScrollStep(10);
   model_->saveAppearanceConfig(true);
+}
+
+void VolumeControl::updateIcon() {
+  if (isMuted_ || currentVolume_ == 0) {
+    setIconName("audio-volume-muted");
+  } else if (currentVolume_ < 30) {
+    setIconName("audio-volume-low");
+  } else if (currentVolume_ <= 70) {
+    setIconName("audio-volume-medium");
+  } else {
+    setIconName("audio-volume-high");
+  }
 }
 
 }  // namespace crystaldock

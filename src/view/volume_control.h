@@ -19,7 +19,7 @@
 #ifndef CRYSTALDOCK_VOLUME_CONTROL_H_
 #define CRYSTALDOCK_VOLUME_CONTROL_H_
 
-#include "iconless_dock_item.h"
+#include "icon_based_dock_item.h"
 
 #include <QAction>
 #include <QActionGroup>
@@ -34,7 +34,7 @@
 namespace crystaldock {
 
 // A volume control widget that integrates with PulseAudio.
-class VolumeControl : public QObject, public IconlessDockItem {
+class VolumeControl : public QObject, public IconBasedDockItem {
   Q_OBJECT
 
  public:
@@ -58,7 +58,6 @@ class VolumeControl : public QObject, public IconlessDockItem {
   void setVolumeScrollStep10();
 
  private:
-  static constexpr float kWhRatio = 1.2;
   static constexpr int kUpdateInterval = 1000;
 
   // Creates the context menu.
@@ -66,6 +65,8 @@ class VolumeControl : public QObject, public IconlessDockItem {
 
   // PulseAudio volume control operations.
   void setVolume(int volume);
+
+  void updateIcon();
 
   // Current volume state.
   int currentVolume_ = 50;
