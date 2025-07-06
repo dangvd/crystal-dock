@@ -361,17 +361,32 @@ void Program::createMenu() {
   }
 
   closeAction_ = menu_.addAction(QIcon::fromTheme("window-close"), QString("&Close Window"), this,
-                                 [this] { closeAllWindows(); });
+                                 [this] {
+                                   parent_->minimize();
+                                   QTimer::singleShot(DockPanel::kExecutionDelayMs, [this]{
+                                     closeAllWindows();
+                                   });
+                                 });
 
   menu_.addSeparator();
   menu_.addAction(QIcon::fromTheme("configure"), QString("Edit &Launchers"), parent_,
-                  [this] { parent_->showEditLaunchersDialog(); });
+                  [this] {
+                    parent_->minimize();
+                    QTimer::singleShot(DockPanel::kExecutionDelayMs, [this]{
+                      parent_->showEditLaunchersDialog();
+                    });
+                  });
 
   if (model_->showTaskManager(parent_->dockId())) {
     menu_.addAction(QIcon::fromTheme("configure"),
                     QString("Task Manager &Settings"),
                     parent_,
-                    [this] { parent_->showTaskManagerSettingsDialog(); });
+                    [this] {
+                      parent_->minimize();
+                      QTimer::singleShot(DockPanel::kExecutionDelayMs, [this]{
+                        parent_->showTaskManagerSettingsDialog();
+                      });
+                    });
   }
 
   menu_.addSeparator();

@@ -309,7 +309,12 @@ void ApplicationMenu::createContextMenu() {
   contextMenu_.addAction(QIcon::fromTheme("configure"),
                          QString("Application Menu &Settings"),
                          parent_,
-                         [this] { parent_->showApplicationMenuSettingsDialog(); });
+                         [this] {
+                           parent_->minimize();
+                           QTimer::singleShot(DockPanel::kExecutionDelayMs, [this]{
+                             parent_->showApplicationMenuSettingsDialog();
+                           });
+                         });
   contextMenu_.addSeparator();
   parent_->addPanelSettings(&contextMenu_);
 }

@@ -918,7 +918,12 @@ void DockPanel::createMenu() {
 
   menu_.addAction(
       QIcon::fromTheme("configure"), QString("Appearance &Settings"), this,
-      SLOT(showAppearanceSettingsDialog()));
+      [this] {
+        minimize();
+        QTimer::singleShot(DockPanel::kExecutionDelayMs, [this]{
+          showAppearanceSettingsDialog();
+        });
+      });
 
   floatingStyleAction_ = menu_.addAction(
       QString("Floating Panel"), this,
@@ -960,8 +965,13 @@ void DockPanel::createMenu() {
   menu_.addAction(QIcon::fromTheme("help-contents"),
                   QString("Online &Documentation"),
                   this, SLOT(showOnlineDocumentation()));
-  menu_.addAction(QIcon::fromTheme("help-about"), QString("A&bout Crystal Dock"),
-      this, SLOT(about()));
+  menu_.addAction(QIcon::fromTheme("help-about"), QString("A&bout Crystal Dock"), this,
+      [this] {
+        minimize();
+        QTimer::singleShot(DockPanel::kExecutionDelayMs, [this]{
+          about();
+        });
+      });
   menu_.addSeparator();
 
   QMenu* extraComponents = menu_.addMenu(QString("&Optional Features"));
