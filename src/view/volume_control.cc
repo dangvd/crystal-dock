@@ -158,7 +158,7 @@ void VolumeControl::wheelEvent(QWheelEvent* e) {
 }
 
 QString VolumeControl::getLabel() const {
-  return QString("Volume: %1%").arg(currentVolume_);
+  return isMuted_ ? "Volume: Muted" : QString("Volume: %1%").arg(currentVolume_);
 }
 
 void VolumeControl::refreshVolumeInfo() {
