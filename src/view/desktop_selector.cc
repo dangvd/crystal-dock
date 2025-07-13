@@ -126,10 +126,12 @@ void DesktopSelector::onDesktopNameChanged(
     std::string_view desktopId, std::string_view desktopName) {
   if (desktop_.id == desktopId) {
     setLabel(QString::fromStdString(std::string{desktopName}));
+    titleAction_->setText(label_);
   }
 }
 
 void DesktopSelector::createMenu() {
+  titleAction_ = menu_.addSection(label_);
   if (desktopEnv_->canSetWallpaper()) {
     menu_.addAction(
         QIcon::fromTheme("preferences-desktop-wallpaper"),

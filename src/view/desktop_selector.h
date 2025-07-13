@@ -82,6 +82,7 @@ class DesktopSelector : public QObject, public IconBasedDockItem {
   // Context (right-click) menu.
   QMenu menu_;
 
+  QAction* titleAction_;
   QAction* showDesktopNumberAction_;
 
   int desktopWidth_;

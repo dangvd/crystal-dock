@@ -902,79 +902,22 @@ void DockPanel::initUi() {
 }
 
 void DockPanel::addPanelSettings(QMenu* menu) {
-  QAction* action = menu->addMenu(&menu_);
-  action->setText("&Panel Settings");
-  action->setIcon(QIcon::fromTheme("configure"));
+  for (const auto& action : menu_.actions()) {
+    menu->addAction(action);
+  }
 }
 
 void DockPanel::createMenu() {
-  menu_.addAction(QIcon::fromTheme("list-add"), QString("&Add Panel"),
+  QMenu* panelMenu = menu_.addMenu("&Panel");
+  panelMenu->addAction(QIcon::fromTheme("list-add"), QString("&Add Panel"),
       this, SLOT(addDock()));
-  menu_.addAction(QIcon::fromTheme("edit-copy"), QString("&Clone Panel"),
+  panelMenu->addAction(QIcon::fromTheme("edit-copy"), QString("&Clone Panel"),
       this, SLOT(cloneDock()));
-  menu_.addAction(QIcon::fromTheme("edit-delete"), QString("&Remove Panel"),
+  panelMenu->addAction(QIcon::fromTheme("edit-delete"), QString("&Remove Panel"),
       this, SLOT(removeDock()));
-  menu_.addSeparator();
+  panelMenu->addSeparator();
 
-  menu_.addAction(
-      QIcon::fromTheme("configure"), QString("Appearance &Settings"), this,
-      [this] {
-        minimize();
-        QTimer::singleShot(DockPanel::kExecutionDelayMs, [this]{
-          showAppearanceSettingsDialog();
-        });
-      });
-
-  floatingStyleAction_ = menu_.addAction(
-      QString("Floating Panel"), this,
-      [this] {
-        changeFloatingStyle();
-      });
-  floatingStyleAction_->setCheckable(true);
-  floatingStyleAction_->setChecked(isFloating());
-
-  glass3DStyleAction_ = menu_.addAction(
-      QString("Style: Glass 3D"), this,
-      [this] {
-        changePanelStyle(isFloating() ? PanelStyle::Glass3D_Floating
-                                      : PanelStyle::Glass3D_NonFloating);
-      });
-  glass3DStyleAction_->setCheckable(true);
-  glass2DStyleAction_ = menu_.addAction(
-      QString("Style: Glass 2D"), this,
-      [this] {
-        changePanelStyle(isFloating() ? PanelStyle::Glass2D_Floating
-                                      : PanelStyle::Glass2D_NonFloating);
-      });
-  glass2DStyleAction_->setCheckable(true);
-  flat2DStyleAction_ = menu_.addAction(
-      QString("Style: Flat 2D"), this,
-      [this] {
-      changePanelStyle(isFloating() ? PanelStyle::Flat2D_Floating
-                                    : PanelStyle::Flat2D_NonFloating);
-      });
-  flat2DStyleAction_->setCheckable(true);
-  metal2DStyleAction_ = menu_.addAction(
-      QString("Style: Metal 2D"), this,
-      [this] {
-      changePanelStyle(isFloating() ? PanelStyle::Metal2D_Floating
-                                    : PanelStyle::Metal2D_NonFloating);
-      });
-  metal2DStyleAction_->setCheckable(true);
-
-  menu_.addAction(QIcon::fromTheme("help-contents"),
-                  QString("Online &Documentation"),
-                  this, SLOT(showOnlineDocumentation()));
-  menu_.addAction(QIcon::fromTheme("help-about"), QString("A&bout Crystal Dock"), this,
-      [this] {
-        minimize();
-        QTimer::singleShot(DockPanel::kExecutionDelayMs, [this]{
-          about();
-        });
-      });
-  menu_.addSeparator();
-
-  QMenu* extraComponents = menu_.addMenu(QString("&Optional Features"));
+  QMenu* extraComponents = panelMenu->addMenu(QString("&Optional Features"));
   applicationMenuAction_ = extraComponents->addAction(QString("Application Menu"), this,
       SLOT(toggleApplicationMenu()));
   applicationMenuAction_->setCheckable(true);
@@ -997,7 +940,7 @@ void DockPanel::createMenu() {
                                             SLOT(toggleClock()));
   clockAction_->setCheckable(true);
 
-  QMenu* position = menu_.addMenu(QString("&Position"));
+  QMenu* position = panelMenu->addMenu(QString("&Position"));
   positionTop_ = position->addAction(QString("&Top"), this,
       [this]() { updatePosition(PanelPosition::Top); });
   positionTop_->setCheckable(true);
@@ -1013,7 +956,7 @@ void DockPanel::createMenu() {
 
   const int numScreens = WindowSystem::screens().size();
   if (numScreens > 1) {
-    QMenu* screen = menu_.addMenu(QString("Scr&een"));
+    QMenu* screen = panelMenu->addMenu(QString("Scr&een"));
     for (int i = 0; i < numScreens; ++i) {
       QAction* action = screen->addAction(
           "Screen " + QString::number(i + 1), this,
@@ -1025,7 +968,7 @@ void DockPanel::createMenu() {
     }
   }
 
-  QMenu* visibility = menu_.addMenu(QString("&Visibility"));
+  QMenu* visibility = panelMenu->addMenu(QString("&Visibility"));
   visibilityAlwaysVisibleAction_ = visibility->addAction(
       QString("Always &Visible"), this,
       [this]() { updateVisibility(PanelVisibility::AlwaysVisible); });
@@ -1043,8 +986,68 @@ void DockPanel::createMenu() {
       [this]() { updateVisibility(PanelVisibility::AlwaysOnTop); });
   visibilityAlwaysOnTopAction_->setCheckable(true);
 
-  menu_.addSeparator();
-  menu_.addAction(QString("E&xit"), parent_, SLOT(exit()));
+  panelMenu->addSeparator();
+  panelMenu->addAction(QIcon::fromTheme("application-exit"), "E&xit", parent_, SLOT(exit()));
+
+  QMenu* appearanceMenu = menu_.addMenu("&Appearance");
+  appearanceMenu->addAction(
+      QIcon::fromTheme("configure"), QString("Appearance &Settings"), this,
+      [this] {
+        minimize();
+        QTimer::singleShot(DockPanel::kExecutionDelayMs, [this]{
+          showAppearanceSettingsDialog();
+        });
+      });
+  appearanceMenu->addSeparator();
+
+  floatingStyleAction_ = appearanceMenu->addAction(
+      QString("Floating Panel"), this,
+      [this] {
+        changeFloatingStyle();
+      });
+  floatingStyleAction_->setCheckable(true);
+  floatingStyleAction_->setChecked(isFloating());
+
+  glass3DStyleAction_ = appearanceMenu->addAction(
+      QString("Style: Glass 3D"), this,
+      [this] {
+        changePanelStyle(isFloating() ? PanelStyle::Glass3D_Floating
+                                      : PanelStyle::Glass3D_NonFloating);
+      });
+  glass3DStyleAction_->setCheckable(true);
+  glass2DStyleAction_ = appearanceMenu->addAction(
+      QString("Style: Glass 2D"), this,
+      [this] {
+        changePanelStyle(isFloating() ? PanelStyle::Glass2D_Floating
+                                      : PanelStyle::Glass2D_NonFloating);
+      });
+  glass2DStyleAction_->setCheckable(true);
+  flat2DStyleAction_ = appearanceMenu->addAction(
+      QString("Style: Flat 2D"), this,
+      [this] {
+      changePanelStyle(isFloating() ? PanelStyle::Flat2D_Floating
+                                    : PanelStyle::Flat2D_NonFloating);
+      });
+  flat2DStyleAction_->setCheckable(true);
+  metal2DStyleAction_ = appearanceMenu->addAction(
+      QString("Style: Metal 2D"), this,
+      [this] {
+      changePanelStyle(isFloating() ? PanelStyle::Metal2D_Floating
+                                    : PanelStyle::Metal2D_NonFloating);
+      });
+  metal2DStyleAction_->setCheckable(true);
+
+  QMenu* helpMenu = menu_.addMenu(QIcon::fromTheme("help-contents"), "&Help");
+  helpMenu->addAction(QIcon::fromTheme("help-contents"),
+                  QString("Online &Documentation"),
+                  this, SLOT(showOnlineDocumentation()));
+  helpMenu->addAction(QIcon::fromTheme("help-about"), QString("A&bout Crystal Dock"), this,
+      [this] {
+        minimize();
+        QTimer::singleShot(DockPanel::kExecutionDelayMs, [this]{
+          about();
+        });
+      });
 }
 
 void DockPanel::setPosition(PanelPosition position) {

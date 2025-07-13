@@ -151,6 +151,7 @@ void Trash::dropEvent(QDropEvent* event) {
 }
 
 void Trash::createMenu() {
+  menu_.addSection(label_);
   emptyTrashAction_ = menu_.addAction(QIcon::fromTheme("trash-empty"), "Empty Trash");
   connect(emptyTrashAction_, &QAction::triggered, this, &Trash::emptyTrash);
 

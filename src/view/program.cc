@@ -391,6 +391,7 @@ void Program::createMenu() {
 
   menu_.addSeparator();
   parent_->addPanelSettings(&menu_);
+
   updateMenu();
 }
 

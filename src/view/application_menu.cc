@@ -306,6 +306,7 @@ QIcon ApplicationMenu::loadIcon(const QString &icon) {
 }
 
 void ApplicationMenu::createContextMenu() {
+  contextMenu_.addSection("Application Menu");
   contextMenu_.addAction(QIcon::fromTheme("configure"),
                          QString("Application Menu &Settings"),
                          parent_,

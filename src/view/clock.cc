@@ -122,12 +122,24 @@ void Clock::setSmallFont() {
 }
 
 void Clock::createMenu() {
+  menu_.addSection("Clock");
   use24HourClockAction_ = menu_.addAction(
       QString("Use 24-hour Clock"), this,
       [this] {
         saveConfig();
       });
   use24HourClockAction_->setCheckable(true);
+
+  QMenu* fontFamily = menu_.addMenu(QString("Font Family"));
+  for (const auto& family : getBaseFontFamilies()) {
+    auto fontFamilyAction = fontFamily->addAction(family, this, [this, family]{
+      model_->setClockFontFamily(family);
+      model_->saveAppearanceConfig(true /* repaintOnly */);
+    });
+    fontFamilyAction->setCheckable(true);
+    fontFamilyAction->setActionGroup(&fontFamilyGroup_);
+    fontFamilyAction->setChecked(family == model_->clockFontFamily());
+  }
 
   QMenu* fontSize = menu_.addMenu(QString("Font Size"));
   largeFontAction_ = fontSize->addAction(QString("Large Font"),
@@ -142,17 +154,6 @@ void Clock::createMenu() {
                                          this,
                                          SLOT(setSmallFont()));
   smallFontAction_->setCheckable(true);
-
-  QMenu* fontFamily = menu_.addMenu(QString("Font Family"));
-  for (const auto& family : getBaseFontFamilies()) {
-    auto fontFamilyAction = fontFamily->addAction(family, this, [this, family]{
-      model_->setClockFontFamily(family);
-      model_->saveAppearanceConfig(true /* repaintOnly */);
-    });
-    fontFamilyAction->setCheckable(true);
-    fontFamilyAction->setActionGroup(&fontFamilyGroup_);
-    fontFamilyAction->setChecked(family == model_->clockFontFamily());
-  }
 
   menu_.addSeparator();
   parent_->addPanelSettings(&menu_);

@@ -255,9 +255,10 @@ void VolumeControl::createMenu() {
   muteAction_->setCheckable(true);
 
   // Context menu
+  contextMenu_.addSection("Volume Control");
 
   // Scroll step submenu
-  scrollStepMenu_ = contextMenu_.addMenu("Scroll Step");
+  scrollStepMenu_ = contextMenu_.addMenu("Volume Scroll Step");
   scrollStepGroup_ = new QActionGroup(this);
 
   scrollStep1Action_ = scrollStepMenu_->addAction("1% (Fine)", this, &VolumeControl::setVolumeScrollStep1);
