@@ -21,6 +21,8 @@
 
 #include "icon_based_dock_item.h"
 
+#include <QMessageBox>
+
 namespace crystaldock {
 
 enum class VersionStatus { Alpha, Beta, OutOfDate, UpToDate };
@@ -33,13 +35,19 @@ class VersionChecker : public QObject, public IconBasedDockItem {
   virtual ~VersionChecker() = default;
 
   bool beforeTask(const QString& program) override { return false; }
-  void mousePressEvent(QMouseEvent* e) override {}
+  void mousePressEvent(QMouseEvent* e) override;
 
  private:
   void checkVersion();
   void setVersionStatus(VersionStatus status);
+  void createMenu();
+  void showVersionInfo();
 
   VersionStatus status_;
+  QMenu menu_;
+  QTimer* timer_ = nullptr;
+  uint32_t timerInterval_ = 60 * 60 * 1000;  // hourly.
+  QMessageBox infoDialog_;
 };
 
 }  // namespace crystaldock

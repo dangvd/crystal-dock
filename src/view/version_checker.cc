@@ -18,6 +18,7 @@
 
 #include "version_checker.h"
 
+#include <QActionGroup>
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QOverload>
@@ -31,7 +32,11 @@ namespace crystaldock {
 VersionChecker::VersionChecker(DockPanel* parent, MultiDockModel* model,
                                Qt::Orientation orientation, int minSize, int maxSize)
     : IconBasedDockItem(parent, model, "Version Checker", orientation, "",
-                        minSize, maxSize) {
+                        minSize, maxSize),
+      infoDialog_(QMessageBox::Information, "Version Information",
+                  QString{}, QMessageBox::Ok, parent, Qt::Tool) {
+  createMenu();
+
   const QString version = DockPanel::kVersion;
   if (version.toLower().contains("alpha")) {
     setVersionStatus(VersionStatus::Alpha);
@@ -43,9 +48,25 @@ VersionChecker::VersionChecker(DockPanel* parent, MultiDockModel* model,
   if (status_ == VersionStatus::UpToDate) {
     // checks version now and every hour.
     QTimer::singleShot(1000, this, &VersionChecker::checkVersion);
-    QTimer *timer = new QTimer(this);
-    connect(timer, &QTimer::timeout, this, &VersionChecker::checkVersion);
-    timer->start(60 * 60 * 1000);
+    timer_ = new QTimer(this);
+    connect(timer_, &QTimer::timeout, this, &VersionChecker::checkVersion);
+    timer_->start(timerInterval_);
+  }
+
+  connect(&menu_, &QMenu::aboutToHide, this,
+          [this]() {
+            parent_->setShowingPopup(false);
+          });
+}
+
+void VersionChecker::mousePressEvent(QMouseEvent* e) {
+  if (e->button() == Qt::LeftButton) {
+    parent_->minimize();
+    QTimer::singleShot(DockPanel::kExecutionDelayMs, [this]{
+      showVersionInfo();
+    });
+  } else if (e->button() == Qt::RightButton) {
+    showPopupMenu(&menu_);
   }
 }
 
@@ -87,20 +108,62 @@ void VersionChecker::setVersionStatus(VersionStatus status) {
   case VersionStatus::Alpha:
     setIconName("dialog-warning");
     setLabel("Warning: alpha version");
+    infoDialog_.setIcon(QMessageBox::Warning);
+    infoDialog_.setText(QString("<p>Warning: You are using an alpha version of Crystal Dock. Please use the latest release instead:")
+                        + "<p><a href=\"https://github.com/dangvd/crystal-dock/releases\">https://github.com/dangvd/crystal-dock/releases</a>");
     break;
   case VersionStatus::Beta:
     setIconName("dialog-warning");
     setLabel("Warning: beta version");
+    infoDialog_.setIcon(QMessageBox::Warning);
+    infoDialog_.setText(QString("<p>Warning: You are using a beta version of Crystal Dock. Please use the latest release instead:")
+                        + "<p><a href=\"https://github.com/dangvd/crystal-dock/releases\">https://github.com/dangvd/crystal-dock/releases</a>");
     break;
   case VersionStatus::OutOfDate:
     setIconName("dialog-warning");
     setLabel("Warning: out-of-date version");
+    infoDialog_.setIcon(QMessageBox::Warning);
+    infoDialog_.setText(QString("<p>Warning: You are using an out-of-date version of Crystal Dock. Please use the latest release instead:")
+                        + "<p><a href=\"https://github.com/dangvd/crystal-dock/releases\">https://github.com/dangvd/crystal-dock/releases</a>");
     break;
   case VersionStatus::UpToDate:
     setIconName("dialog-ok");
     setLabel("Up-to-date version");
+    infoDialog_.setIcon(QMessageBox::Information);
+    infoDialog_.setText(QString("<p>You are using the latest release of Crystal Dock."));
     break;
   }
+}
+
+void VersionChecker::createMenu() {
+  menu_.addSection("Version Checker");
+  auto* frequencyMenu = menu_.addMenu("Checking Frequency");
+  auto* frequencyGroup = new QActionGroup(this);
+  auto* hourlyAction = frequencyMenu->addAction("Hourly", this, [this](){
+    if (status_ == VersionStatus::UpToDate) {
+      timerInterval_ = 60 * 60 * 1000;
+      timer_->start(timerInterval_);
+    }
+  });
+  hourlyAction->setCheckable(true);
+  hourlyAction->setActionGroup(frequencyGroup);
+  hourlyAction->setChecked(true);
+
+  auto* dailyAction = frequencyMenu->addAction("Daily", this, [this](){
+    if (status_ == VersionStatus::UpToDate) {
+      timerInterval_ = 24 * 60 * 60 * 1000;
+      timer_->start(timerInterval_);
+    }
+  });
+  dailyAction->setCheckable(true);
+  dailyAction->setActionGroup(frequencyGroup);
+
+  menu_.addSeparator();
+  parent_->addPanelSettings(&menu_);
+}
+
+void VersionChecker::showVersionInfo() {
+  infoDialog_.exec();
 }
 
 }
