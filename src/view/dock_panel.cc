@@ -1208,7 +1208,7 @@ bool DockPanel::addTask(const WindowInfo* task) {
 
   // Adds a new program.
   auto app = model_->findApplication(task->appId);
-  if (!app) {
+  if (!app && !task->appId.empty()) {
     std::cerr << "Could not find application with id: " << task->appId
               << ". The window icon will have limited functionalities." << std::endl;
   }
