@@ -211,9 +211,9 @@ void VolumeControl::setVolume(int volume) {
           [process](int exitCode, QProcess::ExitStatus exitStatus) {
             process->deleteLater();
           });
-  process->start("pactl", QStringList() << "set-sink-volume" << "@DEFAULT_SINK@" << QString("%1%").arg(volume));
   currentVolume_ = volume;
   updateIcon();
+  process->start("pactl", QStringList() << "set-sink-volume" << "@DEFAULT_SINK@" << QString("%1%").arg(volume));
 }
 
 void VolumeControl::onVolumeSliderChanged(int value) {
@@ -227,6 +227,8 @@ void VolumeControl::toggleMute() {
           [process](int exitCode, QProcess::ExitStatus exitStatus) {
             process->deleteLater();
           });
+  isMuted_ = !isMuted_;
+  updateIcon();
   process->start("pactl", QStringList() << "set-sink-mute" << "@DEFAULT_SINK@" << "toggle");
 }
 
