@@ -148,13 +148,6 @@ void VolumeControl::wheelEvent(QWheelEvent* e) {
   volumeSlider_->blockSignals(true);
   volumeSlider_->setValue(newVolume);
   volumeSlider_->blockSignals(false);
-
-  // Update internal state immediately for responsive UI
-  currentVolume_ = newVolume;
-  setVolume(newVolume);
-
-  // Trigger repaint
-  parent_->update();
 }
 
 QString VolumeControl::getLabel() const {
@@ -219,10 +212,11 @@ void VolumeControl::setVolume(int volume) {
             process->deleteLater();
           });
   process->start("pactl", QStringList() << "set-sink-volume" << "@DEFAULT_SINK@" << QString("%1%").arg(volume));
+  currentVolume_ = volume;
+  updateIcon();
 }
 
 void VolumeControl::onVolumeSliderChanged(int value) {
-  currentVolume_ = value;
   setVolume(value);
   parent_->update();
 }
