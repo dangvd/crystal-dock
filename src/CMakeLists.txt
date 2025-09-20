@@ -120,7 +120,7 @@ set(SRCS
     view/wallpaper_settings_dialog.ui)
 add_library(crystal-dock_lib STATIC ${SRCS})
 
-set(LIBS Qt6::DBus Qt6::GuiPrivate Qt6::Widgets Wayland::Client LayerShellQt::Interface stdc++fs)
+set(LIBS Qt6::DBus Qt6::GuiPrivate Qt6::Widgets Wayland::Client LayerShellQt::Interface)
 target_link_libraries(crystal-dock_lib ${LIBS})
 
 add_executable(crystal-dock main.cc)
