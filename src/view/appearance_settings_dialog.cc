@@ -44,6 +44,8 @@ AppearanceSettingsDialog::AppearanceSettingsDialog(QWidget* parent,
 
   connect(ui->buttonBox, SIGNAL(clicked(QAbstractButton*)),
       this, SLOT(buttonClicked(QAbstractButton*)));
+  connect(ui->enableZooming, &QCheckBox::checkStateChanged,
+          this, &AppearanceSettingsDialog::onEnableZoomingChanged);
 
   loadData();
 }
@@ -63,6 +65,12 @@ void AppearanceSettingsDialog::buttonClicked(QAbstractButton* button) {
     saveData();
   } else if (role == QDialogButtonBox::ResetRole) {
     resetData();
+  }
+}
+
+void AppearanceSettingsDialog::onEnableZoomingChanged() {
+  if (!ui->enableZooming->isChecked()) {
+    ui->maxSize->setValue(ui->minSize->value());
   }
 }
 
@@ -93,6 +101,8 @@ void AppearanceSettingsDialog::loadData() {
   ui->floatingMargin->setValue(model_->floatingMargin());
   ui->floatingMargin->setEnabled(model_->isFloating());
   ui->bouncingLauncherIcon->setChecked(model_->bouncingLauncherIcon());
+  ui->enableZooming->setChecked(model_->minIconSize() < model_->maxIconSize());
+  ui->zoomingAnimationSpeed->setValue(model_->zoomingAnimationSpeed());
 }
 
 void AppearanceSettingsDialog::resetData() {
@@ -119,6 +129,8 @@ void AppearanceSettingsDialog::resetData() {
   ui->tooltipFontSize->setValue(kDefaultTooltipFontSize);
   ui->floatingMargin->setValue(kDefaultFloatingMargin);
   ui->bouncingLauncherIcon->setChecked(kDefaultBouncingLauncherIcon);
+  ui->enableZooming->setChecked(kDefaultMinSize < kDefaultMaxSize);
+  ui->zoomingAnimationSpeed->setValue(kDefaultZoomingAnimationSpeed);
 }
 
 void AppearanceSettingsDialog::saveData() {
@@ -153,6 +165,7 @@ void AppearanceSettingsDialog::saveData() {
   model_->setTooltipFontSize(ui->tooltipFontSize->value());
   model_->setFloatingMargin(ui->floatingMargin->value());
   model_->setBouncingLauncherIcon(ui->bouncingLauncherIcon->isChecked());
+  model_->setZoomingAnimationSpeed(ui->zoomingAnimationSpeed->value());
   model_->saveAppearanceConfig();
 }
 

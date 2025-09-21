@@ -1339,7 +1339,6 @@ void DockPanel::initLayoutVars() {
   floatingMargin_ = model_->floatingMargin();
   parabolicMaxX_ = std::round(2.5 * (minSize_ + itemSpacing_));
   numAnimationSteps_ = 14;
-  animationSpeed_ = 16;
 
   QFont font;
   font.setPointSize(model_->tooltipFontSize());
@@ -1476,7 +1475,7 @@ void DockPanel::updateLayout() {
 
     currentAnimationStep_ = 0;
     isAnimationActive_ = true;
-    animationTimer_->start(32 - animationSpeed_);
+    animationTimer_->start(32 - model_->zoomingAnimationSpeed());
   } else {
     WindowSystem::setLayer(this,
                            visibility_ == PanelVisibility::AlwaysVisible
@@ -1596,7 +1595,7 @@ void DockPanel::updateLayout(int x, int y) {
     currentAnimationStep_ = 0;
     isAnimationActive_ = true;
     isEntering_ = false;
-    animationTimer_->start(32 - animationSpeed_);
+    animationTimer_->start(32 - model_->zoomingAnimationSpeed());
   }
 
   mouseX_ = x;

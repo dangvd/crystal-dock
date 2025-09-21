@@ -42,6 +42,7 @@ class AppearanceSettingsDialog : public QDialog {
  public slots:
   void accept() override;
   void buttonClicked(QAbstractButton* button);
+  void onEnableZoomingChanged();
 
  private:
   void loadData();

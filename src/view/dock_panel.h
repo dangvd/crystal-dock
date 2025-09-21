@@ -426,8 +426,6 @@ class DockPanel : public QWidget {
 
   // Number of animation steps when zooming in and out.
   int numAnimationSteps_;
-  // Animation speed, between 0 and 31. The higher the faster.
-  int animationSpeed_;
 
   Qt::Orientation orientation_;
 
