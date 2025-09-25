@@ -57,6 +57,8 @@ class AppearanceSettingsDialog : public QDialog {
 
   MultiDockModel* model_;
 
+  int prevMaxIconSize_ = 0;
+
   friend class AppearanceSettingsDialogTest;
 };
 

@@ -32,15 +32,15 @@ AppearanceSettingsDialog::AppearanceSettingsDialog(QWidget* parent,
   setWindowFlag(Qt::Tool);
 
   backgroundColor_ = new ColorButton(this);
-  backgroundColor_->setGeometry(QRect(260, 150, 80, 40));
+  backgroundColor_->setGeometry(QRect(260, 210, 80, 40));
 
   borderColor_ = new ColorButton(this);
-  borderColor_->setGeometry(QRect(700, 150, 80, 40));
+  borderColor_->setGeometry(QRect(700, 210, 80, 40));
 
   activeIndicatorColor_ = new ColorButton(this);
-  activeIndicatorColor_->setGeometry(QRect(260, 210, 80, 40));
+  activeIndicatorColor_->setGeometry(QRect(260, 270, 80, 40));
   inactiveIndicatorColor_ = new ColorButton(this);
-  inactiveIndicatorColor_->setGeometry(QRect(700, 210, 80, 40));
+  inactiveIndicatorColor_->setGeometry(QRect(700, 270, 80, 40));
 
   connect(ui->buttonBox, SIGNAL(clicked(QAbstractButton*)),
       this, SLOT(buttonClicked(QAbstractButton*)));
@@ -69,14 +69,25 @@ void AppearanceSettingsDialog::buttonClicked(QAbstractButton* button) {
 }
 
 void AppearanceSettingsDialog::onEnableZoomingChanged() {
-  if (!ui->enableZooming->isChecked()) {
+  const auto enableZooming = ui->enableZooming->isChecked();
+  ui->maxSize->setEnabled(enableZooming);
+  if (enableZooming) {
+    ui->maxSize->setValue(prevMaxIconSize_);
+  } else {
+    prevMaxIconSize_ = ui->maxSize->value();
     ui->maxSize->setValue(ui->minSize->value());
   }
 }
 
 void AppearanceSettingsDialog::loadData() {
+  const auto enableZooming = model_->minIconSize() < model_->maxIconSize();
+  ui->enableZooming->setChecked(enableZooming);
+  ui->zoomingAnimationSpeed->setValue(model_->zoomingAnimationSpeed());
   ui->minSize->setValue(model_->minIconSize());
   ui->maxSize->setValue(model_->maxIconSize());
+  ui->maxSize->setEnabled(enableZooming);
+  prevMaxIconSize_ = model_->maxIconSize();
+
   ui->spacingFactor->setValue(model_->spacingFactor());
   QColor backgroundColor = model_->isGlass()
       ? model_->backgroundColor()
@@ -101,13 +112,16 @@ void AppearanceSettingsDialog::loadData() {
   ui->floatingMargin->setValue(model_->floatingMargin());
   ui->floatingMargin->setEnabled(model_->isFloating());
   ui->bouncingLauncherIcon->setChecked(model_->bouncingLauncherIcon());
-  ui->enableZooming->setChecked(model_->minIconSize() < model_->maxIconSize());
-  ui->zoomingAnimationSpeed->setValue(model_->zoomingAnimationSpeed());
 }
 
 void AppearanceSettingsDialog::resetData() {
+  const auto enableZooming = kDefaultMinSize < kDefaultMaxSize;
+  ui->enableZooming->setChecked(enableZooming);
+  ui->zoomingAnimationSpeed->setValue(kDefaultZoomingAnimationSpeed);
   ui->minSize->setValue(kDefaultMinSize);
   ui->maxSize->setValue(kDefaultMaxSize);
+  ui->maxSize->setEnabled(enableZooming);
+
   ui->spacingFactor->setValue(kDefaultSpacingFactor);
   backgroundColor_->setColor(QColor(
       model_->isGlass() ? kDefaultBackgroundColor
@@ -129,13 +143,13 @@ void AppearanceSettingsDialog::resetData() {
   ui->tooltipFontSize->setValue(kDefaultTooltipFontSize);
   ui->floatingMargin->setValue(kDefaultFloatingMargin);
   ui->bouncingLauncherIcon->setChecked(kDefaultBouncingLauncherIcon);
-  ui->enableZooming->setChecked(kDefaultMinSize < kDefaultMaxSize);
-  ui->zoomingAnimationSpeed->setValue(kDefaultZoomingAnimationSpeed);
 }
 
 void AppearanceSettingsDialog::saveData() {
   model_->setMinIconSize(ui->minSize->value());
   model_->setMaxIconSize(ui->maxSize->value());
+  model_->setZoomingAnimationSpeed(ui->zoomingAnimationSpeed->value());
+
   model_->setSpacingFactor(ui->spacingFactor->value());
   QColor backgroundColor(backgroundColor_->color());
   backgroundColor.setAlphaF(transparencyPercentToAlphaF(ui->backgroundTransparency->value()));
@@ -165,7 +179,6 @@ void AppearanceSettingsDialog::saveData() {
   model_->setTooltipFontSize(ui->tooltipFontSize->value());
   model_->setFloatingMargin(ui->floatingMargin->value());
   model_->setBouncingLauncherIcon(ui->bouncingLauncherIcon->isChecked());
-  model_->setZoomingAnimationSpeed(ui->zoomingAnimationSpeed->value());
   model_->saveAppearanceConfig();
 }
 
