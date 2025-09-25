@@ -16,12 +16,14 @@
  * along with Crystal Dock.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <filesystem>
 #include <iostream>
 
 #include <QApplication>
 #include <QDir>
 #include <QIcon>
 #include <QSharedMemory>
+#include <QStringList>
 
 #include <model/multi_dock_model.h>
 #include <view/multi_dock_view.h>
@@ -49,7 +51,24 @@ int main(int argc, char** argv) {
 
   QApplication::setWindowIcon(QIcon::fromTheme("user-desktop"));
 
-  crystaldock::MultiDockModel model(QDir::homePath() + "/.crystal-dock-2");
+  // Copies the dock config from XDG_CONFIG_DIRS.
+  // This is mainly for package managers to pre-configure the dock.
+  const auto configDir = QDir::homePath() + "/.crystal-dock-2";
+  if (!QDir::home().exists(configDir)) {
+    QStringList xdgConfigDirs =
+        qEnvironmentVariable("XDG_CONFIG_DIRS").split(":", Qt::SkipEmptyParts);
+    for (const auto& xdgConfigDir : xdgConfigDirs) {
+      const auto srcDir = xdgConfigDir + "/.crystal-dock-2";
+      if (QDir::home().exists(srcDir)) {
+        std::filesystem::copy(srcDir.toStdString(), configDir.toStdString(),
+            std::filesystem::copy_options::recursive);
+        std::cout << "Copied config from " << srcDir.toStdString() << " to "
+                  << configDir.toStdString() << std::endl;
+      }
+    }
+  }
+
+  crystaldock::MultiDockModel model(configDir);
   crystaldock::MultiDockView view(&model);
 
   view.show();
