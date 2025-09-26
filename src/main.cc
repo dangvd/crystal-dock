@@ -28,10 +28,9 @@
 #include <model/multi_dock_model.h>
 #include <view/multi_dock_view.h>
 
-int main(int argc, char** argv) {
-  QApplication app(argc, argv);
+namespace {
 
-  // Forces single-instance.
+bool checkSingleInstance() {
   QSharedMemory sharedMemory;
   sharedMemory.setKey("crystal-dock-key");
   if (!sharedMemory.create(1 /*byte*/)) {
@@ -40,20 +39,15 @@ int main(int argc, char** argv) {
     sharedMemory.detach();
     // Now try again.
     if (!sharedMemory.create(1 /*byte*/)) {
-      std::cerr << "Another instance is already running." << std::endl;
-      return -1;
+      return false;
     }
   }
+  return true;
+}
 
-  if (!crystaldock::MultiDockView::checkPlatformSupported(app)) {
-    return -1;
-  }
-
-  QApplication::setWindowIcon(QIcon::fromTheme("user-desktop"));
-
-  // Copies the dock config from XDG_CONFIG_DIRS.
+void maybeCopyConfigOnFirstRun(const QString& configDir) {
+  // On the first run, copies the dock config from XDG_CONFIG_DIRS if it exists.
   // This is mainly for package managers to pre-configure the dock.
-  const auto configDir = QDir::homePath() + "/.crystal-dock-2";
   if (!QDir::home().exists(configDir)) {
     QStringList xdgConfigDirs =
         qEnvironmentVariable("XDG_CONFIG_DIRS").split(":", Qt::SkipEmptyParts);
@@ -64,10 +58,30 @@ int main(int argc, char** argv) {
             std::filesystem::copy_options::recursive);
         std::cout << "Copied config from " << srcDir.toStdString() << " to "
                   << configDir.toStdString() << std::endl;
+        return;
       }
     }
   }
+}
 
+}
+
+int main(int argc, char** argv) {
+  QApplication app(argc, argv);
+
+  if (!checkSingleInstance()) {
+    std::cerr << "Another instance is already running." << std::endl;
+    return -1;
+  }
+
+  if (!crystaldock::MultiDockView::checkPlatformSupported(app)) {
+    return -1;
+  }
+
+  QApplication::setWindowIcon(QIcon::fromTheme("user-desktop"));
+
+  const auto configDir = QDir::homePath() + "/.crystal-dock-2";
+  maybeCopyConfigOnFirstRun(configDir);
   crystaldock::MultiDockModel model(configDir);
   crystaldock::MultiDockView view(&model);
 
