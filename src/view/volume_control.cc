@@ -172,11 +172,7 @@ void VolumeControl::refreshVolumeInfo() {
                 const int newVolume = match.captured(1).toInt();
                 if (newVolume != currentVolume_) {
                   currentVolume_ = newVolume;
-                  updateIcon();
-                  volumeSlider_->blockSignals(true);
-                  volumeSlider_->setValue(currentVolume_);
-                  volumeSlider_->blockSignals(false);
-                  parent_->update();
+                  updateUi();
                 }
               }
             }
@@ -192,9 +188,7 @@ void VolumeControl::refreshVolumeInfo() {
                         const bool newMuted = (output.toLower().contains("yes"));
                         if (newMuted != isMuted_) {
                           isMuted_ = newMuted;
-                          updateIcon();
-                          muteAction_->setChecked(isMuted_);
-                          parent_->update();
+                          updateUi();
                         }
                       }
                       muteProcess->deleteLater();
@@ -212,7 +206,7 @@ void VolumeControl::setVolume(int volume) {
             process->deleteLater();
           });
   currentVolume_ = volume;
-  updateIcon();
+  updateUi();
   process->start("pactl", QStringList() << "set-sink-volume" << "@DEFAULT_SINK@" << QString("%1%").arg(volume));
 }
 
@@ -228,7 +222,7 @@ void VolumeControl::toggleMute() {
             process->deleteLater();
           });
   isMuted_ = !isMuted_;
-  updateIcon();
+  updateUi();
   process->start("pactl", QStringList() << "set-sink-mute" << "@DEFAULT_SINK@" << "toggle");
 }
 
@@ -298,7 +292,12 @@ void VolumeControl::setVolumeScrollStep10() {
   model_->saveAppearanceConfig(true);
 }
 
-void VolumeControl::updateIcon() {
+void VolumeControl::updateUi() {
+  volumeSlider_->blockSignals(true);
+  volumeSlider_->setValue(currentVolume_);
+  volumeSlider_->blockSignals(false);
+  muteAction_->setChecked(isMuted_);
+
   if (isMuted_ || currentVolume_ == 0) {
     setIconName("audio-volume-muted");
   } else if (currentVolume_ < 30) {
@@ -308,6 +307,7 @@ void VolumeControl::updateIcon() {
   } else {
     setIconName("audio-volume-high");
   }
+  parent_->update();
 }
 
 }  // namespace crystaldock

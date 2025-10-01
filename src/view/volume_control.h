@@ -66,7 +66,7 @@ class VolumeControl : public QObject, public IconBasedDockItem {
   // PulseAudio volume control operations.
   void setVolume(int volume);
 
-  void updateIcon();
+  void updateUi();
 
   // Current volume state.
   int currentVolume_ = 50;
