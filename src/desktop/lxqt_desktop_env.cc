@@ -63,7 +63,7 @@ std::vector<Category> LxqtDesktopEnv::getApplicationMenuSystemCategories() const
 
 std::vector<QString> LxqtDesktopEnv::getDefaultLaunchers() const {
   return { kShowDesktopId, defaultWebBrowser(), "qterminal", "pcmanfm-qt",
-           kSeparatorId, "lxqt-config", kLockScreenId, kLogOutId };
+           kSeparatorId, "lxqt-config", kLockScreenId, kLogOutId, kSeparatorId };
 }
 
 bool LxqtDesktopEnv::setWallpaper(int screen, const QString& wallpaper) {

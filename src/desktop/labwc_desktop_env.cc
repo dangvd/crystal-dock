@@ -49,7 +49,7 @@ std::vector<Category> LabwcDesktopEnv::getApplicationMenuSystemCategories() cons
 
 std::vector<QString> LabwcDesktopEnv::getDefaultLaunchers() const {
   return { kShowDesktopId, defaultWebBrowser(), "alacritty",
-           kSeparatorId, kLockScreenId, kLogOutId };
+           kSeparatorId, kLockScreenId, kLogOutId, kSeparatorId };
 }
 
 }  // namespace crystaldock

@@ -77,7 +77,7 @@ std::vector<Category> KdeDesktopEnv::getApplicationMenuSystemCategories() const 
 
 std::vector<QString> KdeDesktopEnv::getDefaultLaunchers() const {
   return { kShowDesktopId, defaultWebBrowser(), "org.kde.konsole", "org.kde.dolphin",
-           kSeparatorId, "systemsettings", kLockScreenId, kLogOutId };
+           kSeparatorId, "systemsettings", kLockScreenId, kLogOutId, kSeparatorId };
 }
 
 bool KdeDesktopEnv::setWallpaper(int screen, const QString& wallpaper) {

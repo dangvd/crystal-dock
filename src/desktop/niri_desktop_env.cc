@@ -49,7 +49,7 @@ std::vector<Category> NiriDesktopEnv::getApplicationMenuSystemCategories() const
 
 std::vector<QString> NiriDesktopEnv::getDefaultLaunchers() const {
   return { defaultWebBrowser(), "alacritty",
-           kSeparatorId, kLockScreenId, kLogOutId };
+           kSeparatorId, kLockScreenId, kLogOutId, kSeparatorId };
 }
 
 }  // namespace crystaldock

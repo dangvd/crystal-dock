@@ -42,7 +42,7 @@ std::vector<Category> WayfireDesktopEnv::getApplicationMenuSystemCategories() co
 
 std::vector<QString> WayfireDesktopEnv::getDefaultLaunchers() const {
   return { kShowDesktopId, defaultWebBrowser(), "alacritty",
-           kSeparatorId, kLockScreenId };
+           kSeparatorId, kLockScreenId, kSeparatorId };
 }
 
 }  // namespace crystaldock

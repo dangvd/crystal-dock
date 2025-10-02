@@ -49,7 +49,7 @@ std::vector<Category> HyprlandDesktopEnv::getApplicationMenuSystemCategories() c
 
 std::vector<QString> HyprlandDesktopEnv::getDefaultLaunchers() const {
   return { defaultWebBrowser(), "kitty",
-           kSeparatorId, kLockScreenId, kLogOutId };
+           kSeparatorId, kLockScreenId, kLogOutId, kSeparatorId };
 }
 
 }  // namespace crystaldock
