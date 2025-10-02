@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>540</width>
-    <height>490</height>
+    <height>610</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,7 +17,7 @@
    <property name="geometry">
     <rect>
      <x>70</x>
-     <y>430</y>
+     <y>550</y>
      <width>400</width>
      <height>32</height>
     </rect>
@@ -36,7 +36,7 @@
    <property name="geometry">
     <rect>
      <x>90</x>
-     <y>320</y>
+     <y>440</y>
      <width>210</width>
      <height>23</height>
     </rect>
@@ -49,7 +49,7 @@
    <property name="geometry">
     <rect>
      <x>320</x>
-     <y>310</y>
+     <y>430</y>
      <width>131</width>
      <height>40</height>
     </rect>
@@ -82,7 +82,7 @@
    <property name="geometry">
     <rect>
      <x>90</x>
-     <y>360</y>
+     <y>480</y>
      <width>210</width>
      <height>23</height>
     </rect>
@@ -95,7 +95,7 @@
    <property name="geometry">
     <rect>
      <x>320</x>
-     <y>355</y>
+     <y>475</y>
      <width>131</width>
      <height>40</height>
     </rect>
@@ -120,7 +120,7 @@
      <x>120</x>
      <y>100</y>
      <width>300</width>
-     <height>29</height>
+     <height>30</height>
     </rect>
    </property>
    <property name="text">
@@ -136,7 +136,7 @@
      <x>120</x>
      <y>140</y>
      <width>300</width>
-     <height>29</height>
+     <height>30</height>
     </rect>
    </property>
    <property name="text">
@@ -163,9 +163,9 @@
    <property name="geometry">
     <rect>
      <x>120</x>
-     <y>220</y>
+     <y>340</y>
      <width>300</width>
-     <height>29</height>
+     <height>30</height>
     </rect>
    </property>
    <property name="text">
@@ -195,7 +195,7 @@
    <property name="geometry">
     <rect>
      <x>90</x>
-     <y>280</y>
+     <y>400</y>
      <width>210</width>
      <height>26</height>
     </rect>
@@ -208,7 +208,7 @@
    <property name="geometry">
     <rect>
      <x>320</x>
-     <y>265</y>
+     <y>385</y>
      <width>131</width>
      <height>40</height>
     </rect>
@@ -233,6 +233,54 @@
      <string>Metal 2D</string>
     </property>
    </item>
+  </widget>
+  <widget class="QCheckBox" name="showTrash">
+   <property name="geometry">
+    <rect>
+     <x>120</x>
+     <y>220</y>
+     <width>300</width>
+     <height>30</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Trash</string>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+  </widget>
+  <widget class="QCheckBox" name="showVolumeControl">
+   <property name="geometry">
+    <rect>
+     <x>120</x>
+     <y>260</y>
+     <width>300</width>
+     <height>30</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Volume Control</string>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+  </widget>
+  <widget class="QCheckBox" name="showVersionChecker">
+   <property name="geometry">
+    <rect>
+     <x>120</x>
+     <y>300</y>
+     <width>300</width>
+     <height>30</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Version Checker</string>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
   </widget>
  </widget>
  <resources/>
