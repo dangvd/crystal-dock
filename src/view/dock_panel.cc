@@ -1759,12 +1759,13 @@ void DockPanel::updateVisibility(PanelVisibility visibility) {
 }
 
 void DockPanel::setAutoHide(bool on) {
+  if (isHidden_ != on) {
+    isHidden_ = on;
+  }
+
   if (!WindowSystem::hasAutoHideManager()) {
-    if (intellihide() && isHidden_ != on) {
-      isHidden_ = on;
-      repaint();
-      setMask();
-    }
+    repaint();
+    setMask();
     return;
   }
 
