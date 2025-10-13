@@ -21,6 +21,7 @@
 #include <QApplication>
 #include <QColor>
 #include <QIcon>
+#include <QMessageBox>
 #include <QPainter>
 #include <QPainterPath>
 #include <QRegularExpression>
@@ -28,6 +29,7 @@
 #include <QtMath>
 
 #include "dock_panel.h"
+#include <utils/command_utils.h>
 #include <utils/draw_utils.h>
 
 namespace crystaldock {
@@ -126,6 +128,11 @@ void VolumeControl::draw(QPainter* painter) const {
 
 void VolumeControl::mousePressEvent(QMouseEvent* e) {
   if (e->button() == Qt::LeftButton) {
+    if (commandExists({kCommand}).isEmpty()) {
+      QMessageBox::warning(parent_, "Command not found",
+          "Command 'pactl' not found. This is required by the Volume Control component.");
+      return;
+    }
     showPopupMenu(&menu_);
   } else if (e->button() == Qt::MiddleButton) {
     toggleMute();
@@ -193,10 +200,10 @@ void VolumeControl::refreshVolumeInfo() {
                       }
                       muteProcess->deleteLater();
                     });
-            muteProcess->start("pactl", QStringList() << "get-sink-mute" << "@DEFAULT_SINK@");
+            muteProcess->start(kCommand, QStringList() << "get-sink-mute" << "@DEFAULT_SINK@");
           });
 
-  volumeProcess_->start("pactl", QStringList() << "get-sink-volume" << "@DEFAULT_SINK@");
+  volumeProcess_->start(kCommand, QStringList() << "get-sink-volume" << "@DEFAULT_SINK@");
 }
 
 void VolumeControl::setVolume(int volume) {
@@ -207,7 +214,7 @@ void VolumeControl::setVolume(int volume) {
           });
   currentVolume_ = volume;
   updateUi();
-  process->start("pactl", QStringList() << "set-sink-volume" << "@DEFAULT_SINK@" << QString("%1%").arg(volume));
+  process->start(kCommand, QStringList() << "set-sink-volume" << "@DEFAULT_SINK@" << QString("%1%").arg(volume));
 }
 
 void VolumeControl::onVolumeSliderChanged(int value) {
@@ -223,7 +230,7 @@ void VolumeControl::toggleMute() {
           });
   isMuted_ = !isMuted_;
   updateUi();
-  process->start("pactl", QStringList() << "set-sink-mute" << "@DEFAULT_SINK@" << "toggle");
+  process->start(kCommand, QStringList() << "set-sink-mute" << "@DEFAULT_SINK@" << "toggle");
 }
 
 void VolumeControl::createMenu() {

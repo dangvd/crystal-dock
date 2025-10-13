@@ -58,6 +58,7 @@ class VolumeControl : public QObject, public IconBasedDockItem {
   void setVolumeScrollStep10();
 
  private:
+  static constexpr char kCommand[] = "pactl";
   static constexpr int kUpdateInterval = 1000;
 
   // Creates the context menu.
