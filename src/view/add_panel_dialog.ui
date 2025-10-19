@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>540</width>
-    <height>610</height>
+    <height>650</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,7 +17,7 @@
    <property name="geometry">
     <rect>
      <x>70</x>
-     <y>550</y>
+     <y>590</y>
      <width>400</width>
      <height>32</height>
     </rect>
@@ -36,7 +36,7 @@
    <property name="geometry">
     <rect>
      <x>90</x>
-     <y>440</y>
+     <y>480</y>
      <width>210</width>
      <height>23</height>
     </rect>
@@ -49,7 +49,7 @@
    <property name="geometry">
     <rect>
      <x>320</x>
-     <y>430</y>
+     <y>470</y>
      <width>131</width>
      <height>40</height>
     </rect>
@@ -82,7 +82,7 @@
    <property name="geometry">
     <rect>
      <x>90</x>
-     <y>480</y>
+     <y>520</y>
      <width>210</width>
      <height>23</height>
     </rect>
@@ -95,7 +95,7 @@
    <property name="geometry">
     <rect>
      <x>320</x>
-     <y>475</y>
+     <y>515</y>
      <width>131</width>
      <height>40</height>
     </rect>
@@ -163,7 +163,7 @@
    <property name="geometry">
     <rect>
      <x>120</x>
-     <y>340</y>
+     <y>380</y>
      <width>300</width>
      <height>30</height>
     </rect>
@@ -195,7 +195,7 @@
    <property name="geometry">
     <rect>
      <x>90</x>
-     <y>400</y>
+     <y>440</y>
      <width>210</width>
      <height>26</height>
     </rect>
@@ -208,7 +208,7 @@
    <property name="geometry">
     <rect>
      <x>320</x>
-     <y>385</y>
+     <y>425</y>
      <width>131</width>
      <height>40</height>
     </rect>
@@ -270,13 +270,29 @@
    <property name="geometry">
     <rect>
      <x>120</x>
-     <y>300</y>
+     <y>340</y>
      <width>300</width>
      <height>30</height>
     </rect>
    </property>
    <property name="text">
     <string>Version Checker</string>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+  </widget>
+  <widget class="QCheckBox" name="showWifiManager">
+   <property name="geometry">
+    <rect>
+     <x>120</x>
+     <y>300</y>
+     <width>300</width>
+     <height>30</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Wi-Fi Manager</string>
    </property>
    <property name="checked">
     <bool>true</bool>

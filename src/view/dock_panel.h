@@ -205,6 +205,12 @@ class DockPanel : public QWidget {
     saveDockConfig();
   }
 
+  void toggleWifiManager() {
+    showWifiManager_ = !showWifiManager_;
+    reload();
+    saveDockConfig();
+  }
+
   // Sets the dock on a specific screen given screen index.
   // Thus 0 is screen 1 and so on.
   // This doesn't refresh the dock.
@@ -393,6 +399,7 @@ class DockPanel : public QWidget {
   bool showTrash_;
   bool showVersionChecker_;
   bool showVolumeControl_;
+  bool showWifiManager_;
   int minSize_;
   int maxSize_;
   float spacingFactor_;  // item spacing as ratio of minSize, in (0, 1) range.
@@ -448,6 +455,7 @@ class DockPanel : public QWidget {
   QAction* trashAction_;
   QAction* versionCheckerAction_;
   QAction* volumeControlAction_;
+  QAction* wifiManagerAction_;
   QAction* floatingStyleAction_;
   QAction* glass3DStyleAction_;
   QAction* glass2DStyleAction_;

@@ -935,6 +935,9 @@ void DockPanel::createMenu() {
   volumeControlAction_ = extraComponents->addAction(QString("Volume Control"), this,
                                                     SLOT(toggleVolumeControl()));
   volumeControlAction_->setCheckable(true);
+  wifiManagerAction_ = extraComponents->addAction(QString("Wi-Fi Manager"), this,
+                                                  SLOT(toggleWifiManager()));
+  wifiManagerAction_->setCheckable(true);
   versionCheckerAction_ = extraComponents->addAction(QString("Version Checker"), this,
                                                      SLOT(toggleVersionChecker()));
   versionCheckerAction_->setCheckable(true);
@@ -1109,6 +1112,9 @@ void DockPanel::loadDockConfig() {
 
   showVolumeControl_ = model_->showVolumeControl(dockId_);
   volumeControlAction_->setChecked(showVolumeControl_);
+
+  showWifiManager_ = model_->showWifiManager(dockId_);
+  wifiManagerAction_->setChecked(showWifiManager_);
 }
 
 void DockPanel::saveDockConfig() {
@@ -1122,6 +1128,7 @@ void DockPanel::saveDockConfig() {
   model_->setShowTrash(dockId_, showTrash_);
   model_->setShowVersionChecker(dockId_, showVersionChecker_);
   model_->setShowVolumeControl(dockId_, showVolumeControl_);
+  model_->setShowWifiManager(dockId_, showWifiManager_);
   model_->saveDockConfig(dockId_);
 }
 
@@ -1336,7 +1343,7 @@ void DockPanel::initVolumeControl() {
 }
 
 void DockPanel::initWifiManager() {
-  if (true) {
+  if (showWifiManager_) {
     items_.push_back(std::make_unique<WifiManager>(
         this, model_, orientation_, minSize_, maxSize_));
   }
