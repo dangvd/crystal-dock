@@ -325,13 +325,11 @@ class DockPanel : public QWidget {
   bool isValidTask(const WindowInfo* task);
   bool hasTask(void* window);
 
-  void initClock();
-
   void initTrash();
-
   void initVolumeControl();
-
+  void initWifiManager();
   void initVersionChecker();
+  void initClock();
 
   void initLayoutVars();
 

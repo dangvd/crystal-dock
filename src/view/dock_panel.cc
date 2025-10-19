@@ -56,6 +56,7 @@
 #include "trash.h"
 #include "version_checker.h"
 #include "volume_control.h"
+#include "wifi_manager.h"
 #include <display/window_system.h>
 #include <utils/draw_utils.h>
 #include <utils/icon_utils.h>
@@ -894,6 +895,7 @@ void DockPanel::initUi() {
   initTasks();
   initTrash();
   initVolumeControl();
+  initWifiManager();
   initVersionChecker();
   initClock();
   initLayoutVars();
@@ -1188,6 +1190,7 @@ void DockPanel::reloadTasks() {
   initTasks();
   initTrash();
   initVolumeControl();
+  initWifiManager();
   initVersionChecker();
   initClock();
   resizeTaskManager();
@@ -1328,6 +1331,13 @@ void DockPanel::initVersionChecker() {
 void DockPanel::initVolumeControl() {
   if (showVolumeControl_) {
     items_.push_back(std::make_unique<VolumeControl>(
+        this, model_, orientation_, minSize_, maxSize_));
+  }
+}
+
+void DockPanel::initWifiManager() {
+  if (true) {
+    items_.push_back(std::make_unique<WifiManager>(
         this, model_, orientation_, minSize_, maxSize_));
   }
 }

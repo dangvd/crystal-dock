@@ -61,6 +61,8 @@ set(SRCS
     view/volume_control.cc
     view/task_manager_settings_dialog.cc
     view/wallpaper_settings_dialog.cc
+    view/wifi_connection_dialog.cc
+    view/wifi_manager.cc
     utils/desktop_file.cc
     desktop/desktop_env.h
     desktop/hyprland_desktop_env.h
@@ -105,6 +107,8 @@ set(SRCS
     view/volume_control.h
     view/task_manager_settings_dialog.h
     view/wallpaper_settings_dialog.h
+    view/wifi_connection_dialog.h
+    view/wifi_manager.h
     utils/command_utils.h
     utils/desktop_file.h
     utils/draw_utils.h
@@ -117,7 +121,8 @@ set(SRCS
     view/application_menu_settings_dialog.ui
     view/edit_launchers_dialog.ui
     view/task_manager_settings_dialog.ui
-    view/wallpaper_settings_dialog.ui)
+    view/wallpaper_settings_dialog.ui
+    view/wifi_connection_dialog.ui)
 add_library(crystal-dock_lib STATIC ${SRCS})
 
 set(LIBS Qt6::DBus Qt6::GuiPrivate Qt6::Widgets Wayland::Client LayerShellQt::Interface)
