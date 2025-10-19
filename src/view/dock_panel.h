@@ -53,7 +53,6 @@
 namespace crystaldock {
 
 class MultiDockView;
-class VolumeControl;
 
 // A dock panel. The user can have multiple dock panels at the same time.
 class DockPanel : public QWidget {
@@ -290,22 +289,6 @@ class DockPanel : public QWidget {
 
   int pagerItemCount() const {
     return showPager_ ? WindowSystem::numberOfDesktops() : 0;
-  }
-
-  int clockItemCount() const {
-    return showClock_ ? 1 : 0;
-  }
-
-  int trashItemCount() const {
-    return showTrash_ ? 1 : 0;
-  }
-
-  int versionCheckerItemCount() const {
-    return showVersionChecker_ ? 1 : 0;
-  }
-
-  int volumeControlItemCount() const {
-    return showVolumeControl_ ? 1 : 0;
   }
 
   bool showTaskManager() { return model_->showTaskManager(dockId_); }
