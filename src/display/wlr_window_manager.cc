@@ -270,6 +270,9 @@ bool WlrWindowManager::showingDesktop_;
           emit self()->activeWindowChanged(activeWindow_);
         }
       }
+      // This is to fix the case where a window could be Minimized
+      // and Activated at the same time on Wayfire.
+      break;
     }
     if (*entry == ZWLR_FOREIGN_TOPLEVEL_HANDLE_V1_STATE_ACTIVATED) {
       if (activeWindow_ != window) {
