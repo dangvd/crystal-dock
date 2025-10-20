@@ -774,6 +774,19 @@ bool DockPanel::intellihideShouldHide(void* excluding_window) {
     return true;
   }
 
+  // For tiling compositors, we only show the dock if there's no window.
+  if (DesktopEnv::getDesktopEnv()->isTiling()) {
+    for (const auto* task : WindowSystem::windows()) {
+      if (isValidTask(task)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  // For stacking compositors, we hide the dock if there's a maximized/fullscreen window.
+  // If the compositor emits window geometry event, we also hide the dock if there's
+  // a window that overlaps the dock.
   QRect dockGeometry = getMinimizedDockGeometry();
   for (const auto* task : WindowSystem::windows()) {
     if (isValidTask(task) && (!excluding_window || task->window != excluding_window)) {

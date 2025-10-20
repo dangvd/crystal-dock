@@ -39,6 +39,9 @@ class DesktopEnv {
   static DesktopEnv* getDesktopEnv();
   static QString getDesktopEnvName();
 
+  // Return true for tiling Wayland compositors (e.g. Hyprland, Niri).
+  virtual bool isTiling() const { return false; }
+
   virtual QString getApplicationMenuIcon() const { return "start-here"; }
 
   // System categories (e.g. Session/Power) on the Application Menu.

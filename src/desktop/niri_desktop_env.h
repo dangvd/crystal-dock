@@ -25,6 +25,8 @@ namespace crystaldock {
 
 class NiriDesktopEnv : public DesktopEnv {
  public:
+  bool isTiling() const override { return true; }
+
   std::vector<Category> getApplicationMenuSystemCategories() const override;
 
   std::vector<QString> getDefaultLaunchers() const override;
