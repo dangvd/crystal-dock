@@ -30,21 +30,6 @@
 
 namespace {
 
-bool checkSingleInstance() {
-  QSharedMemory sharedMemory;
-  sharedMemory.setKey("crystal-dock-key");
-  if (!sharedMemory.create(1 /*byte*/)) {
-    // The failure might have been caused by a previous crash.
-    sharedMemory.attach();
-    sharedMemory.detach();
-    // Now try again.
-    if (!sharedMemory.create(1 /*byte*/)) {
-      return false;
-    }
-  }
-  return true;
-}
-
 void maybeCopyConfigOnFirstRun(const QString& configDir) {
   // On the first run, copies the dock config from XDG_CONFIG_DIRS if it exists.
   // This is mainly for package managers to pre-configure the dock.
@@ -69,9 +54,18 @@ void maybeCopyConfigOnFirstRun(const QString& configDir) {
 int main(int argc, char** argv) {
   QApplication app(argc, argv);
 
-  if (!checkSingleInstance()) {
-    std::cerr << "Another instance is already running." << std::endl;
-    return -1;
+  // Enforces single instance.
+  QSharedMemory sharedMemory;
+  sharedMemory.setKey("crystal-dock-key");
+  if (!sharedMemory.create(1 /*byte*/)) {
+    // The failure might have been caused by a previous crash.
+    sharedMemory.attach();
+    sharedMemory.detach();
+    // Now try again.
+    if (!sharedMemory.create(1 /*byte*/)) {
+      std::cerr << "Another instance is already running." << std::endl;
+      return -1;
+    }
   }
 
   if (!crystaldock::MultiDockView::checkPlatformSupported(app)) {
