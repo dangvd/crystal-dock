@@ -777,7 +777,7 @@ bool DockPanel::intellihideShouldHide(void* excluding_window) {
   // For tiling compositors, we only show the dock if there's no window.
   if (DesktopEnv::getDesktopEnv()->isTiling()) {
     for (const auto* task : WindowSystem::windows()) {
-      if (isValidTask(task)) {
+      if (isValidTask(task) && (!excluding_window || task->window != excluding_window)) {
         return true;
       }
     }
