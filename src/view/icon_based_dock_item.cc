@@ -59,8 +59,12 @@ void IconBasedDockItem::setIcon(const QPixmap& icon) {
   generateIcons(icon);
 }
 
-void IconBasedDockItem::setIconName(const QString& iconName) {
+void IconBasedDockItem::setIconName(const QString& iconName,
+    const QString& backupIconName) {
   QPixmap icon = loadIcon(iconName, DockPanel::kIconLoadSize);
+  if (icon.isNull() && !backupIconName.isEmpty()) {
+    icon = loadIcon(backupIconName, DockPanel::kIconLoadSize);
+  }
   if (!icon.isNull()) {
     iconName_ = iconName;
     setIcon(icon);

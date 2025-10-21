@@ -107,28 +107,28 @@ void VersionChecker::setVersionStatus(VersionStatus status) {
   switch (status_) {
   case VersionStatus::Alpha:
     setIconName("dialog-warning");
-    setLabel("Warning: alpha version");
+    setLabel("Warning: Alpha version");
     infoDialog_.setIcon(QMessageBox::Warning);
     infoDialog_.setText(QString("<p>Warning: You are using an alpha version of Crystal Dock. Please use the latest release instead:")
                         + "<p><a href=\"https://github.com/dangvd/crystal-dock/releases\">https://github.com/dangvd/crystal-dock/releases</a>");
     break;
   case VersionStatus::Beta:
     setIconName("dialog-warning");
-    setLabel("Warning: beta version");
+    setLabel("Warning: Beta version");
     infoDialog_.setIcon(QMessageBox::Warning);
     infoDialog_.setText(QString("<p>Warning: You are using a beta version of Crystal Dock. Please use the latest release instead:")
                         + "<p><a href=\"https://github.com/dangvd/crystal-dock/releases\">https://github.com/dangvd/crystal-dock/releases</a>");
     break;
   case VersionStatus::OutOfDate:
     setIconName("dialog-warning");
-    setLabel("Warning: out-of-date version");
+    setLabel("Warning: Out-of-date version");
     infoDialog_.setIcon(QMessageBox::Warning);
     infoDialog_.setText(QString("<p>Warning: You are using an out-of-date version of Crystal Dock. Please use the latest release instead:")
                         + "<p><a href=\"https://github.com/dangvd/crystal-dock/releases\">https://github.com/dangvd/crystal-dock/releases</a>");
     break;
   case VersionStatus::UpToDate:
-    setIconName("dialog-ok");
-    setLabel("Up-to-date version");
+    setIconName("dialog-ok", "dialog-information");
+    setLabel("Dock version: Up to date");
     infoDialog_.setIcon(QMessageBox::Information);
     infoDialog_.setText(QString("<p>You are using the latest release of Crystal Dock."));
     break;

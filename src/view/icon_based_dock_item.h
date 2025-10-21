@@ -53,7 +53,7 @@ class IconBasedDockItem : public DockItem {
 
   // Sets the icon on the fly.
   void setIcon(const QPixmap& icon);
-  void setIconName(const QString& iconName);
+  void setIconName(const QString& iconName, const QString& backupIconName = "");
   const QPixmap& getIcon(int size) const;
   QString getIconName() const { return iconName_; }
 
