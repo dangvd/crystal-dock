@@ -907,8 +907,8 @@ void DockPanel::initUi() {
   initLaunchers();
   initTasks();
   initTrash();
-  initVolumeControl();
   initWifiManager();
+  initVolumeControl();
   initVersionChecker();
   initClock();
   initLayoutVars();
@@ -1209,8 +1209,8 @@ void DockPanel::reloadTasks() {
   initLaunchers();
   initTasks();
   initTrash();
-  initVolumeControl();
   initWifiManager();
+  initVolumeControl();
   initVersionChecker();
   initClock();
   resizeTaskManager();
