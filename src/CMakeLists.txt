@@ -15,6 +15,10 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTOUIC ON)
 
 find_package(Qt6 6.6 REQUIRED COMPONENTS DBus Gui Test Widgets)
+if (Qt6_VERSION VERSION_GREATER_EQUAL 6.9.0)
+  set(QT_NO_PRIVATE_MODULE_WARNING ON)
+  find_package(Qt6 REQUIRED COMPONENTS GuiPrivate)
+endif()
 find_package(Wayland 1.22 REQUIRED COMPONENTS Client)
 find_package(LayerShellQt 6.0 REQUIRED)
 
