@@ -916,6 +916,9 @@ void DockPanel::initUi() {
   initLayoutVars();
   updateLayout();
   setStrut();
+  if (WindowSystem::hasAutoHideManager() && intellihideShouldHide()) {
+    setAutoHide();
+  }
 }
 
 void DockPanel::addPanelSettings(QMenu* menu) {
@@ -1216,6 +1219,9 @@ void DockPanel::reloadTasks() {
   initVersionChecker();
   initClock();
   resizeTaskManager();
+  if (WindowSystem::hasAutoHideManager() && intellihideShouldHide()) {
+    setAutoHide();
+  }
 }
 
 bool DockPanel::addTask(const WindowInfo* task) {
