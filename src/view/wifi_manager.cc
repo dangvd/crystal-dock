@@ -44,7 +44,7 @@ WifiManager::WifiManager(DockPanel* parent, MultiDockModel* model,
             parent_->setShowingPopup(false);
           });
 
-  initWifiNetworks();
+  scanWifiNetworks();
 }
 
 WifiManager::~WifiManager() {
@@ -72,6 +72,17 @@ void WifiManager::onNetworkSelected(QAction* action) {
   WifiNetwork network = action->data().value<WifiNetwork>();
   connectionDialog_.setData(network);
   connectionDialog_.show();
+}
+
+void WifiManager::rescan() {
+  info_.setText("Rescanning Wi-Fi networks...");
+  parent_->minimize();
+  QTimer::singleShot(DockPanel::kExecutionDelayMs, [this]{
+    info_.show();
+  });
+  scanWifiNetworks([this]() {
+    info_.setText("Rescanning completed");
+  });
 }
 
 void WifiManager::connectWifi(const QString &network, const QString &password) {
@@ -128,14 +139,14 @@ void WifiManager::disconnectWifi(const QString &network) {
   process_->start(kCommand, {"connection", "delete", network});
 }
 
-void WifiManager::initWifiNetworks() {
+void WifiManager::scanWifiNetworks(std::function<void()> onSuccess) {
   if (process_ && process_->state() != QProcess::NotRunning) {
     return;
   }
 
   process_ = new QProcess(parent_);
   connect(process_, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),
-          [this](int exitCode, QProcess::ExitStatus exitStatus) {
+          [this, onSuccess](int exitCode, QProcess::ExitStatus exitStatus) {
             if (exitCode == 0) {
               networks_.clear();
               bool connected = false;
@@ -162,6 +173,9 @@ void WifiManager::initWifiNetworks() {
                 setLabel("Wi-Fi: Not connected");
               }
               updateWifiList();
+              if (onSuccess) {
+                onSuccess();
+              }
             }
             process_->deleteLater();
             process_ = nullptr;
@@ -185,8 +199,10 @@ void WifiManager::updateWifiList() {
 }
 
 void WifiManager::createMenu() {
-  // Context menu
   contextMenu_.addSection(kLabel);
+  rescanAction_ = contextMenu_.addAction(
+      QIcon::fromTheme("network-wireless"), "Rescan Wi-Fi networks");
+  connect(rescanAction_, &QAction::triggered, this, &WifiManager::rescan);
 
   contextMenu_.addSeparator();
   parent_->addPanelSettings(&contextMenu_);

@@ -21,8 +21,11 @@
 
 #include "icon_based_dock_item.h"
 
+#include <functional>
+
 #include <QAction>
 #include <QMenu>
+#include <QMessageBox>
 #include <QMouseEvent>
 #include <QProcess>
 #include <QObject>
@@ -55,13 +58,14 @@ class WifiManager : public QObject, public IconBasedDockItem {
 
  public slots:
   void onNetworkSelected(QAction* action);
+  void rescan();
 
  private:
   static constexpr char kCommand[] = "nmcli";
   static constexpr char kLabel[] = "Wi-Fi Manager";
   static constexpr char kIcon[] = "network-wireless";
 
-  void initWifiNetworks();
+  void scanWifiNetworks(std::function<void()> onSuccess = nullptr);
   void showWifiNetworks();
 
   void updateWifiList();
@@ -77,8 +81,10 @@ class WifiManager : public QObject, public IconBasedDockItem {
   QMenu menu_;
   // Right-click context menu.
   QMenu contextMenu_;
+  QAction* rescanAction_;
 
   WifiConnectionDialog connectionDialog_;
+  QMessageBox info_;
 };
 
 }  // namespace crystaldock
