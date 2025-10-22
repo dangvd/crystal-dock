@@ -312,6 +312,7 @@ class DockPanel : public QWidget {
   void removeTask(void* window);
   void updateTask(const WindowInfo* task);
   bool isValidTask(const WindowInfo* task);
+  bool shouldConsiderTaskForIntellihide(const WindowInfo* task);
   bool hasTask(void* window);
 
   void initTrash();

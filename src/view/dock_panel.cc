@@ -777,7 +777,8 @@ bool DockPanel::intellihideShouldHide(void* excluding_window) {
   // For tiling compositors, we only show the dock if there's no window.
   if (DesktopEnv::getDesktopEnv()->isTiling()) {
     for (const auto* task : WindowSystem::windows()) {
-      if (isValidTask(task) && (!excluding_window || task->window != excluding_window)) {
+      if (shouldConsiderTaskForIntellihide(task)
+          && (!excluding_window || task->window != excluding_window)) {
         return true;
       }
     }
@@ -789,7 +790,8 @@ bool DockPanel::intellihideShouldHide(void* excluding_window) {
   // a window that overlaps the dock.
   QRect dockGeometry = getMinimizedDockGeometry();
   for (const auto* task : WindowSystem::windows()) {
-    if (isValidTask(task) && (!excluding_window || task->window != excluding_window)) {
+    if (shouldConsiderTaskForIntellihide(task)
+        && (!excluding_window || task->window != excluding_window)) {
       if ((task->maximized || task->fullscreen)
           && task->outputs.contains(screenOutput_)) {
         return true;
@@ -1307,6 +1309,29 @@ bool DockPanel::isValidTask(const WindowInfo* task) {
   QRect taskGeometry(task->x, task->y, task->width, task->height);
   if (model_->currentScreenTasksOnly() && taskGeometry.isValid()
       && !screenGeometry_.intersects(taskGeometry)) {
+    return false;
+  }
+
+  if (WindowSystem::hasActivityManager() && !WindowSystem::currentActivity().empty()
+      && !task->activity.empty() && task->activity != WindowSystem::currentActivity()) {
+    return false;
+  }
+
+  return true;
+}
+
+bool DockPanel::shouldConsiderTaskForIntellihide(const WindowInfo* task) {
+  if (task == nullptr) {
+    return false;
+  }
+
+  if (WindowSystem::hasVirtualDesktopManager()
+      && !task->onAllDesktops && task->desktop != WindowSystem::currentDesktop()) {
+    return false;
+  }
+
+  QRect taskGeometry(task->x, task->y, task->width, task->height);
+  if (taskGeometry.isValid() && !screenGeometry_.intersects(taskGeometry)) {
     return false;
   }
 
