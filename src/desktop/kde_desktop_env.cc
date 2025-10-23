@@ -32,7 +32,7 @@ KdeDesktopEnv::KdeDesktopEnv()
   : plasmaShellDBus_("org.kde.plasmashell",
                      "/PlasmaShell",
                      "org.kde.PlasmaShell") {
-  qdbusCommand_ = commandExists({"qdbus", "qdbus6", "qdbus-qt6"});
+  qdbusCommand_ = commandExists({"qdbus6", "qdbus-qt6", "qdbus"});
   if (qdbusCommand_.size() == 0) {
     std::cerr << "Could not find QDBus command. Certain functionalities will not work." << std::endl;
   }
