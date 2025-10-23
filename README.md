@@ -3,7 +3,6 @@
 # Crystal Dock
 
 [Releases](https://github.com/dangvd/crystal-dock/releases)
-[Screenshots](https://github.com/dangvd/crystal-dock/wiki/Screenshots)
 [Documentation](https://github.com/dangvd/crystal-dock/wiki/Documentation)
 [FAQ & Troubleshooting](https://github.com/dangvd/crystal-dock/wiki/FAQ-&-Troubleshooting)
 [Author & Contributors](https://github.com/dangvd/crystal-dock/wiki/Author-&-Contributors)
@@ -16,7 +15,7 @@ The current version (version 2) supports Hyprland, KDE Plasma 6, Labwc, LXQt, Ni
 
 - Smooth parabolic zooming and translucent effect
 - Four visual styles: Glass 3D, Glass 2D, Flat 2D and Metal 2D with various appearance settings
-- Supported components: Application Menu (Application Launcher), Launcher/Task Manager, Clock and (on some environments) Pager
+- Supported components: Application Menu (Application Launcher), Launcher/Task Manager, Trash, Wi-Fi Manager, Volume Control, Version Checker, Clock and (on some environments) Pager
 - Multiple docks support
 - Integration with various desktop environments / compositors: specific default launchers, special menu entries (e.g. Log Out)
 - Separate configs for separate desktop environments / compositors
