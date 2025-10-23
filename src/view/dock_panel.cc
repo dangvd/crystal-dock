@@ -770,6 +770,10 @@ bool DockPanel::intellihideShouldHide(void* excluding_window) {
     return false;
   }
 
+  if (!isMinimized_) {
+    return false;
+  }
+
   if (isEmpty()) {
     return true;
   }
