@@ -33,6 +33,13 @@ std::vector<Category> WayfireDesktopEnv::getApplicationMenuSystemCategories() co
           "swaylock",
           ""
         },
+        {kLogOutId,
+          "Log Out",
+          "",
+          "system-log-out",
+          "wayland-logout",
+          ""
+        },
       },
     },
   };
@@ -42,7 +49,7 @@ std::vector<Category> WayfireDesktopEnv::getApplicationMenuSystemCategories() co
 
 std::vector<QString> WayfireDesktopEnv::getDefaultLaunchers() const {
   return { kShowDesktopId, defaultWebBrowser(), "alacritty",
-           kSeparatorId, kLockScreenId, kSeparatorId };
+           kSeparatorId, kLockScreenId, kLogOutId, kSeparatorId };
 }
 
 }  // namespace crystaldock
