@@ -57,6 +57,8 @@ constexpr char MultiDockModel::kFirstRunMultiScreen[];
 constexpr char MultiDockModel::kFirstRunWindowCountIndicator[];
 
 constexpr char MultiDockModel::kTooltipFontSize[];
+constexpr char MultiDockModel::kHoverGlow[];
+constexpr char MultiDockModel::kHoverGlowAlpha[];
 constexpr char MultiDockModel::kApplicationMenuCategory[];
 constexpr char MultiDockModel::kLabel[];
 constexpr char MultiDockModel::kFontSize[];

@@ -220,6 +220,9 @@ class DockPanel : public QWidget {
   // Slot to update zoom animation.
   void updateAnimation();
 
+  // Slot to reset pressed state after a short delay.
+  void resetPressedState();
+
   void showOnlineDocumentation();
 
   void about();
@@ -421,6 +424,7 @@ class DockPanel : public QWidget {
   // The list of all dock items.
   std::vector<std::unique_ptr<DockItem>> items_;
   int activeItem_ = -1;
+  int pressedItem_ = -1;
 
   // Context (right-click) menu.
   QMenu menu_;
@@ -465,6 +469,7 @@ class DockPanel : public QWidget {
   bool isAnimationActive_;
   bool isShowingPopup_;
   std::unique_ptr<QTimer> animationTimer_;
+  std::unique_ptr<QTimer> pressedResetTimer_;
   int currentAnimationStep_;
   int backgroundWidth_;
   int startBackgroundWidth_;

@@ -94,7 +94,8 @@ DockPanel::DockPanel(MultiDockView* parent, MultiDockModel* model, int dockId)
       isLeaving_(false),
       isAnimationActive_(false),
       isShowingPopup_(false),
-      animationTimer_(std::make_unique<QTimer>(this)) {  
+      animationTimer_(std::make_unique<QTimer>(this)),
+      pressedResetTimer_(std::make_unique<QTimer>(this)) {
   setAttribute(Qt::WA_TranslucentBackground);
   setWindowFlag(Qt::FramelessWindowHint);
   setMouseTracking(true);
@@ -107,6 +108,9 @@ DockPanel::DockPanel(MultiDockView* parent, MultiDockModel* model, int dockId)
 
   connect(animationTimer_.get(), SIGNAL(timeout()), this,
       SLOT(updateAnimation()));
+  pressedResetTimer_->setSingleShot(true);
+  connect(pressedResetTimer_.get(), SIGNAL(timeout()), this,
+      SLOT(resetPressedState()));
   connect(WindowSystem::self(), SIGNAL(numberOfDesktopsChanged(int)),
       this, SLOT(updatePager()));
   connect(WindowSystem::self(), SIGNAL(currentDesktopChanged(std::string_view)),
@@ -228,6 +232,14 @@ void DockPanel::updateAnimation() {
     }
   }
   repaint();
+}
+
+void DockPanel::resetPressedState() {
+  if (pressedItem_ >= 0 && pressedItem_ < static_cast<int>(items_.size())) {
+    items_[pressedItem_]->setPressed(false);
+    pressedItem_ = -1;
+    update();
+  }
 }
 
 void DockPanel::showOnlineDocumentation() {
@@ -841,7 +853,22 @@ void DockPanel::mousePressEvent(QMouseEvent* e) {
     return;
   }
 
+  // Update activeItem_ immediately based on current mouse position
+  // to handle rapid mouse movements，
+  // without this, user might actually clicked icon A, but opened application B next to A.
+  const auto x = e->position().x();
+  const auto y = e->position().y();
+  updateActiveItem(x, y);
+
   if (activeItem_ >= 0 && activeItem_ < static_cast<int>(items_.size())) {
+    if (e->button() == Qt::LeftButton) {
+      pressedItem_ = activeItem_;
+      items_[activeItem_]->setPressed(true);
+      update();
+
+      // Start timer to reset pressed state after 100ms
+      pressedResetTimer_->start(100);
+    }
     items_[activeItem_]->maybeResetActiveWindow(e);
     items_[activeItem_]->mousePressEvent(e);
   }
@@ -875,12 +902,17 @@ void DockPanel::leaveEvent(QEvent* e) {
   isLeaving_ = true;
   updateLayout();
   activeItem_ = -1;
+
+  // Reset hover state for all items
+  for (auto& item : items_) {
+    item->setHovered(false);
+  }
 }
 
 void DockPanel::dragEnterEvent(QDragEnterEvent* e) {
   if (e->mimeData()->hasUrls()) {
     e->acceptProposedAction();
-    
+
     for (const auto& item : items_) {
       Trash* trash = dynamic_cast<Trash*>(item.get());
       if (trash) {
@@ -1859,7 +1891,23 @@ void DockPanel::updateActiveItem(int x, int y) {
       (orientation_ == Qt::Vertical && items_[i]->top_ < y))) {
     ++i;
   }
-  activeItem_ = i - 1;
+
+  int newActiveItem = i - 1;
+
+  // Update hover state only when active item changes
+  if (newActiveItem != activeItem_) {
+    // Clear hover state from old active item
+    if (activeItem_ >= 0 && activeItem_ < itemCount()) {
+      items_[activeItem_]->setHovered(false);
+    }
+
+    activeItem_ = newActiveItem;
+
+    // Set hover state on new active item
+    if (activeItem_ >= 0 && activeItem_ < itemCount()) {
+      items_[activeItem_]->setHovered(true);
+    }
+  }
 }
 
 int DockPanel::parabolic(int x) {

@@ -103,6 +103,12 @@ class DockItem {
   // For a Program dock item.
   virtual void setDemandsAttention(bool demandsAttention) {}
 
+  // Visual feedback functionality
+  virtual void setHovered(bool hovered) { isHovered_ = hovered; }
+  virtual bool isHovered() const { return isHovered_; }
+  virtual void setPressed(bool pressed) { isPressed_ = pressed; }
+  virtual bool isPressed() const { return isPressed_; }
+
   bool isHorizontal() const { return orientation_ == Qt::Horizontal; }
 
   void setAnimationStartAsCurrent() {
@@ -189,6 +195,10 @@ class DockItem {
   int endSize_;
   int currentStep_;
   int numSteps_;
+
+  // Visual feedback states
+  bool isHovered_ = false;
+  bool isPressed_ = false;
 
  private:
   friend class DockPanel;

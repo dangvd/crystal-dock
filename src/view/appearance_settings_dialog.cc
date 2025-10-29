@@ -112,6 +112,8 @@ void AppearanceSettingsDialog::loadData() {
   ui->floatingMargin->setValue(model_->floatingMargin());
   ui->floatingMargin->setEnabled(model_->isFloating());
   ui->bouncingLauncherIcon->setChecked(model_->bouncingLauncherIcon());
+  ui->hoverGlow->setChecked(model_->hoverGlow());
+  ui->hoverGlowAlpha->setValue(model_->hoverGlowAlpha());
 }
 
 void AppearanceSettingsDialog::resetData() {
@@ -143,6 +145,8 @@ void AppearanceSettingsDialog::resetData() {
   ui->tooltipFontSize->setValue(kDefaultTooltipFontSize);
   ui->floatingMargin->setValue(kDefaultFloatingMargin);
   ui->bouncingLauncherIcon->setChecked(kDefaultBouncingLauncherIcon);
+  ui->hoverGlow->setChecked(kDefaultHoverGlow);
+  ui->hoverGlowAlpha->setValue(kDefaultHoverGlowAlpha);
 }
 
 void AppearanceSettingsDialog::saveData() {
@@ -179,6 +183,8 @@ void AppearanceSettingsDialog::saveData() {
   model_->setTooltipFontSize(ui->tooltipFontSize->value());
   model_->setFloatingMargin(ui->floatingMargin->value());
   model_->setBouncingLauncherIcon(ui->bouncingLauncherIcon->isChecked());
+  model_->setHoverGlow(ui->hoverGlow->isChecked());
+  model_->setHoverGlowAlpha(ui->hoverGlowAlpha->value());
   model_->saveAppearanceConfig();
 }
 
