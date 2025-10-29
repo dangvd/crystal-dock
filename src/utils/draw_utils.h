@@ -77,6 +77,54 @@ inline void drawHighlightedIcon(QColor bgColor, int left, int top, int width, in
   painter->setRenderHint(QPainter::Antialiasing, false);
 }
 
+inline void drawDarkenedIcon(const QPixmap& icon, int left, int top, QPainter* painter,
+                             float darkenFactor = 0.6) {
+  QImage iconImage = icon.toImage().convertToFormat(QImage::Format_ARGB32);
+  
+  // Darken each pixel while preserving alpha channel
+  for (int y = 0; y < iconImage.height(); ++y) {
+    QRgb* line = reinterpret_cast<QRgb*>(iconImage.scanLine(y));
+    for (int x = 0; x < iconImage.width(); ++x) {
+      QRgb pixel = line[x];
+      int alpha = qAlpha(pixel);
+      if (alpha > 0) {
+        int r = qRed(pixel) * darkenFactor;
+        int g = qGreen(pixel) * darkenFactor;
+        int b = qBlue(pixel) * darkenFactor;
+        line[x] = qRgba(r, g, b, alpha);
+      }
+    }
+  }
+  
+  painter->drawImage(left, top, iconImage);
+}
+
+inline void drawGlowingIcon(const QPixmap& icon, int left, int top, QPainter* painter,
+                            QColor glowColor, float glowAlpha) {
+  QImage iconImage = icon.toImage().convertToFormat(QImage::Format_ARGB32);
+  
+  painter->save();
+  painter->setCompositionMode(QPainter::CompositionMode_SourceAtop);
+  
+  QImage brightOverlay = iconImage.copy();
+  
+  // Apply glow color to each pixel based on its alpha
+  for (int y = 0; y < brightOverlay.height(); ++y) {
+    QRgb* line = reinterpret_cast<QRgb*>(brightOverlay.scanLine(y));
+    for (int x = 0; x < brightOverlay.width(); ++x) {
+      QRgb pixel = line[x];
+      int pixelAlpha = qAlpha(pixel);
+      if (pixelAlpha > 0) {
+        int finalAlpha = pixelAlpha * glowAlpha;
+        line[x] = qRgba(glowColor.red(), glowColor.green(), glowColor.blue(), finalAlpha);
+      }
+    }
+  }
+  
+  painter->drawImage(left, top, brightOverlay);
+  painter->restore();
+}
+
 inline void fillRoundedRect(int x, int y, int width, int height, int radius, bool showBorder,
                             QColor borderColor, QColor fillColor, QPainter* painter) {
   painter->setRenderHint(QPainter::Antialiasing);

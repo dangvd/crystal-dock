@@ -85,16 +85,21 @@ void DesktopSelector::draw(QPainter* painter) const {
 }
 
 void DesktopSelector::mousePressEvent(QMouseEvent* e) {
+  if (e->button() == Qt::RightButton) {
+    // In case other DesktopSelectors have changed the config.
+    showDesktopNumberAction_->setChecked(model_->showDesktopNumber());
+    showPopupMenu(&menu_);
+  }
+  // Left button press is now handled in mouseReleaseEvent for better UX
+}
+
+void DesktopSelector::mouseReleaseEvent(QMouseEvent* e) {
   if (e->button() == Qt::LeftButton) {
     if (isCurrentDesktop()) {
       WindowSystem::setShowingDesktop(!WindowSystem::showingDesktop());
     } else {
       WindowSystem::setCurrentDesktop(desktop_.id);
     }
-  } else if (e->button() == Qt::RightButton) {
-    // In case other DesktopSelectors have changed the config.
-    showDesktopNumberAction_->setChecked(model_->showDesktopNumber());
-    showPopupMenu(&menu_);
   }
 }
 

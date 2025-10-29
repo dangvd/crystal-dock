@@ -483,7 +483,16 @@ void DockPanel::updatePinnedStatus(const QString& appId, bool pinned) {
 
 void DockPanel::setShowingPopup(bool showingPopup) {
   isShowingPopup_ = showingPopup;
+  
   if (!isShowingPopup_) {
+    // Reset the pressed item when closing popup, as the mouseReleaseEvent
+    // may have been captured by the popup window
+    if (pressedItem_ >= 0 && pressedItem_ < static_cast<int>(items_.size())) {
+      items_[pressedItem_]->setPressed(false);
+      pressedItem_ = -1;
+      update();
+    }
+    
     // We have to do these complicated workarounds because QCursor::pos() does not
     // exactly return the current mouse position but it depends on related mouse events.
     auto mousePosition = mapFromGlobal(QCursor::pos());
@@ -837,13 +846,48 @@ bool DockPanel::isEmpty() {
 }
 
 void DockPanel::mousePressEvent(QMouseEvent* e) {
-  if (isAnimationActive_) {
-    return;
-  }
+  // Note: Don't check isAnimationActive_ here, as it will block user clicks.
+  // Scenario: User clicks an icon → app window opens → user immediately closes it →
+  // user clicks the icon again. If isAnimationActive_ is checked, the second click
+  // won't be handled (dock is still animating from the first interaction), and the app launch will be blocked.
+  
+  // Update activeItem_ immediately based on current mouse position
+  // to handle rapid mouse movements，
+  // without this, user might actually clicked icon A, but opened application B next to A.
+  const auto x = e->position().x();
+  const auto y = e->position().y();
+  updateActiveItem(x, y);
 
   if (activeItem_ >= 0 && activeItem_ < static_cast<int>(items_.size())) {
+    // Set pressed state for visual feedback
+    if (e->button() == Qt::LeftButton) {
+      pressedItem_ = activeItem_;  // Remember which item was pressed
+      items_[activeItem_]->setPressed(true);
+      update();
+    }
     items_[activeItem_]->maybeResetActiveWindow(e);
     items_[activeItem_]->mousePressEvent(e);
+  }
+}
+
+void DockPanel::mouseReleaseEvent(QMouseEvent* e) {
+  if (e->button() == Qt::LeftButton && pressedItem_ >= 0 && pressedItem_ < static_cast<int>(items_.size())) {
+    // Check if mouse is still over the item that was pressed
+    // Standard button behavior: only trigger action if released on the same item
+    const auto x = e->position().x();
+    const auto y = e->position().y();
+    updateActiveItem(x, y);
+    
+    if (activeItem_ == pressedItem_) {
+      // Mouse is still on the pressed item - execute the action
+      items_[pressedItem_]->mouseReleaseEvent(e);
+    }
+    // else: Mouse was moved away - cancel the action (don't call mouseReleaseEvent)
+    
+    // Always reset the pressed state
+    items_[pressedItem_]->setPressed(false);
+    pressedItem_ = -1;
+    update();
   }
 }
 
@@ -875,6 +919,12 @@ void DockPanel::leaveEvent(QEvent* e) {
   isLeaving_ = true;
   updateLayout();
   activeItem_ = -1;
+  
+  // Reset hover state for all items
+  // Note: We keep isPressed_ state and wait for mouseReleaseEvent to handle it
+  for (auto& item : items_) {
+    item->setHovered(false);
+  }
 }
 
 void DockPanel::dragEnterEvent(QDragEnterEvent* e) {
@@ -1859,7 +1909,23 @@ void DockPanel::updateActiveItem(int x, int y) {
       (orientation_ == Qt::Vertical && items_[i]->top_ < y))) {
     ++i;
   }
-  activeItem_ = i - 1;
+  
+  int newActiveItem = i - 1;
+  
+  // Update hover state only when active item changes
+  if (newActiveItem != activeItem_) {
+    // Clear hover state from old active item
+    if (activeItem_ >= 0 && activeItem_ < itemCount()) {
+      items_[activeItem_]->setHovered(false);
+    }
+    
+    activeItem_ = newActiveItem;
+    
+    // Set hover state on new active item
+    if (activeItem_ >= 0 && activeItem_ < itemCount()) {
+      items_[activeItem_]->setHovered(true);
+    }
+  }
 }
 
 int DockPanel::parabolic(int x) {

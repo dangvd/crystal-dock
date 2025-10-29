@@ -36,6 +36,7 @@ class VersionChecker : public QObject, public IconBasedDockItem {
 
   bool beforeTask(const QString& program) override { return false; }
   void mousePressEvent(QMouseEvent* e) override;
+  void mouseReleaseEvent(QMouseEvent* e) override;
 
  private:
   void checkVersion();

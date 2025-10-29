@@ -44,6 +44,7 @@ class Trash : public QObject, public IconBasedDockItem {
 
   void draw(QPainter* painter) const override;
   void mousePressEvent(QMouseEvent* e) override;
+  void mouseReleaseEvent(QMouseEvent* e) override;
   QString getLabel() const override;
   bool beforeTask(const QString& program) override { return false; }
 

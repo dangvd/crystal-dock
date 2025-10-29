@@ -46,8 +46,20 @@ IconBasedDockItem::IconBasedDockItem(DockPanel* parent, MultiDockModel* model, c
 
 void IconBasedDockItem::draw(QPainter* painter) const {
   const auto& icon = icons_[size_ - minSize_];
+  
   if (!icon.isNull()) {
-    painter->drawPixmap(left_, top_, icon);
+    // Step 1: Draw the icon itself (normal or darkened)
+    if (isPressed_) {
+      drawDarkenedIcon(icon, left_, top_, painter);
+    } else {
+      painter->drawPixmap(left_, top_, icon);
+    }
+    
+    // Step 2: Add brightness overlay if hovered (makes icon itself glow)
+    if (isHovered_ && model_->hoverGlow() && !isPressed_) {
+      QColor glowColor = model_->backgroundColor().lighter(200);
+      drawGlowingIcon(icon, left_, top_, painter, glowColor, model_->hoverGlowAlpha());
+    }
   } else {  // Fall-back "icon".
     QColor fillColor = model_->backgroundColor();
     fillColor.setAlphaF(kDefaultBackgroundAlpha);

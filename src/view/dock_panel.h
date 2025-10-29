@@ -252,6 +252,7 @@ class DockPanel : public QWidget {
   virtual void paintEvent(QPaintEvent* e) override;
   virtual void mouseMoveEvent(QMouseEvent* e) override;
   virtual void mousePressEvent(QMouseEvent* e) override;
+  virtual void mouseReleaseEvent(QMouseEvent* e) override;
   virtual void wheelEvent(QWheelEvent* e) override;
   virtual void enterEvent(QEnterEvent* e) override;
   virtual void leaveEvent(QEvent* e) override;
@@ -421,6 +422,7 @@ class DockPanel : public QWidget {
   // The list of all dock items.
   std::vector<std::unique_ptr<DockItem>> items_;
   int activeItem_ = -1;
+  int pressedItem_ = -1;  // Track which item was pressed to ensure press/release match
 
   // Context (right-click) menu.
   QMenu menu_;

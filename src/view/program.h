@@ -60,6 +60,7 @@ class Program : public QObject, public IconBasedDockItem {
   void draw(QPainter* painter) const override;
 
   void mousePressEvent(QMouseEvent* e) override;
+  void mouseReleaseEvent(QMouseEvent* e) override;
 
   QString getLabel() const override;
 

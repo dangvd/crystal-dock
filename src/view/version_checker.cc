@@ -60,13 +60,18 @@ VersionChecker::VersionChecker(DockPanel* parent, MultiDockModel* model,
 }
 
 void VersionChecker::mousePressEvent(QMouseEvent* e) {
+  if (e->button() == Qt::RightButton) {
+    showPopupMenu(&menu_);
+  }
+  // Left button press is now handled in mouseReleaseEvent for better UX
+}
+
+void VersionChecker::mouseReleaseEvent(QMouseEvent* e) {
   if (e->button() == Qt::LeftButton) {
     parent_->minimize();
     QTimer::singleShot(DockPanel::kExecutionDelayMs, [this]{
       showVersionInfo();
     });
-  } else if (e->button() == Qt::RightButton) {
-    showPopupMenu(&menu_);
   }
 }
 

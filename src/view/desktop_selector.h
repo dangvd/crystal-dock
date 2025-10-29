@@ -55,6 +55,7 @@ class DesktopSelector : public QObject, public IconBasedDockItem {
 
   void draw(QPainter* painter) const override;
   void mousePressEvent(QMouseEvent* e) override;
+  void mouseReleaseEvent(QMouseEvent* e) override;
   void loadConfig() override;
 
   // Sets the icon but scales the pixmap to the screen's width/height ratio.

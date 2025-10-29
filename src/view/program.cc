@@ -165,6 +165,13 @@ void Program::draw(QPainter *painter) const {
 }
 
 void Program::mousePressEvent(QMouseEvent* e) {
+  if (e->button() == Qt::RightButton) {
+    showPopupMenu(&menu_);
+  }
+  // Left button press is now handled in mouseReleaseEvent for better UX
+}
+
+void Program::mouseReleaseEvent(QMouseEvent* e) {
   if (e->button() == Qt::LeftButton) { // Run the application.
     if (appId_ == kLockScreenId) {
       parent_->leaveEvent(nullptr);
@@ -209,8 +216,6 @@ void Program::mousePressEvent(QMouseEvent* e) {
         }
       }
     }
-  } else if (e->button() == Qt::RightButton) {
-    showPopupMenu(&menu_);
   }
 }
 

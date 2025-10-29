@@ -56,6 +56,9 @@ class DockItem {
   // Mouse press event handler.
   virtual void mousePressEvent(QMouseEvent* e) = 0;
 
+  // Mouse release event handler.
+  virtual void mouseReleaseEvent(QMouseEvent* e) {}
+
   // We manually reset active window on the dock's mouse event.
   // We don't want to always do this (e.g. handle this in window_system::state_change() handler)
   // because otherwise we wouldn't be able to click on an active window's icon to minimize it
@@ -102,6 +105,12 @@ class DockItem {
 
   // For a Program dock item.
   virtual void setDemandsAttention(bool demandsAttention) {}
+
+  // Visual feedback functionality
+  virtual void setHovered(bool hovered) { isHovered_ = hovered; }
+  virtual bool isHovered() const { return isHovered_; }
+  virtual void setPressed(bool pressed) { isPressed_ = pressed; }
+  virtual bool isPressed() const { return isPressed_; }
 
   bool isHorizontal() const { return orientation_ == Qt::Horizontal; }
 
@@ -189,6 +198,10 @@ class DockItem {
   int endSize_;
   int currentStep_;
   int numSteps_;
+
+  // Visual feedback states
+  bool isHovered_ = false;
+  bool isPressed_ = false;
 
  private:
   friend class DockPanel;

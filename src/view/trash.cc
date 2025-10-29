@@ -72,10 +72,15 @@ void Trash::draw(QPainter* painter) const {
 }
 
 void Trash::mousePressEvent(QMouseEvent* e) {
+  if (e->button() == Qt::RightButton) {
+    showPopupMenu(&menu_);
+  }
+  // Left button press is now handled in mouseReleaseEvent for better UX
+}
+
+void Trash::mouseReleaseEvent(QMouseEvent* e) {
   if (e->button() == Qt::LeftButton) {
     openTrash();
-  } else if (e->button() == Qt::RightButton) {
-    showPopupMenu(&menu_);
   }
 }
 
