@@ -48,6 +48,7 @@
 
 #include "add_panel_dialog.h"
 #include "application_menu.h"
+#include "battery_indicator.h"
 #include "clock.h"
 #include "desktop_selector.h"
 #include "multi_dock_view.h"
@@ -915,6 +916,7 @@ void DockPanel::initUi() {
   initTrash();
   initWifiManager();
   initVolumeControl();
+  initBatteryIndicator();
   initVersionChecker();
   initClock();
   initLayoutVars();
@@ -1220,6 +1222,7 @@ void DockPanel::reloadTasks() {
   initTrash();
   initWifiManager();
   initVolumeControl();
+  initBatteryIndicator();
   initVersionChecker();
   initClock();
   resizeTaskManager();
@@ -1372,6 +1375,13 @@ void DockPanel::initClock() {
 void DockPanel::initTrash() {
   if (showTrash_) {
     items_.push_back(std::make_unique<Trash>(
+        this, model_, orientation_, minSize_, maxSize_));
+  }
+}
+
+void DockPanel::initBatteryIndicator() {
+  if (true) {
+    items_.push_back(std::make_unique<BatteryIndicator>(
         this, model_, orientation_, minSize_, maxSize_));
   }
 }
