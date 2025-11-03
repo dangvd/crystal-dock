@@ -27,46 +27,6 @@
 
 namespace crystaldock {
 
-constexpr char MultiDockModel::kGeneralCategory[];
-constexpr char MultiDockModel::kAutoHide[];
-constexpr char MultiDockModel::kPosition[];
-constexpr char MultiDockModel::kScreen[];
-constexpr char MultiDockModel::kVisibility[];
-constexpr char MultiDockModel::kPanelStyle[];
-
-constexpr char MultiDockModel::kBackgroundColor[];
-constexpr char MultiDockModel::kBackgroundColor2D[];
-constexpr char MultiDockModel::kBackgroundColorMetal2D[];
-constexpr char MultiDockModel::kBorderColor[];
-constexpr char MultiDockModel::kBorderColorMetal2D[];
-constexpr char MultiDockModel::kActiveIndicatorColor[];
-constexpr char MultiDockModel::kActiveIndicatorColor2D[];
-constexpr char MultiDockModel::kActiveIndicatorColorMetal2D[];
-constexpr char MultiDockModel::kInactiveIndicatorColor[];
-constexpr char MultiDockModel::kInactiveIndicatorColor2D[];
-constexpr char MultiDockModel::kInactiveIndicatorColorMetal2D[];
-constexpr char MultiDockModel::kMaximumIconSize[];
-constexpr char MultiDockModel::kMinimumIconSize[];
-constexpr char MultiDockModel::kSpacingFactor[];
-constexpr char MultiDockModel::kFloatingMargin[];
-constexpr char MultiDockModel::kFirstRunMultiScreen[];
-constexpr char MultiDockModel::kFirstRunWindowCountIndicator[];
-
-constexpr char MultiDockModel::kTooltipFontSize[];
-constexpr char MultiDockModel::kApplicationMenuCategory[];
-constexpr char MultiDockModel::kLabel[];
-constexpr char MultiDockModel::kFontSize[];
-constexpr char MultiDockModel::kBackgroundAlpha[];
-constexpr char MultiDockModel::kPagerCategory[];
-constexpr char MultiDockModel::kWallpaper[];
-constexpr char MultiDockModel::kShowDesktopNumber[];
-constexpr char MultiDockModel::kTaskManagerCategory[];
-constexpr char MultiDockModel::kCurrentDesktopTasksOnly[];
-constexpr char MultiDockModel::kCurrentScreenTasksOnly[];
-constexpr char MultiDockModel::kClockCategory[];
-constexpr char MultiDockModel::kUse24HourClock[];
-constexpr char MultiDockModel::kFontScaleFactor[];
-
 MultiDockModel::MultiDockModel(const QString& configDir)
     : configHelper_(configDir),
       appearanceConfig_(configHelper_.appearanceConfigPath(),
