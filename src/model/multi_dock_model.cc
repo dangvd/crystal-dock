@@ -31,10 +31,6 @@ constexpr char MultiDockModel::kGeneralCategory[];
 constexpr char MultiDockModel::kAutoHide[];
 constexpr char MultiDockModel::kPosition[];
 constexpr char MultiDockModel::kScreen[];
-constexpr char MultiDockModel::kShowApplicationMenu[];
-constexpr char MultiDockModel::kShowClock[];
-constexpr char MultiDockModel::kShowPager[];
-constexpr char MultiDockModel::kShowTaskManager[];
 constexpr char MultiDockModel::kVisibility[];
 constexpr char MultiDockModel::kPanelStyle[];
 
@@ -110,7 +106,7 @@ void MultiDockModel::loadDocks() {
 void MultiDockModel::addDock(PanelPosition position, int screen,
                              bool showApplicationMenu, bool showPager,
                              bool showTaskManager, bool showTrash,
-                             bool showVolumeControl, bool showWifiManager,
+                             bool showWifiManager, bool showVolumeControl,
                              bool showVersionChecker, bool showClock) {
   auto configPath = configHelper_.findNextDockConfig();
   auto dockId = addDock(configPath, position, screen);
@@ -120,9 +116,9 @@ void MultiDockModel::addDock(PanelPosition position, int screen,
   setShowPager(dockId, showPager);
   setShowTaskManager(dockId, showTaskManager);
   setShowTrash(dockId, showTrash);
+  setShowWifiManager(dockId, showWifiManager);
   setShowVolumeControl(dockId, showVolumeControl);
   setShowVersionChecker(dockId, showVersionChecker);
-  setShowWifiManager(dockId, showWifiManager);
   setShowClock(dockId, showClock);
   emit dockAdded(dockId);
 

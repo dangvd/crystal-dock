@@ -316,8 +316,8 @@ class DockPanel : public QWidget {
   bool hasTask(void* window);
 
   void initTrash();
-  void initVolumeControl();
   void initWifiManager();
+  void initVolumeControl();
   void initBatteryIndicator();
   void initVersionChecker();
   void initClock();
@@ -380,11 +380,11 @@ class DockPanel : public QWidget {
   PanelVisibility visibility_;
   bool showApplicationMenu_;
   bool showPager_;
-  bool showClock_;
   bool showTrash_;
-  bool showVersionChecker_;
-  bool showVolumeControl_;
   bool showWifiManager_;
+  bool showVolumeControl_;
+  bool showVersionChecker_;
+  bool showClock_;
   int minSize_;
   int maxSize_;
   float spacingFactor_;  // item spacing as ratio of minSize, in (0, 1) range.
@@ -433,14 +433,16 @@ class DockPanel : public QWidget {
   QAction* visibilityIntelligentAutoHideAction_;
   QAction* visibilityAutoHideAction_;
   QAction* visibilityAlwaysOnTopAction_;
+
   QAction* applicationMenuAction_;
   QAction* pagerAction_;
   QAction* taskManagerAction_;
-  QAction* clockAction_;
   QAction* trashAction_;
-  QAction* versionCheckerAction_;
-  QAction* volumeControlAction_;
   QAction* wifiManagerAction_;
+  QAction* volumeControlAction_;
+  QAction* versionCheckerAction_;
+  QAction* clockAction_;
+
   QAction* floatingStyleAction_;
   QAction* glass3DStyleAction_;
   QAction* glass2DStyleAction_;

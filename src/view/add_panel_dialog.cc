@@ -71,8 +71,8 @@ void AddPanelDialog::setMode(Mode mode) {
   // reset positions of fields and size.
   ui->showTaskManager->move(120, 180);
   ui->showTrash->move(120, 220);
-  ui->showVolumeControl->move(120, 260);
-  ui->showWifiManager->move(120, 300);
+  ui->showWifiManager->move(120, 260);
+  ui->showVolumeControl->move(120, 300);
   ui->showVersionChecker->move(120, 340);
   ui->showClock->move(120, 380);
   ui->styleLabel->move(90, 440);
@@ -96,8 +96,8 @@ void AddPanelDialog::setMode(Mode mode) {
   ui->showPager->setChecked(false);
   ui->showTaskManager->setChecked(mode == Mode::Welcome);
   ui->showTrash->setChecked(mode == Mode::Welcome);
-  ui->showVolumeControl->setChecked(mode == Mode::Welcome);
   ui->showWifiManager->setChecked(mode == Mode::Welcome);
+  ui->showVolumeControl->setChecked(mode == Mode::Welcome);
   ui->showVersionChecker->setChecked(mode == Mode::Welcome);
   ui->showClock->setChecked(mode == Mode::Welcome);
 
@@ -106,8 +106,8 @@ void AddPanelDialog::setMode(Mode mode) {
   ui->showPager->setVisible(mode != Mode::Clone);
   ui->showTaskManager->setVisible(mode != Mode::Clone);
   ui->showTrash->setVisible(mode != Mode::Clone);
-  ui->showVolumeControl->setVisible(mode != Mode::Clone);
   ui->showWifiManager->setVisible(mode != Mode::Clone);
+  ui->showVolumeControl->setVisible(mode != Mode::Clone);
   ui->showVersionChecker->setVisible(mode != Mode::Clone);
   ui->showClock->setVisible(mode != Mode::Clone);
 
@@ -117,8 +117,8 @@ void AddPanelDialog::setMode(Mode mode) {
     constexpr int kDeltaY = -40;
     moveY(ui->showTaskManager, kDeltaY);
     moveY(ui->showTrash, kDeltaY);
-    moveY(ui->showVolumeControl, kDeltaY);
     moveY(ui->showWifiManager, kDeltaY);
+    moveY(ui->showVolumeControl, kDeltaY);
     moveY(ui->showVersionChecker, kDeltaY);
     moveY(ui->showClock, kDeltaY);
     moveY(ui->styleLabel, kDeltaY);
@@ -188,8 +188,8 @@ void AddPanelDialog::accept() {
     model_->addDock(
         position, screen, ui->showApplicationMenu->isChecked(),
         ui->showPager->isChecked(), ui->showTaskManager->isChecked(),
-        ui->showTrash->isChecked(), ui->showVolumeControl->isChecked(),
-        ui->showWifiManager->isChecked(), ui->showVersionChecker->isChecked(),
+        ui->showTrash->isChecked(), ui->showWifiManager->isChecked(),
+        ui->showVolumeControl->isChecked(), ui->showVersionChecker->isChecked(),
         ui->showClock->isChecked());
     model_->maybeAddDockForMultiScreen();
   }

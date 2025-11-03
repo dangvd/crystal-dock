@@ -956,12 +956,12 @@ void DockPanel::createMenu() {
   trashAction_ = extraComponents->addAction(QString("Trash"), this,
       SLOT(toggleTrash()));
   trashAction_->setCheckable(true);
-  volumeControlAction_ = extraComponents->addAction(QString("Volume Control"), this,
-                                                    SLOT(toggleVolumeControl()));
-  volumeControlAction_->setCheckable(true);
   wifiManagerAction_ = extraComponents->addAction(QString("Wi-Fi Manager"), this,
                                                   SLOT(toggleWifiManager()));
   wifiManagerAction_->setCheckable(true);
+  volumeControlAction_ = extraComponents->addAction(QString("Volume Control"), this,
+                                                    SLOT(toggleVolumeControl()));
+  volumeControlAction_->setCheckable(true);
   versionCheckerAction_ = extraComponents->addAction(QString("Version Checker"), this,
                                                      SLOT(toggleVersionChecker()));
   versionCheckerAction_->setCheckable(true);
@@ -1125,20 +1125,20 @@ void DockPanel::loadDockConfig() {
 
   taskManagerAction_->setChecked(model_->showTaskManager(dockId_));
 
-  showClock_ = model_->showClock(dockId_);
-  clockAction_->setChecked(showClock_);
-
   showTrash_ = model_->showTrash(dockId_);
   trashAction_->setChecked(showTrash_);
 
-  showVersionChecker_ = model_->showVersionChecker(dockId_);
-  versionCheckerAction_->setChecked(showVersionChecker_);
+  showWifiManager_ = model_->showWifiManager(dockId_);
+  wifiManagerAction_->setChecked(showWifiManager_);
 
   showVolumeControl_ = model_->showVolumeControl(dockId_);
   volumeControlAction_->setChecked(showVolumeControl_);
 
-  showWifiManager_ = model_->showWifiManager(dockId_);
-  wifiManagerAction_->setChecked(showWifiManager_);
+  showVersionChecker_ = model_->showVersionChecker(dockId_);
+  versionCheckerAction_->setChecked(showVersionChecker_);
+
+  showClock_ = model_->showClock(dockId_);
+  clockAction_->setChecked(showClock_);
 }
 
 void DockPanel::saveDockConfig() {
@@ -1148,11 +1148,11 @@ void DockPanel::saveDockConfig() {
   model_->setShowApplicationMenu(dockId_, showApplicationMenu_);
   model_->setShowPager(dockId_, showPager_);
   model_->setShowTaskManager(dockId_, taskManagerAction_->isChecked());
-  model_->setShowClock(dockId_, showClock_);
   model_->setShowTrash(dockId_, showTrash_);
-  model_->setShowVersionChecker(dockId_, showVersionChecker_);
-  model_->setShowVolumeControl(dockId_, showVolumeControl_);
   model_->setShowWifiManager(dockId_, showWifiManager_);
+  model_->setShowVolumeControl(dockId_, showVolumeControl_);
+  model_->setShowVersionChecker(dockId_, showVersionChecker_);
+  model_->setShowClock(dockId_, showClock_);
   model_->saveDockConfig(dockId_);
 }
 
@@ -1365,16 +1365,23 @@ bool DockPanel::hasTask(void* window) {
   return false;
 }
 
-void DockPanel::initClock() {
-  if (showClock_) {
-    items_.push_back(std::make_unique<Clock>(
+void DockPanel::initTrash() {
+  if (showTrash_) {
+    items_.push_back(std::make_unique<Trash>(
         this, model_, orientation_, minSize_, maxSize_));
   }
 }
 
-void DockPanel::initTrash() {
-  if (showTrash_) {
-    items_.push_back(std::make_unique<Trash>(
+void DockPanel::initWifiManager() {
+  if (showWifiManager_) {
+    items_.push_back(std::make_unique<WifiManager>(
+        this, model_, orientation_, minSize_, maxSize_));
+  }
+}
+
+void DockPanel::initVolumeControl() {
+  if (showVolumeControl_) {
+    items_.push_back(std::make_unique<VolumeControl>(
         this, model_, orientation_, minSize_, maxSize_));
   }
 }
@@ -1393,16 +1400,9 @@ void DockPanel::initVersionChecker() {
   }
 }
 
-void DockPanel::initVolumeControl() {
-  if (showVolumeControl_) {
-    items_.push_back(std::make_unique<VolumeControl>(
-        this, model_, orientation_, minSize_, maxSize_));
-  }
-}
-
-void DockPanel::initWifiManager() {
-  if (showWifiManager_) {
-    items_.push_back(std::make_unique<WifiManager>(
+void DockPanel::initClock() {
+  if (showClock_) {
+    items_.push_back(std::make_unique<Clock>(
         this, model_, orientation_, minSize_, maxSize_));
   }
 }
