@@ -252,9 +252,10 @@ bool WlrWindowManager::showingDesktop_;
   windows_[window]->minimized = false;
   windows_[window]->maximized = false;
   windows_[window]->fullscreen = false;
-  void *state_entry;
-  wl_array_for_each(state_entry, state) {
-    auto* entry = static_cast<uint32_t*>(state_entry);
+  for (uint32_t* entry = static_cast<uint32_t*>(state->data);
+       state->size != 0 && reinterpret_cast<const char*>(entry)
+           < static_cast<const char*>(state->data) + state->size;
+       ++entry) {
     if (*entry == ZWLR_FOREIGN_TOPLEVEL_HANDLE_V1_STATE_MAXIMIZED) {
       if (!windows_[window]->minimized) {
         windows_[window]->maximized = true;
