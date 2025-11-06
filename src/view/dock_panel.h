@@ -180,20 +180,14 @@ class DockPanel : public QWidget {
     saveDockConfig();
   }
 
-  void toggleClock() {
-    showClock_ = !showClock_;
-    reload();
-    saveDockConfig();
-  }
-
   void toggleTrash() {
     showTrash_ = !showTrash_;
     reload();
     saveDockConfig();
   }
 
-  void toggleVersionChecker() {
-    showVersionChecker_ = !showVersionChecker_;
+  void toggleWifiManager() {
+    showWifiManager_ = !showWifiManager_;
     reload();
     saveDockConfig();
   }
@@ -210,8 +204,14 @@ class DockPanel : public QWidget {
     saveDockConfig();
   }
 
-  void toggleWifiManager() {
-    showWifiManager_ = !showWifiManager_;
+  void toggleVersionChecker() {
+    showVersionChecker_ = !showVersionChecker_;
+    reload();
+    saveDockConfig();
+  }
+
+  void toggleClock() {
+    showClock_ = !showClock_;
     reload();
     saveDockConfig();
   }
