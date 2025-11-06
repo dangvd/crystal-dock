@@ -73,10 +73,6 @@ DockPanel::DockPanel(MultiDockView* parent, MultiDockModel* model, int dockId)
       parent_(parent),
       model_(model),
       dockId_(dockId),
-      visibility_(PanelVisibility::AlwaysVisible),
-      showPager_(false),
-      showClock_(false),
-      showTrash_(false),
       aboutDialog_(QMessageBox::Information, "About Crystal Dock",
                    QString("<h3>Crystal Dock ") + kVersion + "</h3>"
                    + "<p>Copyright (C) 2025 Viet Dang (dangvd@gmail.com)"
