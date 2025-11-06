@@ -189,7 +189,8 @@ void AddPanelDialog::accept() {
         position, screen, ui->showApplicationMenu->isChecked(),
         ui->showPager->isChecked(), ui->showTaskManager->isChecked(),
         ui->showTrash->isChecked(), ui->showWifiManager->isChecked(),
-        ui->showVolumeControl->isChecked(), ui->showVersionChecker->isChecked(),
+        ui->showVolumeControl->isChecked(), true /*TODO*/,
+        ui->showVersionChecker->isChecked(),
         ui->showClock->isChecked());
     model_->maybeAddDockForMultiScreen();
   }

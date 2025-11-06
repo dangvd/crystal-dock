@@ -962,6 +962,9 @@ void DockPanel::createMenu() {
   volumeControlAction_ = extraComponents->addAction(QString("Volume Control"), this,
                                                     SLOT(toggleVolumeControl()));
   volumeControlAction_->setCheckable(true);
+  batteryIndicatorAction_ = extraComponents->addAction(QString("Battery Indicator"), this,
+                                                       SLOT(toggleBatteryIndicator()));
+  batteryIndicatorAction_->setCheckable(true);
   versionCheckerAction_ = extraComponents->addAction(QString("Version Checker"), this,
                                                      SLOT(toggleVersionChecker()));
   versionCheckerAction_->setCheckable(true);
@@ -1134,6 +1137,9 @@ void DockPanel::loadDockConfig() {
   showVolumeControl_ = model_->showVolumeControl(dockId_);
   volumeControlAction_->setChecked(showVolumeControl_);
 
+  showBatteryIndicator_ = model_->showBatteryIndicator(dockId_);
+  batteryIndicatorAction_->setChecked(showBatteryIndicator_);
+
   showVersionChecker_ = model_->showVersionChecker(dockId_);
   versionCheckerAction_->setChecked(showVersionChecker_);
 
@@ -1151,6 +1157,7 @@ void DockPanel::saveDockConfig() {
   model_->setShowTrash(dockId_, showTrash_);
   model_->setShowWifiManager(dockId_, showWifiManager_);
   model_->setShowVolumeControl(dockId_, showVolumeControl_);
+  model_->setShowBatteryIndicator(dockId_, showBatteryIndicator_);
   model_->setShowVersionChecker(dockId_, showVersionChecker_);
   model_->setShowClock(dockId_, showClock_);
   model_->saveDockConfig(dockId_);
@@ -1387,7 +1394,7 @@ void DockPanel::initVolumeControl() {
 }
 
 void DockPanel::initBatteryIndicator() {
-  if (true) {
+  if (showBatteryIndicator_) {
     items_.push_back(std::make_unique<BatteryIndicator>(
         this, model_, orientation_, minSize_, maxSize_));
   }

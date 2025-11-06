@@ -83,6 +83,7 @@ constexpr bool kDefaultShowTaskManager = true;
 constexpr bool kDefaultShowTrash = true;
 constexpr bool kDefaultShowWifiManager = true;
 constexpr bool kDefaultShowVolumeControl = true;
+constexpr bool kDefaultShowBatteryIndicator = false;
 constexpr bool kDefaultShowVersionChecker = true;
 constexpr bool kDefaultShowClock = true;
 constexpr int kDefaultVolumeScrollStep = 2;
@@ -125,12 +126,14 @@ class MultiDockModel : public QObject {
   void addDock(PanelPosition position, int screen, bool showApplicationMenu,
                bool showPager, bool showTaskManager, bool showTrash,
                bool showWifiManager, bool showVolumeControl,
+               bool showBatteryIndicator,
                bool showVersionChecker, bool showClock);
 
   void addDock() {
     addDock(PanelPosition::Bottom, 0, kDefaultShowApplicationMenu,
             kDefaultShowPager, kDefaultShowTaskManager, kDefaultShowTrash,
             kDefaultShowWifiManager, kDefaultShowVolumeControl,
+            kDefaultShowBatteryIndicator,
             kDefaultShowVersionChecker, kDefaultShowClock);
   }
 
@@ -604,6 +607,15 @@ class MultiDockModel : public QObject {
     setDockProperty(dockId, kGeneralCategory, kShowVolumeControl, value);
   }
 
+  bool showBatteryIndicator(int dockId) const {
+    return dockProperty(dockId, kGeneralCategory, kShowBatteryIndicator,
+                        kDefaultShowBatteryIndicator);
+  }
+
+  void setShowBatteryIndicator(int dockId, bool value) {
+    setDockProperty(dockId, kGeneralCategory, kShowBatteryIndicator, value);
+  }
+
   bool showVersionChecker(int dockId) const {
     return dockProperty(dockId, kGeneralCategory, kShowVersionChecker,
                         kDefaultShowVersionChecker);
@@ -717,6 +729,7 @@ class MultiDockModel : public QObject {
   static constexpr char kShowTrash[] = "showTrash";
   static constexpr char kShowWifiManager[] = "showWifiManager";
   static constexpr char kShowVolumeControl[] = "showVolumeControl";
+  static constexpr char kShowBatteryIndicator[] = "showBatteryIndicator";
   static constexpr char kShowVersionChecker[] = "showVersionChecker";
   static constexpr char kShowClock[] = "showClock";
   static constexpr char kLaunchers[] = "launchers";

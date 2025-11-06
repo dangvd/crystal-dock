@@ -204,6 +204,12 @@ class DockPanel : public QWidget {
     saveDockConfig();
   }
 
+  void toggleBatteryIndicator() {
+    showBatteryIndicator_ = !showBatteryIndicator_;
+    reload();
+    saveDockConfig();
+  }
+
   void toggleWifiManager() {
     showWifiManager_ = !showWifiManager_;
     reload();
@@ -383,6 +389,7 @@ class DockPanel : public QWidget {
   bool showTrash_;
   bool showWifiManager_;
   bool showVolumeControl_;
+  bool showBatteryIndicator_;
   bool showVersionChecker_;
   bool showClock_;
   int minSize_;
@@ -440,6 +447,7 @@ class DockPanel : public QWidget {
   QAction* trashAction_;
   QAction* wifiManagerAction_;
   QAction* volumeControlAction_;
+  QAction* batteryIndicatorAction_;
   QAction* versionCheckerAction_;
   QAction* clockAction_;
 
