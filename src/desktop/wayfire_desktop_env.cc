@@ -37,7 +37,7 @@ std::vector<Category> WayfireDesktopEnv::getApplicationMenuSystemCategories() co
           "Log Out",
           "",
           "system-log-out",
-          "wayland-logout",
+          "wlogout",
           ""
         },
       },
