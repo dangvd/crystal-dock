@@ -51,6 +51,7 @@
 #include "battery_indicator.h"
 #include "clock.h"
 #include "desktop_selector.h"
+#include "keyboard_layout.h"
 #include "multi_dock_view.h"
 #include "program.h"
 #include "separator.h"
@@ -913,6 +914,7 @@ void DockPanel::initUi() {
   initWifiManager();
   initVolumeControl();
   initBatteryIndicator();
+  initKeyboardLayout();
   initVersionChecker();
   initClock();
   initLayoutVars();
@@ -1226,6 +1228,7 @@ void DockPanel::reloadTasks() {
   initWifiManager();
   initVolumeControl();
   initBatteryIndicator();
+  initKeyboardLayout();
   initVersionChecker();
   initClock();
   resizeTaskManager();
@@ -1392,6 +1395,13 @@ void DockPanel::initVolumeControl() {
 void DockPanel::initBatteryIndicator() {
   if (showBatteryIndicator_) {
     items_.push_back(std::make_unique<BatteryIndicator>(
+        this, model_, orientation_, minSize_, maxSize_));
+  }
+}
+
+void DockPanel::initKeyboardLayout() {
+  if (true) {
+    items_.push_back(std::make_unique<KeyboardLayout>(
         this, model_, orientation_, minSize_, maxSize_));
   }
 }

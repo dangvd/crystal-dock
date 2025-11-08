@@ -325,6 +325,7 @@ class DockPanel : public QWidget {
   void initWifiManager();
   void initVolumeControl();
   void initBatteryIndicator();
+  void initKeyboardLayout();
   void initVersionChecker();
   void initClock();
 

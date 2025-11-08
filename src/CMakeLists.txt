@@ -58,6 +58,7 @@ set(SRCS
     view/icon_based_dock_item.cc
     view/icon_button.cc
     view/iconless_dock_item.cc
+    view/keyboard_layout.cc
     view/multi_dock_view.cc
     view/program.cc
     view/separator.cc
@@ -105,6 +106,7 @@ set(SRCS
     view/icon_based_dock_item.h
     view/icon_button.h
     view/iconless_dock_item.h
+    view/keyboard_layout.h
     view/multi_dock_view.h
     view/program.h
     view/separator.h
