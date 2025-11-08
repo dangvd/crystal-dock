@@ -31,7 +31,7 @@ namespace crystaldock {
 
 struct KeyboardLayoutInfo {
   QString language;
-  QString countryCode;
+  QString languageCode;
   QString engine;
   QString description;
 

@@ -35,9 +35,9 @@ KeyboardLayout::KeyboardLayout(DockPanel* parent, MultiDockModel* model,
                         minSize, maxSize),
     process_(nullptr),
     keyboardLayouts_{
-      {"English", "GB", "xkb:gb::eng", "English (UK)"},
+      {"English", "EN", "xkb:gb::eng", "English (UK)"},
       {"Vietnamese", "VI", "m17n:vi:telex", "vi-telex (m17n)"}},
-    activeKeyboardLayout_({"English", "GB", "xkb:gb::eng", "English (UK)"}) {
+    activeKeyboardLayout_({"English", "EN", "xkb:gb::eng", "English (UK)"}) {
   createMenu();
 
   connect(&menu_, &QMenu::triggered, this, &KeyboardLayout::onKeyboardLayoutSelected);
@@ -67,7 +67,7 @@ void KeyboardLayout::draw(QPainter* painter) const {
   painter->setFont(font);
   drawBorderedText(left_ + getWidth() / 4, top_ + getHeight()  * 3 / 8,
                    getWidth() * 3 / 4, getHeight() * 5 / 8,
-                   0, activeKeyboardLayout_.countryCode, 2, Qt::black, Qt::white, painter);
+                   0, activeKeyboardLayout_.languageCode, 2, Qt::black, Qt::white, painter);
 }
 
 void KeyboardLayout::mousePressEvent(QMouseEvent* e) {
