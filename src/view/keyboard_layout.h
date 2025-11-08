@@ -29,6 +29,15 @@
 
 namespace crystaldock {
 
+struct KeyboardLayoutInfo {
+  QString language;
+  QString countryCode;
+  QString engine;
+  QString description;
+
+  QString toString() const { return language + " - " + description; }
+};
+
 // A keyboard layout manager that integrates with IBus.
 class KeyboardLayout : public QObject, public IconBasedDockItem {
   Q_OBJECT
@@ -45,7 +54,7 @@ class KeyboardLayout : public QObject, public IconBasedDockItem {
 
  public slots:
   void onKeyboardLayoutSelected(QAction* action);
-  void setKeyboardLayout(const QString& layout);
+  void setKeyboardLayout(const KeyboardLayoutInfo& layout);
 
  private:
   static constexpr char kCommand[] = "ibus";
@@ -58,8 +67,8 @@ class KeyboardLayout : public QObject, public IconBasedDockItem {
 
   void updateUi();
 
-  std::vector<QString> keyboardLayouts_;
-  QString activeKeyboardLayout_;
+  std::vector<KeyboardLayoutInfo> keyboardLayouts_;
+  KeyboardLayoutInfo activeKeyboardLayout_;
 
   // ibus process.
   QProcess* process_ = nullptr;
@@ -71,5 +80,7 @@ class KeyboardLayout : public QObject, public IconBasedDockItem {
 };
 
 }  // namespace crystaldock
+
+Q_DECLARE_METATYPE(crystaldock::KeyboardLayoutInfo);
 
 #endif  // CRYSTAL_DOCK_KEYBOARD_LAYOUT_H_

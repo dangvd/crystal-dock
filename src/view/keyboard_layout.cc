@@ -34,8 +34,10 @@ KeyboardLayout::KeyboardLayout(DockPanel* parent, MultiDockModel* model,
     : IconBasedDockItem(parent, model, kLabel, orientation, kIcon,
                         minSize, maxSize),
     process_(nullptr),
-    keyboardLayouts_{"xkb:gb::eng", "tb:vi:telex"},
-    activeKeyboardLayout_("xkb:gb::eng") {
+    keyboardLayouts_{
+      {"English", "GB", "xkb:gb::eng", "English (UK)"},
+      {"Vietnamese", "VI", "m17n:vi:telex", "vi-telex (m17n)"}},
+    activeKeyboardLayout_({"English", "GB", "xkb:gb::eng", "English (UK)"}) {
   createMenu();
 
   connect(&menu_, &QMenu::triggered, this, &KeyboardLayout::onKeyboardLayoutSelected);
@@ -60,17 +62,12 @@ KeyboardLayout::~KeyboardLayout() {
 void KeyboardLayout::draw(QPainter* painter) const {
   IconBasedDockItem::draw(painter);
 
-  QString countryCode;
-  QStringList tokens = activeKeyboardLayout_.split(':', Qt::SkipEmptyParts);
-  if (tokens.size() >= 2) {
-    countryCode = tokens[tokens.size() - 2].toUpper();
-  }
   QFont font;
   font.setPixelSize(getHeight() / 2);
   painter->setFont(font);
   drawBorderedText(left_ + getWidth() / 4, top_ + getHeight()  * 3 / 8,
                    getWidth() * 3 / 4, getHeight() * 5 / 8,
-                   0, countryCode, 2, Qt::black, Qt::white, painter);
+                   0, activeKeyboardLayout_.countryCode, 2, Qt::black, Qt::white, painter);
 }
 
 void KeyboardLayout::mousePressEvent(QMouseEvent* e) {
@@ -88,14 +85,15 @@ void KeyboardLayout::mousePressEvent(QMouseEvent* e) {
 }
 
 QString KeyboardLayout::getLabel() const {
-  return QString(kLabel) + ": " + activeKeyboardLayout_;
+  return QString(kLabel) + ": " + activeKeyboardLayout_.toString();
 }
 
 void KeyboardLayout::onKeyboardLayoutSelected(QAction* action) {
-  setKeyboardLayout(action->text());
+  KeyboardLayoutInfo layout = action->data().value<KeyboardLayoutInfo>();
+  setKeyboardLayout(layout);
 }
 
-void KeyboardLayout::setKeyboardLayout(const QString& layout) {
+void KeyboardLayout::setKeyboardLayout(const KeyboardLayoutInfo& layout) {
   // Prevent concurrent processes
   if (process_ && process_->state() != QProcess::NotRunning) {
     return;
@@ -111,13 +109,15 @@ void KeyboardLayout::setKeyboardLayout(const QString& layout) {
             process_ = nullptr;
           });
 
-  process_->start(kCommand, QStringList() << "engine" << layout);
+  process_->start(kCommand, QStringList() << "engine" << layout.engine);
 }
 
 void KeyboardLayout::createMenu() {
   // Left-click menu.
   for (const auto& layout : keyboardLayouts_) {
-    menu_.addAction(layout);
+    QAction* action = new QAction(layout.toString(), &menu_);
+    action->setData(QVariant::fromValue(layout));
+    menu_.addAction(action);
   }
 
   // Right-click context menu.
