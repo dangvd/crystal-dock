@@ -67,8 +67,6 @@ class BatteryIndicator : public QObject, public IconBasedDockItem {
   // upower process.
   QProcess* process_ = nullptr;
 
-  // Left-click volume menu.
-  QMenu menu_;
   // Right-click context menu.
   QMenu contextMenu_;
 };

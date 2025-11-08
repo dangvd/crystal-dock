@@ -41,10 +41,6 @@ BatteryIndicator::BatteryIndicator(DockPanel* parent, MultiDockModel* model,
     getBatteryDevice();
   });
 
-  connect(&menu_, &QMenu::aboutToHide, this,
-          [this]() {
-            parent_->setShowingPopup(false);
-          });
   connect(&contextMenu_, &QMenu::aboutToHide, this,
           [this]() {
             parent_->setShowingPopup(false);
