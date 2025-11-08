@@ -34,7 +34,7 @@ KeyboardLayout::KeyboardLayout(DockPanel* parent, MultiDockModel* model,
     : IconBasedDockItem(parent, model, kLabel, orientation, kIcon,
                         minSize, maxSize),
     process_(nullptr),
-    keyboardLayouts_{"xkb:gb::eng", "xkb:us::eng"},
+    keyboardLayouts_{"xkb:gb::eng", "tb:vi:telex"},
     activeKeyboardLayout_("xkb:gb::eng") {
   createMenu();
 
