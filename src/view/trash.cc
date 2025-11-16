@@ -111,7 +111,26 @@ void Trash::emptyTrash() {
 }
 
 void Trash::openTrash() {
-  Program::launch("xdg-open trash:/");
+  QProcess* process = new QProcess(parent_);
+  connect(process, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),
+          [this, process](int exitCode, QProcess::ExitStatus exitStatus) {
+            // Tries to find the default file manager. Falls back to using "xdg-open".
+            QString command = "xdg-open";
+            if (exitCode == 0) {
+              QString desktopFile = process->readAllStandardOutput().trimmed();
+              if (desktopFile.endsWith(".desktop")) {
+                desktopFile = desktopFile.first(desktopFile.size() - 8);
+              }
+              const auto* fileManager = model_->findApplication(desktopFile.toStdString());
+              if (fileManager != nullptr) {
+                command = fileManager->command;
+              }
+            }
+
+            Program::launch(command + " trash:/");
+            process->deleteLater();
+          });
+  process->start("xdg-mime", QStringList() << "query" << "default" << "inode/directory");
 }
 
 void Trash::setAcceptDrops(bool accept) {
