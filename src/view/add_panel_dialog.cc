@@ -73,16 +73,18 @@ void AddPanelDialog::setMode(Mode mode) {
   ui->showTrash->move(120, 220);
   ui->showWifiManager->move(120, 260);
   ui->showVolumeControl->move(120, 300);
-  ui->showVersionChecker->move(120, 340);
-  ui->showClock->move(120, 380);
-  ui->styleLabel->move(90, 440);
-  ui->style->move(320, 425);
-  ui->positionLabel->move(90, 480);
-  ui->position->move(320, 470);
-  ui->screenLabel->move(90, 520);
-  ui->screen->move(320, 515);
-  ui->buttonBox->move(70, 590);
-  resize(540, 650);
+  ui->showBatteryIndicator->move(120, 340);
+  ui->showKeyboardLayout->move(120, 380);
+  ui->showVersionChecker->move(120, 420);
+  ui->showClock->move(120, 460);
+  ui->styleLabel->move(90, 520);
+  ui->style->move(320, 505);
+  ui->positionLabel->move(90, 560);
+  ui->position->move(320, 550);
+  ui->screenLabel->move(90, 600);
+  ui->screen->move(320, 595);
+  ui->buttonBox->move(70, 670);
+  resize(540, 730);
 
   setWindowTitle((mode_ == Mode::Add)
                  ? QString("Add Panel") : (mode_ == Mode::Clone)
@@ -98,6 +100,8 @@ void AddPanelDialog::setMode(Mode mode) {
   ui->showTrash->setChecked(mode == Mode::Welcome);
   ui->showWifiManager->setChecked(mode == Mode::Welcome);
   ui->showVolumeControl->setChecked(mode == Mode::Welcome);
+  ui->showBatteryIndicator->setChecked(mode == Mode::Welcome);
+  ui->showKeyboardLayout->setChecked(mode == Mode::Welcome);
   ui->showVersionChecker->setChecked(mode == Mode::Welcome);
   ui->showClock->setChecked(mode == Mode::Welcome);
 
@@ -108,6 +112,8 @@ void AddPanelDialog::setMode(Mode mode) {
   ui->showTrash->setVisible(mode != Mode::Clone);
   ui->showWifiManager->setVisible(mode != Mode::Clone);
   ui->showVolumeControl->setVisible(mode != Mode::Clone);
+  ui->showBatteryIndicator->setVisible(mode != Mode::Clone);
+  ui->showKeyboardLayout->setVisible(mode != Mode::Clone);
   ui->showVersionChecker->setVisible(mode != Mode::Clone);
   ui->showClock->setVisible(mode != Mode::Clone);
 
@@ -119,6 +125,8 @@ void AddPanelDialog::setMode(Mode mode) {
     moveY(ui->showTrash, kDeltaY);
     moveY(ui->showWifiManager, kDeltaY);
     moveY(ui->showVolumeControl, kDeltaY);
+    moveY(ui->showBatteryIndicator, kDeltaY);
+    moveY(ui->showKeyboardLayout, kDeltaY);
     moveY(ui->showVersionChecker, kDeltaY);
     moveY(ui->showClock, kDeltaY);
     moveY(ui->styleLabel, kDeltaY);
@@ -189,8 +197,8 @@ void AddPanelDialog::accept() {
         position, screen, ui->showApplicationMenu->isChecked(),
         ui->showPager->isChecked(), ui->showTaskManager->isChecked(),
         ui->showTrash->isChecked(), ui->showWifiManager->isChecked(),
-        ui->showVolumeControl->isChecked(), true /*TODO*/,
-        ui->showVersionChecker->isChecked(),
+        ui->showVolumeControl->isChecked(), ui->showBatteryIndicator->isChecked(),
+        ui->showKeyboardLayout->isChecked(), ui->showVersionChecker->isChecked(),
         ui->showClock->isChecked());
     model_->maybeAddDockForMultiScreen();
   }

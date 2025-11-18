@@ -963,6 +963,9 @@ void DockPanel::createMenu() {
   batteryIndicatorAction_ = extraComponents->addAction(QString("Battery Indicator"), this,
                                                        SLOT(toggleBatteryIndicator()));
   batteryIndicatorAction_->setCheckable(true);
+  keyboardLayoutAction_ = extraComponents->addAction(QString("Keyboard Layout"), this,
+                                                     SLOT(toggleKeyboardLayout()));
+  keyboardLayoutAction_->setCheckable(true);
   versionCheckerAction_ = extraComponents->addAction(QString("Version Checker"), this,
                                                      SLOT(toggleVersionChecker()));
   versionCheckerAction_->setCheckable(true);
@@ -1138,6 +1141,9 @@ void DockPanel::loadDockConfig() {
   showBatteryIndicator_ = model_->showBatteryIndicator(dockId_);
   batteryIndicatorAction_->setChecked(showBatteryIndicator_);
 
+  showKeyboardLayout_ = model_->showKeyboardLayout(dockId_);
+  keyboardLayoutAction_->setChecked(showKeyboardLayout_);
+
   showVersionChecker_ = model_->showVersionChecker(dockId_);
   versionCheckerAction_->setChecked(showVersionChecker_);
 
@@ -1156,6 +1162,7 @@ void DockPanel::saveDockConfig() {
   model_->setShowWifiManager(dockId_, showWifiManager_);
   model_->setShowVolumeControl(dockId_, showVolumeControl_);
   model_->setShowBatteryIndicator(dockId_, showBatteryIndicator_);
+  model_->setShowKeyboardLayout(dockId_, showKeyboardLayout_);
   model_->setShowVersionChecker(dockId_, showVersionChecker_);
   model_->setShowClock(dockId_, showClock_);
   model_->saveDockConfig(dockId_);
@@ -1400,7 +1407,7 @@ void DockPanel::initBatteryIndicator() {
 }
 
 void DockPanel::initKeyboardLayout() {
-  if (true) {
+  if (showKeyboardLayout_) {
     items_.push_back(std::make_unique<KeyboardLayout>(
         this, model_, orientation_, minSize_, maxSize_));
   }

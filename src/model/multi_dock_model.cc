@@ -67,7 +67,7 @@ void MultiDockModel::addDock(PanelPosition position, int screen,
                              bool showApplicationMenu, bool showPager,
                              bool showTaskManager, bool showTrash,
                              bool showWifiManager, bool showVolumeControl,
-                             bool showBatteryIndicator,
+                             bool showBatteryIndicator, bool showKeyboardLayout,
                              bool showVersionChecker, bool showClock) {
   auto configPath = configHelper_.findNextDockConfig();
   auto dockId = addDock(configPath, position, screen);
@@ -80,6 +80,7 @@ void MultiDockModel::addDock(PanelPosition position, int screen,
   setShowWifiManager(dockId, showWifiManager);
   setShowVolumeControl(dockId, showVolumeControl);
   setShowBatteryIndicator(dockId, showBatteryIndicator);
+  setShowKeyboardLayout(dockId, showKeyboardLayout);
   setShowVersionChecker(dockId, showVersionChecker);
   setShowClock(dockId, showClock);
   emit dockAdded(dockId);

@@ -204,6 +204,12 @@ class DockPanel : public QWidget {
     saveDockConfig();
   }
 
+  void toggleKeyboardLayout() {
+    showKeyboardLayout_ = !showKeyboardLayout_;
+    reload();
+    saveDockConfig();
+  }
+
   void toggleVersionChecker() {
     showVersionChecker_ = !showVersionChecker_;
     reload();
@@ -391,6 +397,7 @@ class DockPanel : public QWidget {
   bool showWifiManager_;
   bool showVolumeControl_;
   bool showBatteryIndicator_;
+  bool showKeyboardLayout_;
   bool showVersionChecker_;
   bool showClock_;
   int minSize_;
@@ -449,6 +456,7 @@ class DockPanel : public QWidget {
   QAction* wifiManagerAction_;
   QAction* volumeControlAction_;
   QAction* batteryIndicatorAction_;
+  QAction* keyboardLayoutAction_;
   QAction* versionCheckerAction_;
   QAction* clockAction_;
 

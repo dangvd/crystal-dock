@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>540</width>
-    <height>650</height>
+    <height>730</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,7 +17,7 @@
    <property name="geometry">
     <rect>
      <x>70</x>
-     <y>590</y>
+     <y>670</y>
      <width>400</width>
      <height>32</height>
     </rect>
@@ -36,7 +36,7 @@
    <property name="geometry">
     <rect>
      <x>90</x>
-     <y>480</y>
+     <y>560</y>
      <width>210</width>
      <height>23</height>
     </rect>
@@ -49,7 +49,7 @@
    <property name="geometry">
     <rect>
      <x>320</x>
-     <y>470</y>
+     <y>550</y>
      <width>131</width>
      <height>40</height>
     </rect>
@@ -82,7 +82,7 @@
    <property name="geometry">
     <rect>
      <x>90</x>
-     <y>520</y>
+     <y>600</y>
      <width>210</width>
      <height>23</height>
     </rect>
@@ -95,7 +95,7 @@
    <property name="geometry">
     <rect>
      <x>320</x>
-     <y>515</y>
+     <y>595</y>
      <width>131</width>
      <height>40</height>
     </rect>
@@ -111,7 +111,7 @@
     </rect>
    </property>
    <property name="text">
-    <string>Optional features</string>
+    <string>Optional features:</string>
    </property>
   </widget>
   <widget class="QCheckBox" name="showApplicationMenu">
@@ -163,7 +163,7 @@
    <property name="geometry">
     <rect>
      <x>120</x>
-     <y>380</y>
+     <y>460</y>
      <width>300</width>
      <height>30</height>
     </rect>
@@ -195,7 +195,7 @@
    <property name="geometry">
     <rect>
      <x>90</x>
-     <y>440</y>
+     <y>520</y>
      <width>210</width>
      <height>26</height>
     </rect>
@@ -208,7 +208,7 @@
    <property name="geometry">
     <rect>
      <x>320</x>
-     <y>425</y>
+     <y>505</y>
      <width>131</width>
      <height>40</height>
     </rect>
@@ -270,7 +270,7 @@
    <property name="geometry">
     <rect>
      <x>120</x>
-     <y>340</y>
+     <y>420</y>
      <width>300</width>
      <height>30</height>
     </rect>
@@ -293,6 +293,38 @@
    </property>
    <property name="text">
     <string>Wi-Fi Manager</string>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+  </widget>
+  <widget class="QCheckBox" name="showBatteryIndicator">
+   <property name="geometry">
+    <rect>
+     <x>120</x>
+     <y>340</y>
+     <width>300</width>
+     <height>30</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Battery Indicator</string>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+  </widget>
+  <widget class="QCheckBox" name="showKeyboardLayout">
+   <property name="geometry">
+    <rect>
+     <x>120</x>
+     <y>380</y>
+     <width>300</width>
+     <height>30</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Keyboard Layout</string>
    </property>
    <property name="checked">
     <bool>true</bool>
