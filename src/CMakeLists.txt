@@ -24,6 +24,7 @@ find_package(LayerShellQt 6.0 REQUIRED)
 
 set(SRCS
     desktop/desktop_env.cc
+    desktop/budgie_desktop_env.cc
     desktop/hyprland_desktop_env.cc
     desktop/kde_desktop_env.cc
     desktop/labwc_desktop_env.cc
@@ -71,6 +72,7 @@ set(SRCS
     view/wifi_manager.cc
     utils/desktop_file.cc
     desktop/desktop_env.h
+    desktop/budgie_desktop_env.h
     desktop/hyprland_desktop_env.h
     desktop/kde_desktop_env.h
     desktop/labwc_desktop_env.h

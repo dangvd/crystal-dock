@@ -24,6 +24,7 @@
 #include <QProcess>
 #include <QStringList>
 
+#include "budgie_desktop_env.h"
 #include "hyprland_desktop_env.h"
 #include "kde_desktop_env.h"
 #include "labwc_desktop_env.h"
@@ -37,7 +38,10 @@ namespace crystaldock {
 
 DesktopEnv* DesktopEnv::getDesktopEnv() {
   QString currentDesktopEnv = getDesktopEnvName();
-  if (currentDesktopEnv == "Hyprland") {
+  if (currentDesktopEnv == "Budgie") {
+    static std::unique_ptr<BudgieDesktopEnv> budgie(new BudgieDesktopEnv);
+    return budgie.get();
+  } else if (currentDesktopEnv == "Hyprland") {
     static std::unique_ptr<HyprlandDesktopEnv> hyprland(new HyprlandDesktopEnv);
     return hyprland.get();
   } else if (currentDesktopEnv == "KDE") {
