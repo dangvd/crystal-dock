@@ -1332,10 +1332,15 @@ bool DockPanel::isValidTask(const WindowInfo* task) {
     return false;
   }
 
-  QRect taskGeometry(task->x, task->y, task->width, task->height);
-  if (model_->currentScreenTasksOnly() && taskGeometry.isValid()
-      && !screenGeometry_.intersects(taskGeometry)) {
-    return false;
+  if (model_->currentScreenTasksOnly()) {
+    if (!task->outputs.empty() && !task->outputs.contains(screenOutput_)) {
+      return false;
+    }
+
+    QRect taskGeometry(task->x, task->y, task->width, task->height);
+    if (taskGeometry.isValid() && !screenGeometry_.intersects(taskGeometry)) {
+      return false;
+    }
   }
 
   if (WindowSystem::hasActivityManager() && !WindowSystem::currentActivity().empty()
