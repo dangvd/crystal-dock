@@ -30,7 +30,21 @@
 
 namespace {
 
-void maybeCopyConfigOnFirstRun(const QString& configDir) {
+void maybeCopyOldConfigOnFirstRun(const QString& configDir) {
+  // On the first run, copies the dock config from the old config location if it exists.
+  // This is for backward compatibility.
+  if (!QDir::home().exists(configDir)) {
+    const auto oldConfigDir = QDir::homePath() + "/.crystal-dock-2";
+    if (QDir::home().exists(oldConfigDir)) {
+      std::filesystem::copy(oldConfigDir.toStdString(), configDir.toStdString(),
+          std::filesystem::copy_options::recursive);
+      std::cout << "Copied config from " << oldConfigDir.toStdString() << " to "
+                << configDir.toStdString() << std::endl;
+    }
+  }
+}
+
+void maybeCopyPresetConfigOnFirstRun(const QString& configDir) {
   // On the first run, copies the dock config from XDG_CONFIG_DIRS if it exists.
   // This is mainly for package managers to pre-configure the dock.
   if (!QDir::home().exists(configDir)) {
@@ -74,8 +88,11 @@ int main(int argc, char** argv) {
 
   QApplication::setWindowIcon(QIcon::fromTheme("user-desktop"));
 
-  const auto configDir = QDir::homePath() + "/.crystal-dock-2";
-  maybeCopyConfigOnFirstRun(configDir);
+  auto configHome = qEnvironmentVariable("XDG_CONFIG_HOME").trimmed();
+  if (configHome.isEmpty()) { configHome = QDir::homePath() + "/.config"; }
+  const auto configDir = configHome + "/crystal-dock";
+  maybeCopyOldConfigOnFirstRun(configDir);
+  maybeCopyPresetConfigOnFirstRun(configDir);
   crystaldock::MultiDockModel model(configDir);
   crystaldock::MultiDockView view(&model);
 
