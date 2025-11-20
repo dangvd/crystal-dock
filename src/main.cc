@@ -51,7 +51,7 @@ void maybeCopyPresetConfigOnFirstRun(const QString& configDir) {
     QStringList xdgConfigDirs =
         qEnvironmentVariable("XDG_CONFIG_DIRS").split(":", Qt::SkipEmptyParts);
     for (const auto& xdgConfigDir : xdgConfigDirs) {
-      const auto srcDir = xdgConfigDir + "/.crystal-dock-2";
+      const auto srcDir = xdgConfigDir + "/crystal-dock";
       if (QDir::home().exists(srcDir)) {
         std::filesystem::copy(srcDir.toStdString(), configDir.toStdString(),
             std::filesystem::copy_options::recursive);
