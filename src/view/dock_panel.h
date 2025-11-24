@@ -47,7 +47,6 @@
 #include "dock_item.h"
 #include "edit_launchers_dialog.h"
 #include "task_manager_settings_dialog.h"
-#include "trash.h"
 #include "wallpaper_settings_dialog.h"
 
 namespace crystaldock {
