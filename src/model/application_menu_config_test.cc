@@ -236,5 +236,5 @@ void ApplicationMenuConfigTest::tryMatchingApplicationId() {
 
 }  // namespace crystaldock
 
-QTEST_MAIN(crystaldock::ApplicationMenuConfigTest)
+QTEST_GUILESS_MAIN(crystaldock::ApplicationMenuConfigTest)
 #include "application_menu_config_test.moc"
