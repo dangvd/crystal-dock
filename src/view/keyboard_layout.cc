@@ -33,12 +33,8 @@ KeyboardLayout::KeyboardLayout(DockPanel* parent, MultiDockModel* model,
                                Qt::Orientation orientation, int minSize, int maxSize)
     : IconBasedDockItem(parent, model, kLabel, orientation, kIcon,
                         minSize, maxSize),
-    process_(nullptr),
-    keyboardLayouts_{
-      {"English", "EN", "xkb:gb::eng", "English (UK)"},
-      {"Vietnamese", "VI", "m17n:vi:telex", "vi-telex (m17n)"}},
-    activeKeyboardLayout_({"English", "EN", "xkb:gb::eng", "English (UK)"}) {
-  createMenu();
+    process_(nullptr) {
+  initKeyboardLayouts();
 
   connect(&menu_, &QMenu::triggered, this, &KeyboardLayout::onKeyboardLayoutSelected);
 
@@ -77,6 +73,10 @@ void KeyboardLayout::mousePressEvent(QMouseEvent* e) {
                            QString("Command '") + kCommand + "' not found. This is required by the "
                                + kLabel + " component.");
       return;
+    } else if (!ibusReady_) {
+      QMessageBox::warning(parent_, "IBus is not running",
+                           "Please make sure the IBus daemon is running.");
+      return;
     }
     showPopupMenu(&menu_);
   } else if (e->button() == Qt::RightButton) {
@@ -85,7 +85,9 @@ void KeyboardLayout::mousePressEvent(QMouseEvent* e) {
 }
 
 QString KeyboardLayout::getLabel() const {
-  return QString(kLabel) + ": " + activeKeyboardLayout_.toString();
+  return activeKeyboardLayout_.isEmpty()
+      ? kLabel
+      : QString(kLabel) + ": " + activeKeyboardLayout_.toString();
 }
 
 void KeyboardLayout::onKeyboardLayoutSelected(QAction* action) {
@@ -112,9 +114,55 @@ void KeyboardLayout::setKeyboardLayout(const KeyboardLayoutInfo& layout) {
   process_->start(kCommand, QStringList() << "engine" << layout.engine);
 }
 
+void KeyboardLayout::initKeyboardLayouts() {
+  if (process_ && process_->state() != QProcess::NotRunning) {
+    return;
+  }
+
+  process_ = new QProcess(parent_);
+  connect(process_, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),
+          [this](int exitCode, QProcess::ExitStatus exitStatus) {
+            if (exitCode == 0) {
+              ibusReady_ = true;
+              QRegularExpression languageRe(R"(language:\s+(.+))");
+              QRegularExpression keyboardRe(R"(\s*(.+)\s+-\s+(.+))");
+              QString language;
+              for (const QString& line : process_->readAllStandardOutput().split('\n')) {
+                QRegularExpressionMatch match = languageRe.match(line);
+                if (match.hasMatch()) {
+                  language = match.captured(1).trimmed();
+                } else {
+                  match = keyboardRe.match(line);
+                  if (match.hasMatch()) {
+                    QString engine = match.captured(1).trimmed();
+                    QString description = match.captured(2).trimmed();
+                    if (!language.isEmpty()) {
+                      if (keyboardLayouts_.count(language) == 0) {
+                        keyboardLayouts_[language] = std::vector<KeyboardLayoutInfo>();
+                      }
+                      keyboardLayouts_[language].push_back(
+                          KeyboardLayoutInfo(language, engine, description));
+                      keyboardEngines_[engine] = keyboardLayouts_[language].back();
+                    }
+                  }
+                }
+              }
+
+              activeKeyboardLayout_ = keyboardEngines_["xkb:gb::eng"];
+              userKeyboardLayouts_ =
+                  {keyboardEngines_["xkb:gb::eng"], keyboardEngines_["m17n:vi:telex"]};
+              createMenu();
+            }
+            process_->deleteLater();
+            process_ = nullptr;
+          });
+
+  process_->start(kCommand, QStringList() << "list-engine");
+}
+
 void KeyboardLayout::createMenu() {
   // Left-click menu.
-  for (const auto& layout : keyboardLayouts_) {
+  for (const auto& layout : userKeyboardLayouts_) {
     QAction* action = new QAction(layout.toString(), &menu_);
     action->setData(QVariant::fromValue(layout));
     menu_.addAction(action);

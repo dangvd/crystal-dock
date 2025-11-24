@@ -21,6 +21,9 @@
 
 #include "icon_based_dock_item.h"
 
+#include <map>
+#include <vector>
+
 #include <QAction>
 #include <QMenu>
 #include <QMouseEvent>
@@ -34,6 +37,17 @@ struct KeyboardLayoutInfo {
   QString languageCode;
   QString engine;
   QString description;
+
+  KeyboardLayoutInfo() = default;
+
+  KeyboardLayoutInfo(const QString& language2, const QString& engine2, const QString& description2)
+      : language(language2), engine(engine2), description(description2) {
+    if (language.size() >= 2) {
+      languageCode = language.first(2).toUpper();
+    }
+  }
+
+  bool isEmpty() const { return engine.isEmpty(); }
 
   QString toString() const { return language + " - " + description; }
 };
@@ -62,13 +76,23 @@ class KeyboardLayout : public QObject, public IconBasedDockItem {
   static constexpr char kIcon[] = "input-keyboard";
   static constexpr int kUpdateInterval = 1000;  // 1 second.
 
+  void initKeyboardLayouts();
+
   // Creates the context menu.
   void createMenu();
 
   void updateUi();
 
-  std::vector<KeyboardLayoutInfo> keyboardLayouts_;
+  // All the available keyboard layouts, as map from languages to list of structs.
+  std::map<QString, std::vector<KeyboardLayoutInfo>> keyboardLayouts_;
+  // All the available keyboard layouts, as map from engines to structs.
+  std::map<QString, KeyboardLayoutInfo> keyboardEngines_;
+  // The user-selected keyboard layouts for quick switching.
+  std::vector<KeyboardLayoutInfo> userKeyboardLayouts_;
+  // The active keyboard layout.
   KeyboardLayoutInfo activeKeyboardLayout_;
+
+  bool ibusReady_ = false;
 
   // ibus process.
   QProcess* process_ = nullptr;
