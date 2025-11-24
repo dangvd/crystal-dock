@@ -56,6 +56,10 @@ bool WlrWindowManager::showingDesktop_;
       WindowSystem::self(), &WindowSystem::windowStateChanged);
   connect(WlrWindowManager::self(), &WlrWindowManager::windowTitleChanged,
       WindowSystem::self(), &WindowSystem::windowTitleChanged);
+  connect(WlrWindowManager::self(), &WlrWindowManager::windowEnteredOutput,
+      WindowSystem::self(), &WindowSystem::windowEnteredOutput);
+  connect(WlrWindowManager::self(), &WlrWindowManager::windowLeftOutput,
+      WindowSystem::self(), &WindowSystem::windowLeftOutput);
 }
 
 /* static */ void WlrWindowManager::bindWindowManagerFunctions(
@@ -228,6 +232,7 @@ bool WlrWindowManager::showingDesktop_;
   }
 
   windows_[window]->outputs.insert(output);
+  emit self()->windowEnteredOutput(windows_[window].get(), output);
 }
 
 /* static */ void WlrWindowManager::output_leave(
@@ -239,6 +244,7 @@ bool WlrWindowManager::showingDesktop_;
   }
 
   windows_[window]->outputs.erase(output);
+  emit self()->windowLeftOutput(windows_[window].get(), output);
 }
 
 /* static */ void WlrWindowManager::state(

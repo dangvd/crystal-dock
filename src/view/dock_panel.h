@@ -257,6 +257,8 @@ class DockPanel : public QWidget {
   void onWindowStateChanged(const WindowInfo* info);
   void onWindowTitleChanged(const WindowInfo* info);
   void onActiveWindowChanged();
+  void onWindowEnteredOutput(const WindowInfo*, const wl_output*);
+  void onWindowLeftOutput(const WindowInfo*, const wl_output*);
 
   void minimize() { leaveEvent(nullptr); }
 

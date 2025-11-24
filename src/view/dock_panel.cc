@@ -123,6 +123,10 @@ DockPanel::DockPanel(MultiDockView* parent, MultiDockModel* model, int dockId)
           this, SLOT(onWindowLeftCurrentDesktop(void*)));
   connect(WindowSystem::self(), SIGNAL(windowLeftCurrentActivity(void*)),
           this, SLOT(onWindowLeftCurrentActivity(void*)));
+  connect(WindowSystem::self(), SIGNAL(windowEnteredOutput(const WindowInfo*, const wl_output*)),
+          this, SLOT(onWindowEnteredOutput(const WindowInfo*, const wl_output*)));
+  connect(WindowSystem::self(), SIGNAL(windowLeftOutput(const WindowInfo*, const wl_output*)),
+          this, SLOT(onWindowLeftOutput(const WindowInfo*, const wl_output*)));
   connect(WindowSystem::self(), SIGNAL(windowGeometryChanged(const WindowInfo*)),
           this, SLOT(onWindowGeometryChanged(const WindowInfo*)));
   connect(WindowSystem::self(), SIGNAL(currentActivityChanged(std::string_view)),
@@ -404,6 +408,44 @@ void DockPanel::onWindowTitleChanged(const WindowInfo *task) {
 
 void DockPanel::onActiveWindowChanged() {
   update();
+}
+
+void DockPanel::onWindowEnteredOutput(const WindowInfo* task, const wl_output* output) {
+  intellihideHideUnhide();
+
+  if (!showTaskManager()) {
+    return;
+  }
+
+  if (!model_->currentScreenTasksOnly()) {
+    return;
+  }
+
+  if (screenOutput_ != output) {
+    return;
+  }
+
+  if (addTask(task)) {
+    resizeTaskManager();
+  }
+}
+
+void DockPanel::onWindowLeftOutput(const WindowInfo* task, const wl_output* output) {
+  intellihideHideUnhide();
+
+  if (!showTaskManager()) {
+    return;
+  }
+
+  if (!model_->currentScreenTasksOnly()) {
+    return;
+  }
+
+  if (screenOutput_ != output) {
+    return;
+  }
+
+  removeTask(task->window);
 }
 
 int DockPanel::taskIndicatorPos() {

@@ -124,6 +124,10 @@ class WindowSystem : public QObject {
   void activeWindowChanged(void*);
   void windowLeftCurrentActivity(void*);
 
+  // Signals emitted when a window entered or left an output (screen).
+  void windowEnteredOutput(const WindowInfo*, const wl_output*);
+  void windowLeftOutput(const WindowInfo*, const wl_output*);
+
   void currentActivityChanged(std::string_view);
 
  private:

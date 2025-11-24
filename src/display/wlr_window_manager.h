@@ -42,6 +42,10 @@ class WlrWindowManager : public QObject {
   void windowTitleChanged(const WindowInfo*);
   void activeWindowChanged(void*);
 
+  // Signals emitted when a window entered or left an output (screen).
+  void windowEnteredOutput(const WindowInfo*, const wl_output*);
+  void windowLeftOutput(const WindowInfo*, const wl_output*);
+
  public:
   static WlrWindowManager* self();
   static void init(struct zwlr_foreign_toplevel_manager_v1* window_manager);
