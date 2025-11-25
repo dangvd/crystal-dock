@@ -787,13 +787,13 @@ class MultiDockModel : public QObject {
   static constexpr char kCurrentScreenTasksOnly[] = "currentScreenTasksOnly";
   static constexpr char kGroupTasksByApplication[] = "groupTasksByApplication";
 
+  static constexpr char kVolumeControlCategory[] = "VolumeControl";
+  static constexpr char kVolumeScrollStep[] = "volumeScrollStep";
+
   static constexpr char kClockCategory[] = "Clock";
   static constexpr char kUse24HourClock[] = "use24HourClock";
   static constexpr char kFontScaleFactor[] = "fontScaleFactor";
   static constexpr char kClockFontFamily[] = "clockFontFamily";
-
-  static constexpr char kVolumeControlCategory[] = "VolumeControl";
-  static constexpr char kVolumeScrollStep[] = "volumeScrollStep";
 
   template <typename T>
   T appearanceProperty(QString category, QString name, T defaultValue) const {
