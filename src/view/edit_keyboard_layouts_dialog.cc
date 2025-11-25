@@ -9,6 +9,9 @@ EditKeyboardLayoutsDialog::EditKeyboardLayoutsDialog(QWidget *parent)
     : QDialog(parent),
       ui(new Ui::EditKeyboardLayoutsDialog) {
   ui->setupUi(this);
+
+  connect(ui->languages, &QListWidget::currentTextChanged,
+      this, &EditKeyboardLayoutsDialog::onLanguageChanged);
 }
 
 EditKeyboardLayoutsDialog::~EditKeyboardLayoutsDialog() {
@@ -17,13 +20,20 @@ EditKeyboardLayoutsDialog::~EditKeyboardLayoutsDialog() {
 
 void EditKeyboardLayoutsDialog::setData(
     const std::map<QString, std::vector<KeyboardLayoutInfo>>& keyboardLayouts) {
+  keyboardLayouts_ = keyboardLayouts;
   ui->languages->clear();
-  ui->languageKeyboardLayouts->clear();
-  for (const auto& pair : keyboardLayouts) {
+  for (const auto& pair : keyboardLayouts_) {
     ui->languages->addItem(pair.first);
-    for (const auto& layout : pair.second) {
-      ui->languageKeyboardLayouts->addItem(layout.toString());
-    }
+  }
+}
+
+void EditKeyboardLayoutsDialog::onLanguageChanged(const QString& language) {
+  if (keyboardLayouts_.count(language) == 0) {
+    return;
+  }
+  ui->languageKeyboardLayouts->clear();
+  for (const auto& layout : keyboardLayouts_[language]) {
+    ui->languageKeyboardLayouts->addItem(layout.toString());
   }
 }
 

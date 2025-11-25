@@ -152,6 +152,7 @@ void KeyboardLayout::initKeyboardLayouts() {
               userKeyboardLayouts_ =
                   {keyboardEngines_["xkb:gb::eng"], keyboardEngines_["m17n:vi:telex"]};
               createMenu();
+              parent_->editKeyboardLayoutsDialog_.setData(keyboardLayouts_);
             }
             process_->deleteLater();
             process_ = nullptr;
@@ -170,6 +171,14 @@ void KeyboardLayout::createMenu() {
 
   // Right-click context menu.
   contextMenu_.addSection(kLabel);
+  contextMenu_.addAction(QIcon::fromTheme("configure"), QString("&Edit Keyboard Layouts"), parent_,
+                  [this] {
+                    parent_->minimize();
+                    QTimer::singleShot(DockPanel::kExecutionDelayMs, [this]{
+                      parent_->showEditKeyboardLayoutsDialog();
+                    });
+                  });
+
   contextMenu_.addSeparator();
   parent_->addPanelSettings(&contextMenu_);
 }

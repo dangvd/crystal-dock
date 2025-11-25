@@ -45,6 +45,7 @@
 #include "application_menu_settings_dialog.h"
 #include "appearance_settings_dialog.h"
 #include "dock_item.h"
+#include "edit_keyboard_layouts_dialog.h"
 #include "edit_launchers_dialog.h"
 #include "task_manager_settings_dialog.h"
 #include "wallpaper_settings_dialog.h"
@@ -239,6 +240,7 @@ class DockPanel : public QWidget {
   // Dock-specific settings are activated from menu items on the context menu
   // directly.
   void showAppearanceSettingsDialog();
+  void showEditKeyboardLayoutsDialog();
   void showEditLaunchersDialog();
   void showApplicationMenuSettingsDialog();
   void showWallpaperSettingsDialog(int desktop);
@@ -472,6 +474,7 @@ class DockPanel : public QWidget {
   QMessageBox aboutDialog_;
   AddPanelDialog addPanelDialog_;
   AppearanceSettingsDialog appearanceSettingsDialog_;
+  EditKeyboardLayoutsDialog editKeyboardLayoutsDialog_;
   EditLaunchersDialog editLaunchersDialog_;
   ApplicationMenuSettingsDialog applicationMenuSettingsDialog_;
   WallpaperSettingsDialog wallpaperSettingsDialog_;
@@ -499,6 +502,7 @@ class DockPanel : public QWidget {
   int mouseX_;
   int mouseY_;
 
+  friend class KeyboardLayout;  // for accessing EditKeyboardLayoutDialog.
   friend class Program;  // for leaveEvent.
   friend class DockPanelTest;
   friend class ConfigDialogTest;

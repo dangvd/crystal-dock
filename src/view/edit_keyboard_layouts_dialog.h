@@ -23,8 +23,13 @@ class EditKeyboardLayoutsDialog : public QDialog {
 
   void setData(const std::map<QString, std::vector<KeyboardLayoutInfo>>& keyboardLayouts);
 
+ public slots:
+  void onLanguageChanged(const QString&);
+
  private:
   Ui::EditKeyboardLayoutsDialog *ui;
+
+  std::map<QString, std::vector<KeyboardLayoutInfo>> keyboardLayouts_;
 };
 
 }  // namespace crystaldock

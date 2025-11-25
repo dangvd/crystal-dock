@@ -82,6 +82,7 @@ DockPanel::DockPanel(MultiDockView* parent, MultiDockModel* model, int dockId)
                    QMessageBox::Ok, this, Qt::Tool),
       addPanelDialog_(this, model, dockId),
       appearanceSettingsDialog_(this, model),
+      editKeyboardLayoutsDialog_(this),
       editLaunchersDialog_(this, model, dockId),
       applicationMenuSettingsDialog_(this, model),
       wallpaperSettingsDialog_(this, model),
@@ -246,6 +247,10 @@ void DockPanel::showAppearanceSettingsDialog() {
   appearanceSettingsDialog_.show();
   appearanceSettingsDialog_.raise();
   appearanceSettingsDialog_.activateWindow();
+}
+
+void DockPanel::showEditKeyboardLayoutsDialog() {
+  editKeyboardLayoutsDialog_.show();
 }
 
 void DockPanel::showEditLaunchersDialog() {
