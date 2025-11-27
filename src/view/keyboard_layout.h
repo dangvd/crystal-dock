@@ -77,6 +77,7 @@ class KeyboardLayout : public QObject, public IconBasedDockItem {
   static constexpr int kUpdateInterval = 1000;  // 1 second.
 
   void initKeyboardLayouts();
+  void initUserKeyboardLayouts(const QString& activeLayout);
 
   // Creates the context menu.
   void createMenu();

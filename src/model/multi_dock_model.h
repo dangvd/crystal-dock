@@ -653,6 +653,23 @@ class MultiDockModel : public QObject {
     setAppearanceProperty(kVolumeControlCategory, kVolumeScrollStep, value);
   }
 
+  QString activeKeyboardLayout() const {
+    return appearanceProperty(kKeyboardLayoutCategory, kActiveKeyboardLayout, QString());
+  }
+
+  void setActiveKeyboardLayout(QString value) {
+    return setAppearanceProperty(kKeyboardLayoutCategory, kActiveKeyboardLayout, value);
+  }
+
+  QStringList userKeyboardLayouts() const {
+    return appearanceProperty(kKeyboardLayoutCategory, kUserKeyboardLayouts, QString())
+        .split(";", Qt::SkipEmptyParts);
+  }
+
+  void setUserKeyboardLayouts(QStringList value) {
+    return setAppearanceProperty(kKeyboardLayoutCategory, kUserKeyboardLayouts, value.join(";"));
+  }
+
   QStringList launchers(int dockId) const {
     return dockProperty(dockId, kGeneralCategory, kLaunchers, QString())
         .split(";", Qt::SkipEmptyParts);
@@ -789,6 +806,12 @@ class MultiDockModel : public QObject {
 
   static constexpr char kVolumeControlCategory[] = "VolumeControl";
   static constexpr char kVolumeScrollStep[] = "volumeScrollStep";
+
+  static constexpr char kKeyboardLayoutCategory[] = "KeyboardLayout";
+  // The active keyboard layout (the engine name).
+  static constexpr char kActiveKeyboardLayout[] = "activeKeyboardLayout";
+  // The list of user-selected keyboard layouts (the engine names) for fast switching.
+  static constexpr char kUserKeyboardLayouts[] = "userKeyboardLayouts";
 
   static constexpr char kClockCategory[] = "Clock";
   static constexpr char kUse24HourClock[] = "use24HourClock";

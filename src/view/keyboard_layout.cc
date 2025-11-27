@@ -148,17 +148,49 @@ void KeyboardLayout::initKeyboardLayouts() {
                 }
               }
 
-              activeKeyboardLayout_ = keyboardEngines_["xkb:gb::eng"];
-              userKeyboardLayouts_ =
-                  {keyboardEngines_["xkb:gb::eng"], keyboardEngines_["m17n:vi:telex"]};
-              createMenu();
               parent_->editKeyboardLayoutsDialog_.setData(keyboardLayouts_);
+              QString activeLayout = model_->activeKeyboardLayout();
+              if (!activeLayout.isEmpty() && keyboardEngines_.count(activeLayout) > 0) {
+                initUserKeyboardLayouts(activeLayout);
+              } else {
+                // Gets the currently active keyboard layout.
+                QProcess* process = new QProcess(parent_);
+                connect(process, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),
+                    [this, process](int exitCode, QProcess::ExitStatus exitStatus) {
+                      if (exitCode == 0) {
+                        const QString ibusActiveLayout = process->readAllStandardOutput().trimmed();
+                        if (!ibusActiveLayout.isEmpty() && keyboardEngines_.count(ibusActiveLayout) > 0) {
+                          initUserKeyboardLayouts(ibusActiveLayout);
+                          model_->setActiveKeyboardLayout(ibusActiveLayout);
+                        }
+                      }
+                      process->deleteLater();
+                    });
+                process->start(kCommand, QStringList() << "engine");
+              }
             }
             process_->deleteLater();
             process_ = nullptr;
           });
 
   process_->start(kCommand, QStringList() << "list-engine");
+}
+
+void KeyboardLayout::initUserKeyboardLayouts(const QString& activeLayout) {
+  activeKeyboardLayout_ = keyboardEngines_[activeLayout];
+  QStringList userLayouts = model_->userKeyboardLayouts();
+  if (userLayouts.isEmpty()) {
+    model_->setUserKeyboardLayouts(QStringList() << activeLayout);
+  }
+  if (!userLayouts.contains(activeLayout)) {
+    userLayouts << activeLayout;
+  }
+  for (const auto& layout : userLayouts) {
+    if (keyboardEngines_.count(layout) > 0) {
+      userKeyboardLayouts_.push_back(keyboardEngines_[layout]);
+    }
+  }
+  createMenu();
 }
 
 void KeyboardLayout::createMenu() {
