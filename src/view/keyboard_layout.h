@@ -82,8 +82,6 @@ class KeyboardLayout : public QObject, public IconBasedDockItem {
   // Creates the context menu.
   void createMenu();
 
-  void updateUi();
-
   // All the available keyboard layouts, as map from languages to list of structs.
   std::map<QString, std::vector<KeyboardLayoutInfo>> keyboardLayouts_;
   // All the available keyboard layouts, as map from engines to structs.

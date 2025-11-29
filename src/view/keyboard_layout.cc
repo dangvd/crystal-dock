@@ -104,9 +104,10 @@ void KeyboardLayout::setKeyboardLayout(const KeyboardLayoutInfo& layout) {
   process_ = new QProcess(parent_);
   connect(process_, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),
           [this, layout](int exitCode, QProcess::ExitStatus exitStatus) {
-            // Somehow ibus returns 1 even when it succeeded.
+            // Somehow IBus returns 1 here even when it succeeded.
             activeKeyboardLayout_ = layout;
-            updateUi();
+            model_->setActiveKeyboardLayout(activeKeyboardLayout_.engine);
+            model_->saveAppearanceConfig(/*repaintOnly=*/true);
             process_->deleteLater();
             process_ = nullptr;
           });
@@ -148,7 +149,8 @@ void KeyboardLayout::initKeyboardLayouts() {
                 }
               }
 
-              parent_->editKeyboardLayoutsDialog_.setData(keyboardLayouts_);
+              parent_->editKeyboardLayoutsDialog_.setKeyboardLayouts(
+                  keyboardLayouts_, keyboardEngines_);
               QString activeLayout = model_->activeKeyboardLayout();
               if (!activeLayout.isEmpty() && keyboardEngines_.count(activeLayout) > 0) {
                 initUserKeyboardLayouts(activeLayout);
@@ -213,10 +215,6 @@ void KeyboardLayout::createMenu() {
 
   contextMenu_.addSeparator();
   parent_->addPanelSettings(&contextMenu_);
-}
-
-void KeyboardLayout::updateUi() {
-  parent_->update();
 }
 
 }  // namespace crystaldock
