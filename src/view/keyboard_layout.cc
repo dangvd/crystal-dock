@@ -21,6 +21,8 @@
 #include <iostream>
 
 #include <QMessageBox>
+#include <QProcess>
+#include <QTimer>
 
 #include "dock_panel.h"
 
@@ -193,6 +195,10 @@ void KeyboardLayout::initUserKeyboardLayouts(const QString& activeLayout) {
     }
   }
   createMenu();
+
+  QTimer::singleShot(500, this, [this] {
+    setKeyboardLayout(activeKeyboardLayout_);
+  });
 }
 
 void KeyboardLayout::createMenu() {

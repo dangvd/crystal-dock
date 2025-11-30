@@ -93,6 +93,11 @@ void EditKeyboardLayoutsDialog::saveData() {
     userLayouts << info.engine;
   }
   model_->setUserKeyboardLayouts(userLayouts);
+  if (!userLayouts.contains(model_->activeKeyboardLayout())
+      && !userLayouts.isEmpty()) {
+    model_->setActiveKeyboardLayout(userLayouts[0]);
+  }
+
   model_->saveAppearanceConfig();
 }
 
