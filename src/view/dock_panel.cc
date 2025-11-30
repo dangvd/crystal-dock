@@ -245,8 +245,6 @@ void DockPanel::about() {
 void DockPanel::showAppearanceSettingsDialog() {
   appearanceSettingsDialog_.reload();
   appearanceSettingsDialog_.show();
-  appearanceSettingsDialog_.raise();
-  appearanceSettingsDialog_.activateWindow();
 }
 
 void DockPanel::showEditKeyboardLayoutsDialog() {
@@ -257,43 +255,31 @@ void DockPanel::showEditKeyboardLayoutsDialog() {
 void DockPanel::showEditLaunchersDialog() {
   editLaunchersDialog_.reload();
   editLaunchersDialog_.show();
-  editLaunchersDialog_.raise();
-  editLaunchersDialog_.activateWindow();
 }
 
 void DockPanel::showApplicationMenuSettingsDialog() {
   applicationMenuSettingsDialog_.reload();
   applicationMenuSettingsDialog_.show();
-  applicationMenuSettingsDialog_.raise();
-  applicationMenuSettingsDialog_.activateWindow();
 }
 
 void DockPanel::showWallpaperSettingsDialog(int desktop) {
   wallpaperSettingsDialog_.setFor(desktop, screen_);
   wallpaperSettingsDialog_.show();
-  wallpaperSettingsDialog_.raise();
-  wallpaperSettingsDialog_.activateWindow();
 }
 
 void DockPanel::showTaskManagerSettingsDialog() {
   taskManagerSettingsDialog_.reload();
   taskManagerSettingsDialog_.show();
-  taskManagerSettingsDialog_.raise();
-  taskManagerSettingsDialog_.activateWindow();
 }
 
 void DockPanel::addDock() {
   addPanelDialog_.setMode(AddPanelDialog::Mode::Add);
   addPanelDialog_.show();
-  addPanelDialog_.raise();
-  addPanelDialog_.activateWindow();
 }
 
 void DockPanel::cloneDock() {
   addPanelDialog_.setMode(AddPanelDialog::Mode::Clone);
   addPanelDialog_.show();
-  addPanelDialog_.raise();
-  addPanelDialog_.activateWindow();
 }
 
 void DockPanel::removeDock() {

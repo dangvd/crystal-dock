@@ -504,9 +504,6 @@ class DockPanel : public QWidget {
 
   friend class KeyboardLayout;  // for accessing EditKeyboardLayoutDialog.
   friend class Program;  // for leaveEvent.
-  friend class DockPanelTest;
-  friend class ConfigDialogTest;
-  friend class EditLaunchersDialogTest;
 };
 
 }  // namespace crystaldock
