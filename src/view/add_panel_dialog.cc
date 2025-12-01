@@ -150,7 +150,7 @@ void AddPanelDialog::setMode(Mode mode) {
   }
 
   if (mode == Mode::Clone) {
-    constexpr int kDeltaY = -380;
+    constexpr int kDeltaY = -460;
     moveY(ui->positionLabel, kDeltaY);
     moveY(ui->position, kDeltaY);
     moveY(ui->screenLabel, kDeltaY);
@@ -169,8 +169,8 @@ void AddPanelDialog::setMode(Mode mode) {
     resizeHeight(this, kDeltaY);
   }
 
-  if (!ui->screen->isVisible()) {
-    constexpr int kScreenDeltaY = -45;
+  if (isSingleScreen_) {
+    constexpr int kScreenDeltaY = -40;
     moveY(ui->buttonBox, kScreenDeltaY);
     resizeHeight(this, kScreenDeltaY);
   }
