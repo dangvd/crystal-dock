@@ -67,7 +67,7 @@ namespace ranges = std::ranges;
 
 namespace crystaldock {
 
-/*static*/ constexpr char DockPanel::kVersion[] = "2.16 RC2";
+/*static*/ constexpr char DockPanel::kVersion[] = "2.16 RC3";
 
 DockPanel::DockPanel(MultiDockView* parent, MultiDockModel* model, int dockId)
     : QWidget(),
