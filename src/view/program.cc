@@ -182,8 +182,6 @@ void Program::mousePressEvent(QMouseEvent* e) {
         if (mod & Qt::ShiftModifier) {
           launch();
           startBounceAnimation();
-        } else if (tasks_.size() == 1) {
-          WindowSystem::activateOrMinimizeWindow(tasks_[0].window);
         } else {
           cycleThroughTasks(!(mod & Qt::ControlModifier));
         }
@@ -206,7 +204,7 @@ void Program::wheelEvent(QWheelEvent* e) {
 }
 
 void Program::cycleThroughTasks(bool forward) {
-  if (tasks_.size() < 2) {
+  if (tasks_.empty()) {
     return;
   }
 
