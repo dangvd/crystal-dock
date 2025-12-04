@@ -38,7 +38,7 @@ BatteryIndicator::BatteryIndicator(DockPanel* parent, MultiDockModel* model,
   QTimer::singleShot(500, this, [this]() {
     connect(updateTimer_, &QTimer::timeout, this, &BatteryIndicator::refreshBatteryInfo);
     updateTimer_->start(kUpdateInterval);
-    getBatteryDevice();
+    batteryDevice_ = getBatteryDevice();
   });
 
   connect(&contextMenu_, &QMenu::aboutToHide, this,
@@ -68,12 +68,12 @@ void BatteryIndicator::mousePressEvent(QMouseEvent* e) {
 }
 
 QString BatteryIndicator::getLabel() const {
-  return hasBattery_
-      ? batteryLevel_ > 0
-          ? "Battery: " + QString::number(batteryLevel_) + "%"
-              + (isCharging_ ? " (charging)" : "")
-          : kLabel
-      : "Battery: Not found";
+  return batteryDevice_.isNull()
+      ? kLabel
+      : batteryDevice_.isEmpty()
+          ? "Battery: Not found"
+          : "Battery: " + QString::number(batteryLevel_) + "%"
+              + (isCharging_ ? " (charging)" : "");
 }
 
 void BatteryIndicator::refreshBatteryInfo() {
@@ -116,31 +116,18 @@ void BatteryIndicator::refreshBatteryInfo() {
   process_->start(kCommand, QStringList() << "-i" << batteryDevice_);
 }
 
-void BatteryIndicator::getBatteryDevice() {
-  // Prevent concurrent processes
-  if (process_ && process_->state() != QProcess::NotRunning) {
-    return;
+QString BatteryIndicator::getBatteryDevice() {
+  QProcess process;
+  process.start(kCommand, QStringList() << "--enumerate");
+  process.waitForFinished(1000 /*msecs*/);
+  for (const QString& device : process.readAllStandardOutput().split('\n')) {
+    if (device.toLower().contains("battery")) {
+      return device;
+    }
   }
-
-  process_ = new QProcess(parent_);
-  connect(process_, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),
-          [this](int exitCode, QProcess::ExitStatus exitStatus) {
-            if (exitCode == 0) {
-              for (const QString& device : process_->readAllStandardOutput().split('\n')) {
-                if (device.toLower().contains("battery")) {
-                  batteryDevice_ = device;
-                  break;
-                }
-              }
-              if (batteryDevice_.isEmpty()) {
-                hasBattery_ = false;
-              }
-            }
-            process_->deleteLater();
-            process_ = nullptr;
-          });
-
-  process_->start(kCommand, QStringList() << "--enumerate");
+  // Returns an empty string instead of null string to specify that
+  // the battery device was not found.
+  return QString("");
 }
 
 void BatteryIndicator::createMenu() {
@@ -151,7 +138,7 @@ void BatteryIndicator::createMenu() {
 
 void BatteryIndicator::updateUi() {
   QString iconName = kIcon;
-  if (hasBattery_ && batteryLevel_ > 0 && !isCharging_) {
+  if (!batteryDevice_.isEmpty() && batteryLevel_ > 0 && !isCharging_) {
     if (batteryLevel_ < 20) {
       iconName = "battery-low";
     } else if (batteryLevel_ < 40) {

@@ -21,6 +21,7 @@
 
 #include <QGuiApplication>
 
+#include "battery_indicator.h"
 #include <display/window_system.h>
 
 namespace crystaldock {
@@ -100,7 +101,8 @@ void AddPanelDialog::setMode(Mode mode) {
   ui->showTrash->setChecked(mode == Mode::Welcome);
   ui->showWifiManager->setChecked(mode == Mode::Welcome);
   ui->showVolumeControl->setChecked(mode == Mode::Welcome);
-  ui->showBatteryIndicator->setChecked(mode == Mode::Welcome);
+  ui->showBatteryIndicator->setChecked(
+      mode == Mode::Welcome && !BatteryIndicator::getBatteryDevice().isEmpty());
   ui->showKeyboardLayout->setChecked(mode == Mode::Welcome);
   ui->showVersionChecker->setChecked(mode == Mode::Welcome);
   ui->showClock->setChecked(mode == Mode::Welcome);

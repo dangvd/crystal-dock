@@ -40,6 +40,8 @@ class BatteryIndicator : public QObject, public IconBasedDockItem {
   QString getLabel() const override;
   bool beforeTask(const QString& program) override { return false; }
 
+  static QString getBatteryDevice();
+
  public slots:
   void refreshBatteryInfo();
 
@@ -49,14 +51,11 @@ class BatteryIndicator : public QObject, public IconBasedDockItem {
   static constexpr char kIcon[] = "battery";
   static constexpr int kUpdateInterval = 1000;  // 1 second.
 
-  void getBatteryDevice();
-
   // Creates the context menu.
   void createMenu();
 
   void updateUi();
 
-  bool hasBattery_ = true;
   QString batteryDevice_;
   int batteryLevel_ = 0;  // in percentage.
   bool isCharging_ = false;
