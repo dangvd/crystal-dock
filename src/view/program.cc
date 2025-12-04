@@ -211,6 +211,9 @@ void Program::mousePressEvent(QMouseEvent* e) {
     }
   } else if (e->button() == Qt::RightButton) {
     showPopupMenu(&menu_);
+  } else if (e->button() == Qt::MiddleButton) {
+    launch();
+    startBounceAnimation();
   }
 }
 
