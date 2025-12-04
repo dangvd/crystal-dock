@@ -56,6 +56,9 @@ class DockItem {
   // Mouse press event handler.
   virtual void mousePressEvent(QMouseEvent* e) = 0;
 
+  // Mouse wheel even handler.
+  virtual void wheelEvent(QWheelEvent* e) {}
+
   // We manually reset active window on the dock's mouse event.
   // We don't want to always do this (e.g. handle this in window_system::state_change() handler)
   // because otherwise we wouldn't be able to click on an active window's icon to minimize it

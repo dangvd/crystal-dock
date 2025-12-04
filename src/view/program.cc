@@ -185,27 +185,7 @@ void Program::mousePressEvent(QMouseEvent* e) {
         } else if (tasks_.size() == 1) {
           WindowSystem::activateOrMinimizeWindow(tasks_[0].window);
         } else {
-          const auto activeTask = getActiveTask();
-          if (activeTask >= 0) {
-            // Cycles through tasks.
-            auto lastTask = static_cast<int>(tasks_.size() - 1);
-            int nextTask;
-            if (mod & Qt::ControlModifier) {
-              // Cycles backwards with CTRL.
-              nextTask = activeTask > 0 ? (activeTask - 1) : -1;
-            } else {
-              nextTask = (activeTask < lastTask) ? (activeTask + 1) : -1;
-            }
-            if (nextTask >= 0 && nextTask <= lastTask) {
-              WindowSystem::activateWindow(tasks_[nextTask].window);
-            } else {
-              for (int i = 0; i <= lastTask; ++i) {
-                WindowSystem::minimizeWindow(tasks_[i].window);
-              }
-            }
-          } else {
-            WindowSystem::activateWindow(tasks_[0].window);
-          }
+          cycleThroughTasks(!(mod & Qt::ControlModifier));
         }
       }
     }
@@ -214,6 +194,42 @@ void Program::mousePressEvent(QMouseEvent* e) {
   } else if (e->button() == Qt::MiddleButton) {
     launch();
     startBounceAnimation();
+  }
+}
+
+void Program::wheelEvent(QWheelEvent* e) {
+  const int delta = e->angleDelta().y();
+  if (delta == 0) {
+    return;
+  }
+  cycleThroughTasks(delta < 0);
+}
+
+void Program::cycleThroughTasks(bool forward) {
+  if (tasks_.size() < 2) {
+    return;
+  }
+
+  const auto activeTask = getActiveTask();
+  const auto lastTask = static_cast<int>(tasks_.size() - 1);
+  if (activeTask >= 0) {
+    // Cycles through tasks.
+    int nextTask;
+    if (forward) {
+      nextTask = (activeTask < lastTask) ? (activeTask + 1) : -1;
+    } else {
+      nextTask = activeTask > 0 ? (activeTask - 1) : -1;
+    }
+    if (nextTask >= 0 && nextTask <= lastTask) {
+      WindowSystem::activateWindow(tasks_[nextTask].window);
+    } else {
+      for (int i = 0; i <= lastTask; ++i) {
+        WindowSystem::minimizeWindow(tasks_[i].window);
+      }
+    }
+  } else {
+    const auto nextTask = forward ? 0 : lastTask;
+    WindowSystem::activateWindow(tasks_[nextTask].window);
   }
 }
 

@@ -60,6 +60,7 @@ class Program : public QObject, public IconBasedDockItem {
   void draw(QPainter* painter) const override;
 
   void mousePressEvent(QMouseEvent* e) override;
+  void wheelEvent(QWheelEvent* e) override;
 
   QString getLabel() const override;
 
@@ -126,6 +127,8 @@ class Program : public QObject, public IconBasedDockItem {
   void updateDemandsAttention();
 
   void updateMenu();
+
+  void cycleThroughTasks(bool forward);
 
   QString appId_;
   QString appLabel_;

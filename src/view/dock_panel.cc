@@ -885,11 +885,7 @@ void DockPanel::wheelEvent(QWheelEvent* e) {
   }
 
   if (activeItem_ >= 0 && activeItem_ < static_cast<int>(items_.size())) {
-    // Check if the active item is a VolumeControl
-    VolumeControl* volumeControl = dynamic_cast<VolumeControl*>(items_[activeItem_].get());
-    if (volumeControl) {
-      volumeControl->wheelEvent(e);
-    }
+    items_[activeItem_]->wheelEvent(e);
   }
 }
 

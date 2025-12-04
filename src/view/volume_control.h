@@ -44,7 +44,7 @@ class VolumeControl : public QObject, public IconBasedDockItem {
 
   void draw(QPainter* painter) const override;
   void mousePressEvent(QMouseEvent* e) override;
-  void wheelEvent(QWheelEvent* e);
+  void wheelEvent(QWheelEvent* e) override;
   QString getLabel() const override;
   bool beforeTask(const QString& program) override { return false; }
 
