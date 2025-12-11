@@ -30,6 +30,7 @@
 #include "labwc_desktop_env.h"
 #include "lxqt_desktop_env.h"
 #include "niri_desktop_env.h"
+#include "sway_desktop_env.h"
 #include "wayfire_desktop_env.h"
 #include <model/application_menu_config.h>
 #include <model/multi_dock_model.h>
@@ -56,6 +57,9 @@ DesktopEnv* DesktopEnv::getDesktopEnv() {
   } else if (currentDesktopEnv == "niri") {
     static std::unique_ptr<NiriDesktopEnv> niri(new NiriDesktopEnv);
     return niri.get();
+  } else if (currentDesktopEnv == "sway") {
+    static std::unique_ptr<SwayDesktopEnv> sway(new SwayDesktopEnv);
+    return sway.get();
   } else if (currentDesktopEnv == "Wayfire") {
     static std::unique_ptr<WayfireDesktopEnv> wayfire(new WayfireDesktopEnv);
     return wayfire.get();

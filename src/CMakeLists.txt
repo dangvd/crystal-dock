@@ -30,6 +30,7 @@ set(SRCS
     desktop/labwc_desktop_env.cc
     desktop/lxqt_desktop_env.cc
     desktop/niri_desktop_env.cc
+    desktop/sway_desktop_env.cc
     desktop/wayfire_desktop_env.cc
     display/window_system.cc
     display/kde_auto_hide_manager.cc
@@ -79,6 +80,7 @@ set(SRCS
     desktop/labwc_desktop_env.h
     desktop/lxqt_desktop_env.h
     desktop/niri_desktop_env.h
+    desktop/sway_desktop_env.h
     desktop/wayfire_desktop_env.h
     display/window_system.h
     display/kde_auto_hide_manager.h
