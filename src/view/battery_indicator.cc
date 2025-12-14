@@ -94,7 +94,7 @@ void BatteryIndicator::refreshBatteryInfo() {
               int batteryLevel = 0;
               QRegularExpression chargingRe(R"(state:(\s+)charging)");
               QRegularExpression percentageRe(R"(percentage:(\s+)(\d+.?\d*)(\s*)%)");
-              for (const QString& line : process_->readAllStandardOutput().split('\n')) {
+              for (const QByteArray& line : process_->readAllStandardOutput().split('\n')) {
                 if (chargingRe.match(line).hasMatch()) {
                   isCharging = true;
                 }
@@ -120,7 +120,7 @@ QString BatteryIndicator::getBatteryDevice() {
   QProcess process;
   process.start(kCommand, QStringList() << "--enumerate");
   process.waitForFinished(1000 /*msecs*/);
-  for (const QString& device : process.readAllStandardOutput().split('\n')) {
+  for (const QByteArray& device : process.readAllStandardOutput().split('\n')) {
     if (device.toLower().contains("battery")) {
       return device;
     }

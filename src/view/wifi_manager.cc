@@ -150,7 +150,7 @@ void WifiManager::scanWifiNetworks(std::function<void()> onSuccess) {
             if (exitCode == 0) {
               networks_.clear();
               bool connected = false;
-              for (const QString& network : process_->readAllStandardOutput().split('\n')) {
+              for (const QString network : process_->readAllStandardOutput().split('\n')) {
                 QStringList fields = network.split(':');
                 if (fields.size() < 3) continue;
                 const QString& name = fields[0];

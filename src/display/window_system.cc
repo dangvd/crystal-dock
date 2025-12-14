@@ -142,7 +142,7 @@ void WindowSystem::initScreens() {
 }
 
 /*static*/ void WindowSystem::setScreen(QWidget* widget, int screen) {
-  if (screen < 0 || screen >= screens_.size()) {
+  if (screen < 0 || screen >= static_cast<int>(screens_.size())) {
     return;
   }
 
@@ -153,7 +153,7 @@ void WindowSystem::initScreens() {
 }
 
 /*static*/ wl_output* WindowSystem::getWlOutputForScreen(int screen) {
-  if (screen < 0 || screen >= screens_.size()) {
+  if (screen < 0 || screen >= static_cast<int>(screens_.size())) {
     return nullptr;
   }
 

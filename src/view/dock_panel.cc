@@ -527,13 +527,14 @@ void DockPanel::setShowingPopup(bool showingPopup) {
     int y2 = 0;
     int w2 = 0;
     int h2 = 0;
+    int itemCount = static_cast<int>(items_.size());
     switch (position_) {
     case PanelPosition::Top:
       x = itemSpacing_;
       w = maxWidth_ - 2 * x;
       y = itemSpacing_ + (isFloating() ? floatingMargin_ : 0);
       h = minSize_;
-      if (activeItem_ >= 0 && activeItem_ < items_.size()) {
+      if (activeItem_ >= 0 && activeItem_ < itemCount) {
         x2 = items_[activeItem_]->left_;
         w2 = items_[activeItem_]->getMaxWidth();
         y2 = y;
@@ -546,7 +547,7 @@ void DockPanel::setShowingPopup(bool showingPopup) {
       y = maxHeight_ - itemSpacing_ - (isFloating() ? floatingMargin_ : 0)
           - (is3D() && isBottom() ? k3DPanelThickness : 0) - minSize_;
       h = minSize_;
-      if (activeItem_ >= 0 && activeItem_ < items_.size()) {
+      if (activeItem_ >= 0 && activeItem_ < itemCount) {
         x2 = items_[activeItem_]->left_;
         w2 = items_[activeItem_]->getMaxWidth();
         y2 = y + minSize_ - maxSize_;
@@ -558,7 +559,7 @@ void DockPanel::setShowingPopup(bool showingPopup) {
       h = maxHeight_ - 2 * y;
       x = itemSpacing_ + (isFloating() ? floatingMargin_ : 0);
       w = minSize_;
-      if (activeItem_ >= 0 && activeItem_ < items_.size()) {
+      if (activeItem_ >= 0 && activeItem_ < itemCount) {
         y2 = items_[activeItem_]->top_;
         h2 = items_[activeItem_]->getMaxHeight();
         x2 = y;
@@ -570,7 +571,7 @@ void DockPanel::setShowingPopup(bool showingPopup) {
       h = maxHeight_ - 2 * y;
       x = maxWidth_ - itemSpacing_ - (isFloating() ? floatingMargin_ : 0) - minSize_;
       w = minSize_;
-      if (activeItem_ >= 0 && activeItem_ < items_.size()) {
+      if (activeItem_ >= 0 && activeItem_ < itemCount) {
         y2 = items_[activeItem_]->top_;
         h2 = items_[activeItem_]->getMaxHeight();
         x2 = x + minSize_ - maxSize_;
@@ -642,7 +643,7 @@ void DockPanel::drawGlass3D(QPainter& painter) {
     int y = height() - itemSpacing_ - k3DPanelThickness;
     if (isFloating()) { y -= floatingMargin_; }
     QImage toMirrorImage = mainImage.copy(0, y - itemSpacing_ + 2, width(), itemSpacing_ - 2);
-    QImage mirrorImage = toMirrorImage.mirrored();
+    QImage mirrorImage = toMirrorImage.flipped(Qt::Vertical);
     painter.setOpacity(0.3);
     painter.drawImage(0, y, mirrorImage);
     painter.setOpacity(1.0);

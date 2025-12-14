@@ -130,7 +130,7 @@ void KeyboardLayout::initKeyboardLayouts() {
               QRegularExpression languageRe(R"(language:\s+(.+))");
               QRegularExpression keyboardRe(R"(\s*(.+)\s+-\s+(.+))");
               QString language;
-              for (const QString& line : process_->readAllStandardOutput().split('\n')) {
+              for (const QByteArray& line : process_->readAllStandardOutput().split('\n')) {
                 QRegularExpressionMatch match = languageRe.match(line);
                 if (match.hasMatch()) {
                   language = match.captured(1).trimmed();
