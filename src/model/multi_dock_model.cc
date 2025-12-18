@@ -64,14 +64,14 @@ void MultiDockModel::loadDocks() {
 }
 
 void MultiDockModel::addDock(PanelPosition position, int screen,
+                             PanelVisibility visibility,
                              bool showApplicationMenu, bool showPager,
                              bool showTaskManager, bool showTrash,
                              bool showWifiManager, bool showVolumeControl,
                              bool showBatteryIndicator, bool showKeyboardLayout,
                              bool showVersionChecker, bool showClock) {
   auto configPath = configHelper_.findNextDockConfig();
-  auto dockId = addDock(configPath, position, screen);
-  setVisibility(dockId, kDefaultVisibility);
+  auto dockId = addDock(configPath, position, screen, visibility);
   setLaunchers(dockId, defaultLaunchers());
   setShowApplicationMenu(dockId, showApplicationMenu);
   setShowPager(dockId, showPager);
@@ -107,8 +107,8 @@ void MultiDockModel::addDock(PanelPosition position, int screen,
   syncDockConfig(dockId);
 }
 
-int MultiDockModel::addDock(const QString& configPath,
-                            PanelPosition position, int screen) {
+int MultiDockModel::addDock(const QString& configPath, PanelPosition position,
+                            int screen, PanelVisibility visibility) {
   const auto dockId = nextDockId_;
   ++nextDockId_;
   dockConfigs_[dockId] = std::make_tuple(
@@ -116,17 +116,18 @@ int MultiDockModel::addDock(const QString& configPath,
       std::make_unique<QSettings>(configPath, QSettings::IniFormat));
   setPanelPosition(dockId, position);
   setScreen(dockId, screen);
+  setVisibility(dockId, visibility);
 
   return dockId;
 }
 
 void MultiDockModel::cloneDock(int srcDockId, PanelPosition position,
-                               int screen) {
+                               int screen, PanelVisibility visibility) {
   auto configPath = configHelper_.findNextDockConfig();
 
   // Clone the dock config.
   QFile::copy(dockConfigPath(srcDockId), configPath);
-  auto dockId = addDock(configPath, position, screen);
+  auto dockId = addDock(configPath, position, screen, visibility);
   emit dockAdded(dockId);
 
   syncDockConfig(dockId);
@@ -144,9 +145,10 @@ void MultiDockModel::maybeAddDockForMultiScreen() {
     const auto dockId = dockConfigs_.cbegin()->first;
     const auto dockPosition = panelPosition(dockId);
     const auto dockScreen = screen(dockId);
+    const auto dockVisibility = visibility(dockId);
     for (int screen = 0; screen < screenCount; ++screen) {
       if (screen != dockScreen) {
-        cloneDock(dockId, dockPosition, screen);
+        cloneDock(dockId, dockPosition, screen, dockVisibility);
       }
     }
   }

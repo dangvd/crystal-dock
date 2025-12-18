@@ -205,7 +205,7 @@ void DockPanel::changeScreen(int screen) {
   if (screen_ == screen) {
     return;
   }
-  model_->cloneDock(dockId_, position_, screen);
+  model_->cloneDock(dockId_, position_, screen, visibility_);
   deleteLater();
   model_->removeDock(dockId_);
 }

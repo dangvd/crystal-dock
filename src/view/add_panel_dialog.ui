@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>540</width>
-    <height>730</height>
+    <height>770</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,7 +17,7 @@
    <property name="geometry">
     <rect>
      <x>70</x>
-     <y>670</y>
+     <y>710</y>
      <width>400</width>
      <height>32</height>
     </rect>
@@ -37,8 +37,8 @@
     <rect>
      <x>90</x>
      <y>560</y>
-     <width>210</width>
-     <height>23</height>
+     <width>141</width>
+     <height>26</height>
     </rect>
    </property>
    <property name="text">
@@ -48,9 +48,9 @@
   <widget class="QComboBox" name="position">
    <property name="geometry">
     <rect>
-     <x>320</x>
+     <x>240</x>
      <y>550</y>
-     <width>131</width>
+     <width>140</width>
      <height>40</height>
     </rect>
    </property>
@@ -82,9 +82,9 @@
    <property name="geometry">
     <rect>
      <x>90</x>
-     <y>600</y>
-     <width>210</width>
-     <height>23</height>
+     <y>605</y>
+     <width>141</width>
+     <height>26</height>
     </rect>
    </property>
    <property name="text">
@@ -94,9 +94,9 @@
   <widget class="QComboBox" name="screen">
    <property name="geometry">
     <rect>
-     <x>320</x>
+     <x>240</x>
      <y>595</y>
-     <width>131</width>
+     <width>70</width>
      <height>40</height>
     </rect>
    </property>
@@ -195,8 +195,8 @@
    <property name="geometry">
     <rect>
      <x>90</x>
-     <y>520</y>
-     <width>210</width>
+     <y>515</y>
+     <width>141</width>
      <height>26</height>
     </rect>
    </property>
@@ -207,9 +207,9 @@
   <widget class="QComboBox" name="style">
    <property name="geometry">
     <rect>
-     <x>320</x>
+     <x>240</x>
      <y>505</y>
-     <width>131</width>
+     <width>140</width>
      <height>40</height>
     </rect>
    </property>
@@ -329,6 +329,49 @@
    <property name="checked">
     <bool>true</bool>
    </property>
+  </widget>
+  <widget class="QLabel" name="visibilityLabel">
+   <property name="geometry">
+    <rect>
+     <x>90</x>
+     <y>650</y>
+     <width>141</width>
+     <height>26</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Visibility</string>
+   </property>
+  </widget>
+  <widget class="QComboBox" name="visibility">
+   <property name="geometry">
+    <rect>
+     <x>240</x>
+     <y>640</y>
+     <width>210</width>
+     <height>40</height>
+    </rect>
+   </property>
+   <item>
+    <property name="text">
+     <string>Always Visible</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>Intelligent Auto Hide</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>Auto Hide</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>Always On Top</string>
+    </property>
+   </item>
   </widget>
  </widget>
  <resources/>

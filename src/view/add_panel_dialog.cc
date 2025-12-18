@@ -78,14 +78,16 @@ void AddPanelDialog::setMode(Mode mode) {
   ui->showKeyboardLayout->move(120, 380);
   ui->showVersionChecker->move(120, 420);
   ui->showClock->move(120, 460);
-  ui->styleLabel->move(90, 520);
-  ui->style->move(320, 505);
+  ui->styleLabel->move(90, 515);
+  ui->style->move(240, 505);
   ui->positionLabel->move(90, 560);
-  ui->position->move(320, 550);
-  ui->screenLabel->move(90, 600);
-  ui->screen->move(320, 595);
-  ui->buttonBox->move(70, 670);
-  resize(540, 730);
+  ui->position->move(240, 550);
+  ui->screenLabel->move(90, 605);
+  ui->screen->move(240, 595);
+  ui->visibilityLabel->move(90, 650);
+  ui->visibility->move(240, 640);
+  ui->buttonBox->move(70, 710);
+  resize(540, 770);
 
   setWindowTitle((mode_ == Mode::Add)
                  ? QString("Add Panel") : (mode_ == Mode::Clone)
@@ -137,6 +139,8 @@ void AddPanelDialog::setMode(Mode mode) {
     moveY(ui->position, kDeltaY);
     moveY(ui->screenLabel, kDeltaY);
     moveY(ui->screen, kDeltaY);
+    moveY(ui->visibilityLabel, kDeltaY);
+    moveY(ui->visibility, kDeltaY);
     moveY(ui->buttonBox, kDeltaY);
     resizeHeight(this, kDeltaY);
   }
@@ -150,6 +154,8 @@ void AddPanelDialog::setMode(Mode mode) {
   } else {
     ui->buttonBox->setStandardButtons(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
   }
+  ui->visibilityLabel->setVisible(mode != Mode::Clone);
+  ui->visibility->setVisible(mode != Mode::Clone);
 
   if (mode == Mode::Clone) {
     constexpr int kDeltaY = -460;
@@ -157,8 +163,8 @@ void AddPanelDialog::setMode(Mode mode) {
     moveY(ui->position, kDeltaY);
     moveY(ui->screenLabel, kDeltaY);
     moveY(ui->screen, kDeltaY);
-    moveY(ui->buttonBox, kDeltaY);
-    resizeHeight(this, kDeltaY);
+    moveY(ui->buttonBox, kDeltaY - 45);
+    resizeHeight(this, kDeltaY - 45);
   } else if (mode != Mode::Welcome) {
     ui->styleLabel->setVisible(false);
     ui->style->setVisible(false);
@@ -167,12 +173,16 @@ void AddPanelDialog::setMode(Mode mode) {
     moveY(ui->position, kDeltaY);
     moveY(ui->screenLabel, kDeltaY);
     moveY(ui->screen, kDeltaY);
+    moveY(ui->visibilityLabel, kDeltaY);
+    moveY(ui->visibility, kDeltaY);
     moveY(ui->buttonBox, kDeltaY);
     resizeHeight(this, kDeltaY);
   }
 
   if (isSingleScreen_) {
     constexpr int kScreenDeltaY = -40;
+    moveY(ui->visibilityLabel, kScreenDeltaY);
+    moveY(ui->visibility, kScreenDeltaY);
     moveY(ui->buttonBox, kScreenDeltaY);
     resizeHeight(this, kScreenDeltaY);
   }
@@ -182,8 +192,16 @@ void AddPanelDialog::accept() {
   QDialog::accept();
   auto position = static_cast<PanelPosition>(ui->position->currentIndex());
   auto screen = ui->screen->currentIndex();
+  const auto& visibilityText = ui->visibility->currentText();
+  auto visibility = visibilityText == "Always Visible"
+      ? PanelVisibility::AlwaysVisible
+      : visibilityText == "Intelligent Auto Hide"
+          ? PanelVisibility::IntelligentAutoHide
+          : visibilityText == "Auto Hide"
+              ? PanelVisibility::AutoHide
+              : PanelVisibility::AlwaysOnTop;
   if (mode_ == Mode::Clone) {
-    model_->cloneDock(dockId_, position, screen);
+    model_->cloneDock(dockId_, position, screen, visibility);
   } else {
     if (mode_ == Mode::Welcome) {
       const auto& style = ui->style->currentText();
@@ -196,7 +214,7 @@ void AddPanelDialog::accept() {
                   : PanelStyle::Metal2D_NonFloating);
     }
     model_->addDock(
-        position, screen, ui->showApplicationMenu->isChecked(),
+        position, screen, visibility, ui->showApplicationMenu->isChecked(),
         ui->showPager->isChecked(), ui->showTaskManager->isChecked(),
         ui->showTrash->isChecked(), ui->showWifiManager->isChecked(),
         ui->showVolumeControl->isChecked(), ui->showBatteryIndicator->isChecked(),

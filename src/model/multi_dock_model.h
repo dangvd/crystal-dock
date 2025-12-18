@@ -124,22 +124,16 @@ class MultiDockModel : public QObject {
   int dockCount() const { return dockConfigs_.size(); }
 
   // Adds a new dock in the specified position and screen.
-  void addDock(PanelPosition position, int screen, bool showApplicationMenu,
-               bool showPager, bool showTaskManager, bool showTrash,
+  void addDock(PanelPosition position, int screen, PanelVisibility visibility,
+               bool showApplicationMenu, bool showPager,
+               bool showTaskManager, bool showTrash,
                bool showWifiManager, bool showVolumeControl,
                bool showBatteryIndicator, bool showKeyboardLayout,
                bool showVersionChecker, bool showClock);
 
-  void addDock() {
-    addDock(PanelPosition::Bottom, 0, kDefaultShowApplicationMenu,
-            kDefaultShowPager, kDefaultShowTaskManager, kDefaultShowTrash,
-            kDefaultShowWifiManager, kDefaultShowVolumeControl,
-            kDefaultShowBatteryIndicator, kDefaultShowKeyboardLayout,
-            kDefaultShowVersionChecker, kDefaultShowClock);
-  }
-
   // Clones an existing dock in the specified position and screen.
-  void cloneDock(int srcDockId, PanelPosition position, int screen);
+  void cloneDock(int srcDockId, PanelPosition position, int screen,
+                 PanelVisibility visibility);
 
   // Removes a dock.
   void removeDock(int dockId);
@@ -873,7 +867,8 @@ class MultiDockModel : public QObject {
 
   void loadDocks();
 
-  int addDock(const QString& configPath, PanelPosition position, int screen);
+  int addDock(const QString& configPath, PanelPosition position, int screen,
+              PanelVisibility visibility);
 
   void syncAppearanceConfig() {
     appearanceConfig_.sync();
