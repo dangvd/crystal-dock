@@ -22,6 +22,7 @@
 #include <QGuiApplication>
 
 #include "battery_indicator.h"
+#include <desktop/desktop_env.h>
 #include <display/window_system.h>
 
 namespace crystaldock {
@@ -120,6 +121,12 @@ void AddPanelDialog::setMode(Mode mode) {
   ui->showKeyboardLayout->setVisible(mode != Mode::Clone);
   ui->showVersionChecker->setVisible(mode != Mode::Clone);
   ui->showClock->setVisible(mode != Mode::Clone);
+
+  // See https://github.com/dangvd/crystal-dock/issues/218
+  ui->visibility->setCurrentText(
+      DesktopEnv::getDesktopEnvName() == "Wayfire"
+          ? "Intelligent Auto Hide"
+          : "Always Visible");
 
   if (mode != Mode::Clone && !WindowSystem::hasVirtualDesktopManager()) {
     ui->showPager->setChecked(false);
