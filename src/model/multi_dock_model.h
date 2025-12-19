@@ -132,8 +132,7 @@ class MultiDockModel : public QObject {
                bool showVersionChecker, bool showClock);
 
   // Clones an existing dock in the specified position and screen.
-  void cloneDock(int srcDockId, PanelPosition position, int screen,
-                 PanelVisibility visibility);
+  void cloneDock(int srcDockId, PanelPosition position, int screen);
 
   // Removes a dock.
   void removeDock(int dockId);

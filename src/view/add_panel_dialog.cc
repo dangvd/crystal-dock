@@ -79,13 +79,13 @@ void AddPanelDialog::setMode(Mode mode) {
   ui->showKeyboardLayout->move(120, 380);
   ui->showVersionChecker->move(120, 420);
   ui->showClock->move(120, 460);
-  ui->styleLabel->move(90, 515);
+  ui->styleLabel->move(60, 515);
   ui->style->move(240, 505);
-  ui->positionLabel->move(90, 560);
+  ui->positionLabel->move(60, 560);
   ui->position->move(240, 550);
-  ui->screenLabel->move(90, 605);
+  ui->screenLabel->move(60, 605);
   ui->screen->move(240, 595);
-  ui->visibilityLabel->move(90, 650);
+  ui->visibilityLabel->move(60, 650);
   ui->visibility->move(240, 640);
   ui->buttonBox->move(70, 710);
   resize(540, 770);
@@ -186,7 +186,7 @@ void AddPanelDialog::setMode(Mode mode) {
     resizeHeight(this, kDeltaY);
   }
 
-  if (isSingleScreen_) {
+  if (isSingleScreen_ || mode == Mode::Welcome) {
     constexpr int kScreenDeltaY = -40;
     moveY(ui->visibilityLabel, kScreenDeltaY);
     moveY(ui->visibility, kScreenDeltaY);
@@ -208,7 +208,7 @@ void AddPanelDialog::accept() {
               ? PanelVisibility::AutoHide
               : PanelVisibility::AlwaysOnTop;
   if (mode_ == Mode::Clone) {
-    model_->cloneDock(dockId_, position, screen, visibility);
+    model_->cloneDock(dockId_, position, screen);
   } else {
     if (mode_ == Mode::Welcome) {
       const auto& style = ui->style->currentText();

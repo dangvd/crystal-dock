@@ -35,9 +35,9 @@
   <widget class="QLabel" name="positionLabel">
    <property name="geometry">
     <rect>
-     <x>90</x>
+     <x>60</x>
      <y>560</y>
-     <width>141</width>
+     <width>160</width>
      <height>26</height>
     </rect>
    </property>
@@ -50,7 +50,7 @@
     <rect>
      <x>240</x>
      <y>550</y>
-     <width>140</width>
+     <width>160</width>
      <height>40</height>
     </rect>
    </property>
@@ -81,9 +81,9 @@
   <widget class="QLabel" name="screenLabel">
    <property name="geometry">
     <rect>
-     <x>90</x>
+     <x>60</x>
      <y>605</y>
-     <width>141</width>
+     <width>160</width>
      <height>26</height>
     </rect>
    </property>
@@ -96,7 +96,7 @@
     <rect>
      <x>240</x>
      <y>595</y>
-     <width>70</width>
+     <width>80</width>
      <height>40</height>
     </rect>
    </property>
@@ -104,7 +104,7 @@
   <widget class="QLabel" name="componentsLabel">
    <property name="geometry">
     <rect>
-     <x>90</x>
+     <x>60</x>
      <y>68</y>
      <width>351</width>
      <height>23</height>
@@ -149,9 +149,9 @@
   <widget class="QLabel" name="headerLabel">
    <property name="geometry">
     <rect>
-     <x>90</x>
+     <x>60</x>
      <y>20</y>
-     <width>361</width>
+     <width>400</width>
      <height>23</height>
     </rect>
    </property>
@@ -194,9 +194,9 @@
   <widget class="QLabel" name="styleLabel">
    <property name="geometry">
     <rect>
-     <x>90</x>
+     <x>60</x>
      <y>515</y>
-     <width>141</width>
+     <width>160</width>
      <height>26</height>
     </rect>
    </property>
@@ -209,7 +209,7 @@
     <rect>
      <x>240</x>
      <y>505</y>
-     <width>140</width>
+     <width>160</width>
      <height>40</height>
     </rect>
    </property>
@@ -333,9 +333,9 @@
   <widget class="QLabel" name="visibilityLabel">
    <property name="geometry">
     <rect>
-     <x>90</x>
+     <x>60</x>
      <y>650</y>
-     <width>141</width>
+     <width>160</width>
      <height>26</height>
     </rect>
    </property>
@@ -348,7 +348,7 @@
     <rect>
      <x>240</x>
      <y>640</y>
-     <width>210</width>
+     <width>240</width>
      <height>40</height>
     </rect>
    </property>

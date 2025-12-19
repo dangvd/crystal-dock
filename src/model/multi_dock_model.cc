@@ -122,12 +122,12 @@ int MultiDockModel::addDock(const QString& configPath, PanelPosition position,
 }
 
 void MultiDockModel::cloneDock(int srcDockId, PanelPosition position,
-                               int screen, PanelVisibility visibility) {
+                               int screen) {
   auto configPath = configHelper_.findNextDockConfig();
 
   // Clone the dock config.
   QFile::copy(dockConfigPath(srcDockId), configPath);
-  auto dockId = addDock(configPath, position, screen, visibility);
+  auto dockId = addDock(configPath, position, screen, visibility(srcDockId));
   emit dockAdded(dockId);
 
   syncDockConfig(dockId);
@@ -145,10 +145,9 @@ void MultiDockModel::maybeAddDockForMultiScreen() {
     const auto dockId = dockConfigs_.cbegin()->first;
     const auto dockPosition = panelPosition(dockId);
     const auto dockScreen = screen(dockId);
-    const auto dockVisibility = visibility(dockId);
     for (int screen = 0; screen < screenCount; ++screen) {
       if (screen != dockScreen) {
-        cloneDock(dockId, dockPosition, screen, dockVisibility);
+        cloneDock(dockId, dockPosition, screen);
       }
     }
   }
