@@ -143,7 +143,6 @@ void DockPanel::reload() {
   items_.clear();
   initUi();
   setMask();
-  update();
 }
 
 void DockPanel::refresh() {
@@ -1827,7 +1826,6 @@ void DockPanel::resizeTaskManager() {
   }
 
   setMask();
-  update();
 }
 
 void DockPanel::setStrut(int width) {
@@ -1866,6 +1864,7 @@ void DockPanel::setMask() {
   } else {
     QWidget::setMask(QRegion(0, 0, maxWidth_, maxHeight_));
   }
+  repaint();
 }
 
 void DockPanel::updatePosition(PanelPosition position) {
