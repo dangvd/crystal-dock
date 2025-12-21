@@ -9,7 +9,7 @@
 
 Crystal Dock is a cool dock (desktop panel) for Linux desktop, with the focus on attractive user interface, simplicity and cross-desktop support.
 
-The current version (version 2) supports Hyprland, KDE Plasma 6, Labwc, LXQt, Niri and Wayfire on Wayland. Other desktop environments and compositors will be considered when they run on Wayland and provide sufficient APIs. The previous version (version 1) supports KDE Plasma 5, GNOME, LXQt, Cinnamon and MATE on X11.
+The current version (version 2) supports Budgie, Hyprland, KDE Plasma 6, Labwc, LXQt, Niri, Sway and Wayfire on Wayland. Other desktop environments and compositors will be considered when they run on Wayland and provide sufficient APIs. The previous version (version 1) supports KDE Plasma 5, GNOME, LXQt, Cinnamon and MATE on X11.
 
 ## Main features
 
