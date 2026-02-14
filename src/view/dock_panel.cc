@@ -642,7 +642,7 @@ void DockPanel::drawGlass3D(QPainter& painter) {
     int y = height() - itemSpacing_ - k3DPanelThickness;
     if (isFloating()) { y -= floatingMargin_; }
     QImage toMirrorImage = mainImage.copy(0, y - itemSpacing_ + 2, width(), itemSpacing_ - 2);
-    QImage mirrorImage = toMirrorImage.flipped(Qt::Vertical);
+    QImage mirrorImage = toMirrorImage.mirrored(false, true);
     painter.setOpacity(0.3);
     painter.drawImage(0, y, mirrorImage);
     painter.setOpacity(1.0);
