@@ -25,6 +25,7 @@
 #include <QStringList>
 
 #include "budgie_desktop_env.h"
+#include "cosmic_desktop_env.h"
 #include "hyprland_desktop_env.h"
 #include "kde_desktop_env.h"
 #include "labwc_desktop_env.h"
@@ -42,6 +43,9 @@ DesktopEnv* DesktopEnv::getDesktopEnv() {
   if (currentDesktopEnv == "Budgie") {
     static std::unique_ptr<BudgieDesktopEnv> budgie(new BudgieDesktopEnv);
     return budgie.get();
+  } else if (currentDesktopEnv == "COSMIC") {
+    static std::unique_ptr<CosmicDesktopEnv> cosmic(new CosmicDesktopEnv);
+    return cosmic.get();
   } else if (currentDesktopEnv == "Hyprland") {
     static std::unique_ptr<HyprlandDesktopEnv> hyprland(new HyprlandDesktopEnv);
     return hyprland.get();

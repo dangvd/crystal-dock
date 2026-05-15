@@ -25,6 +25,7 @@ find_package(LayerShellQt 6.0 REQUIRED)
 set(SRCS
     desktop/desktop_env.cc
     desktop/budgie_desktop_env.cc
+    desktop/cosmic_desktop_env.cc
     desktop/hyprland_desktop_env.cc
     desktop/kde_desktop_env.cc
     desktop/labwc_desktop_env.cc
@@ -41,6 +42,9 @@ set(SRCS
     display/plasma_window_management.c
     display/wlr_foreign_toplevel_management.c
     display/wlr_window_manager.cc
+    display/cosmic_toplevel_info.c
+    display/cosmic_toplevel_management.c
+    display/cosmic_window_manager.cc
     model/application_menu_config.cc
     model/config_helper.cc
     model/launcher_config.cc
@@ -75,6 +79,7 @@ set(SRCS
     utils/desktop_file.cc
     desktop/desktop_env.h
     desktop/budgie_desktop_env.h
+    desktop/cosmic_desktop_env.h
     desktop/hyprland_desktop_env.h
     desktop/kde_desktop_env.h
     desktop/labwc_desktop_env.h
@@ -91,6 +96,9 @@ set(SRCS
     display/plasma_window_management.h
     display/wlr_foreign_toplevel_management.h
     display/wlr_window_manager.h
+    display/cosmic_toplevel_info.h
+    display/cosmic_toplevel_management.h
+    display/cosmic_window_manager.h
     model/application_menu_config.h
     model/application_menu_entry.h
     model/config_helper.h

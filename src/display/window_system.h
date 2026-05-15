@@ -40,6 +40,8 @@
 #include "plasma_virtual_desktop.h"
 #include "plasma_window_management.h"
 #include "wlr_foreign_toplevel_management.h"
+#include "cosmic_toplevel_info.h"
+#include "cosmic_toplevel_management.h"
 
 #include <LayerShellQt/Window>
 
@@ -247,6 +249,9 @@ class WindowSystem : public QObject {
   static kde_screen_edge_manager_v1* kde_screen_edge_manager_;
 
   static zwlr_foreign_toplevel_manager_v1* wlr_window_manager_;
+
+  static zcosmic_toplevel_info_v1* cosmic_toplevel_info_;
+  static zcosmic_toplevel_manager_v1* cosmic_toplevel_manager_;
 
   static VirtualDesktopManager virtualDesktopManager_;
   static WindowManager windowManager_;

@@ -14,6 +14,7 @@
 #include "kde_virtual_desktop_manager.h"
 #include "kde_window_manager.h"
 #include "wlr_window_manager.h"
+#include "cosmic_window_manager.h"
 
 namespace crystaldock {
 
@@ -37,6 +38,9 @@ kde_screen_edge_manager_v1* WindowSystem::kde_screen_edge_manager_;
 
 zwlr_foreign_toplevel_manager_v1* WindowSystem::wlr_window_manager_;
 
+zcosmic_toplevel_info_v1* WindowSystem::cosmic_toplevel_info_;
+zcosmic_toplevel_manager_v1* WindowSystem::cosmic_toplevel_manager_;
+
 VirtualDesktopManager WindowSystem::virtualDesktopManager_;
 WindowManager WindowSystem::windowManager_;
 AutoHideManager WindowSystem::autoHideManager_;
@@ -56,7 +60,8 @@ std::unique_ptr<QDBusInterface> WindowSystem::activityManager_;
   // wait for the "initial" set of globals to appear
   wl_display_roundtrip(display);
 
-  if (!kde_window_management_ && !wlr_window_manager_) {
+  if (!kde_window_management_ && !wlr_window_manager_
+      && !(cosmic_toplevel_info_ && cosmic_toplevel_manager_)) {
     std::cerr << "Failed to bind required Wayland interfaces" << std::endl;
     return false;
   }
@@ -69,6 +74,9 @@ std::unique_ptr<QDBusInterface> WindowSystem::activityManager_;
   if (kde_window_management_) {
     KdeWindowManager::init(kde_window_management_);
     KdeWindowManager::bindWindowManagerFunctions(&windowManager_);
+  } else if (cosmic_toplevel_info_ && cosmic_toplevel_manager_) {
+    CosmicWindowManager::init(cosmic_toplevel_info_, cosmic_toplevel_manager_);
+    CosmicWindowManager::bindWindowManagerFunctions(&windowManager_);
   } else if (wlr_window_manager_) {
     WlrWindowManager::init(wlr_window_manager_);
     WlrWindowManager::bindWindowManagerFunctions(&windowManager_);
@@ -203,6 +211,28 @@ void WindowSystem::initScreens() {
             registry, name, &zwlr_foreign_toplevel_manager_v1_interface, 3));
     if (!wlr_window_manager_) {
       std::cerr << "Failed to bind zwlr_foreign_toplevel_manager_v1 Wayland interface"
+                << std::endl;
+    }
+  } else if (std::string(interface) == "zcosmic_toplevel_info_v1") {
+    // Bind v1 of the protocol so we receive the legacy `toplevel` event
+    // directly on the info object rather than having to go through
+    // ext_foreign_toplevel_list_v1.
+    cosmic_toplevel_info_ =
+        reinterpret_cast<zcosmic_toplevel_info_v1*>(wl_registry_bind(
+            registry, name, &zcosmic_toplevel_info_v1_interface, 1));
+    if (!cosmic_toplevel_info_) {
+      std::cerr << "Failed to bind zcosmic_toplevel_info_v1 Wayland interface"
+                << std::endl;
+    }
+  } else if (std::string(interface) == "zcosmic_toplevel_manager_v1") {
+    // Cosmic compositor currently exposes v4 of the management protocol.
+    // Bind at v1 since we don't use anything beyond the basic activate/
+    // set_minimized/close/set_maximized requests that are present from v1.
+    cosmic_toplevel_manager_ =
+        reinterpret_cast<zcosmic_toplevel_manager_v1*>(wl_registry_bind(
+            registry, name, &zcosmic_toplevel_manager_v1_interface, 1));
+    if (!cosmic_toplevel_manager_) {
+      std::cerr << "Failed to bind zcosmic_toplevel_manager_v1 Wayland interface"
                 << std::endl;
     }
   }
