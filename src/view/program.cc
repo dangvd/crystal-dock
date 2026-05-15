@@ -21,6 +21,7 @@
 #include <iostream>
 
 #include <QDir>
+#include <QFile>
 #include <QGuiApplication>
 #include <QMessageBox>
 #include <QProcess>
@@ -334,7 +335,24 @@ void Program::pinUnpin() {
 }
 
 void Program::launch(const QString& command) {
-  QStringList list = QProcess::splitCommand(command);
+  // When the dock is running inside a container (e.g. distrobox or toolbx),
+  // launcher commands typically reference host binaries that aren't on the
+  // container's PATH. Detect the container via /run/.containerenv (podman)
+  // or the $container env var and prepend distrobox-host-exec to bridge.
+  // Skip if the user has already prepended a bridge command, or the command
+  // is one of our internal helpers.
+  QString runCommand = command;
+  const QString trimmed = command.trimmed();
+  const bool inContainer = QFile::exists("/run/.containerenv")
+      || qEnvironmentVariableIsSet("container");
+  const bool alreadyBridged = trimmed.startsWith("distrobox-host-exec ")
+      || trimmed.startsWith("host-spawn ")
+      || trimmed.startsWith("flatpak-spawn ");
+  if (inContainer && !alreadyBridged && !trimmed.isEmpty()) {
+    runCommand = "distrobox-host-exec " + command;
+  }
+
+  QStringList list = QProcess::splitCommand(runCommand);
   QProcess process;
   process.setProgram(list.at(0));
   process.setArguments(list.mid(1));
@@ -347,7 +365,7 @@ void Program::launch(const QString& command) {
   process.setWorkingDirectory(QDir::homePath());
   if (!process.startDetached()) {
     QMessageBox warning(QMessageBox::Warning, "Error",
-                        QString("Could not run command: ") + command,
+                        QString("Could not run command: ") + runCommand,
                         QMessageBox::Ok, nullptr, Qt::Tool);
     warning.exec();
   }
