@@ -48,8 +48,18 @@ std::vector<Category> CosmicDesktopEnv::getApplicationMenuSystemCategories() con
 }
 
 std::vector<QString> CosmicDesktopEnv::getDefaultLaunchers() const {
-  return { defaultWebBrowser(), "cosmic-files", "cosmic-term",
-           kSeparatorId, kLockScreenId, kLogOutId, kSeparatorId };
+  return {
+    defaultWebBrowser(),
+    "com.system76.CosmicFiles",
+    "com.system76.CosmicTerm",
+    "com.system76.CosmicEdit",
+    "com.system76.CosmicSettings",
+    "com.system76.CosmicStore",
+    kSeparatorId,
+    kLockScreenId,
+    kLogOutId,
+    kSeparatorId
+  };
 }
 
 }  // namespace crystaldock
