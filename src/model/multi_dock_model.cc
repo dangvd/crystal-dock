@@ -180,7 +180,7 @@ const std::vector<LauncherConfig> MultiDockModel::launcherConfigs(int dockId) co
       continue;
     }
 
-    const auto* entry = applicationMenuConfig_.findApplication(appId.toStdString());
+    const auto* entry = applicationMenuConfig_.findApplication(appId.toLower().toStdString());
     if (entry != nullptr) {
       entries.push_back(LauncherConfig(entry->appId, entry->name, entry->icon,
                                        entry->command));
