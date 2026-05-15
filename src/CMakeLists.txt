@@ -44,6 +44,7 @@ set(SRCS
     display/wlr_window_manager.cc
     display/cosmic_toplevel_info.c
     display/cosmic_toplevel_management.c
+    display/cosmic_protocol_stubs.c
     display/cosmic_window_manager.cc
     model/application_menu_config.cc
     model/config_helper.cc
