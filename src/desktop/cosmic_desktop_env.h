@@ -25,6 +25,9 @@ namespace crystaldock {
 
 class CosmicDesktopEnv : public DesktopEnv {
  public:
+  CosmicDesktopEnv();
+
+  QString getApplicationMenuIcon() const override;
   std::vector<Category> getApplicationMenuSystemCategories() const override;
   std::vector<QString> getDefaultLaunchers() const override;
 };

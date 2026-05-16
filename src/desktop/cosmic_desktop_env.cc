@@ -18,9 +18,34 @@
 
 #include "cosmic_desktop_env.h"
 
+#include <QIcon>
+
 #include <model/multi_dock_model.h>
 
 namespace crystaldock {
+
+CosmicDesktopEnv::CosmicDesktopEnv() {
+  // COSMIC ships its own icon theme ("Cosmic") that includes both COSMIC's
+  // own app icons and freedesktop standard action/status icons. Qt running
+  // inside a containerized build (or without GTK theme integration) does
+  // not detect this automatically and falls back to a hicolor-only search
+  // path, which causes system-action icon names ("system-lock-screen",
+  // "system-log-out", etc.) to render blank because hicolor only ships
+  // app icons. Set the theme explicitly so those names resolve.
+  //
+  // Icon themes inherit from hicolor for app icons, so existing per-app
+  // lookups (e.g. brave-browser, com.system76.CosmicFiles) continue to
+  // work after this is set.
+  QIcon::setThemeName("Cosmic");
+}
+
+QString CosmicDesktopEnv::getApplicationMenuIcon() const {
+  // COSMIC ships com.system76.CosmicAppLibrary as the equivalent of an
+  // application-launcher icon. Using its reverse-DNS name resolves via
+  // hicolor and produces the actual COSMIC App Library icon rather than
+  // the freedesktop "start-here" name (which isn't in COSMIC's theme).
+  return "com.system76.CosmicAppLibrary";
+}
 
 std::vector<Category> CosmicDesktopEnv::getApplicationMenuSystemCategories() const {
   static const std::vector<Category> kSystemCategories = {
