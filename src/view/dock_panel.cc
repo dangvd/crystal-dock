@@ -647,7 +647,11 @@ void DockPanel::drawGlass3D(QPainter& painter) {
     const int copyH = qRound((itemSpacing_ - 2) * dpr);
     QImage toMirrorImage = mainImage.copy(0, copyY, mainImage.width(), copyH);
     toMirrorImage.setDevicePixelRatio(dpr);
+#if QT_VERSION >= QT_VERSION_CHECK(6, 9, 0)
     QImage mirrorImage = toMirrorImage.flipped(Qt::Vertical);
+#else
+    QImage mirrorImage = toMirrorImage.mirrored(false, true);
+#endif
     painter.setOpacity(0.3);
     painter.drawImage(0, y, mirrorImage);
     painter.setOpacity(1.0);
