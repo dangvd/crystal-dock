@@ -956,7 +956,10 @@ void DockPanel::initUi() {
   updateLayout();
   setStrut();
   if (WindowSystem::hasAutoHideManager() && intellihideShouldHide()) {
-    setAutoHide();
+    // Deferred so that it runs after show(), since the Auto Hide screen edge
+    // Wayland protocol requires the surface to already have the layer_surface
+    // role, which is only assigned once the panel is shown.
+    QTimer::singleShot(0, this, [this] { setAutoHide(); });
   }
 }
 
