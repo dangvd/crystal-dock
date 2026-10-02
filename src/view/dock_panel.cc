@@ -708,6 +708,10 @@ void DockPanel::drawTooltip(QPainter& painter) {
       activeItem_ < static_cast<int>(items_.size())) {
     if (isHorizontal()) {
       const auto& item = items_[activeItem_];
+      if (model_->tooltipBackground()) {
+        drawTooltipWithBackground(painter, *item);
+        return;
+      }
       QFont font;
       font.setPointSize(model_->tooltipFontSize());
       font.setBold(true);
@@ -724,6 +728,36 @@ void DockPanel::drawTooltip(QPainter& painter) {
       // area of the dock would take too much desktop space.
     }
   }
+}
+
+void DockPanel::drawTooltipWithBackground(QPainter& painter,
+                                          const DockItem& item) {
+  QFont font;
+  font.setPointSize(model_->tooltipFontSize());
+  QFontMetrics metrics(font);
+  const QString label = item.getLabel();
+  const int paddingX = metrics.height() * 2 / 3;
+  const int paddingY = metrics.height() / 4;
+  const int boxWidth = metrics.horizontalAdvance(label) + 2 * paddingX;
+  const int boxHeight = metrics.height() + 2 * paddingY;
+  int x = item.left_ + item.getWidth() / 2 - boxWidth / 2;
+  x = std::min(x, maxWidth_ - boxWidth - 1);
+  x = std::max(x, 1);
+  const int centerY = isTop() ? maxHeight_ - tooltipSize_ / 2 : tooltipSize_ / 2;
+  const QRectF box(x + 0.5, centerY - boxHeight / 2 + 0.5, boxWidth, boxHeight);
+  const qreal radius = boxHeight / 2.0 * model_->tooltipCornerRadius() / 100.0;
+
+  painter.save();
+  painter.setRenderHint(QPainter::Antialiasing, true);
+  QColor borderColor = model_->tooltipTextColor();
+  borderColor.setAlpha(40);
+  painter.setPen(QPen(borderColor, 1));
+  painter.setBrush(model_->tooltipBackgroundColor());
+  painter.drawRoundedRect(box, radius, radius);
+  painter.setFont(font);
+  painter.setPen(model_->tooltipTextColor());
+  painter.drawText(box, Qt::AlignCenter, label);
+  painter.restore();
 }
 
 void DockPanel::mouseMoveEvent(QMouseEvent* e) {
@@ -1477,9 +1511,11 @@ void DockPanel::initLayoutVars() {
 
   QFont font;
   font.setPointSize(model_->tooltipFontSize());
-  font.setBold(true);
+  font.setBold(!model_->tooltipBackground());
   QFontMetrics metrics(font);
-  tooltipSize_ = metrics.boundingRect("Tooltip").height();
+  tooltipSize_ = model_->tooltipBackground()
+      ? metrics.height() * 3 / 2 + 4  // Room for the background box.
+      : metrics.boundingRect("Tooltip").height();
 
   const int distance = minSize_ + itemSpacing_;
   // The difference between minWidth_ and maxWidth_

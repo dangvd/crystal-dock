@@ -379,6 +379,7 @@ class DockPanel : public QWidget {
   void draw2D(QPainter& painter);  // for 2D styles.
 
   void drawTooltip(QPainter& painter);
+  void drawTooltipWithBackground(QPainter& painter, const DockItem& item);
 
   // Returns the size given the distance to the mouse.
   int parabolic(int x);
