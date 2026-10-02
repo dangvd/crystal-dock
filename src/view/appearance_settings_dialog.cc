@@ -42,10 +42,19 @@ AppearanceSettingsDialog::AppearanceSettingsDialog(QWidget* parent,
   inactiveIndicatorColor_ = new ColorButton(this);
   inactiveIndicatorColor_->setGeometry(QRect(700, 270, 80, 40));
 
+  tooltipBackgroundColor_ = new ColorButton(this);
+  tooltipBackgroundColor_->setGeometry(QRect(260, 510, 80, 40));
+  tooltipTextColor_ = new ColorButton(this);
+  tooltipTextColor_->setGeometry(QRect(260, 570, 80, 40));
+
   connect(ui->buttonBox, SIGNAL(clicked(QAbstractButton*)),
       this, SLOT(buttonClicked(QAbstractButton*)));
   connect(ui->enableZooming, &QCheckBox::checkStateChanged,
           this, &AppearanceSettingsDialog::onEnableZoomingChanged);
+  connect(ui->tooltipBackground, &QCheckBox::checkStateChanged,
+          this, &AppearanceSettingsDialog::updateTooltipBackgroundWidgets);
+  connect(ui->showTooltip, &QCheckBox::checkStateChanged,
+          this, &AppearanceSettingsDialog::updateTooltipBackgroundWidgets);
 
   loadData();
 }
@@ -66,6 +75,16 @@ void AppearanceSettingsDialog::buttonClicked(QAbstractButton* button) {
   } else if (role == QDialogButtonBox::ResetRole) {
     resetData();
   }
+}
+
+void AppearanceSettingsDialog::updateTooltipBackgroundWidgets() {
+  ui->tooltipBackground->setEnabled(ui->showTooltip->isChecked());
+  const auto enabled =
+      ui->showTooltip->isChecked() && ui->tooltipBackground->isChecked();
+  ui->tooltipCornerRadius->setEnabled(enabled);
+  ui->tooltipTransparency->setEnabled(enabled);
+  tooltipBackgroundColor_->setEnabled(enabled);
+  tooltipTextColor_->setEnabled(enabled);
 }
 
 void AppearanceSettingsDialog::onEnableZoomingChanged() {
@@ -109,6 +128,14 @@ void AppearanceSettingsDialog::loadData() {
                                              : model_->inactiveIndicatorColorMetal2D());
   ui->showTooltip->setChecked(model_->showTooltip());
   ui->tooltipFontSize->setValue(model_->tooltipFontSize());
+  ui->tooltipBackground->setChecked(model_->tooltipBackground());
+  ui->tooltipCornerRadius->setValue(model_->tooltipCornerRadius());
+  const QColor tooltipBackgroundColor = model_->tooltipBackgroundColor();
+  tooltipBackgroundColor_->setColor(QColor(tooltipBackgroundColor.rgb()));
+  ui->tooltipTransparency->setValue(
+      alphaFToTransparencyPercent(tooltipBackgroundColor.alphaF()));
+  tooltipTextColor_->setColor(model_->tooltipTextColor());
+  updateTooltipBackgroundWidgets();
   ui->floatingMargin->setValue(model_->floatingMargin());
   ui->floatingMargin->setEnabled(model_->isFloating());
   ui->bouncingLauncherIcon->setChecked(model_->bouncingLauncherIcon());
@@ -141,6 +168,13 @@ void AppearanceSettingsDialog::resetData() {
                                             : kDefaultInactiveIndicatorColorMetal2D));
   ui->showTooltip->setChecked(kDefaultShowTooltip);
   ui->tooltipFontSize->setValue(kDefaultTooltipFontSize);
+  ui->tooltipBackground->setChecked(kDefaultTooltipBackground);
+  ui->tooltipCornerRadius->setValue(kDefaultTooltipCornerRadius);
+  tooltipBackgroundColor_->setColor(QColor(kDefaultTooltipBackgroundColor));
+  ui->tooltipTransparency->setValue(
+      alphaFToTransparencyPercent(kDefaultTooltipBackgroundAlpha));
+  tooltipTextColor_->setColor(QColor(kDefaultTooltipTextColor));
+  updateTooltipBackgroundWidgets();
   ui->floatingMargin->setValue(kDefaultFloatingMargin);
   ui->bouncingLauncherIcon->setChecked(kDefaultBouncingLauncherIcon);
 }
@@ -177,6 +211,13 @@ void AppearanceSettingsDialog::saveData() {
   }
   model_->setShowTooltip(ui->showTooltip->isChecked());
   model_->setTooltipFontSize(ui->tooltipFontSize->value());
+  model_->setTooltipBackground(ui->tooltipBackground->isChecked());
+  model_->setTooltipCornerRadius(ui->tooltipCornerRadius->value());
+  QColor tooltipBackgroundColor(tooltipBackgroundColor_->color());
+  tooltipBackgroundColor.setAlphaF(
+      transparencyPercentToAlphaF(ui->tooltipTransparency->value()));
+  model_->setTooltipBackgroundColor(tooltipBackgroundColor);
+  model_->setTooltipTextColor(tooltipTextColor_->color());
   model_->setFloatingMargin(ui->floatingMargin->value());
   model_->setBouncingLauncherIcon(ui->bouncingLauncherIcon->isChecked());
   model_->saveAppearanceConfig();
