@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>820</width>
-    <height>540</height>
+    <height>720</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,7 +17,7 @@
    <property name="geometry">
     <rect>
      <x>34</x>
-     <y>470</y>
+     <y>650</y>
      <width>730</width>
      <height>36</height>
     </rect>
@@ -312,6 +312,115 @@
    </property>
    <property name="text">
     <string>Show tooltip</string>
+   </property>
+  </widget>
+  <widget class="QCheckBox" name="tooltipBackground">
+   <property name="geometry">
+    <rect>
+     <x>40</x>
+     <y>450</y>
+     <width>360</width>
+     <height>40</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Show tooltip with background</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="tooltipCornerRadiusLabel">
+   <property name="geometry">
+    <rect>
+     <x>440</x>
+     <y>450</y>
+     <width>220</width>
+     <height>40</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Tooltip corner radius</string>
+   </property>
+  </widget>
+  <widget class="QSpinBox" name="tooltipCornerRadius">
+   <property name="geometry">
+    <rect>
+     <x>700</x>
+     <y>450</y>
+     <width>81</width>
+     <height>40</height>
+    </rect>
+   </property>
+   <property name="suffix">
+    <string>%</string>
+   </property>
+   <property name="maximum">
+    <number>100</number>
+   </property>
+   <property name="singleStep">
+    <number>10</number>
+   </property>
+   <property name="value">
+    <number>50</number>
+   </property>
+  </widget>
+  <widget class="QLabel" name="tooltipBackgroundColorLabel">
+   <property name="geometry">
+    <rect>
+     <x>40</x>
+     <y>510</y>
+     <width>220</width>
+     <height>40</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Tooltip background</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="tooltipTransparencyLabel">
+   <property name="geometry">
+    <rect>
+     <x>440</x>
+     <y>510</y>
+     <width>220</width>
+     <height>40</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Tooltip transparency</string>
+   </property>
+  </widget>
+  <widget class="QSpinBox" name="tooltipTransparency">
+   <property name="geometry">
+    <rect>
+     <x>700</x>
+     <y>510</y>
+     <width>81</width>
+     <height>40</height>
+    </rect>
+   </property>
+   <property name="suffix">
+    <string>%</string>
+   </property>
+   <property name="maximum">
+    <number>100</number>
+   </property>
+   <property name="singleStep">
+    <number>5</number>
+   </property>
+   <property name="value">
+    <number>10</number>
+   </property>
+  </widget>
+  <widget class="QLabel" name="tooltipTextColorLabel">
+   <property name="geometry">
+    <rect>
+     <x>40</x>
+     <y>570</y>
+     <width>220</width>
+     <height>40</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Tooltip text color</string>
    </property>
   </widget>
   <widget class="QLabel" name="zoomingSpeedLabel">

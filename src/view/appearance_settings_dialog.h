@@ -43,6 +43,7 @@ class AppearanceSettingsDialog : public QDialog {
   void accept() override;
   void buttonClicked(QAbstractButton* button);
   void onEnableZoomingChanged();
+  void updateTooltipBackgroundWidgets();
 
  private:
   void loadData();
@@ -54,6 +55,8 @@ class AppearanceSettingsDialog : public QDialog {
   ColorButton* borderColor_;
   ColorButton* activeIndicatorColor_;
   ColorButton* inactiveIndicatorColor_;
+  ColorButton* tooltipBackgroundColor_;
+  ColorButton* tooltipTextColor_;
 
   MultiDockModel* model_;
 

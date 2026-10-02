@@ -54,6 +54,11 @@ constexpr int kDefaultMaxSize = 128;
 constexpr float kDefaultSpacingFactor = 0.5;
 constexpr bool kDefaultShowTooltip = true;
 constexpr int kDefaultTooltipFontSize = 24;
+constexpr bool kDefaultTooltipBackground = false;
+constexpr int kDefaultTooltipCornerRadius = 50;  // % of half the box height.
+constexpr char kDefaultTooltipBackgroundColor[] = "#282828";
+constexpr float kDefaultTooltipBackgroundAlpha = 0.92;
+constexpr char kDefaultTooltipTextColor[] = "#ffffff";
 constexpr float kDefaultBackgroundAlpha = 0.42;
 constexpr float kDefaultBackgroundAlphaMetal2D = 0.68;
 constexpr char kDefaultBackgroundColor[] = "#638abd";
@@ -294,6 +299,45 @@ class MultiDockModel : public QObject {
 
   void setTooltipFontSize(int value) {
     setAppearanceProperty(kGeneralCategory, kTooltipFontSize, value);
+  }
+
+  bool tooltipBackground() const {
+    return appearanceProperty(kGeneralCategory, kTooltipBackground,
+                              kDefaultTooltipBackground);
+  }
+
+  void setTooltipBackground(bool value) {
+    setAppearanceProperty(kGeneralCategory, kTooltipBackground, value);
+  }
+
+  int tooltipCornerRadius() const {
+    return appearanceProperty(kGeneralCategory, kTooltipCornerRadius,
+                              kDefaultTooltipCornerRadius);
+  }
+
+  void setTooltipCornerRadius(int value) {
+    setAppearanceProperty(kGeneralCategory, kTooltipCornerRadius, value);
+  }
+
+  QColor tooltipBackgroundColor() const {
+    QColor defaultColor(kDefaultTooltipBackgroundColor);
+    defaultColor.setAlphaF(kDefaultTooltipBackgroundAlpha);
+    return QColor(appearanceProperty(kGeneralCategory, kTooltipBackgroundColor,
+                                     defaultColor.name(QColor::HexArgb)));
+  }
+
+  void setTooltipBackgroundColor(const QColor& value) {
+    setAppearanceProperty(kGeneralCategory, kTooltipBackgroundColor,
+                          value.name(QColor::HexArgb));
+  }
+
+  QColor tooltipTextColor() const {
+    return QColor(appearanceProperty(kGeneralCategory, kTooltipTextColor,
+                                     QString(kDefaultTooltipTextColor)));
+  }
+
+  void setTooltipTextColor(const QColor& value) {
+    setAppearanceProperty(kGeneralCategory, kTooltipTextColor, value.name(QColor::HexRgb));
   }
 
   PanelStyle panelStyle() {
@@ -774,6 +818,10 @@ class MultiDockModel : public QObject {
   static constexpr char kSpacingFactor[] = "spacingFactor";
   static constexpr char kShowTooltip[] = "showTooltip";
   static constexpr char kTooltipFontSize[] = "tooltipFontSize";
+  static constexpr char kTooltipBackground[] = "tooltipBackground";
+  static constexpr char kTooltipCornerRadius[] = "tooltipCornerRadius";
+  static constexpr char kTooltipBackgroundColor[] = "tooltipBackgroundColor";
+  static constexpr char kTooltipTextColor[] = "tooltipTextColor";
   static constexpr char kPanelStyle[] = "panelStyle";
   static constexpr char kFloatingMargin[] = "floatingMargin";
   static constexpr char kBouncingLauncherIcon[] = "bouncingLauncherIcon";
